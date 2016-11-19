@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{titulo}}</title>
+	<link rel="stylesheet" type="text/css" href="../css/producto.css">
+</head>
+<body>
+    <div id="contenedor-principal">
+		<div id="contenedor-imagenes">
+			<div id="contenedor-imagenes-secundarias">
+				<div class="contenedor-imagen-secundaria-individual"><img onmouseenter="imageHover(this)" class="imagen-secundaria" src="../public-uploads/{{loop imagenes}}"></div>
+			</div>
+
+			<div id="contenedor-imagen-principal"><img id="imagen-principal" src="../public-uploads/{{loop imagenes 1}}"></div>
+		</div>
+
+		<div id="contenedor-informacion-producto">
+		    <h1 id="producto-title">{{titulo}}</h1>
+
+		    <div id="producto-precio">{{precio}}€</div>
+		    <br/>
+		    <div id="producto-atributos">
+		      	<b id="producto-atributos-key">{{loopKey atributos}}</b>
+		      	<select>
+		    		<option>{{loopArray atributos}}</option>
+		    	</select>
+		    	{{/loopKey atributos}}
+		    </div>
+		    <br/>
+		    <div id="producto-descripcion">{{descripcion}}<span id="producto-descripcion-fadeout"></span></div>
+		    <div id="contenedor-button-expandir-texto">
+		    	<a id="button-expandir-texto" href="javascript:void(0)">Expandir texto</a>
+		    </div>
+		    <br/>
+		    <div id="producto-categoria">Categoría: {{categoria}}</div>
+		    <br/>
+		</div>
+
+		<div id="contenedor-comprar-producto">
+			<div id="contenedor-input-cantidad">Cantidad: <input id="input-cantidad" type="number" value="1"></div>
+			<button id="button-añadir-cesta">Añadir a la cesta</button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="../js/producto.js"></script>
+	<script type="text/javascript" src="../js/widgetImagenes.js"></script>
+</body>
+</html>

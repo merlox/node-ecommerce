@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Login authentication</title>
+    <link rel="stylesheet" href="../css/status.css" media="screen" title="no title" charset="utf-8">
+  </head>
+  <body>
+
+    <h5 id="status"></h5>
+
+    <div id="mainContent">
+    <h2>Bienvenido</h2>
+    <p>
+      En esta web podrás autenticarte con tu usario y contraseña.
+      <br>
+      Primero crea tu registro a continuación y si el formulario no tiene errores,
+      podrás acceder con tu nuevo usuario.
+    </p>
+    <h2>Crear usuario</h2>
+    <form action="/register" method="post">
+      Nombre <input type="text" name="nombreUsuario">
+      Contraseña <input type="password" name="passUsuario">
+      <input type="submit" value="Enviar datos">
+    </form>
+
+    <h2>Entrar en tu cuenta</h2>
+    <form action="/login" method="post">
+      Nombre <input type="text" name="nombreUsuario">
+      Contraseña <input type="password" name="passUsuario">
+      <input type="submit" value="Enviar datos">
+    </form>
+
+  <script src="../js/status.js" charset="utf-8"></script>
+  </div>
+  </body>
+</html>

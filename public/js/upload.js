@@ -1,0 +1,252 @@
+let imagenesProducto = {};
+let informacionProducto = {};
+
+//imagenesProducto = {
+//  "1" : {
+//    "ubicación": "ubicación imagen"
+//  },
+//  "2": ...
+//}
+//El 1 representa la ubicación, siendo 1 la imágen más grande y el resto miniaturas.
+
+function guardarProduct(){
+  informacionProducto.titulo = document.getElementById('producto-title').value;
+  informacionProducto.permalink = document.getElementById('permalink').value;
+  informacionProducto.precio = document.getElementById('producto-precio').value;
+  informacionProducto.descripcion = document.getElementById('producto-descripcion').value;
+  //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
+  if(informacionProducto.categoria == null){
+    return messageStatus('Error: Tienes que guardar la categoría seleccionada con el botón azul del widget de categorías', "error");
+  }else{
+    informacionProducto.atributos = objetoAtributos;
+    informacionProducto.imagenes = imagenesProducto;
+    informacionProducto.publicado = "no";
+
+    let categoriasReq = new XMLHttpRequest();
+    categoriasReq.open('POST', '/api/guardar-categorias');
+    categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+    categoriasReq.onreadystatechange = () => {
+      if(categoriasReq.readyState = XMLHttpRequest.DONE){
+        messageStatus(request.responseText, 'info');
+      }
+    };
+    categoriasReq.send(JSON.stringify(arrayCategorias));
+
+    let request = new XMLHttpRequest();
+    request.open('POST', '/upload-product');
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.onreadystatechange = () => {
+      if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
+        messageStatus(request.responseText, 'info');
+        resetAllProductData();
+      }else{
+        messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
+        resetAllProductData();
+      }
+      request.send(JSON.stringify(informacionProducto));
+    };
+  }
+}
+function uploadProduct(){
+  informacionProducto.titulo = document.getElementById('producto-title').value;
+  informacionProducto.permalink = document.getElementById('permalink').value;
+  informacionProducto.precio = document.getElementById('producto-precio').value;
+  informacionProducto.descripcion = document.getElementById('producto-descripcion').value;
+  //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
+  if(informacionProducto.categoria == null){
+    console.log(informacionProducto.categoria);
+    messageStatus('Error: Tienes que guardar la categoría seleccionada con el botón azul del widget de categorías', "error");
+  }else{
+    informacionProducto.atributos = objetoAtributos;
+    informacionProducto.imagenes = imagenesProducto;
+    informacionProducto.publicado = "si";
+    
+    let categoriasReq = new XMLHttpRequest();
+    categoriasReq.open('POST', '/api/guardar-categorias');
+    categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+    categoriasReq.onreadystatechange = () => {
+      if(categoriasReq.readyState = XMLHttpRequest.DONE){
+        messageStatus(request.responseText, 'info');
+      }
+    };
+    categoriasReq.send(JSON.stringify(arrayCategorias));
+
+    let request = new XMLHttpRequest();
+    request.open('POST', '/upload-product');
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.onreadystatechange = () => {
+      if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
+        messageStatus(request.responseText, 'info');
+        resetAllProductData();
+      }else{
+        messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
+        resetAllProductData();
+      }
+    };
+    request.send(JSON.stringify(informacionProducto));
+  }
+}
+function resetAllProductData(){
+  informacionProducto = {};
+  imagenesProducto = {};
+  document.getElementById('producto-title').value = '';
+  document.getElementById('permalink').value = '';
+  document.getElementById('producto-precio').value = '';
+  document.getElementById('producto-descripcion').value = '';
+  document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
+  if(document.getElementById('contenedor-imagen-principal')){
+    document.getElementById('contenedor-imagen-principal').remove();
+  }
+  document.getElementById('imagen-principal').style.display = 'flex';
+}
+function showChangeImage(e){
+  document.getElementById('contenedor-imagen-principal').style.height = document.getElementById('imagen-principal-uploaded').offsetHeight+"px";
+  if(document.getElementById('imagen-principal-uploaded-active') == null){
+    e.insertAdjacentHTML('beforeend', '<div id="imagen-principal-uploaded-active">cambiar imágenes</div>');
+    document.getElementById('imagen-principal-uploaded-active').style.width = document.getElementById('imagen-principal-uploaded').width+"px";
+    document.getElementById('imagen-principal-uploaded-active').style.height = document.getElementById('imagen-principal-uploaded').height+"px";
+    document.getElementById('imagen-principal-uploaded-active').addEventListener('click', () => {
+      document.getElementById('image-upload-input').click();
+    });
+  }
+}
+function hideChangeImage(e){
+  document.getElementById('imagen-principal-uploaded-active').remove();
+}
+//Función para reorganizar miniaturas
+function showChangeSecondaryImage(e){
+  e.insertAdjacentHTML('beforeend', '<div id="imagen-secundaria-activa-hover"><span id="imagen-secundaria-activa-hover-flecha-up"></span><span id="imagen-secundaria-activa-hover-flecha-down"></span></div>');
+  document.getElementById('imagen-secundaria-activa-hover-flecha-down').addEventListener('click', (e) => {
+    let elementos = document.getElementsByClassName('imagen-secundaria-contenedor');
+    let elementoSeleccionado = e.target.parentNode.parentNode; //Contenedor de la imagen miniatura
+    let orderInicial = parseInt(elementoSeleccionado.id.replace('imagen-secundaria-orden-', ""));
+    if(orderInicial < elementos.length){
+      let propiedadBajar = imagenesProducto[orderInicial+1];
+      //Ahora el OBJETO debe funcionar bien
+      imagenesProducto[orderInicial+1] = imagenesProducto[orderInicial];
+      imagenesProducto[orderInicial] = propiedadBajar;
+
+      let findId = 'imagen-secundaria-orden-'+(orderInicial+1);
+      document.getElementById(findId).id = 'imagen-secundaria-orden-'+orderInicial;
+      elementoSeleccionado.id = 'imagen-secundaria-orden-'+(orderInicial+1);
+    };
+  });
+  document.getElementById('imagen-secundaria-activa-hover-flecha-up').addEventListener('click', (e) => {
+    let elementos = document.getElementsByClassName('imagen-secundaria-contenedor');
+    let elementoSeleccionado = e.target.parentNode.parentNode //Contenedor de la imagen miniatura
+    let orderInicial = parseInt(elementoSeleccionado.id.replace('imagen-secundaria-orden-', ""));
+    if(orderInicial >= 2){
+      let propiedadBajar = imagenesProducto[orderInicial-1];
+      //Ahora el OBJETO debe funcionar bien
+      imagenesProducto[orderInicial-1] = imagenesProducto[orderInicial];
+      imagenesProducto[orderInicial] = propiedadBajar;
+
+      let findId = 'imagen-secundaria-orden-'+(orderInicial-1);
+      document.getElementById(findId).id = 'imagen-secundaria-orden-'+orderInicial;
+      elementoSeleccionado.id = 'imagen-secundaria-orden-'+(orderInicial-1);
+    };
+    if(orderInicial == 2){
+      let imagenPrincipalNueva = document.getElementById('imagen-secundaria-orden-1').firstChild;
+      document.getElementById('imagen-principal-uploaded').src = imagenPrincipalNueva.src;
+      if(window.innerWidth <= 700){
+        document.getElementById('imagen-principal-uploaded').style.height = ((imagenPrincipalNueva.naturalHeight*22)/imagenPrincipalNueva.naturalWidth)+"vw";
+      }else{
+        document.getElementById('imagen-principal-uploaded').style.height = ((imagenPrincipalNueva.naturalHeight*28)/imagenPrincipalNueva.naturalWidth)+"vw";
+      }
+    }
+  });
+}
+function hideChangeSecondaryImage(e){
+  e.lastChild.remove();
+}
+document.getElementById('button-guardar-producto').addEventListener('click', () => {
+  guardarProduct();
+});
+document.getElementById('button-publicar-producto').addEventListener('click', () => {
+  uploadProduct();
+});
+document.getElementById('imagen-principal').addEventListener('click', () => {
+  document.getElementById('image-upload-input').click();
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('progress-bar').innerHTML = '0%';
+});
+//Funcion que se encarga de mostrar las imágenes
+document.getElementById('image-upload-input').addEventListener('change', () => {
+  let files = document.getElementById('image-upload-input').files;
+  let requestResults;
+
+  if(files.length > 0){
+    if(files.length <= 10){
+      if(document.getElementById('contenedor-imagen-principal')){
+        document.getElementById('contenedor-imagen-principal').remove();
+      }
+      document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
+      let formData = new FormData();
+
+      for(let i = 0; i < files.length; i++){
+        let file = files[i];
+        formData.append('uploads[]', file, file.name);
+      }
+
+      let request = new XMLHttpRequest();
+      request.upload.addEventListener('progress', (e) => {
+        if(e.lengthComputable){
+          percentComplete = parseInt(e.loaded/e.total * 100);
+          document.getElementById('progress-bar').innerHTML = percentComplete + '%';
+          document.getElementById('progress-bar').style.width = percentComplete + '%';
+        }
+      }, false);
+      request.onreadystatechange = () => {
+        if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
+          requestResults = JSON.parse(request.responseText);
+          imagenesProducto = requestResults;
+          for(let i in imagenesProducto){
+            if(i == 1){
+              let imagenSecundaria = new Image();
+              imagenSecundaria.src = '../public-uploads/'+imagenesProducto[i];
+              imagenSecundaria.onload = () => {
+                let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
+                imagenSecundaria.className = 'imagen-secundaria';
+                document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
+                '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
+                let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
+                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
+                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].firstChild.style.height = imagenSubidaAltura+'px';
+              };
+              let imagenPrincipal = new Image();
+              let imagenSubidaAltura;
+              imagenPrincipal.src = '../public-uploads/'+imagenesProducto[i];
+              imagenPrincipal.onload = () => {
+                imagenPrincipal.id = 'imagen-principal-uploaded';
+                document.getElementById('imagen-principal').style.display = 'none';
+                document.getElementById('contenedor-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
+                document.getElementById('contenedor-imagen-principal').appendChild(imagenPrincipal);
+                document.getElementById('contenedor-imagen-principal').style.height = imagenSubidaAltura+'vw';
+                document.getElementById('imagen-principal-uploaded').style.height = imagenSubidaAltura+'vw';
+              };
+            }else{
+              let imagenSecundaria = new Image();
+              imagenSecundaria.src = '../public-uploads/'+imagenesProducto[i];
+              imagenSecundaria.onload = () => {
+                let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
+                imagenSecundaria.style.order = i;
+                imagenSecundaria.className = 'imagen-secundaria';
+                document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
+                '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
+                let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
+                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
+                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].firstChild.style.height = imagenSubidaAltura+'px';
+              };
+            }
+          }
+        }
+      };
+      request.open('POST', '/upload-image-product', true);
+      request.send(formData);
+    }else{
+      messageStatus('Error, maximum 10 images', 'error');
+    }
+  }else{
+    messageStatus('Error, files not recognized.', 'error');
+  }
+});

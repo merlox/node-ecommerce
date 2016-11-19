@@ -1,0 +1,43 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+#status{
+  display: none;
+}
+#mainContent{
+  padding: 0 20px;
+}
+#status.errorStatus{
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  color: white;
+  width: 100%;
+  font-size: 13pt;
+  font-family: arial;
+  height: 50px;
+  background-color: rgb(255, 74, 74);
+}
+#status.successStatus{
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  color: white;
+  width: 100%;
+  font-size: 13pt;
+  font-family: arial;
+  height: 50px;
+  background-color: rgb(21, 195, 0);
+}
+#status.infoStatus{
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  color: white;
+  width: 100%;
+  font-size: 13pt;
+  font-family: arial;
+  height: 50px;
+  background-color: rgb(0, 72, 195);
+}

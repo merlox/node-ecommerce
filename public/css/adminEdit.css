@@ -1,0 +1,69 @@
+/*
+
+GENERALES
+
+*/
+
+h1, h2, h3, h4, h5, h6{
+	font-family: sans-serif;
+	font-weight: 100;
+}
+#contenedor-total{
+	display: flex;
+	justify-content: center;
+}
+
+/*
+
+MENU LATERAL
+
+*/
+
+#seccion-menu{
+	width: 15%;
+	height: calc(100vh - 50px);
+	background-color: #EEEEEE;
+}
+
+/*
+
+PRODUCTOS
+
+*/
+
+#seccion-productos{
+	width: 35%;
+	height: calc(100vh - 50px);
+}
+.contenedor-producto{
+	border: 1px solid lightgrey;
+	border-bottom: none;
+	display: flex;
+}
+.contenedor-producto:last-child{
+	border-bottom: 1px solid lightgrey;
+}
+.imagen-producto{
+	width: 100px;
+	height: 100px;
+}
+.contenedor-producto-informacion{
+	display: flex;
+	flex-direction: column;
+	padding: 15px 0;
+}
+.contenedor-producto-informacion h3{
+	margin: 0;
+}
+
+/*
+
+PREVIEW
+
+*/
+
+#seccion-preview{
+	width: 50%;
+	height: calc(100vh - 50px);
+	background-color: #EEEEEE;
+}

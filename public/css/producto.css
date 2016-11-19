@@ -1,0 +1,204 @@
+/*
+
+GENERALES
+
+*/
+
+body{
+	font-family: georgia;
+}
+h1, h2, h3, h4, h5, h6, button{
+	font-family: helvetica;
+}
+#contenedor-principal{
+	display: flex;
+	justify-content: center;
+}
+
+/*
+
+IMAGES
+
+*/
+
+#contenedor-imagenes{
+	width: 30%;
+	display: flex;
+	justify-content: center;
+}
+.contenedor-imagen-secundaria-individual{
+	width: 40px;
+	height: 40px;
+	border: 1px solid grey;
+	margin-bottom: 5px;
+	display: flex;
+	align-items: center;
+}
+.imagen-secundaria{
+	width: 38px;
+}
+.imagen-secundaria-activa{
+	-webkit-box-shadow: 0px 0px 10px 0px rgba(250,188,3,1);
+	-moz-box-shadow: 0px 0px 10px 0px rgba(250,188,3,1);
+	box-shadow: 0px 0px 10px 0px rgba(250,188,3,1);
+	border: 1px solid rgba(250,188,3,1);
+}
+#imagen-principal{
+	width: 100%;
+	padding: 0 10px;
+	box-sizing: border-box;
+}
+
+/*
+
+PRODUCT INFORMATION
+
+*/
+
+#contenedor-informacion-producto{
+	width: 55%;
+}
+#producto-precio{
+	color: #FC2828;
+	font-size: 15pt;
+}
+#producto-categoria{
+	font-weight: bold;
+}
+#producto-title{
+	margin-top: 0;
+}
+#producto-categoria::first-letter{
+	text-transform: uppercase;
+}
+#contenedor-button-expandir-texto{
+	text-align: center;
+	display: none;
+}
+
+/*
+
+BUY SIDEBAR
+
+*/
+
+#contenedor-comprar-producto{
+	width: 15%;
+}
+#button-añadir-cesta{
+	border-radius: 2px;
+	border: 1px solid grey;
+	background-color: #FFCC00;
+	padding: 10px;
+	width: 100%;
+	cursor: pointer;
+	color: #0F0F0F;
+	font-size: 13pt;
+}
+#button-añadir-cesta:hover{
+	background-color: #FFA210;
+}
+#button-añadir-cesta:active{
+	background-color: #FFBA00;
+}
+#contenedor-input-cantidad{
+	display: flex;
+	justify-content: center;
+}
+#input-cantidad{
+	width: 25px;
+	font-size: 13pt;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	border-radius: 5px;
+}
+
+/*
+
+RESPONSIVE CSS
+
+*/
+
+@media (max-width: 1000px){
+	#contenedor-informacion-producto{
+		width: 50%;
+	}
+	#contenedor-imagenes{
+		width: 50%;
+	}
+}
+
+@media (max-width: 800px){
+	#producto-title{
+		font-size: 18pt;
+	}
+}
+
+@media (max-width: 650px){
+	#contenedor-principal{
+		flex-direction: column;
+	}
+	#contenedor-informacion-producto{
+		width: 100%;
+	}
+	#contenedor-comprar-producto{
+		width: 100%;
+	}
+	#contenedor-imagenes{
+		width: 100%;
+	}
+	#producto-descripcion{
+		height: 130px;
+		overflow: hidden;
+	}
+	#contenedor-button-expandir-texto{
+		display: block;
+	}
+	#producto-descripcion-fadeout{
+		position: absolute;
+		bottom: 0em;
+		height: 4em;
+		width: 100%;
+		background-image: linear-gradient(
+        	rgba(255, 255, 255, 0) 0%,
+        	rgba(255, 255, 255, 1) 100%
+    	);
+	}
+}
+
+/*
+
+JAVASCRIPT CSS
+
+*/
+
+#imagen-secundaria-orden-1{
+  order: 1;
+}
+#imagen-secundaria-orden-2{
+  order: 2;
+}
+#imagen-secundaria-orden-3{
+  order: 3;
+}
+#imagen-secundaria-orden-4{
+  order: 4;
+}
+#imagen-secundaria-orden-5{
+  order: 5;
+}
+#imagen-secundaria-orden-6{
+  order: 6;
+}
+#imagen-secundaria-orden-7{
+  order: 7;
+}
+#imagen-secundaria-orden-8{
+  order: 8;
+}
+#imagen-secundaria-orden-9{
+  order: 9;
+}
+#imagen-secundaria-orden-10{
+  order: 10;
+}

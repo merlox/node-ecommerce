@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script type="text/javascript">
+      let socket = io();
+    </script>
+  </head>
+  <body>
+    <h1>Dashboard</h1>
+    <div id="mensajesChat"></div>
+    <form>
+      <input id="textoChat" type="text" placeholder="Say something...">
+      <input id="formulario" type="button" value="Enviar mensaje">
+    </form>
+    <div id="usersConnected"></div>
+
+    <script type="text/javascript">
+      document.getElementById('formulario').addEventListener('click', function(e){
+        e.preventDefault();
+        socket.emit('mensaje chat', document.getElementById('textoChat').value);
+        document.getElementById('textoChat').value = '';
+      });
+
+      document.getElementById('textoChat').addEventListener('keypress', function(e){
+        if(e.keyCode == 13){
+          e.preventDefault();
+          socket.emit('mensaje chat', document.getElementById('textoChat').value);
+          document.getElementById('textoChat').value = '';
+        }
+      });
+
+      socket.on('mensaje chat', function(mensaje){
+        document.getElementById('mensajesChat').insertAdjacentHTML('beforeend', mensaje+'<br/>');
+      });
+      socket.on('user connected', function(arrayOfUsersConnected){
+        document.getElementById('usersConnected').innerHTML = '';
+        for(let i=0; i<arrayOfUsersConnected.length; i++){
+          document.getElementById('usersConnected').insertAdjacentHTML('beforeend', arrayOfUsersConnected[i]+'<br/>');
+        }
+      });
+    </script>
+  </body>
+</html>

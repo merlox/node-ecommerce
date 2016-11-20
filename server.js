@@ -7,12 +7,14 @@ const express = require('express'),
     Mongo = require('mongodb').MongoClient,
     MongoStore = require('connect-mongo')(session),
     path = require('path'),
-    publicRoutes = require('./server/routes/publicRoutes.js'),
-    MongoUrl = 'mongodb://localhost:27017/ecommerce';
+    MongoUrl = 'mongodb://localhost:27017/ecommerce',
+    apiRoutes = require('./server/routes/apiRoutes.js'),
+    adminRoutes = require('./server/routes/adminRoutes.js'),
+    publicRoutes = require('./server/routes/publicRoutes.js');
 
+//Inicializamos configuracion de express y sessión
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-//Esto permite que la req.session se guarde en la BD para cada usuario
 app.use(session({
   secret: 'GOODPASSWORD',
   store: new MongoStore({
@@ -21,11 +23,22 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
+//Para cargar los archivos publicamente usamos
+app.use(express.static(path.join(__dirname, 'public')));
+
+//Logger middleware
 app.use('*', (req, res, next) => {
   console.log('Requesting: '+req.url);
-  publicRoutes(app);
   next();
 });
+
+//Custom routes
+app.use('/api', apiRoutes);
+app.use('/admin', adminRoutes);
+app.use('/', publicRoutes);
+
+//Ejecutamos el servidor en la ip local
 http.listen(3000, '0.0.0.0', function(){
   console.log("Server started at 192.168.1.111:3000");
 });

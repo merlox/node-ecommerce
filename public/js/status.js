@@ -15,13 +15,6 @@ function messageStatus(status, type){
     document.getElementById('status').style.display = 'flex';
     document.getElementById('status').style.marginTop = "-50px";
     let marginTop = -50;
-    let interval = setInterval(() => {
-      marginTop += 2;
-      document.getElementById('status').style.marginTop = marginTop+"px";
-      if(marginTop >= 0){
-        clearInterval(interval);
-      }
-    }, 10);
     if(type == "success"){
       document.getElementById('status').className = 'successStatus';
     }else if(type == "error"){

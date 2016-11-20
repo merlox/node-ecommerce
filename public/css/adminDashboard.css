@@ -35,15 +35,8 @@ button{
 }
 button:hover{
   cursor: pointer;
-  background-color: lightgrey;
-  border: none;
-}
-input{
-  border: none;
-  border-bottom: 1px solid grey;
-}
-input:hover{
-  border: 1px solid grey;
+  background-color: rgb(0, 154, 196);
+  border: 1px solid black;
 }
 .disabled, .disabled:hover{
   background-color: grey;

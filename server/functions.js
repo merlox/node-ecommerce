@@ -8,7 +8,7 @@ let buscarProducto = function(permalink, callback){
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
-      return res.send('Error, could not connect to the database', null);
+      return callback('Error, could not connect to the database', null);
     }
     db.collection('productos').findOne({
       'permalink': permalink
@@ -48,7 +48,7 @@ let getAllProducts = function(callback){
               if(err){
                 return callback(err, null);
               }else{
-                return callback(null, 'Copied image to public uploads');
+                return callback(null, results);
               }
             });
           });
@@ -172,7 +172,7 @@ let guardarCategorias = function(categorias, callback){
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
-      return res.send('Error, could not connect to the database', null);
+      return callback('Error, could not connect to the database', null);
     }
     //1º Buscamos el array
     //2º Lo actualizamos, categorias es un param de la funcion

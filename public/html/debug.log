@@ -1,3 +1,0 @@
-[1116/223842:ERROR:crash_report_database_win.cc(562)] CreateDirectory C:\Program Files (x86)\Junemike\Reports\Dump\reports: Access is denied. (0x5)
-[1116/223842:ERROR:registration_protocol_win.cc(82)] TransactNamedPipe: The pipe has been ended. (0x6D)
-[1116/223842:ERROR:crash_report_database_win.cc(562)] CreateDirectory C:\Program Files (x86)\Junemike\Reports\Dump\reports: Access is denied. (0x5)

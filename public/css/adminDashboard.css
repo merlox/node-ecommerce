@@ -29,12 +29,14 @@ button{
   background-color: rgb(0, 154, 196);
   color: white;
   border: 1px solid rgb(0, 154, 196);
+  border-radius: 3px;
   padding: 5px;
   font-size: 13pt;
 }
 button:hover{
   cursor: pointer;
-  background-color: rgb(0, 175, 223);
+  background-color: lightgrey;
+  border: none;
 }
 input{
   border: none;

@@ -681,3 +681,9 @@ Ayer fue un día ocupado. Estuve reinstalando windows 10 con todo lo que conllev
 Hoy sin embargo, voy a ponerme a trabajar en serio y mi objetivo es hacer al menos 2 horas y crear un vídeo decente para mi canal de youtube.
 
 Voy a continuar con la edición de productos.
+
+### Día 20
+
+Ayer estuve remodelando la estructura de la aplicación porque se me ha desorganizado de tal manera que me cuesta encontrar donde esta cada cosa. 
+
+Hoy voy a trabajar en arreglar la página de subida de productos y en crear la página de edicion de productos. Pero antes voy a arreglar el desorden causado por el orden.

@@ -4,6 +4,7 @@ let Mongo = require('mongodb').MongoClient,
   MongoUrl = 'mongodb://localhost:27017/ecommerce';
 
 let buscarProducto = function(permalink, callback){
+  console.log('BuscarProducto, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
@@ -23,6 +24,7 @@ let buscarProducto = function(permalink, callback){
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
 let getAllProducts = function(callback){
+  console.log('GetAllProducts, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
@@ -58,6 +60,7 @@ let getAllProducts = function(callback){
   });
 };
 let render = function(page, dataObject, cb){
+  console.log('Render, functions.js');
   fs.readFile(page, (err, content) => {
     if(err) throw err;
     let resultado = content.toString();
@@ -141,6 +144,7 @@ let render = function(page, dataObject, cb){
   });
 };
 let copyFile = function(origin, end, fileName, callback){
+  console.log('CopyFile, functions.js');
   let callbackCalled = false;
   let readStream = fs.createReadStream(origin);
   readStream.on('error', (err) => {
@@ -164,6 +168,7 @@ let copyFile = function(origin, end, fileName, callback){
   }
 };
 let guardarCategorias = function(categorias, callback){
+  console.log('GuardarCategorias, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
@@ -190,6 +195,7 @@ let guardarCategorias = function(categorias, callback){
   });
 };
 let getCategories = function(callback){
+  console.log('GetCategories, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
@@ -208,6 +214,7 @@ let getCategories = function(callback){
   });
 }
 let copyDirectory = function(origin, end, callback){
+  console.log('CopyDirectory, functions.js');
   if(callback == undefined){
     callback = () => {};
   }

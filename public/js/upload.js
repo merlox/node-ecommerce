@@ -33,7 +33,7 @@ function guardarProduct(){
     categoriasReq.send(JSON.stringify(arrayCategorias));
 
     let request = new XMLHttpRequest();
-    request.open('POST', '/upload-product');
+    request.open('POST', '/api/upload-product');
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     request.onreadystatechange = () => {
       if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
@@ -72,7 +72,7 @@ function uploadProduct(){
     categoriasReq.send(JSON.stringify(arrayCategorias));
 
     let request = new XMLHttpRequest();
-    request.open('POST', '/upload-product');
+    request.open('POST', '/api/upload-product');
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     request.onreadystatechange = () => {
       if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
@@ -241,7 +241,7 @@ document.getElementById('image-upload-input').addEventListener('change', () => {
           }
         }
       };
-      request.open('POST', '/upload-image-product', true);
+      request.open('POST', '/api/upload-image-product', true);
       request.send(formData);
     }else{
       messageStatus('Error, maximum 10 images', 'error');

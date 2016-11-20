@@ -1,8 +1,9 @@
 let arrayCategorias = [];
 
-//TODO PRIORIDAD MEDIA GET AJAX Categorias del servidor
-//Entonces do
-//foreach element in the ajax categories push to arrayCategorias
+window.onload = () => {
+  getCategoriesFromServer();
+}
+
 function getCategoriesFromServer(){
   let request = new XMLHttpRequest();
   request.open('GET', '/api/get-categories');
@@ -15,9 +16,6 @@ function getCategoriesFromServer(){
     }
   };
   request.send();
-}
-window.onload = () => {
-  getCategoriesFromServer();
 }
 
 function guardarButtonEffects(){

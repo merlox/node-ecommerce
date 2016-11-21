@@ -55,17 +55,13 @@ button:hover{
   background-color: rgb(0, 175, 223);
 }
 input{
-  border: 1px solid grey;
-  border-radius: 3px;
-  padding: 2px;
+  padding: 10px;
 }
 input:hover{
   border: 1px solid blue;
 }
 textarea{
-  border: 1px solid grey;
-  border-radius: 3px; 
-  padding: 2px;
+  padding: 10px;
 }
 textarea:hover{
  border: 1px solid blue; 

@@ -29,7 +29,6 @@ button{
   background-color: rgb(0, 154, 196);
   color: white;
   border: 1px solid rgb(0, 154, 196);
-  border-radius: 3px;
   padding: 5px;
   font-size: 13pt;
 }
@@ -57,8 +56,16 @@ button:hover{
   border: 1px solid rgb(0, 175, 223);
   color: rgb(0, 175, 223);
 }
-.add-product-item{
-  display: block;
+#contenedor-guardar-producto{
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 10px;
+  min-width: 17%;
+}
+#contenedor-principal-add-product{
+  display: flex;
+  justify-content: center;
 }
 
 /*
@@ -185,23 +192,26 @@ INFORMACION PRODUCTO
 #contenedor-informacion-producto{
   padding: 8px;
   min-width: 50%;
+  display: flex;
+  flex-direction: column;
 }
 #producto-descripcion{
   width: 100%;
   font-family: helvetica;
 }
+.contenedores-precio-permalink{
+  width: 150px;
+  display: inline-block;
+}
 #permalink{
   font-weight: bold;
-  width: calc(100% - 200px);
-  min-width: 200px;
+  width: calc(100% - 309px);
+  display: inline-block;
 }
 #producto-title{
   width: 100%;
   font-size: 20pt;
   word-wrap: break-word;
-}
-#producto-precio{
-  width: 40px;
 }
 #producto-categorias{
   font-size: 13pt;
@@ -265,23 +275,6 @@ INFORMACION PRODUCTO
   justify-content: space-between;
 }
 
-/*
-
-SECCION BOTONES
-
-*/
-
-#contenedor-guardar-producto{
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  padding: 10px;
-  min-width: 17%;
-}
-#contenedor-principal-add-product{
-  display: flex;
-  justify-content: center;
-}
 
 /*
 

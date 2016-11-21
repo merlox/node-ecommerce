@@ -37,6 +37,14 @@ function guardarButtonEffects(){
     document.getElementById('button-activar-nueva-categoria').style.display = 'none';
   }
 };
+
+//Hide category widget if no categories
+if(document.getElementById('producto-categorias').innerHTML == ""){
+  document.getElementById('producto-categorias').style.display = 'none';
+}else{
+  document.getElementById('producto-categorias').style.display = 'block';
+}
+
 document.getElementById('producto-categorias').addEventListener('change', () => {
   if(document.getElementById('producto-categorias').selectedIndex >= 0){
     document.getElementById('button-categoria-guardar').className = '';
@@ -51,6 +59,7 @@ document.getElementById('button-nueva-categoria-add').addEventListener('click', 
   let newCategoryValue = document.getElementById('nueva-categoria').value;
   let newCategoryNode = '<option>'+newCategoryValue+'</option>';
   arrayCategorias.push(newCategoryValue);
+  document.getElementById('producto-categorias').style.display = 'block';
   document.getElementById('producto-categorias').insertAdjacentHTML('beforeend', newCategoryNode);
   document.getElementById('contenedor-elementos-categoria').style.display = 'inline-block';
   document.getElementById('contenedor-categoria-add').style.display = 'none';
@@ -62,6 +71,9 @@ document.getElementById('button-nueva-categoria-cancelar').addEventListener('cli
 });
 document.getElementById('button-categoria-borrar').addEventListener('click', () => {
   let categoriaSeleccionada = document.getElementById('producto-categorias');
+  if(document.getElementById('producto-categorias').innerHTML == ""){
+    document.getElementById('producto-categorias').style.display = 'none';
+  }
   arrayCategorias = arrayCategorias.splice(categoriaSeleccionada.selectedIndex, 1);
   categoriaSeleccionada.remove(categoriaSeleccionada.selectedIndex);
   document.getElementById('button-categoria-guardar').className = 'disabled';

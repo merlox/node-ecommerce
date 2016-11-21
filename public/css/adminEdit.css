@@ -36,7 +36,7 @@ PRODUCTOS
 */
 
 #seccion-productos{
-	width: 35%;
+	width: 25%;
 	height: calc(100vh - 50px);
 }
 .contenedor-producto{
@@ -56,14 +56,19 @@ PRODUCTOS
 	margin: 0;
 }
 
-/*
+/**
 
 PREVIEW
 
 */
 
 #seccion-preview{
-	width: 50%;
+	width: 75%;
 	height: calc(100vh - 50px);
-	background-color: #EEEEEE;
 }
+
+/**
+
+SECCION PREVIEW INCLUDE ADD PRODUCT
+
+*/

@@ -1,5 +1,9 @@
 let domainName = '192.168.1.111:3000';
 
+function id(id){
+	return document.getElementById(id);
+}
+
 function httpGet(url, cb){
 	//If no callback is provided in the function calling, ignore the callback
 	if(cb == undefined){
@@ -18,9 +22,15 @@ function httpGet(url, cb){
 }
 
 function loadFullProduct(productPermalink){
-	console.log('/api/get-single-product/'+productPermalink);
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
-		document.getElementById('seccion-preview').innerHTML =
+		fullProduct = JSON.parse(fullProduct);
+		id('seccion-preview-titulo').innerHTML = fullProduct.titulo;
+		id('seccion-preview-permalink').innerHTML = fullProduct.permalink;
+		id('seccion-preview-precio').innerHTML = fullProduct.precio;
+		id('seccion-preview-descripcion').innerHTML = fullProduct.descripcion;
+		id('seccion-preview-categoria').innerHTML = fullProduct.categoria;
+		id('seccion-preview-atributos').innerHTML = fullProduct.atributos;
+		id('seccion-preview-publicado').innerHTML = fullProduct.publicado;
 	});
 }
 
@@ -38,10 +48,10 @@ httpGet('/api/get-all-products/', (results) => {
 				+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')">Editar producto</a>'
 				+'<p>'+objetoProducto.categoria+'</p></div>';
 
-			document.getElementById('seccion-productos').insertAdjacentHTML('beforeend', htmlProducto);
+			id('seccion-productos').insertAdjacentHTML('beforeend', htmlProducto);
 		}
 	}else{
-		document.getElementById('seccion-productos').innerHTML = 
+		id('seccion-productos').innerHTML = 
 			'<p class="no-products-found">No hay productos para mostrar.</p>';
 	}
 });

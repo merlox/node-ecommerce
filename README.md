@@ -687,3 +687,9 @@ Voy a continuar con la edición de productos.
 Ayer estuve remodelando la estructura de la aplicación porque se me ha desorganizado de tal manera que me cuesta encontrar donde esta cada cosa. 
 
 Hoy voy a trabajar en arreglar la página de subida de productos y en crear la página de edicion de productos. Pero antes voy a arreglar el desorden causado por el orden.
+
+### Día 21
+
+Entre ayer y hoy completé la reestructura de la aplicación en la parte del servidor. Lo que hice fue ordenar las rutas por los tipos que había para tener un acceso mucho más facil.
+
+Hoy voy a continuar trabajando en la página de edición de productos para poder ver todos los productos que hay disponibles, editarlos y borrarlos.

@@ -28,33 +28,39 @@ let getAllProducts = function(callback){
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
-      return callback('Err, could not connect to the db: '+err, null);
+      return callback('Err, could not connect to the db: '+err, false);
     }
     db.collection('productos').find({}).toArray((err, results) => {
       db.close();
       if(err){
-        return callback('Err, error searching products: '+err, null);
+        return callback('Err, error searching products: '+err, false);
       }
       if(results != undefined && results.length > 0){
         //Acceder a la carpeta título y copiar la 1º imagen
         for(let i = 0; i<results.length; i++){
-          let folderServer = path.join(__dirname, '/uploads/', results[i].titulo);
+          let folderServer = path.join(__dirname, '/uploads/', results[i].permalink);
           let folderClient = path.join(__dirname, '../public/public-uploads/');
           fs.readdir(folderServer, (err, imagesInFolder) => {
             if(err) return callback(err, null);
-            let firstImageInFolder = path.join(folderServer, imagesInFolder[0]);
-            copyFile(firstImageInFolder, folderClient, imagesInFolder[0], (err) => {
-              console.log('Imagen copiadas a public-uploads ', firstImageInFolder);
-              if(err){
-                return callback(err, null);
-              }else{
-                return callback(null, results);
+
+            //Buscar la primera imagen guardada en la bd para copiarla
+            for(let f = 1; f<imagesInFolder.length; f++){
+              if(results[i].imagenes[1] == imagesInFolder[f]){
+                let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
+                copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
+                  console.log('Imagen copiadas a public-uploads ', firstImageInFolder);
+                  if(err){
+                    callback(err, false);
+                  }
+                });
               }
-            });
+            }
+
           });
         }
+        callback(null, results);
       }else{
-        return callback('Err, no products found', null);
+       callback(null, false);
       }
     });
   });
@@ -162,7 +168,7 @@ let copyFile = function(origin, end, fileName, callback){
 
   function done(err){
     if(!callbackCalled){
-      callback(err);
+      return callback(err);
       callbackCalled = true;
     }
   }

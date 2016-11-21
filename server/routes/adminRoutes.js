@@ -3,7 +3,6 @@ const express = require('express'),
 	admin = express.Router();
 
 admin.get('/dashboard', (req, res) => {
-	console.log('dashboard');
 	return res.sendFile(path.join(__dirname, '../../public/html/adminDashboard.html'));
 });
 

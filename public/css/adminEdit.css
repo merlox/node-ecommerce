@@ -12,6 +12,10 @@ h1, h2, h3, h4, h5, h6{
 	display: flex;
 	justify-content: center;
 }
+.no-products-found{
+	color: grey;
+	text-align: center;
+}
 
 /*
 
@@ -36,16 +40,12 @@ PRODUCTOS
 	height: calc(100vh - 50px);
 }
 .contenedor-producto{
-	border: 1px solid lightgrey;
-	border-bottom: none;
+	border-bottom:  1px solid lightgrey;
 	display: flex;
-}
-.contenedor-producto:last-child{
-	border-bottom: 1px solid lightgrey;
+	align-items: center;
 }
 .imagen-producto{
-	width: 100px;
-	height: 100px;
+	height: 130px;
 }
 .contenedor-producto-informacion{
 	display: flex;

@@ -48,16 +48,20 @@ api.get('/get-categories', (req, res) => {
 	});
 });
 api.get('/get-all-products/:imagenesLimit?', (req, res) => {
-	console.log('Executing get-all-products');
 	functions.getAllProducts((err, results) => {
 		if(err){
 			console.log(err);
 			return res.send(err);
 		}else{
-			console.log(results);
 			return res.send(results);
 		}
 	});
+});
+api.get('/get-single-product/:permalink', (req, res) => {
+  functions.buscarProducto(req.params.permalink, (err, result) => {
+    if(err) return res.send(err);
+    else return res.send(result);
+  });
 });
 
 let productImages = {};

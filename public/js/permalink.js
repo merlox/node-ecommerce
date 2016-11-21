@@ -15,7 +15,8 @@ function checkPermalinkState(){
 	request.send();
 }
 document.getElementById('producto-title').addEventListener('keyup', () => {
-  	document.getElementById('permalink').value = document.getElementById('producto-title').value.replace(/(\?|\\|\/|:|\*|"|<|>|\|| )+/g, "-");
+  	document.getElementById('permalink').value = 
+  		document.getElementById('producto-title').value.replace(/(\?|\\|\/|:|\*|"|<|>|\|| )+/g, "-");
   	checkPermalinkState();
 });
 document.getElementById('permalink').addEventListener('keyup', () => {

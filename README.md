@@ -693,3 +693,16 @@ Hoy voy a trabajar en arreglar la página de subida de productos y en crear la p
 Entre ayer y hoy completé la reestructura de la aplicación en la parte del servidor. Lo que hice fue ordenar las rutas por los tipos que había para tener un acceso mucho más facil.
 
 Hoy voy a continuar trabajando en la página de edición de productos para poder ver todos los productos que hay disponibles, editarlos y borrarlos.
+
+### Dia 22
+
+Ayer estuve trabajando en la página de editar productos. Conseguí introducir la parte de añadir productos al igual que se muestra en la página de añadir productos ya que quiero usar el mismo "pack" de formularios para editar los productos.
+
+Sin embargo no está bien integrado. Hay que hacerle cambios visuales en el sentido de que no se adapta bien en pantallas pequeñas y el diseño está, digamos "descolocado" por lo que tengo que arreglar eso.
+
+Hoy estuve trabajando en lo mismo y he conseguido lo siguiente:
+
+- Que la parte de productos donde salen en forma de lista se vea bien estéticamente con botones "Ver", "editar" y "borrar".
+- Que a la parte de editar producto se le añada el contenido para poder modificarlo y enviarlo al servidor en cuanto se completen los cambios.
+
+Mañana continuaré trabajando en ello para tener un diseño digno de ver con una calidad excepcional. Presiento que esta seccion de editar productos me tomará mas tiempo del esperado ya que tengo que integrar numerosas partes por separado como los widgets y el nuevo diseño.

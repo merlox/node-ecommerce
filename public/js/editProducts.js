@@ -21,16 +21,24 @@ function httpGet(url, cb){
 	request.send();
 }
 
+//TODO poner los datos del producto para editarlo
 function loadFullProduct(productPermalink){
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
 		fullProduct = JSON.parse(fullProduct);
-		id('seccion-preview-titulo').innerHTML = fullProduct.titulo;
-		id('seccion-preview-permalink').innerHTML = fullProduct.permalink;
-		id('seccion-preview-precio').innerHTML = fullProduct.precio;
-		id('seccion-preview-descripcion').innerHTML = fullProduct.descripcion;
-		id('seccion-preview-categoria').innerHTML = fullProduct.categoria;
+		id('producto-title').value = fullProduct.titulo;
+		id('producto-precio').value = fullProduct.precio;
+		id('permalink').value = fullProduct.permalink;
+		id('producto-descripcion').value = fullProduct.descripcion;
+		id('producto-categoria-seleccionada').innerHTML = fullProduct.categoria;
+		guardarCategoria();
 		id('seccion-preview-atributos').innerHTML = fullProduct.atributos;
 		id('seccion-preview-publicado').innerHTML = fullProduct.publicado;
+	});
+}
+//TODO this
+function borrarProducto(productPermalink){
+	httpGet('/api/borrar-producto/'+productPermalink, (respuesta) => {
+
 	});
 }
 
@@ -40,13 +48,22 @@ httpGet('/api/get-all-products/', (results) => {
 		let arrayProductos = results;
 		for(let i = 0; i < arrayProductos.length; i++){
 			let objetoProducto = arrayProductos[i];
+			let tituloProducto = objetoProducto.titulo;
+			let addEspacioTitulo = '';
+			if(objetoProducto.titulo.length > 54){
+				objetoProducto.titulo = objetoProducto.titulo.substring(0, 55);
+				objetoProducto.titulo += "...";
+			}else{
+				addEspacioTitulo = '<br />';
+			}
 			let permalinkATexto = "'"+objetoProducto.permalink+"'";
 			let htmlProducto = '<div class="contenedor-producto">'
 				+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'">'
-				+'<div class="contenedor-producto-informacion"><h3>'+objetoProducto.titulo+'</h3>'
-				+'<a target="_blank" href="'+domainName+'/p/'+objetoProducto.permalink+'">Ver Producto</a>'
-				+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')">Editar producto</a>'
-				+'<p>'+objetoProducto.categoria+'</p></div>';
+				+'<div class="contenedor-producto-informacion"><b title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</b>'
+				+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+'</p>'
+				+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
+				+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
+				+'<a href="javascript:void(0)" onclick="borrarProducto('+permalinkATexto+')"> Borrar </a></div></div>';
 
 			id('seccion-productos').insertAdjacentHTML('beforeend', htmlProducto);
 		}

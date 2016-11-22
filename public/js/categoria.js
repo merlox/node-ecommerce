@@ -1,6 +1,7 @@
 let arrayCategorias = [];
 
 window.onload = () => {
+  console.log("Consiguiendo categorias del servidor");
   getCategoriesFromServer();
 }
 
@@ -36,7 +37,18 @@ function guardarButtonEffects(){
     document.getElementById('button-categoria-borrar').style.display = 'none';
     document.getElementById('button-activar-nueva-categoria').style.display = 'none';
   }
-};
+}
+
+function guardarCategoria(){
+  let newCategoryValue = document.getElementById('nueva-categoria').value;
+  let newCategoryNode = '<option>'+newCategoryValue+'</option>';
+  arrayCategorias.push(newCategoryValue);
+  document.getElementById('producto-categorias').style.display = 'block';
+  document.getElementById('producto-categorias').insertAdjacentHTML('beforeend', newCategoryNode);
+  document.getElementById('contenedor-elementos-categoria').style.display = 'inline-block';
+  document.getElementById('contenedor-categoria-add').style.display = 'none';
+  document.getElementById('nueva-categoria').value = '';
+}
 
 //Hide category widget if no categories
 if(document.getElementById('producto-categorias').innerHTML == ""){
@@ -56,14 +68,7 @@ document.getElementById('button-activar-nueva-categoria').addEventListener('clic
   document.getElementById('contenedor-categoria-add').style.display = 'inline-block';
 });
 document.getElementById('button-nueva-categoria-add').addEventListener('click', () => {
-  let newCategoryValue = document.getElementById('nueva-categoria').value;
-  let newCategoryNode = '<option>'+newCategoryValue+'</option>';
-  arrayCategorias.push(newCategoryValue);
-  document.getElementById('producto-categorias').style.display = 'block';
-  document.getElementById('producto-categorias').insertAdjacentHTML('beforeend', newCategoryNode);
-  document.getElementById('contenedor-elementos-categoria').style.display = 'inline-block';
-  document.getElementById('contenedor-categoria-add').style.display = 'none';
-  document.getElementById('nueva-categoria').value = '';
+  guardarCategoria();
 });
 document.getElementById('button-nueva-categoria-cancelar').addEventListener('click', () => {
   document.getElementById('contenedor-elementos-categoria').style.display = 'inline-block';

@@ -16,15 +16,6 @@ MAIN MENU
 .main-menu-item{
   width: 300px;
 }
-#progress-bar{
-  width: 100%;
-  display: block;
-  display: flex;
-  justify-content: center;
-  color: white;
-  background-color: rgba(10, 43, 116, 0.81);
-  height: 20px;
-}
 
 /*
 

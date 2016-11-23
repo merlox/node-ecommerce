@@ -38,6 +38,8 @@ PRODUCTOS
 #seccion-productos{
 	width: 25%;
 	height: calc(100vh - 50px);
+	border-right: 1px solid lightgrey;
+	border-left: 1px solid lightgrey;
 }
 .contenedor-producto{
 	border-bottom:  1px solid lightgrey;
@@ -71,6 +73,15 @@ PRODUCTOS
 .contenedor-enlaces-producto{
 	display: flex;
 	justify-content: space-between;
+}
+#precio-permalink-no-border input{
+	border-bottom: none;
+	border-top: none;
+	border-left: 1px solid grey;
+	border-right: 1px solid grey;
+}
+#precio-permalink-no-border input:hover{
+	border: 1px solid blue;
 }
 
 /**

@@ -29,20 +29,26 @@
 
 	    <section id="seccion-preview">
 
-          <div id="progress-bar"></div>
-
           <div id="contenedor-principal-add-product">
 
       <!--Widget imágenes-->
       <div class="contenedores-add-product" id="contenedor-imagenes">
-        <div id="contenedor-imagenes-secundarias"></div>
-        <div id="imagen-principal" title="add image"></div>
-        <input id="image-upload-input" type="file" name="uploads[]" multiple="multiple">
+        <div>
+          <div id="contenedor-imagenes-secundarias"></div>
+          <div id="imagen-principal" title="add image"></div>
+          <input id="image-upload-input" type="file" name="uploads[]" multiple="multiple">
+        </div>
+        
+        <div id="contenedor-guardar-producto">
+          <button id="button-guardar-producto" class="button-big-padding button-no-style" type="button" name="button">Guardar cambios</button>
+          <button id="button-publicar-producto" class="button-big-padding" type="button" name="button">Publicar producto</button>
+        </div>
+
       </div>
 
       <div class="contenedores-add-product" id="contenedor-informacion-producto">
         <textarea id="producto-title" rows="2" placeholder="Título"></textarea>
-        <span>
+        <span id="precio-permalink-no-border">
           <input class="contenedores-precio-permalink" id="producto-precio" type="number" placeholder="Precio en €">
           <div class="contenedores-precio-permalink">192.168.1.111:3000/</div>
           <input id="permalink" type="text" placeholder="Permalink">
@@ -77,11 +83,6 @@
           </div>
           <ul id="lista-atributos"></ul>
         </div>
-      </div>
-
-      <div class="contenedores-add-product" id="contenedor-guardar-producto">
-        <button id="button-guardar-producto" class="button-big-padding button-no-style" type="button" name="button">Guardar cambios</button>
-        <button id="button-publicar-producto" class="button-big-padding" type="button" name="button">Publicar producto</button>
       </div>
 
 	    </section>

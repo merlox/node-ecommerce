@@ -21,6 +21,7 @@ app.use(session({
     url: MongoUrl
   }),
   resave: true,
+  expires: 30000,
   saveUninitialized: true
 }));
 

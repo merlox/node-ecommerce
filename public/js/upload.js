@@ -1,5 +1,6 @@
 let imagenesProducto = {};
 let informacionProducto = {};
+let contenidosMainMenu = "";
 
 //imagenesProducto = {
 //  "1" : {
@@ -167,8 +168,9 @@ document.getElementById('button-publicar-producto').addEventListener('click', ()
 });
 document.getElementById('imagen-principal').addEventListener('click', () => {
   document.getElementById('image-upload-input').click();
-  document.getElementById('progress-bar').style.width = '0%';
-  document.getElementById('progress-bar').innerHTML = '0%';
+  contenidosMainMenu = document.getElementsByClassName('main-menu')[0].innerHTML;
+  document.getElementsByClassName('main-menu')[0].style.width = '0%';
+  document.getElementsByClassName('main-menu')[0].innerHTML = '0%';
 });
 //Funcion que se encarga de mostrar las imágenes
 document.getElementById('image-upload-input').addEventListener('change', () => {
@@ -192,8 +194,11 @@ document.getElementById('image-upload-input').addEventListener('change', () => {
       request.upload.addEventListener('progress', (e) => {
         if(e.lengthComputable){
           percentComplete = parseInt(e.loaded/e.total * 100);
-          document.getElementById('progress-bar').innerHTML = percentComplete + '%';
-          document.getElementById('progress-bar').style.width = percentComplete + '%';
+          document.getElementsByClassName('main-menu')[0].innerHTML = percentComplete + '%';
+          document.getElementsByClassName('main-menu')[0].style.width = percentComplete + '%';
+          if(percentComplete >= 100){
+            document.getElementsByClassName('main-menu')[0].innerHTML = contenidosMainMenu;
+          }
         }
       }, false);
       request.onreadystatechange = () => {

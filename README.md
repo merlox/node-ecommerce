@@ -706,3 +706,7 @@ Hoy estuve trabajando en lo mismo y he conseguido lo siguiente:
 - Que a la parte de editar producto se le añada el contenido para poder modificarlo y enviarlo al servidor en cuanto se completen los cambios.
 
 Mañana continuaré trabajando en ello para tener un diseño digno de ver con una calidad excepcional. Presiento que esta seccion de editar productos me tomará mas tiempo del esperado ya que tengo que integrar numerosas partes por separado como los widgets y el nuevo diseño.
+
+### Día 23
+
+Como dije ayer, hoy voy a continuar trabajando en el diseño de la aplicación para que se pueda añadir y modificar los productos desde una única página bien diseñada.

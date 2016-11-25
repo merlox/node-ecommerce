@@ -1,4 +1,9 @@
 let objetoAtributos = {};
+// objetoAtributos = {
+//  "atributo1": [
+//    valor1, valor2, valor3
+//  ]
+//}
 
 function borrarAtributo(e){
   //Eliminamos el nodo en el html
@@ -30,8 +35,19 @@ function borrarValorAtributo(e){
   e.parentNode.parentNode.removeChild(e.parentNode);
 }
 
-function insertAtributoValor(e){
-  let itemIndex = Array.prototype.indexOf.call(e.parentNode.parentNode.children, e.parentNode);
+//Crea el nodo y añade al array de atributos el 'e' que se le pasa. 
+//e puede ser el objeto contenedor o el index del objeto contenedor. 
+//CreateIndex es un boleano para determinar si 'e' es un index o no.
+function insertAtributoValor(e, createIndex){
+  //Item index es el index del atributo contenedor de valores
+  let itemIndex;
+  if(createIndex == true){
+    itemIndex = e;  
+  }else{
+    itemIndex = Array.prototype.indexOf.call(e.parentNode.parentNode.children, e.parentNode);
+  }
+  console.log(createIndex);
+  console.log(itemIndex);
   let inputValue = document.getElementsByClassName('nuevo-valor-atributo')[itemIndex].value;
   for(let key in objetoAtributos){
     if(key == e.parentNode.firstChild.innerHTML){
@@ -39,22 +55,32 @@ function insertAtributoValor(e){
       break;
     }
   }
-  document.getElementsByClassName('lista-atributos-estilo')[itemIndex].insertAdjacentHTML('beforeend', '<div class="contenedor-valor-atributo">'+inputValue+'<span class="x-hover-red" onclick="borrarValorAtributo(this)">&#10006</span></div>');
+  document.getElementsByClassName('lista-atributos-estilo')[itemIndex].insertAdjacentHTML('beforeend', 
+    '<div class="contenedor-valor-atributo">'+inputValue+'<span class="x-hover-red" '
+    +'onclick="borrarValorAtributo(this)">&#10006</span></div>');
 
   document.getElementsByClassName('nuevo-valor-atributo')[itemIndex].value = '';
 }
 
-document.getElementById('button-atributo-add').addEventListener('click', () => {
+//Para crear nuevos atributos en el dom. Recibe el nombre del atributo a crear (obligatorio param)
+function crearNuevoAtributo(nombreNuevoAtributo){
   document.getElementById('lista-atributos').style.display = 'block';
 
-  let nombreNuevoAtributo = document.getElementById('atributo-nuevo-nombre').value;
-  let nodoNuevoAtributo = '<li class="lista-atributos-estilo"><b>'+nombreNuevoAtributo+'</b> <input class="nuevo-valor-atributo" type="text" placeholder="Nuevo valor atributo"> <button onclick="insertAtributoValor(this)">Añadir valor</button><span class="x-delete-icon" onclick="borrarAtributo(this)">&#10006</span></li>';
+  let nodoNuevoAtributo = '<li class="lista-atributos-estilo"><b>'+nombreNuevoAtributo+'</b>'
+    +' <input class="nuevo-valor-atributo" type="text" placeholder="Nuevo valor atributo"> '
+    +'<button onclick="insertAtributoValor(this)"> + </button><span class="x-delete-icon" onclick="borrarAtributo(this)">'
+    +'&#10006</span></li>';
 
-  //Añadimos la key del nuevo atributo objeto
+  //Creamos la key del nuevo atributo objeto
   objetoAtributos[nombreNuevoAtributo] = [];
   document.getElementById('lista-atributos').insertAdjacentHTML('beforeend', nodoNuevoAtributo);
 
-  document.getElementById('atributo-nuevo-nombre').value = '';
+  document.getElementById('atributo-nuevo-nombre').value = '';  
+}
+
+document.getElementById('button-atributo-add').addEventListener('click', () => {
+  let nombreNuevoAtributo = document.getElementById('atributo-nuevo-nombre').value;
+  crearNuevoAtributo(nombreNuevoAtributo);
 });
 //1. conseguir el index del atributo
 //2. usar get class con el index para obtener el valor del input

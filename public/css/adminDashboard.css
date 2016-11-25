@@ -78,8 +78,10 @@ SECCION IMAGENES
   padding: 10px;
   width: 33%;
   position: relative;
+}
+#contenedor-interior-imagenes{
   display: flex;
-  justify-content: center;
+  justify-content: center;  
 }
 #contenedor-imagenes-secundarias{
   display: flex;
@@ -191,7 +193,7 @@ INFORMACION PRODUCTO
 
 #contenedor-informacion-producto{
   padding: 8px;
-  min-width: 50%;
+  min-width: 66%;
   display: flex;
   flex-direction: column;
 }
@@ -217,14 +219,27 @@ INFORMACION PRODUCTO
   font-size: 13pt;
   float: left;
   margin-right: 5px;
+  padding: 4.5px;
+}
+#nueva-categoria{
+  font-size: 13pt;
+  float: left;
+  margin-right: 5px;
+  padding: 4.5px;
 }
 #contenedor-elementos-categoria{
-  border: 1px solid grey;
-  padding: 5px;
+  border: 1px solid lightgrey;
   display: inline-block;
+  padding: 5px;
+  border-right: none;
+  width: 50%;
 }
 #contenedor-categoria-add{
   display: none;
+  border: 1px solid lightgrey;
+  padding: 5px;
+  border-right: none;
+  width: 50%;
 }
 #lista-atributos{
   list-style-type: none;
@@ -243,9 +258,15 @@ INFORMACION PRODUCTO
   padding: 0 5px;
   cursor: pointer;
 }
+#contenedor-categoria-atributos{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 #contenedor-elementos-atributos{
-  border: 1px solid grey;
+  border: 1px solid lightgrey;
   padding: 5px;
+  width: 50%;
 }
 #button-atributo-add{
   float: right;
@@ -257,7 +278,7 @@ INFORMACION PRODUCTO
   margin-bottom: 0;
 }
 #atributo-nuevo-nombre{
-  padding: 0;
+  padding: 8px;
 }
 .contenedor-magico{
   display: flex;

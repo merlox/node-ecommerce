@@ -1,7 +1,6 @@
 let arrayCategorias = [];
 
 window.onload = () => {
-  console.log("Consiguiendo categorias del servidor");
   getCategoriesFromServer();
 }
 
@@ -12,31 +11,12 @@ function getCategoriesFromServer(){
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status < 400){
       let resultado = JSON.parse(request.responseText);
       for(let i = 0; i < resultado.arrayCategorias.length; i++){
-        document.getElementById('producto-categorias').insertAdjacentHTML('beforeend', '<option>'+resultado.arrayCategorias[i]+'</option>');
+        arrayCategorias = resultado.arrayCategorias;
+        document.getElementById('producto-categorias').insertAdjacentHTML('afterbegin', '<option>'+resultado.arrayCategorias[i]+'</option>');
       }
     }
   };
   request.send();
-}
-
-function guardarButtonEffects(){
-  let categoriaSeleccionada = document.getElementById('producto-categorias');
-  if(document.getElementById('button-categoria-guardar').innerHTML == 'Cambiar categoría'){
-    categoriaSeleccionada.style.display = 'inline-block';
-    document.getElementById('producto-categoria-seleccionada').innerHTML = '';
-    document.getElementById('button-categoria-guardar').innerHTML = 'Guardar';
-    document.getElementById('button-categoria-guardar').className = '';
-    document.getElementById('button-categoria-borrar').style.display = 'inline-block';
-    document.getElementById('button-activar-nueva-categoria').style.display = 'inline-block';
-  } else {
-    informacionProducto.categoria = categoriaSeleccionada.options[categoriaSeleccionada.selectedIndex].text;
-    categoriaSeleccionada.style.display = 'none';
-    document.getElementById('producto-categoria-seleccionada').innerHTML = categoriaSeleccionada.options[categoriaSeleccionada.selectedIndex].text;
-    document.getElementById('button-categoria-guardar').innerHTML = 'Cambiar categoría';
-    document.getElementById('button-categoria-guardar').className = 'button-no-style';
-    document.getElementById('button-categoria-borrar').style.display = 'none';
-    document.getElementById('button-activar-nueva-categoria').style.display = 'none';
-  }
 }
 
 function guardarCategoria(){
@@ -50,19 +30,6 @@ function guardarCategoria(){
   document.getElementById('nueva-categoria').value = '';
 }
 
-//Hide category widget if no categories
-if(document.getElementById('producto-categorias').innerHTML == ""){
-  document.getElementById('producto-categorias').style.display = 'none';
-}else{
-  document.getElementById('producto-categorias').style.display = 'block';
-}
-
-document.getElementById('producto-categorias').addEventListener('change', () => {
-  if(document.getElementById('producto-categorias').selectedIndex >= 0){
-    document.getElementById('button-categoria-guardar').className = '';
-    document.getElementById('button-categoria-guardar').addEventListener('click', guardarButtonEffects);
-  }
-});
 document.getElementById('button-activar-nueva-categoria').addEventListener('click', () => {
   document.getElementById('contenedor-elementos-categoria').style.display = 'none';
   document.getElementById('contenedor-categoria-add').style.display = 'inline-block';
@@ -75,12 +42,10 @@ document.getElementById('button-nueva-categoria-cancelar').addEventListener('cli
   document.getElementById('contenedor-categoria-add').style.display = 'none';
 });
 document.getElementById('button-categoria-borrar').addEventListener('click', () => {
-  let categoriaSeleccionada = document.getElementById('producto-categorias');
-  if(document.getElementById('producto-categorias').innerHTML == ""){
-    document.getElementById('producto-categorias').style.display = 'none';
+  //Comprobamos que no sea la categoria default para que no se elimine
+  let opcionesSelect = document.getElementById('producto-categorias');
+  if(opcionesSelect[opcionesSelect.selectedIndex].innerHTML.toLowerCase() != 'default'){
+    arrayCategorias = arrayCategorias.splice(document.getElementById('producto-categorias').selectedIndex, 1);
+    document.getElementById('producto-categorias').remove(document.getElementById('producto-categorias').selectedIndex);
   }
-  arrayCategorias = arrayCategorias.splice(categoriaSeleccionada.selectedIndex, 1);
-  categoriaSeleccionada.remove(categoriaSeleccionada.selectedIndex);
-  document.getElementById('button-categoria-guardar').className = 'disabled';
-  document.getElementById('button-categoria-guardar').removeEventListener('click', guardarButtonEffects);
 });

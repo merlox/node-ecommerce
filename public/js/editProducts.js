@@ -21,6 +21,9 @@ function httpGet(url, cb){
 	request.send();
 }
 
+//El estado de publicado o borrador se establece con los botones de "Guardar borrador" y "Publicar producto"
+//de modo que si quieres quitar un producto publicado le das a guardar borrador.
+
 //TODO poner los datos del producto para editarlo
 function loadFullProduct(productPermalink){
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
@@ -29,10 +32,30 @@ function loadFullProduct(productPermalink){
 		id('producto-precio').value = fullProduct.precio;
 		id('permalink').value = fullProduct.permalink;
 		id('producto-descripcion').value = fullProduct.descripcion;
-		id('producto-categoria-seleccionada').innerHTML = fullProduct.categoria;
-		guardarCategoria();
-		id('seccion-preview-atributos').innerHTML = fullProduct.atributos;
-		id('seccion-preview-publicado').innerHTML = fullProduct.publicado;
+		console.log(fullProduct.categoria);
+
+		//Borramos los selected. Comprobamos si el <option> ya existe o no. En caso de que si, selecionalo.
+		let opcionesDelSelect = document.getElementsByTagName('option');
+		let anadirCategoriaOriginalProducto = true;
+		for(let i = 0; i < opcionesDelSelect.length; i++){
+			if(opcionesDelSelect[i].hasAttribute('selected')){
+				opcionesDelSelect[i].removeAttribute('selected');
+			}
+		}
+		for(let i = 0; i < opcionesDelSelect.length; i++){
+			if(opcionesDelSelect[i].innerHTML == fullProduct.categoria){
+				opcionesDelSelect[i].setAttribute("selected", "selected");
+				anadirCategoriaOriginalProducto = false;
+			}
+		}
+		if(anadirCategoriaOriginalProducto){
+			id('producto-categorias').insertAdjacentHTML('afterbegin', '<option selected="selected">'+fullProduct.categoria+'</option>');
+		}
+		//Crear el dom de los atributos
+		mostrarObjetoAtributos(fullProduct.atributos);
+
+		//Funcion del upload.js para mostrar las imagenes en el DOM
+		mostrarImagenesCliente(fullProduct.imagenes);
 	});
 }
 //TODO this
@@ -42,6 +65,22 @@ function borrarProducto(productPermalink){
 	});
 }
 
+//Funcion para crear el dom del objeto atributos pasandole el objeto.
+function mostrarObjetoAtributos(objetoAtributos){
+	//id('seccion-preview-atributos').innerHTML = 
+	let indexAtributo = 0;
+	for(let keyArrayAtributo in objetoAtributos){
+		//Mostrar atributo. Función del atributo.js para crear el nodo en el DOM.
+		crearNuevoAtributo(keyArrayAtributo);
+		for(let i = 0; i < keyArrayAtributo.length; i++){
+			//Mostrar cada valor del atributo. La funcion es del atributo.js y sirve para crear el dom de cada valor.
+			insertAtributoValor(indexAtributo, true);
+		}
+		indexAtributo++;
+	}
+}
+
+//Funcion para mostrar las cajas de productos.
 httpGet('/api/get-all-products/', (results) => {
 	results = JSON.parse(results);
 	if(results != false){

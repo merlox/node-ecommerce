@@ -47,9 +47,11 @@ button:hover{
 }
 input{
   padding: 10px;
+  border: 1px solid lightgrey;
 }
 input:hover{
   border: 1px solid blue;
+  box-sizing: border-box;
 }
 textarea{
   padding: 10px;

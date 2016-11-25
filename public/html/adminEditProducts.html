@@ -32,21 +32,21 @@
           <div id="contenedor-principal-add-product">
 
       <!--Widget imágenes-->
-      <div class="contenedores-add-product" id="contenedor-imagenes">
-        <div>
+      <div id="contenedor-imagenes">
+        <div id="contenedor-interior-imagenes">
           <div id="contenedor-imagenes-secundarias"></div>
           <div id="imagen-principal" title="add image"></div>
           <input id="image-upload-input" type="file" name="uploads[]" multiple="multiple">
         </div>
         
         <div id="contenedor-guardar-producto">
-          <button id="button-guardar-producto" class="button-big-padding button-no-style" type="button" name="button">Guardar cambios</button>
+          <button id="button-guardar-producto" class="button-big-padding button-no-style" type="button" name="button">Guardar borrador</button>
           <button id="button-publicar-producto" class="button-big-padding" type="button" name="button">Publicar producto</button>
         </div>
-
       </div>
 
-      <div class="contenedores-add-product" id="contenedor-informacion-producto">
+      <!--Informacion producto-->
+      <div id="contenedor-informacion-producto">
         <textarea id="producto-title" rows="2" placeholder="Título"></textarea>
         <span id="precio-permalink-no-border">
           <input class="contenedores-precio-permalink" id="producto-precio" type="number" placeholder="Precio en €">
@@ -54,34 +54,38 @@
           <input id="permalink" type="text" placeholder="Permalink">
         </span>
 
-        <textarea id="producto-descripcion" rows="10" placeholder="Descripción"></textarea><br/><br/>
+        <textarea id="producto-descripcion" rows="10" placeholder="Descripción"></textarea><br/>
 
-        <!--Widget categoría-->
-        <div>Categoría</div>
-        <div id="contenedor-elementos-categoria">
-          <select id="producto-categorias" size="5"></select>
-          <b id="producto-categoria-seleccionada"></b>
-          <button id="button-activar-nueva-categoria" class="button-no-style" type="button" name="button">Añadir</button>
-          <button id="button-categoria-borrar" class="button-no-style" type="button" name="button">Borrar</button>
-          <button id="button-categoria-guardar" type="button" name="button">Guardar</button>
-        </div>
-        <div id="contenedor-categoria-add">
-          <input id="nueva-categoria" type="text">
-          <button id="button-nueva-categoria-cancelar" class="button-no-style" stype="button" name="button">Cancelar</button>
-          <button id="button-nueva-categoria-add" type="button" name="button">Añadir categoría</button>
-        </div>
-        <br/>
-
-        <!--Widget atributos-->
-        <div>Atributos</div>
-        <div id="contenedor-elementos-atributos">
-          <div class="contenedor-magico">
-
-          <input id="atributo-nuevo-nombre" type="text" name="name" placeholder="Nombre nuevo atributo">
-          <button id="button-atributo-add">Añadir</button>
-
+        <div id="contenedor-categoria-atributos">
+          <!--Widget categoría-->
+          <div id="contenedor-elementos-categoria">
+            <div>Categoría</div>
+            <select id="producto-categorias">
+              <option>Default</option>
+            </select>
+            <b id="producto-categoria-seleccionada"></b>
+            <button id="button-categoria-borrar" class="button-no-style" type="button" name="button">Borrar</button>
+            <button id="button-activar-nueva-categoria" type="button" name="button">Añadir</button>
           </div>
-          <ul id="lista-atributos"></ul>
+          <div id="contenedor-categoria-add">
+            <div>Nueva categoría</div>
+            <input id="nueva-categoria" type="text" size="13" placeholder="Nombre nueva" />
+            <button id="button-nueva-categoria-cancelar" class="button-no-style" stype="button" name="button">Cancelar</button>
+            <button id="button-nueva-categoria-add" type="button" name="button">Añadir</button>
+          </div>
+          <br/>
+
+          <!--Widget atributos-->
+          <div id="contenedor-elementos-atributos">
+            <div>Atributos</div>
+            <div class="contenedor-magico">
+
+            <input id="atributo-nuevo-nombre" type="text" name="name" placeholder="Nombre nuevo atributo">
+            <button id="button-atributo-add">Añadir</button>
+
+            </div>
+            <ul id="lista-atributos"></ul>
+          </div>
         </div>
       </div>
 
@@ -89,13 +93,13 @@
     </div>
 
 
-    <script type="text/javascript" src="../js/editProducts.js"></script>
     <script src="../js/status.js" charset="utf-8"></script>
     <script src="../js/upload.js" charset="utf-8"></script>
     <script src="../js/atributo.js" charset="utf-8"></script>
     <script src="../js/categoria.js" charset="utf-8"></script>
     <script src="../js/permalink.js" charset="utf-8"></script>
     <script src="../js/adminDashboard.js" charset="utf-8"></script>
+    <script src="../js/editProducts.js"></script>
 
 </body>
 </html>

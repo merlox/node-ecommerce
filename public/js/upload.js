@@ -10,7 +10,7 @@ let contenidosMainMenu = "";
 //}
 //El 1 representa la ubicación, siendo 1 la imágen más grande y el resto miniaturas.
 
-function guardarProduct(){
+function guardarPublicarProducto(publicar){
   informacionProducto.titulo = document.getElementById('producto-title').value;
   informacionProducto.permalink = document.getElementById('permalink').value;
   informacionProducto.precio = document.getElementById('producto-precio').value;
@@ -19,9 +19,14 @@ function guardarProduct(){
   if(informacionProducto.categoria == null){
     return messageStatus('Error: Tienes que guardar la categoría seleccionada con el botón azul del widget de categorías', "error");
   }else{
+    informacionProducto.categoria = document.getElementById('producto-categorias').selectedIndex;
     informacionProducto.atributos = objetoAtributos;
     informacionProducto.imagenes = imagenesProducto;
     informacionProducto.publicado = "no";
+
+    if(publicar){
+      informacionProducto.publicado = "si";  
+    }
 
     let categoriasReq = new XMLHttpRequest();
     categoriasReq.open('POST', '/api/guardar-categorias');
@@ -48,45 +53,7 @@ function guardarProduct(){
     };
   }
 }
-function uploadProduct(){
-  informacionProducto.titulo = document.getElementById('producto-title').value;
-  informacionProducto.permalink = document.getElementById('permalink').value;
-  informacionProducto.precio = document.getElementById('producto-precio').value;
-  informacionProducto.descripcion = document.getElementById('producto-descripcion').value;
-  //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
-  if(informacionProducto.categoria == null){
-    console.log(informacionProducto.categoria);
-    messageStatus('Error: Tienes que guardar la categoría seleccionada con el botón azul del widget de categorías', "error");
-  }else{
-    informacionProducto.atributos = objetoAtributos;
-    informacionProducto.imagenes = imagenesProducto;
-    informacionProducto.publicado = "si";
-    
-    let categoriasReq = new XMLHttpRequest();
-    categoriasReq.open('POST', '/api/guardar-categorias');
-    categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-    categoriasReq.onreadystatechange = () => {
-      if(categoriasReq.readyState = XMLHttpRequest.DONE){
-        messageStatus(request.responseText, 'info');
-      }
-    };
-    categoriasReq.send(JSON.stringify(arrayCategorias));
 
-    let request = new XMLHttpRequest();
-    request.open('POST', '/api/upload-product');
-    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    request.onreadystatechange = () => {
-      if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-        messageStatus(request.responseText, 'info');
-        resetAllProductData();
-      }else{
-        messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
-        resetAllProductData();
-      }
-    };
-    request.send(JSON.stringify(informacionProducto));
-  }
-}
 function resetAllProductData(){
   informacionProducto = {};
   imagenesProducto = {};
@@ -111,6 +78,98 @@ function showChangeImage(e){
     });
   }
 }
+
+//Funcion para guardar las imagenes en la carpeta de public-uploads
+function saveClientImages(){
+  let files = document.getElementById('image-upload-input').files;
+  let requestResults;
+
+  if(files.length > 0){
+    if(files.length <= 10){
+      if(document.getElementById('contenedor-imagen-principal')){
+        document.getElementById('contenedor-imagen-principal').remove();
+      }
+      document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
+      let formData = new FormData();
+
+      for(let i = 0; i < files.length; i++){
+        let file = files[i];
+        formData.append('uploads[]', file, file.name);
+      }
+
+      let request = new XMLHttpRequest();
+      request.upload.addEventListener('progress', (e) => {
+        if(e.lengthComputable){
+          percentComplete = parseInt(e.loaded/e.total * 100);
+          document.getElementsByClassName('main-menu')[0].innerHTML = percentComplete + '%';
+          document.getElementsByClassName('main-menu')[0].style.width = percentComplete + '%';
+          if(percentComplete >= 100){
+            document.getElementsByClassName('main-menu')[0].innerHTML = contenidosMainMenu;
+          }
+        }
+      }, false);
+      request.onreadystatechange = () => {
+        if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
+          requestResults = JSON.parse(request.responseText);
+          imagenesProducto = requestResults;
+
+          mostrarImagenesCliente(imagenesProducto);
+
+        }
+      };
+      request.open('POST', '/api/upload-image-product', true);
+      request.send(formData);
+    }else{
+      messageStatus('Error, maximum 10 images', 'error');
+    }
+  }else{
+    messageStatus('Error, files not recognized.', 'error');
+  }
+}
+
+//Para mostrar las imágenes en el DOM
+function mostrarImagenesCliente(imagenesProducto){
+  for(let i in imagenesProducto){
+    if(i == 1){
+      let imagenSecundaria = new Image();
+      imagenSecundaria.src = '../public-uploads/'+imagenesProducto[i];
+      imagenSecundaria.onload = () => {
+        let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
+        imagenSecundaria.className = 'imagen-secundaria';
+        document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
+        '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
+        let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
+        contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
+        contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].firstChild.style.height = imagenSubidaAltura+'px';
+      };
+      let imagenPrincipal = new Image();
+      let imagenSubidaAltura;
+      imagenPrincipal.src = '../public-uploads/'+imagenesProducto[i];
+      imagenPrincipal.onload = () => {
+        imagenPrincipal.id = 'imagen-principal-uploaded';
+        document.getElementById('imagen-principal').style.display = 'none';
+        document.getElementById('contenedor-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
+        document.getElementById('contenedor-imagen-principal').appendChild(imagenPrincipal);
+        document.getElementById('contenedor-imagen-principal').style.height = imagenSubidaAltura+'vw';
+        document.getElementById('imagen-principal-uploaded').style.height = imagenSubidaAltura+'vw';
+      };
+    }else{
+      let imagenSecundaria = new Image();
+      imagenSecundaria.src = '../public-uploads/'+imagenesProducto[i];
+      imagenSecundaria.onload = () => {
+        let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
+        imagenSecundaria.style.order = i;
+        imagenSecundaria.className = 'imagen-secundaria';
+        document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
+        '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
+        let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
+        contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
+        contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].firstChild.style.height = imagenSubidaAltura+'px';
+      };
+    }
+  }
+}
+
 function hideChangeImage(e){
   document.getElementById('imagen-principal-uploaded-active').remove();
 }
@@ -161,10 +220,10 @@ function hideChangeSecondaryImage(e){
   e.lastChild.remove();
 }
 document.getElementById('button-guardar-producto').addEventListener('click', () => {
-  guardarProduct();
+  guardarPublicarProducto(false);
 });
 document.getElementById('button-publicar-producto').addEventListener('click', () => {
-  uploadProduct();
+  guardarPublicarProducto(true);
 });
 document.getElementById('imagen-principal').addEventListener('click', () => {
   document.getElementById('image-upload-input').click();
@@ -174,84 +233,5 @@ document.getElementById('imagen-principal').addEventListener('click', () => {
 });
 //Funcion que se encarga de mostrar las imágenes
 document.getElementById('image-upload-input').addEventListener('change', () => {
-  let files = document.getElementById('image-upload-input').files;
-  let requestResults;
-
-  if(files.length > 0){
-    if(files.length <= 10){
-      if(document.getElementById('contenedor-imagen-principal')){
-        document.getElementById('contenedor-imagen-principal').remove();
-      }
-      document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
-      let formData = new FormData();
-
-      for(let i = 0; i < files.length; i++){
-        let file = files[i];
-        formData.append('uploads[]', file, file.name);
-      }
-
-      let request = new XMLHttpRequest();
-      request.upload.addEventListener('progress', (e) => {
-        if(e.lengthComputable){
-          percentComplete = parseInt(e.loaded/e.total * 100);
-          document.getElementsByClassName('main-menu')[0].innerHTML = percentComplete + '%';
-          document.getElementsByClassName('main-menu')[0].style.width = percentComplete + '%';
-          if(percentComplete >= 100){
-            document.getElementsByClassName('main-menu')[0].innerHTML = contenidosMainMenu;
-          }
-        }
-      }, false);
-      request.onreadystatechange = () => {
-        if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-          requestResults = JSON.parse(request.responseText);
-          imagenesProducto = requestResults;
-          for(let i in imagenesProducto){
-            if(i == 1){
-              let imagenSecundaria = new Image();
-              imagenSecundaria.src = '../public-uploads/'+imagenesProducto[i];
-              imagenSecundaria.onload = () => {
-                let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
-                imagenSecundaria.className = 'imagen-secundaria';
-                document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
-                '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
-                let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
-                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
-                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].firstChild.style.height = imagenSubidaAltura+'px';
-              };
-              let imagenPrincipal = new Image();
-              let imagenSubidaAltura;
-              imagenPrincipal.src = '../public-uploads/'+imagenesProducto[i];
-              imagenPrincipal.onload = () => {
-                imagenPrincipal.id = 'imagen-principal-uploaded';
-                document.getElementById('imagen-principal').style.display = 'none';
-                document.getElementById('contenedor-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
-                document.getElementById('contenedor-imagen-principal').appendChild(imagenPrincipal);
-                document.getElementById('contenedor-imagen-principal').style.height = imagenSubidaAltura+'vw';
-                document.getElementById('imagen-principal-uploaded').style.height = imagenSubidaAltura+'vw';
-              };
-            }else{
-              let imagenSecundaria = new Image();
-              imagenSecundaria.src = '../public-uploads/'+imagenesProducto[i];
-              imagenSecundaria.onload = () => {
-                let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
-                imagenSecundaria.style.order = i;
-                imagenSecundaria.className = 'imagen-secundaria';
-                document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
-                '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
-                let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
-                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
-                contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].firstChild.style.height = imagenSubidaAltura+'px';
-              };
-            }
-          }
-        }
-      };
-      request.open('POST', '/api/upload-image-product', true);
-      request.send(formData);
-    }else{
-      messageStatus('Error, maximum 10 images', 'error');
-    }
-  }else{
-    messageStatus('Error, files not recognized.', 'error');
-  }
+  saveClientImages();
 });

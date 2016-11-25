@@ -710,3 +710,19 @@ Mañana continuaré trabajando en ello para tener un diseño digno de ver con un
 ### Día 23
 
 Como dije ayer, hoy voy a continuar trabajando en el diseño de la aplicación para que se pueda añadir y modificar los productos desde una única página bien diseñada.
+
+### Día 24
+
+Estuve trabajando en mejorar la interfaz gráfica aparte del widget de las categorías. Ha sido un día lleno de cosas.
+
+### Día 25 
+
+Hoy estuve trabajando en los widgets de categoría y atributos ya que voy a mover la funcion de añadir productos a la página de editar productos y así tenerlo todo organizado en un lugar en el que añadir y editar.
+
+Las categorías se reciben y se muestran correctamente en su sitio, esta vez en un dropdown bastante simplificado para hacerlo todo mas facil y los atributos me falta por saber si funcionan o no, porque tras tantos cambios no puedo añadir nuevos productos con facilidad y los que hay ahora mismo no tienen atributos.
+
+Además, estuve trabajando en reorganizar el código de los diferentes widgets en funciones más sencillas para hacer todo un poco mas entendible. Luego he hecho que las imágenes se muestren al cargar la edición del producto, sin embargo, no se muestran correctamente porque tengo que ajustar el css.
+
+Estoy pensando en crear o implementar un sistema de grid o cajas para organizar todo el proyecto de manera ordenada. Aunque no creo que lo lleve a cabo porque hay partes muy específicas como las imágenes secundarias que se tienen que mostrar de forma precisa.
+
+Igualmente, sigo trabajando en el proyecto y ahora mismo tiene una apariencia increible. A pesar de estar lleno de errores, es una maravilla. Espero no perder la motivación y recordar continuamente el porqué he empezado, mi gran objetivo: crear the next big thing al igual que lo hizo facebook, amazon y google.

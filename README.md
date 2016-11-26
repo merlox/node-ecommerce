@@ -726,3 +726,9 @@ Además, estuve trabajando en reorganizar el código de los diferentes widgets e
 Estoy pensando en crear o implementar un sistema de grid o cajas para organizar todo el proyecto de manera ordenada. Aunque no creo que lo lleve a cabo porque hay partes muy específicas como las imágenes secundarias que se tienen que mostrar de forma precisa.
 
 Igualmente, sigo trabajando en el proyecto y ahora mismo tiene una apariencia increible. A pesar de estar lleno de errores, es una maravilla. Espero no perder la motivación y recordar continuamente el porqué he empezado, mi gran objetivo: crear the next big thing al igual que lo hizo facebook, amazon y google.
+
+### Dia 26
+
+Sigo trabajando en subir los productos y modificarlos. Ahora estoy tratando de arreglar bugs.
+
+Mañana continuaré trabajando en ello tras estudiar.

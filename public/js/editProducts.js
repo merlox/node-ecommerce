@@ -26,6 +26,7 @@ function httpGet(url, cb){
 
 //TODO poner los datos del producto para editarlo
 function loadFullProduct(productPermalink){
+	id('seccion-preview').className = 'animate-preview';
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
 		fullProduct = JSON.parse(fullProduct);
 		id('producto-title').value = fullProduct.titulo;
@@ -64,6 +65,8 @@ function borrarProducto(productPermalink){
 		if(success){
 			//Funcion de upload.js
 			resetAllProductData();
+			id('seccion-productos').innerHTML = '';
+			crearCajasProductos();
 		}
 	});
 }
@@ -81,45 +84,52 @@ function mostrarObjetoAtributos(objetoAtributos){
 		crearNuevoAtributo(keyArrayAtributo);
 		for(let i = 0; i < keyArrayAtributo.length; i++){
 			//Mostrar cada valor del atributo. La funcion es del atributo.js y sirve para crear el dom de cada valor.
-			insertAtributoValor(indexAtributo, true);
+			insertAtributoValor(indexAtributo, keyArrayAtributo[i], keyArrayAtributo);
 		}
 		indexAtributo++;
 	}
 }
+//Para generar las cajas de productos
+function crearCajasProductos(){
+	id('seccion-preview').className = '';
+	id('seccion-productos').innerHTML = '';
+	resetAllProductData();
+	httpGet('/api/get-all-products/', (results) => {
+		results = JSON.parse(results);
+		if(results != false){
+			let arrayProductos = results;
+			for(let i = 0; i < arrayProductos.length; i++){
+				let objetoProducto = arrayProductos[i];
+				let tituloProducto = objetoProducto.titulo;
+				let addEspacioTitulo = '';
+				if(objetoProducto.titulo.length > 54){
+					objetoProducto.titulo = objetoProducto.titulo.substring(0, 55);
+					objetoProducto.titulo += "...";
+				}else{
+					addEspacioTitulo = '<br />';
+				}
+				let permalinkATexto = "'"+objetoProducto.permalink+"'";
+				let htmlProducto = '<div class="contenedor-producto">'
+					+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'"/>'
+					+'<div class="contenedor-producto-informacion"><b title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</b>'
+					+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+'</p>'
+					+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
+					+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
+					+'<a href="javascript:void(0)" onclick="borrarProducto('+permalinkATexto+')"> Borrar </a>'
+					+'</div></div><input type="hidden" value="'+objetoProducto.permalink+'"/></div>';
 
-//Funcion para mostrar las cajas de productos.
-httpGet('/api/get-all-products/', (results) => {
-	results = JSON.parse(results);
-	if(results != false){
-		let arrayProductos = results;
-		for(let i = 0; i < arrayProductos.length; i++){
-			let objetoProducto = arrayProductos[i];
-			let tituloProducto = objetoProducto.titulo;
-			let addEspacioTitulo = '';
-			if(objetoProducto.titulo.length > 54){
-				objetoProducto.titulo = objetoProducto.titulo.substring(0, 55);
-				objetoProducto.titulo += "...";
-			}else{
-				addEspacioTitulo = '<br />';
+				id('seccion-productos').insertAdjacentHTML('beforeend', htmlProducto);
 			}
-			let permalinkATexto = "'"+objetoProducto.permalink+"'";
-			let htmlProducto = '<div class="contenedor-producto">'
-				+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'">'
-				+'<div class="contenedor-producto-informacion"><b title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</b>'
-				+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+'</p>'
-				+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
-				+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
-				+'<a href="javascript:void(0)" onclick="borrarProducto('+permalinkATexto+')"> Borrar </a></div></div>';
-
-			id('seccion-productos').insertAdjacentHTML('beforeend', htmlProducto);
+		}else{
+			id('seccion-productos').innerHTML = 
+				'<p class="no-products-found">No hay productos para mostrar.</p>';
 		}
-	}else{
-		id('seccion-productos').innerHTML = 
-			'<p class="no-products-found">No hay productos para mostrar.</p>';
-	}
-});
+	});
+}
 
 //Animar el seccion preview para añadir un nuevo producto
 id('button-nuevo-producto').addEventListener('click', () => {
 	id('seccion-preview').className = 'animate-preview';
 });
+
+crearCajasProductos();

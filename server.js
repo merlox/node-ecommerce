@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Logger middleware
 app.use('*', (req, res, next) => {
-  console.log('Requesting: '+req.url);
+  console.log('\nRequesting: '+req.originalUrl);
   next();
 });
 

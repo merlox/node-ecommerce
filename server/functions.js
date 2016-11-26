@@ -57,23 +57,23 @@ let createUpdateProduct = function(permalink, productData, cb){
 let uploadPublicImages = function(objectImages, permalinkName, cb){
   console.log('UploadPublicImages, functions.js');
   let publicUploads = path.join(__dirname, '../public/public-uploads/');
-  let serverUploads = path.join(__dirname, '/uploads/', permalinkName);
+  let serverUploads = path.join(__dirname, '/uploads/');
   let objectImagenesSize = Object.keys(objectImages).length;
   let counter = 0;
-  fs.stat(serverUploads, (err, stats) => {
-    if(err) fs.mkdirSync(serverUploads);
-  });
-  for(let key in objectImages){
-    counter++;
-    copyFile(path.join(publicUploads, objectImages[key]), serverUploads, objectImages[key], (err) => {
-      if(err){
-        return cb('Could not copy the file: '+objectImages[key]+' to the server, please try again.');
+  fs.stat(path.join(serverUploads, permalinkName), (err, stats) => {
+    if(err) fs.mkdirSync(path.join(serverUploads, permalinkName));
+    for(let key in objectImages){
+      counter++;
+      copyFile(path.join(publicUploads, objectImages[key]), path.join(serverUploads, permalinkName), objectImages[key], (err) => {
+        if(err){
+          return cb('Could not copy the file: '+objectImages[key]+' to the server, please try again: '+err);
+        }
+      });
+      if(counter == objectImagenesSize){
+        return cb(null);
       }
-    });
-    if(counter == objectImagenesSize){
-      return cb(null);
     }
-  }
+  });
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
 let getAllProducts = function(callback){
@@ -140,11 +140,33 @@ let borrarProducto = function(permalink, cb){
           console.log(err);
           return cb('Error, could not delete the product');
         }
+        //Borramos el directorio y todas sus imagenes
+        borrarDirectorio(permalink);
         return cb(null);
       });
     });
   });
 };
+//Funcion para borrar el directorio y todas sus imagenes
+let borrarDirectorio = function(permalink){
+  console.log('BorrarDirectorio, functions.js');
+  let imagenesServer = path.join(__dirname, '/uploads/', permalink);
+  fs.readdir(imagenesServer, (err, files) => {
+    let i = 0;
+    if(err) console.log('Error, no se pudo leer el directorio '+imagenesServer+': '+err);
+    files.forEach((file) => {
+      fs.unlink(path.join(imagenesServer, file), (err) => {
+        if(err) console.log('Error, no se pudo borrar la imagen '+path.join(imagenesServer, file)+'del servidor');
+        i++;
+      });
+    });
+    if(i >= files.length){
+      fs.unlink(imagenesServer, (err) => {
+        if(err) console.log('Error, no se pudo borrar el dir '+imagenesServer+': '+err);
+      });
+    }
+  });
+}
 let render = function(page, dataObject, cb){
   console.log('Render, functions.js');
   fs.readFile(page, (err, content) => {
@@ -358,3 +380,4 @@ exports.getAllProducts = getAllProducts;
 exports.borrarProducto = borrarProducto;
 exports.createUpdateProduct = createUpdateProduct;
 exports.uploadPublicImages = uploadPublicImages;
+exports.borrarDirectorio = borrarDirectorio;

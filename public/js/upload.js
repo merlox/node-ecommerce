@@ -44,6 +44,9 @@ function guardarPublicarProducto(publicar){
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
       messageStatus(request.responseText, 'info');
       resetAllProductData();
+
+      //Funcion del editProducts.js para generar las cajas de productos
+      crearCajasProductos();
     }else{
       messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
       resetAllProductData();

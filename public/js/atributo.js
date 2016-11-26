@@ -38,23 +38,25 @@ function borrarValorAtributo(e){
 //Crea el nodo y añade al array de atributos el 'e' que se le pasa. 
 //e puede ser el objeto contenedor o el index del objeto contenedor. 
 //CreateIndex es un boleano para determinar si 'e' es un index o no.
-function insertAtributoValor(e, createIndex){
+function insertAtributoValor(e, valueNode, parentName){
   //Item index es el index del atributo contenedor de valores
   let itemIndex;
-  if(createIndex == true){
+  let inputValue;
+  //Crear el atributo hijo
+  if(parentName != null){
     itemIndex = e;  
+    inputValue = valueNode;
+    objetoAtributos[parentName].push(inputValue);
   }else{
     itemIndex = Array.prototype.indexOf.call(e.parentNode.parentNode.children, e.parentNode);
-  }
-  console.log(createIndex);
-  console.log(itemIndex);
-  let inputValue = document.getElementsByClassName('nuevo-valor-atributo')[itemIndex].value;
-  for(let key in objetoAtributos){
-    if(key == e.parentNode.firstChild.innerHTML){
-      objetoAtributos[key].push(inputValue);
-      break;
+    inputValue = document.getElementsByClassName('nuevo-valor-atributo')[itemIndex].value;
+    for(let key in objetoAtributos){
+      if(key == e.parentNode.firstChild.innerHTML){
+        objetoAtributos[key].push(inputValue);
+        break;
+      }
     }
-  }
+  }  
   document.getElementsByClassName('lista-atributos-estilo')[itemIndex].insertAdjacentHTML('beforeend', 
     '<div class="contenedor-valor-atributo">'+inputValue+'<span class="x-hover-red" '
     +'onclick="borrarValorAtributo(this)">&#10006</span></div>');

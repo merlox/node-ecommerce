@@ -43,6 +43,6 @@ app.use('/admin', adminRoutes);
 app.use('/', publicRoutes);
 
 //Ejecutamos el servidor en la ip local
-http.listen(3000, '0.0.0.0', function(){
+http.listen(8000, '0.0.0.0', function(){
   console.log("Server started at 192.168.1.111:3000");
 });

@@ -57,6 +57,8 @@ function guardarPublicarProducto(publicar){
 function resetAllProductData(){
   informacionProducto = {};
   imagenesProducto = {};
+  //Objeto del atributo.js
+  objetoAtributos = {};
   document.getElementById('producto-title').value = '';
   document.getElementById('permalink').value = '';
   document.getElementById('producto-precio').value = '';
@@ -66,6 +68,9 @@ function resetAllProductData(){
     document.getElementById('contenedor-imagen-principal').remove();
   }
   document.getElementById('imagen-principal').style.display = 'flex';
+  //Ocultar los atributos
+  document.getElementById('lista-atributos').innerHTML = '';
+  document.getElementById('lista-atributos').style.display = 'none';
 }
 function showChangeImage(e){
   document.getElementById('contenedor-imagen-principal').style.height = document.getElementById('imagen-principal-uploaded').offsetHeight+"px";
@@ -129,6 +134,14 @@ function saveClientImages(){
 
 //Para mostrar las imágenes en el DOM
 function mostrarImagenesCliente(imagenesProducto){
+
+  //Vaciamos las imágenes para que no se acumulen
+  document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
+  if(document.getElementById('contenedor-imagen-principal') != null){
+    document.getElementById('contenedor-imagen-principal').remove();
+  }
+
+  //Ponemos las imágenes sacadas del objeto de imagenes
   for(let i in imagenesProducto){
     if(i == 1){
       let imagenSecundaria = new Image();
@@ -148,7 +161,7 @@ function mostrarImagenesCliente(imagenesProducto){
       imagenPrincipal.onload = () => {
         imagenPrincipal.id = 'imagen-principal-uploaded';
         document.getElementById('imagen-principal').style.display = 'none';
-        document.getElementById('contenedor-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
+        document.getElementById('contenedor-interior-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
         document.getElementById('contenedor-imagen-principal').appendChild(imagenPrincipal);
         document.getElementById('contenedor-imagen-principal').style.height = imagenSubidaAltura+'vw';
         document.getElementById('imagen-principal-uploaded').style.height = imagenSubidaAltura+'vw';

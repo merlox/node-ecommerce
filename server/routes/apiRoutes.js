@@ -60,7 +60,20 @@ api.get('/get-all-products/:imagenesLimit?', (req, res) => {
 api.get('/get-single-product/:permalink', (req, res) => {
   functions.buscarProducto(req.params.permalink, (err, result) => {
     if(err) return res.send(err);
-    else return res.send(result);
+    functions.copyDirectory(path.join(__dirname, '../uploads/', req.params.permalink), 
+        path.join(__dirname, '../../public/public-uploads/'), (err) => {
+      if(err) console.log(err);
+      else return res.send(result);
+    });
+  });
+});
+api.get('/borrar-producto/:permalink', (req, res) => {
+  functions.borrarProducto(req.params.permalink, (err) => {
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }
+    else return res.send(true);
   });
 });
 
@@ -119,43 +132,22 @@ api.post('/upload-product', (req, res) => {
             });
           });
         });
+
         //Guardamos el producto en la base de datos
-        Mongo.connect(MongoUrl, (err, db) => {
-          if(err){
-            db.close();
-            return res.send('Error: could not connect to the database');
-          }
-          db.collection('productos').find({
-            'permalink': req.body.permalink
-          }).toArray((err, results) => {
-            if(err){
-              db.close();
-              return res.send('Error: '+err);
-            }
-            if(results != undefined && results.length > 0){
-              db.close();
-              console.log('Producto already in the db');
-              return res.send('Error: That product is already in the database');
-            }else{
-              db.collection('productos').insert({
-                'titulo': req.body.titulo,
-                'imagenes': req.body.imagenes,
-                'permalink': req.body.permalink.toLowerCase(),
-                'precio': req.body.precio,
-                'descripcion': req.body.descripcion,
-                'categoria': req.body.categoria,
-                'atributos': req.body.atributos,
-                'publicado': req.body.publicado
-              }, (err, result) => {
-                db.close();
-                if(err){
-                  return res.send('Error: '+err);
-                }else{
-                  return res.send('Success: Uploaded successfully <a href="http://'+req.headers.host+'/p/'+req.body.permalink+'"> Ver Producto Ahora</a>');
-                }
-              });
-            }
-          });
+        informacionProducto = {
+          'titulo': req.body.titulo,
+          'imagenes': req.body.imagenes,
+          'permalink': req.body.permalink.toLowerCase(),
+          'precio': req.body.precio,
+          'descripcion': req.body.descripcion,
+          'categoria': req.body.categoria,
+          'atributos': req.body.atributos,
+          'publicado': req.body.publicado
+        };
+
+        functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, (err) => {
+          if(err) return res.send(err);
+          else return res.send('Producto guardado satisfactoriamente');
         });
       }
     });

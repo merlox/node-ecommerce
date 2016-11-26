@@ -27,6 +27,11 @@ MENU LATERAL
 	width: 15%;
 	height: calc(100vh - 50px);
 	background-color: #EEEEEE;
+	display: flex;
+	flex-direction: column;
+}
+#button-nuevo-producto{
+	padding: 30px 0;
 }
 
 /*
@@ -93,4 +98,6 @@ PREVIEW
 #seccion-preview{
 	width: 75%;
 	height: calc(100vh - 50px);
+	display: flex;
+  	justify-content: center;
 }

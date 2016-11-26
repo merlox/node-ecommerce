@@ -22,6 +22,37 @@ let buscarProducto = function(permalink, callback){
     });
   });
 };
+//Funcion para reemplazar o añadir un producto si no existe
+let createUpdateProduct = function(permalink, productData, cb){
+  console.log('CreateUpdateProduct, functions,js');
+  Mongo.connect(MongoUrl, (err, db) => {
+    if(err){
+      db.close();
+      return cb('Error: could not connect to the database');
+    }
+    db.collection('productos').update({
+      'permalink': req.body.permalink.toLowerCase()
+    }, {
+      'titulo': productData.titulo,
+      'imagenes': productData.imagenes,
+      'permalink': productData.permalink,
+      'precio': productData.precio,
+      'descripcion': productData.descripcion,
+      'categoria': productData.categoria,
+      'atributos': productData.atributos,
+      'publicado': productData.publicado
+    }, {
+      upsert: true
+    }, (err, result) => {
+      db.close();
+      if(err){
+        return cb('Error: '+err);
+      }else{
+        return cb(null);
+      }
+    });
+  });
+};
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
 let getAllProducts = function(callback){
   console.log('GetAllProducts, functions.js');
@@ -62,6 +93,33 @@ let getAllProducts = function(callback){
       }else{
        callback(null, false);
       }
+    });
+  });
+};
+let borrarProducto = function(permalink, cb){
+  console.log('BorrarProducto, functions.js');
+  Mongo.connect(MongoUrl, (err, db) => {
+    if(err){
+      db.close();
+      return cb('Error, could not connect to the database');
+    }
+    db.collection('productos').findOne({
+      'permalink': permalink
+    }, (err, result) => {
+      if(err){
+        db.close();
+        return cb('Error, could not find the product to delete');
+      }
+      db.collection('productos').remove({
+        'permalink': permalink
+      }, (err, numberRemoved) => {
+        db.close();
+        if(err){
+          console.log(err);
+          return cb('Error, could not delete the product');
+        }
+        return cb(null);
+      });
     });
   });
 };
@@ -210,7 +268,6 @@ let getCategories = function(callback){
     db.collection('categorias').findOne({
       'arrayCategorias': {$exists : true}
     }, (err, result) => {
-      console.log(result);
       if(err){
         return callback('Err, could not find the categories.', null);
       }else{
@@ -240,7 +297,6 @@ let copyDirectory = function(origin, end, callback){
       });
       //Copy the files from origin to end
       fs.readdir(origin, (err, files) => {
-        console.log('1'+files);
         if(err){
           done(err);
         }else if(files.length > 0){
@@ -277,3 +333,5 @@ exports.copyDirectory = copyDirectory;
 exports.guardarCategorias = guardarCategorias;
 exports.getCategories = getCategories;
 exports.getAllProducts = getAllProducts;
+exports.borrarProducto = borrarProducto;
+exports.createUpdateProduct = createUpdateProduct;

@@ -1,4 +1,4 @@
-let domainName = '192.168.1.111:3000';
+let domainName = 'localhost:8000';
 
 function id(id){
 	return document.getElementById(id);
@@ -60,10 +60,17 @@ function loadFullProduct(productPermalink){
 }
 //TODO this
 function borrarProducto(productPermalink){
-	httpGet('/api/borrar-producto/'+productPermalink, (respuesta) => {
-
+	httpGet('/api/borrar-producto/'+productPermalink, (success) => {
+		if(success){
+			//Funcion de upload.js
+			resetAllProductData();
+		}
 	});
 }
+
+//TODO, cuando se hagan upload a las imagenes modificadas, solo subir las seleccionadas y NO toda la carpeta public-uploads porque
+//se llenará de imágenes de diferentes productos conforme los vayas cargando.
+//TODO, las imagenes se deforman al cambiarlas de orden.
 
 //Funcion para crear el dom del objeto atributos pasandole el objeto.
 function mostrarObjetoAtributos(objetoAtributos){

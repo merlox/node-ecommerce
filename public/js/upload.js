@@ -60,6 +60,9 @@ function resetAllProductData(){
   imagenesProducto = {};
   //Objeto del atributo.js
   objetoAtributos = {};
+  document.getElementById('seccion-preview').className = '';
+  document.getElementById('seccion-productos').innerHTML = '';
+  document.getElementById('lista-atributos').innerHTML = '';
   document.getElementById('producto-title').value = '';
   document.getElementById('permalink').value = '';
   document.getElementById('producto-precio').value = '';

@@ -27,14 +27,13 @@ function httpGet(url, cb){
 //TODO poner los datos del producto para editarlo
 function loadFullProduct(productPermalink){
 	id('seccion-preview').className = 'animate-preview';
+	objetoAtributos = {};
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
 		fullProduct = JSON.parse(fullProduct);
 		id('producto-title').value = fullProduct.titulo;
 		id('producto-precio').value = fullProduct.precio;
 		id('permalink').value = fullProduct.permalink;
 		id('producto-descripcion').value = fullProduct.descripcion;
-		console.log(fullProduct.categoria);
-
 		//Borramos los selected. Comprobamos si el <option> ya existe o no. En caso de que si, selecionalo.
 		let opcionesDelSelect = document.getElementsByTagName('option');
 		let anadirCategoriaOriginalProducto = true;
@@ -77,22 +76,22 @@ function borrarProducto(productPermalink){
 
 //Funcion para crear el dom del objeto atributos pasandole el objeto.
 function mostrarObjetoAtributos(objetoAtributos){
-	//id('seccion-preview-atributos').innerHTML = 
 	let indexAtributo = 0;
+
+	id('lista-atributos').innerHTML = '';
+
 	for(let keyArrayAtributo in objetoAtributos){
 		//Mostrar atributo. Función del atributo.js para crear el nodo en el DOM.
 		crearNuevoAtributo(keyArrayAtributo);
-		for(let i = 0; i < keyArrayAtributo.length; i++){
+		for(let i = 0; i < objetoAtributos[keyArrayAtributo].length; i++){
 			//Mostrar cada valor del atributo. La funcion es del atributo.js y sirve para crear el dom de cada valor.
-			insertAtributoValor(indexAtributo, keyArrayAtributo[i], keyArrayAtributo);
+			insertAtributoValor(indexAtributo, objetoAtributos[keyArrayAtributo][i], keyArrayAtributo);
 		}
 		indexAtributo++;
 	}
 }
 //Para generar las cajas de productos
 function crearCajasProductos(){
-	id('seccion-preview').className = '';
-	id('seccion-productos').innerHTML = '';
 	resetAllProductData();
 	httpGet('/api/get-all-products/', (results) => {
 		results = JSON.parse(results);

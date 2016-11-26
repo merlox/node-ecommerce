@@ -42,6 +42,7 @@ function insertAtributoValor(e, valueNode, parentName){
   //Item index es el index del atributo contenedor de valores
   let itemIndex;
   let inputValue;
+  
   //Crear el atributo hijo
   if(parentName != null){
     itemIndex = e;  

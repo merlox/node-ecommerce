@@ -44,5 +44,5 @@ app.use('/', publicRoutes);
 
 //Ejecutamos el servidor en la ip local
 http.listen(8000, '0.0.0.0', function(){
-  console.log("Server started at 192.168.1.111:3000");
+  console.log("Server started at 192.168.1.111:8000");
 });

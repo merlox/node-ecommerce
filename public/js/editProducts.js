@@ -118,3 +118,8 @@ httpGet('/api/get-all-products/', (results) => {
 			'<p class="no-products-found">No hay productos para mostrar.</p>';
 	}
 });
+
+//Animar el seccion preview para añadir un nuevo producto
+id('button-nuevo-producto').addEventListener('click', () => {
+	id('seccion-preview').className = 'animate-preview';
+});

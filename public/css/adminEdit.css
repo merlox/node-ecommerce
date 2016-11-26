@@ -4,6 +4,9 @@ GENERALES
 
 */
 
+body{
+	overflow-x: hidden;
+}
 h1, h2, h3, h4, h5, h6{
 	font-family: sans-serif;
 	font-weight: 100;
@@ -26,12 +29,18 @@ MENU LATERAL
 #seccion-menu{
 	width: 15%;
 	height: calc(100vh - 50px);
-	background-color: #EEEEEE;
 	display: flex;
 	flex-direction: column;
 }
 #button-nuevo-producto{
 	padding: 30px 0;
+	width: 100%;
+}
+.titulo-categorias-lateral{
+	font-variant: small-caps;
+}
+#contenedor-categorias{
+	margin-left: 10px;
 }
 
 /*
@@ -98,6 +107,12 @@ PREVIEW
 #seccion-preview{
 	width: 75%;
 	height: calc(100vh - 50px);
-	display: flex;
   	justify-content: center;
+  	position: relative;
+  	display: flex;
+  	left: 1050px;
+}
+.animate-preview{
+	transition: all 0.1s ease-out;
+	transform: translate(-1050px);
 }

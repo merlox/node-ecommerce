@@ -16,42 +16,40 @@ function guardarPublicarProducto(publicar){
   informacionProducto.precio = document.getElementById('producto-precio').value;
   informacionProducto.descripcion = document.getElementById('producto-descripcion').value;
   //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
-  if(informacionProducto.categoria == null){
-    return messageStatus('Error: Tienes que guardar la categoría seleccionada con el botón azul del widget de categorías', "error");
-  }else{
-    informacionProducto.categoria = document.getElementById('producto-categorias').selectedIndex;
-    informacionProducto.atributos = objetoAtributos;
-    informacionProducto.imagenes = imagenesProducto;
-    informacionProducto.publicado = "no";
+  informacionProducto.categoria = document.getElementById('producto-categorias').selectedIndex;
+  informacionProducto.atributos = objetoAtributos;
+  informacionProducto.imagenes = imagenesProducto;
+  informacionProducto.publicado = "no";
 
-    if(publicar){
-      informacionProducto.publicado = "si";  
-    }
-
-    let categoriasReq = new XMLHttpRequest();
-    categoriasReq.open('POST', '/api/guardar-categorias');
-    categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-    categoriasReq.onreadystatechange = () => {
-      if(categoriasReq.readyState = XMLHttpRequest.DONE){
-        messageStatus(request.responseText, 'info');
-      }
-    };
-    categoriasReq.send(JSON.stringify(arrayCategorias));
-
-    let request = new XMLHttpRequest();
-    request.open('POST', '/api/upload-product');
-    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    request.onreadystatechange = () => {
-      if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-        messageStatus(request.responseText, 'info');
-        resetAllProductData();
-      }else{
-        messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
-        resetAllProductData();
-      }
-      request.send(JSON.stringify(informacionProducto));
-    };
+  if(publicar){
+    informacionProducto.publicado = "si";  
   }
+
+  let categoriasReq = new XMLHttpRequest();
+  categoriasReq.open('POST', '/api/guardar-categorias');
+  categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+  categoriasReq.onreadystatechange = () => {
+    console.log('hi')
+    if(categoriasReq.readyState = XMLHttpRequest.DONE){
+      messageStatus(request.responseText, 'info');
+    }
+  };
+  categoriasReq.send(JSON.stringify(arrayCategorias));
+
+  let request = new XMLHttpRequest();
+  request.open('POST', '/api/upload-product');
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  request.onreadystatechange = () => {
+    console.log('hi2')
+    if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
+      messageStatus(request.responseText, 'info');
+      resetAllProductData();
+    }else{
+      messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
+      resetAllProductData();
+    }
+  };
+  request.send(JSON.stringify(informacionProducto));
 }
 
 function resetAllProductData(){
@@ -233,9 +231,11 @@ function hideChangeSecondaryImage(e){
   e.lastChild.remove();
 }
 document.getElementById('button-guardar-producto').addEventListener('click', () => {
+  console.log('Called');
   guardarPublicarProducto(false);
 });
 document.getElementById('button-publicar-producto').addEventListener('click', () => {
+  console.log('Called');
   guardarPublicarProducto(true);
 });
 document.getElementById('imagen-principal').addEventListener('click', () => {

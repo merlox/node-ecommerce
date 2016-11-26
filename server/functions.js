@@ -31,11 +31,11 @@ let createUpdateProduct = function(permalink, productData, cb){
       return cb('Error: could not connect to the database');
     }
     db.collection('productos').update({
-      'permalink': req.body.permalink.toLowerCase()
+      'permalink': permalink.toLowerCase()
     }, {
       'titulo': productData.titulo,
       'imagenes': productData.imagenes,
-      'permalink': productData.permalink,
+      'permalink': productData.permalink.toLowerCase(),
       'precio': productData.precio,
       'descripcion': productData.descripcion,
       'categoria': productData.categoria,
@@ -52,6 +52,28 @@ let createUpdateProduct = function(permalink, productData, cb){
       }
     });
   });
+};
+//Funcion para subir las imagenes publicas al servidor en uploads
+let uploadPublicImages = function(objectImages, permalinkName, cb){
+  console.log('UploadPublicImages, functions.js');
+  let publicUploads = path.join(__dirname, '../public/public-uploads/');
+  let serverUploads = path.join(__dirname, '/uploads/', permalinkName);
+  let objectImagenesSize = Object.keys(objectImages).length;
+  let counter = 0;
+  fs.stat(serverUploads, (err, stats) => {
+    if(err) fs.mkdirSync(serverUploads);
+  });
+  for(let key in objectImages){
+    counter++;
+    copyFile(path.join(publicUploads, objectImages[key]), serverUploads, objectImages[key], (err) => {
+      if(err){
+        return cb('Could not copy the file: '+objectImages[key]+' to the server, please try again.');
+      }
+    });
+    if(counter == objectImagenesSize){
+      return cb(null);
+    }
+  }
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
 let getAllProducts = function(callback){
@@ -335,3 +357,4 @@ exports.getCategories = getCategories;
 exports.getAllProducts = getAllProducts;
 exports.borrarProducto = borrarProducto;
 exports.createUpdateProduct = createUpdateProduct;
+exports.uploadPublicImages = uploadPublicImages;

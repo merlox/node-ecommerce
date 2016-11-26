@@ -106,52 +106,27 @@ api.post('/upload-image-product', (req, res) => {
 //1. Create a folder for each product images and then copy the folder to uploads in the server
 api.post('/upload-product', (req, res) => {
 
-  fs.stat(path.join(__dirname, '../../server/uploads/', req.body.permalink), (err, stats) => {
-    if(err){
-      fs.mkdirSync(path.join(__dirname, '../../server/uploads/', req.body.permalink));
-    }
-    functions.copyDirectory(path.join(__dirname, '../../public/public-uploads/'), path.join(__dirname, '../../server/uploads/', req.body.permalink), (err) => {
-      //Si hay un error copiando el directorio, borramos las imágenes temporales
-      if(err){
-        console.log('Error copiando el directorio '+err);
-        fs.readdir(path.join(__dirname, '../../public/public-uploads/'), (err, files) => {
-          files.forEach((file) => {
-            fs.unlink(path.join(__dirname, '../../public/public-uploads/', file), (err) => {
-              if(err) console.log(err);
-            });
-          });
-        });
-        return res.send('Error: Could not copy the images to the server');
-      }else{
-        console.log('Directory '+__dirname+'../../public/public-uploads/'+' copied successfully to '+__dirname+'../../server/uploads/'+req.body.permalink);
-        //Borramos imágenes temporales
-        fs.readdir(path.join(__dirname, '../../public/public-uploads/'), (err, files) => {
-          files.forEach((file) => {
-            fs.unlink(path.join(__dirname, '../../public/public-uploads/', file), (err) => {
-              if(err) console.log(err);
-            });
-          });
-        });
+  //Guardamos el producto en la base de datos
+  informacionProducto = {
+    'titulo': req.body.titulo,
+    'imagenes': req.body.imagenes,
+    'permalink': req.body.permalink.toLowerCase(),
+    'precio': req.body.precio,
+    'descripcion': req.body.descripcion,
+    'categoria': req.body.categoria,
+    'atributos': req.body.atributos,
+    'publicado': req.body.publicado
+  };
 
-        //Guardamos el producto en la base de datos
-        informacionProducto = {
-          'titulo': req.body.titulo,
-          'imagenes': req.body.imagenes,
-          'permalink': req.body.permalink.toLowerCase(),
-          'precio': req.body.precio,
-          'descripcion': req.body.descripcion,
-          'categoria': req.body.categoria,
-          'atributos': req.body.atributos,
-          'publicado': req.body.publicado
-        };
+  functions.uploadPublicImages(req.body.imagenes, req.body.permalink.toLowerCase(), (err) => {
+    if(err) console.log(err);
+  });
 
-        functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, (err) => {
-          if(err) return res.send(err);
-          else return res.send('Producto guardado satisfactoriamente');
-        });
-      }
-    });
+  functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, (err) => {
+    if(err) return res.send(err);
+    else return res.send('Producto guardado satisfactoriamente');
   });
 });
+
 
 module.exports = api;

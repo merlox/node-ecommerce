@@ -20,7 +20,6 @@ function guardarPublicarProducto(publicar){
   informacionProducto.categoria = productoCategorias.childNodes[productoCategorias.selectedIndex].innerHTML;
   informacionProducto.atributos = objetoAtributos;
   informacionProducto.imagenes = imagenesProducto;
-  console.log(informacionProducto.imagenes);
   informacionProducto.publicado = "no";
 
   if(publicar){
@@ -95,6 +94,7 @@ function saveClientImages(){
 
   if(files.length > 0){
     if(files.length <= 10){
+
       if(document.getElementById('contenedor-imagen-principal')){
         document.getElementById('contenedor-imagen-principal').remove();
       }
@@ -121,7 +121,6 @@ function saveClientImages(){
         if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
           requestResults = JSON.parse(request.responseText);
           imagenesProducto = requestResults;
-
           mostrarImagenesCliente(imagenesProducto);
 
         }
@@ -232,7 +231,6 @@ function hideChangeSecondaryImage(e){
   e.lastChild.remove();
 }
 document.getElementById('button-guardar-producto').addEventListener('click', () => {
-  console.log('Called');
   guardarPublicarProducto(false);
 });
 document.getElementById('button-publicar-producto').addEventListener('click', () => {

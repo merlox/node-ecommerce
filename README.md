@@ -732,3 +732,9 @@ Igualmente, sigo trabajando en el proyecto y ahora mismo tiene una apariencia in
 Sigo trabajando en subir los productos y modificarlos. Ahora estoy tratando de arreglar bugs.
 
 Mañana continuaré trabajando en ello tras estudiar.
+
+### Día 27
+
+La página de edición y añado de productos ya está completa, solo se necesita hacerla responsive y arreglar unos mínimos errores.
+
+Hoy ha sido un día muy productivo.

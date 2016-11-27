@@ -86,6 +86,7 @@ api.post('/upload-image-product', (req, res) => {
   form.uploadDir = path.join(__dirname, '../../server/uploads');
   form.on('file', (field, file) => {
     counterImage++;
+    file.name = file.name.replace(/&.*;+/g, '-');
     //Esta linea es la que se encarga de subir el archivo en el servidor.
     fs.rename(file.path, path.join(__dirname, '../../public/public-uploads/', file.name), (err) => {
     	if(err) console.log(err);

@@ -10,8 +10,9 @@ function getCategoriesFromServer(){
   request.onreadystatechange = () => {
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status < 400){
       let resultado = JSON.parse(request.responseText);
+      arrayCategorias = resultado.arrayCategorias;
       for(let i = 0; i < resultado.arrayCategorias.length; i++){
-        arrayCategorias = resultado.arrayCategorias;
+        document.getElementById('contenedor-categorias').insertAdjacentHTML('beforeend', '<p>'+arrayCategorias[i]+'</p>');
         document.getElementById('producto-categorias').insertAdjacentHTML('afterbegin', '<option>'+resultado.arrayCategorias[i]+'</option>');
       }
     }

@@ -69,8 +69,6 @@ PRODUCTOS
 	height: 50px;
 }
 .contenedor-producto-informacion{
-	display: flex;
-	flex-direction: column;
 	padding: 5px;
 	padding-left: 0;
 	width: 100%;
@@ -96,6 +94,9 @@ PRODUCTOS
 }
 #precio-permalink-no-border input:hover{
 	border: 1px solid blue;
+}
+.borrador{
+	background-color: #EBEBEB;
 }
 
 /**

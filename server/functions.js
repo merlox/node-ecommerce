@@ -61,16 +61,33 @@ let uploadPublicImages = function(objectImages, permalinkName, cb){
   let objectImagenesSize = Object.keys(objectImages).length;
   let counter = 0;
   fs.stat(path.join(serverUploads, permalinkName), (err, stats) => {
-    if(err) fs.mkdirSync(path.join(serverUploads, permalinkName));
-    for(let key in objectImages){
-      counter++;
-      copyFile(path.join(publicUploads, objectImages[key]), path.join(serverUploads, permalinkName), objectImages[key], (err) => {
-        if(err){
-          return cb('Could not copy the file: '+objectImages[key]+' to the server, please try again: '+err);
-        }
+    if(err){
+      fs.mkdirSync(path.join(serverUploads, permalinkName));
+      copy();
+    }
+    else{
+      //Delete the images in the folder
+      fs.readdir(path.join(serverUploads, permalinkName), (err, files) => {
+        if(err) console.log('Could not read the folder: '+path.join(serverUploads, permalinkName)+' to delete their images '+err);
+        files.forEach((file) => {
+          fs.unlink(path.join(serverUploads, permalinkName, file), (err) => {
+            if(err) console.log('Could not delete the file: '+path.join(serverUploads, permalinkName, file)+' '+err);
+          });
+        });
+        copy();
       });
-      if(counter == objectImagenesSize){
-        return cb(null);
+    }
+    function copy(){
+      for(let key in objectImages){
+        counter++;
+        copyFile(path.join(publicUploads, objectImages[key]), path.join(serverUploads, permalinkName), objectImages[key], (err) => {
+          if(err){
+            return cb('Could not copy the file: '+objectImages[key]+' to the server, please try again: '+err);
+          }
+        });
+        if(counter == objectImagenesSize){
+          return cb(null);
+        }
       }
     }
   });
@@ -108,7 +125,6 @@ let getAllProducts = function(callback){
                 });
               }
             }
-
           });
         }
         callback(null, results);

@@ -16,9 +16,11 @@ function guardarPublicarProducto(publicar){
   informacionProducto.precio = document.getElementById('producto-precio').value;
   informacionProducto.descripcion = document.getElementById('producto-descripcion').value;
   //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
-  informacionProducto.categoria = document.getElementById('producto-categorias').selectedIndex;
+  let productoCategorias = document.getElementById('producto-categorias');
+  informacionProducto.categoria = productoCategorias.childNodes[productoCategorias.selectedIndex].innerHTML;
   informacionProducto.atributos = objetoAtributos;
   informacionProducto.imagenes = imagenesProducto;
+  console.log(informacionProducto.imagenes);
   informacionProducto.publicado = "no";
 
   if(publicar){
@@ -29,7 +31,6 @@ function guardarPublicarProducto(publicar){
   categoriasReq.open('POST', '/api/guardar-categorias');
   categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
   categoriasReq.onreadystatechange = () => {
-    console.log('hi')
     if(categoriasReq.readyState = XMLHttpRequest.DONE){
       messageStatus(request.responseText, 'info');
     }
@@ -40,7 +41,6 @@ function guardarPublicarProducto(publicar){
   request.open('POST', '/api/upload-product');
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.onreadystatechange = () => {
-    console.log('hi2')
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
       messageStatus(request.responseText, 'info');
       resetAllProductData();
@@ -225,11 +225,6 @@ function showChangeSecondaryImage(e){
     if(orderInicial == 2){
       let imagenPrincipalNueva = document.getElementById('imagen-secundaria-orden-1').firstChild;
       document.getElementById('imagen-principal-uploaded').src = imagenPrincipalNueva.src;
-      if(window.innerWidth <= 700){
-        document.getElementById('imagen-principal-uploaded').style.height = ((imagenPrincipalNueva.naturalHeight*22)/imagenPrincipalNueva.naturalWidth)+"vw";
-      }else{
-        document.getElementById('imagen-principal-uploaded').style.height = ((imagenPrincipalNueva.naturalHeight*28)/imagenPrincipalNueva.naturalWidth)+"vw";
-      }
     }
   });
 }
@@ -241,7 +236,6 @@ document.getElementById('button-guardar-producto').addEventListener('click', () 
   guardarPublicarProducto(false);
 });
 document.getElementById('button-publicar-producto').addEventListener('click', () => {
-  console.log('Called');
   guardarPublicarProducto(true);
 });
 document.getElementById('imagen-principal').addEventListener('click', () => {

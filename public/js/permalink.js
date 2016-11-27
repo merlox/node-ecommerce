@@ -14,9 +14,19 @@ function checkPermalinkState(){
 	}
 	request.send();
 }
+
+function replaceBadCharacters(string, cb){
+	string = string.replace(/(ñ)+/g, 'n');
+	return cb(string.replace(/(\?|\\|\/|:|\*|"|<|>|\|| )+/g, "-"));
+}
+
 document.getElementById('producto-title').addEventListener('keyup', () => {
-  	document.getElementById('permalink').value = 
-  		document.getElementById('producto-title').value.replace(/(\?|\\|\/|:|\*|"|<|>|\|| )+/g, "-");
+  	
+  	replaceBadCharacters(document.getElementById('producto-title').value, (result) => {
+  		document.getElementById('permalink').value = result;
+  		document.getElementById('permalink').value = encodeURI(result);
+  	});
+  		
   	checkPermalinkState();
 });
 document.getElementById('permalink').addEventListener('keyup', () => {

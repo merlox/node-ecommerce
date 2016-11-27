@@ -28,9 +28,10 @@ function borrarValorAtributo(e){
   //Delete the intem in the object array
   for(let key in objetoAtributos){
     if(key == e.parentNode.parentNode.firstChild.innerHTML){
-       delete objetoAtributos[key][liItemIndex];
+       objetoAtributos[key].splice(liItemIndex, 1);
     }
   }
+  console.log(objetoAtributos);
   //Delete the item in the dom
   e.parentNode.parentNode.removeChild(e.parentNode);
 }

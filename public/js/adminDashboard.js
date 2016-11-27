@@ -1,5 +1,5 @@
 document.getElementById('close-session').addEventListener('click', () => {
-  window.location = 'http://192.168.1.111:3000/close-session';
+  window.location = 'http://localhost:8000/close-session';
 });
 
 if(window.location.pathname == "/admin/dashboard"){

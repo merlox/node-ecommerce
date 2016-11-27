@@ -132,13 +132,12 @@ SECCION IMAGENES
   height: 40px;
   margin-right: 3px;
   margin-bottom: 8px;
-  border: 1px solid black;
   cursor: pointer;
   display: flex;
   align-items: center;
 }
 .imagen-secundaria{
-  width: 38px;
+  width: 40px;
 }
 #imagen-secundaria-activa-hover{
   display: flex;
@@ -200,6 +199,7 @@ INFORMACION PRODUCTO
 .contenedores-precio-permalink{
   width: 150px;
   display: inline-block;
+  text-align: center;
 }
 #permalink{
   font-weight: bold;
@@ -282,6 +282,9 @@ INFORMACION PRODUCTO
 }
 #lista-atributos{
   display: none;
+}
+.x-hover-red{
+  cursor: pointer;
 }
 .x-hover-red:hover{
   color: red;

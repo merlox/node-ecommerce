@@ -738,3 +738,13 @@ Mañana continuaré trabajando en ello tras estudiar.
 La página de edición y añado de productos ya está completa, solo se necesita hacerla responsive y arreglar unos mínimos errores.
 
 Hoy ha sido un día muy productivo.
+
+### Día 28
+
+Hoy estuve trabajando en funcionalidades bastante sencillas pero muy necesarias como un diseño estático con un tamaño fijo que no se mueva.
+
+Tuve que reordenar el css de muchos de los elementos para conseguir que se colocasen en su lugar correcto.
+
+Luego trabajé en el diseño responsive y he conseguido llegar a los 1000 px de tamaño. Me queda bajar al resto hasta alrededor de 300 px.
+
+Mañana continuaré trabajando en ello.

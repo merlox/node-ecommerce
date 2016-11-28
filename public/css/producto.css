@@ -154,16 +154,6 @@ RESPONSIVE CSS
 	#contenedor-button-expandir-texto{
 		display: block;
 	}
-	#producto-descripcion-fadeout{
-		position: absolute;
-		bottom: 0em;
-		height: 4em;
-		width: 100%;
-		background-image: linear-gradient(
-        	rgba(255, 255, 255, 0) 0%,
-        	rgba(255, 255, 255, 1) 100%
-    	);
-	}
 }
 
 /*

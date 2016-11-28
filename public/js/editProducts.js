@@ -34,6 +34,7 @@ function loadFullProduct(productPermalink){
 		id('producto-precio').value = fullProduct.precio;
 		id('permalink').value = fullProduct.permalink;
 		id('producto-descripcion').value = fullProduct.descripcion;
+
 		imagenesProducto = fullProduct.imagenes;
 		//Borramos los selected. Comprobamos si el <option> ya existe o no. En caso de que si, selecionalo.
 		let opcionesDelSelect = document.getElementsByTagName('option');
@@ -71,9 +72,26 @@ function borrarProducto(productPermalink){
 	});
 }
 
-//TODO, cuando se hagan upload a las imagenes modificadas, solo subir las seleccionadas y NO toda la carpeta public-uploads porque
-//se llenará de imágenes de diferentes productos conforme los vayas cargando.
-//TODO, las imagenes se deforman al cambiarlas de orden.
+//Funcion para filtrar los objetos por categoria para ver solo los que pertenezcan a dicha categoria
+function filtrarVistaCategoria(e){
+	id('boton-limpiar-filtro-categoria').style.display = 'inline';
+	let permalinks = document.getElementsByClassName('categoria-producto-unico');
+	for(let i = 0; i < permalinks.length; i++){
+		if(permalinks[i].innerHTML != e.innerHTML && permalinks[i].innerHTML != e.innerHTML+' (Borrador)'){
+			document.getElementsByClassName('contenedor-producto')[i].style.display = 'none';
+		}else{
+			document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
+		}
+	}
+}
+
+function quitarFiltroVistaCategoria(){
+	id('boton-limpiar-filtro-categoria').style.display = 'none';
+	let cajasProductos = document.getElementsByClassName('contenedor-producto');
+	for(let i = 0; i < cajasProductos.length; i++){
+		document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
+	}
+}
 
 //Funcion para crear el dom del objeto atributos pasandole el objeto.
 function mostrarObjetoAtributos(objetoAtributos){
@@ -113,7 +131,7 @@ function crearCajasProductos(){
 				if(objetoProducto.publicado == 'no'){
 					htmlProducto = '<div class="contenedor-producto borrador">'
 						+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'"/>'
-						+'<div class="contenedor-producto-informacion"><b title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</b>'
+						+'<div class="contenedor-producto-informacion"><span title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</span>'
 						+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+' (Borrador)</p>'
 						+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
 						+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
@@ -122,7 +140,7 @@ function crearCajasProductos(){
 				}else{
 					htmlProducto = '<div class="contenedor-producto">'
 						+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'"/>'
-						+'<div class="contenedor-producto-informacion"><b title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</b>'
+						+'<div class="contenedor-producto-informacion"><span title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</span>'
 						+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+'</p>'
 						+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
 						+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
@@ -144,6 +162,10 @@ function crearCajasProductos(){
 id('button-nuevo-producto').addEventListener('click', () => {
 	crearCajasProductos();
 	id('seccion-preview').className = 'animate-preview';
+});
+
+id('boton-limpiar-filtro-categoria').addEventListener('click', () => {
+	quitarFiltroVistaCategoria();
 });
 
 crearCajasProductos();

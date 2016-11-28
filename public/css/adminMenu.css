@@ -12,6 +12,7 @@ MAIN MENU
   width: 100%;
   padding: 20px;
   justify-content: center;
+  position: fixed;
 }
 .main-menu-item{
   width: 300px;

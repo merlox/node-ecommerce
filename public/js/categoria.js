@@ -12,8 +12,10 @@ function getCategoriesFromServer(){
       let resultado = JSON.parse(request.responseText);
       arrayCategorias = resultado.arrayCategorias;
       for(let i = 0; i < resultado.arrayCategorias.length; i++){
-        document.getElementById('contenedor-categorias').insertAdjacentHTML('beforeend', '<p>'+arrayCategorias[i]+'</p>');
-        document.getElementById('producto-categorias').insertAdjacentHTML('afterbegin', '<option>'+resultado.arrayCategorias[i]+'</option>');
+        document.getElementById('contenedor-categorias').insertAdjacentHTML('beforeend', 
+          '<p><a onclick="filtrarVistaCategoria(this)" href="javascript:void(0)">'+arrayCategorias[i]+'</a></p>');
+        document.getElementById('producto-categorias').insertAdjacentHTML('afterbegin', 
+          '<option>'+resultado.arrayCategorias[i]+'</option>');
       }
     }
   };

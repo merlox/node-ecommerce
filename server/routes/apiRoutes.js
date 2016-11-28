@@ -17,7 +17,7 @@ let functions = require('./../functions.js'),
 let api = express.Router();
 
 api.get('/get-images/:permalink', (req, res) => {
-  functions.copyDirectory(path.join(__dirname, '/uploads/', '/kindle/'), path.join(__dirname, '../public/', '/public-uploads/'), (err) => {
+  functions.copyDirectory(path.join(__dirname, '../uploads/', req.params.permalink), path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
     if(err) console.log(err);
     res.send('Images copied');
   });

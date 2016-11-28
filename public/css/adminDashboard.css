@@ -293,7 +293,18 @@ INFORMACION PRODUCTO
   display: flex;
   justify-content: space-between;
 }
-
+#button-categoria-borrar{
+  float: right;
+}
+#button-activar-nueva-categoria{
+  float: right;
+}
+#button-nueva-categoria-cancelar{
+  float: right;
+}
+#button-nueva-categoria-add{
+  float: right;
+}
 
 /*
 
@@ -301,6 +312,37 @@ RESPONSIVE CSS
 
 */
 
+@media (max-width: 1400px){
+  #contenedor-categoria-atributos{
+    flex-direction: column;
+  }
+  #contenedor-elementos-categoria{
+    width: 100%;
+  }
+  #contenedor-categoria-add{
+    width: 100%;
+  }
+  #contenedor-elementos-atributos{
+    width: 100%;
+  }
+}
+@media (max-width: 1100px){
+  #seccion-preview{
+    flex-direction: column;
+  }
+  #contenedor-imagenes{
+    width: 100%;
+  }
+  #contenedor-guardar-producto{
+    width: 100%;
+  }
+  #contenedor-guardar-producto *{
+    width: 50%;
+  }
+  #imagen-principal{
+    background-size: 10%;
+  }
+}
 @media (max-width: 1000px) {
   #contenedor-guardar-producto{
     display: flex;

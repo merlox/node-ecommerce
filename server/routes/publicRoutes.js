@@ -14,7 +14,7 @@ routes.get('/p/:permalink', (req, res) => {
     if(result.publicado == 'no'){
       return res.redirect('/?message=That page is not available');
     }else if(result.publicado == 'si'){
-      functions.render(__dirname+'/public/views/producto.html', result, (err, data) => {
+      functions.render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
         return res.send(data);
       });
     }
@@ -91,11 +91,14 @@ routes.get('/close-session', (req, res) => {
 	return res.redirect('/');
 });
 
-routes.get('*', (req, res) => {
-  if(req.session.username == 'merunas'){
-    return res.redirect('/admin/dashboard');
+routes.use((req, res) => {
+  if(!res.heardersSent){
+    if(req.session.username == 'merunas'){
+      console.log('redirecting');
+      res.redirect('/admin/dashboard');
+    }
+    else res.sendFile(path.join(__dirname, '../../public/html/main.html'));
   }
-  res.sendFile(path.join(__dirname, '../../public/html/main.html'));
 });
 
 module.exports = routes;

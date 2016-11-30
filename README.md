@@ -748,3 +748,24 @@ Tuve que reordenar el css de muchos de los elementos para conseguir que se coloc
 Luego trabajé en el diseño responsive y he conseguido llegar a los 1000 px de tamaño. Me queda bajar al resto hasta alrededor de 300 px.
 
 Mañana continuaré trabajando en ello.
+
+### Día 29
+
+Hoy estuve tratando de hacer responsive la página con mútiples problemas.
+
+La organización de los menús y el filtro de categorías no es como me gustaría, por lo que lo voy a cambiar a un estilo más sencillo y ordenado.
+
+Hoy fue un día sencillo.
+
+### Día 30
+
+Hoy he trabajado en el diseño responsive. Para ello he reoganizado los menús al estado inicial, una barra superior con las principales páginas. Luego he añadido un selector dropdown en la seccion de las cajas de los productos y el boton de nuevo producto en ese sitio.
+
+Además, he creado un botón tipo hamburguesa para ocultar la sección de cajas de productos con una animación de movimiento y un desenfoque en el fondo.
+
+Mañana continuaré trabajando en el menú responsive y esto es lo que tengo pensado lograr:
+
+- Que la página se adapte a pantallas pequeñas.
+- Que se oculte el menú en dispositivos más  pequeños de fora automática (ya lo hace pero falta mejorarlo).
+- Que vuelva a funcionar el filtro de categorias ya que con los cambios dejo de funcioinar.
+- Que el botón de hamburguesa funcione en los 2 modos que tengo pensado de manera efectiva y ordenada (ahora mismo es un desorden).

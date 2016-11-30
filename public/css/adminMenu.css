@@ -11,11 +11,37 @@ MAIN MENU
   align-items: center;
   width: 100%;
   padding: 20px;
-  justify-content: center;
+  justify-content: space-around;
   position: fixed;
+  z-index: 3;
+  text-align: center;
 }
-.main-menu-item{
-  width: 300px;
+.main-menu a{
+  text-decoration: none;
+  color: white;
+  font-size: 13pt;
+  font-family: verdana;
+  flex-grow: 1;
+}
+.main-menu a:hover{
+  color: yellow;
+}
+
+/*
+
+Burger
+
+*/
+
+#contenedor-burger{
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 50px;
+  border-radius: 2px;
+}
+
+.burger:first-child{
+  margin-top: 0px;
 }
 
 /*
@@ -59,13 +85,4 @@ textarea{
 }
 textarea:hover{
  border: 1px solid blue; 
-}
-.main-menu a{
-  text-decoration: none;
-  color: white;
-  font-size: 13pt;
-  font-family: verdana;
-}
-.main-menu a:hover{
-  color: blue;
 }

@@ -3,7 +3,10 @@
 GENERALES
 
 */
-
+	
+*{
+	transition: all 0.5s ease-out;
+}
 body{
 	overflow-x: hidden;
 }
@@ -19,32 +22,8 @@ h1, h2, h3, h4, h5, h6{
 	color: grey;
 	text-align: center;
 }
-
-/*
-
-MENU LATERAL
-
-*/
-
-#seccion-menu{
-	width: 150px;
-	height: calc(100vh - 50px);
-	display: flex;
-	flex-direction: column;
-	position: fixed;
-	flex: none;
-	left: 0;
-	top: 50px;
-}
 #button-nuevo-producto{
-	padding: 30px 0;
-	width: 100%;
-}
-.titulo-categorias-lateral{
-	font-variant: small-caps;
-}
-#contenedor-categorias{
-	margin-left: 10px;
+	padding: 10px 0;
 }
 
 /*
@@ -57,18 +36,23 @@ PRODUCTOS
 	width: 350px;
 	height: calc(100vh - 50px);
 	border-right: 1px solid lightgrey;
+	background-color: white;
+	z-index: 3;
 	border-left: 1px solid lightgrey;
 	flex: none;
 	position: fixed;
-	overflow-y: scroll;
-	left: 150px;
-	top: 50px;
+	margin-top: 50px;
+	left: 0;
+	overflow-y: auto;
 }
 .contenedor-producto{
 	border-bottom:  1px solid lightgrey;
 	display: flex;
 	align-items: flex-start;
 	height: 80px;
+}
+.contenedor-producto:first-child{
+	border-top: 1px solid lightgrey;
 }
 .contenedor-producto a{
 	text-decoration: none;
@@ -110,8 +94,29 @@ PRODUCTOS
 .borrador{
 	background-color: #EBEBEB;
 }
-#boton-limpiar-filtro-categoria{
+#contenedor-opciones-productos{
+	display: flex;
+}
+#contenedor-categorias{
+	width: 50%;
+}
+#button-nuevo-producto{
+	width: 50%;
+}
+.animate-menu{
+	transform: translate(-500px);
+}
+#overlay-black{
+	position: fixed;
+	width: 100%;
 	display: none;
+	height: 100%;
+	background-color: black;
+	opacity: 0.5;
+	z-index: 2;
+}
+.sombra-seccion-productos{
+	box-shadow: 13px 8px 35px -8px rgba(0,0,0, 0.3);
 }
 
 /**
@@ -121,17 +126,20 @@ PREVIEW
 */
 
 #seccion-preview{
-	width: calc(100% - 500px);
+	width: calc(100% - 350px);
 	height: calc(100vh - 50px);
   	justify-content: center;
-  	position: relative;
-  	display: flex;
-  	left: 1550px;
-  	top: 50px;
+  	margin-top: 50px;
+  	margin-left: 150vw;
+	display: flex;
 }
-.animate-preview{
-	transition: all 0.1s ease-out;
-	transform: translate(-1300px);
+#seccion-preview.animate-preview{
+	width: 100%;
+	margin-left: 350px;
+}
+#seccion-preview.animar-menu{
+	width: 100%;
+	margin-left: 0;
 }
 
 /*

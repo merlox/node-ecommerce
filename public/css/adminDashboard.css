@@ -104,6 +104,7 @@ SECCION IMAGENES
 }
 #imagen-principal-uploaded-active{
   width: 100%;
+  transition: all 0s;
   background-color: rgba(0, 0, 0, 0.25);
   position: absolute;
   color: white;
@@ -326,7 +327,23 @@ RESPONSIVE CSS
     width: 100%;
   }
 }
-@media (max-width: 1100px){
+@media (max-width: 700px){
+  button {
+    background-color: rgb(0, 154, 196);
+    color: white;
+    border: 1px solid rgb(0, 154, 196);
+    padding: 5px;
+    font-size: 11pt;
+  }
+  #imagen-principal-uploaded{
+    width: 100%;
+  }
+  #imagen-principal-uploaded-active{
+    width: 100%;
+  }
+}
+/*TODO THIS*/
+@media (max-width: 600px){
   #seccion-preview{
     flex-direction: column;
   }
@@ -341,31 +358,6 @@ RESPONSIVE CSS
   }
   #imagen-principal{
     background-size: 10%;
-  }
-}
-@media (max-width: 1000px) {
-  #contenedor-guardar-producto{
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-    min-width: 17%;
-  }
-}
-@media (max-width: 700px){
-  button {
-    background-color: rgb(0, 154, 196);
-    color: white;
-    border: 1px solid rgb(0, 154, 196);
-    padding: 5px;
-    font-size: 11pt;
-  }
-  #imagen-principal-uploaded{
-    width: 100%;
-  }
-  #imagen-principal-uploaded-active{
-    width: 100%;
   }
 }
 @media (max-width: 550px){

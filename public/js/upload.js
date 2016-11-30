@@ -60,7 +60,7 @@ function resetAllProductData(){
   //Objeto del atributo.js
   objetoAtributos = {};
   document.getElementById('seccion-preview').className = '';
-  document.getElementById('seccion-productos').innerHTML = '';
+  document.getElementById('contenedor-productos').innerHTML = '';
   document.getElementById('lista-atributos').innerHTML = '';
   document.getElementById('producto-title').value = '';
   document.getElementById('permalink').value = '';

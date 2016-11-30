@@ -11,5 +11,5 @@ if(window.location.pathname == "/admin/add-product"){
 }
 
 if(window.location.pathname == "/admin/edit-products"){
-  document.getElementById('edit-products-button').style.color = "rgb(12, 0, 147)";
+  document.getElementById('see-products-button').style.color = "rgb(12, 0, 147)";
 }

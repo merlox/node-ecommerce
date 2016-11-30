@@ -7,29 +7,34 @@
   <link rel="stylesheet" href="../css/adminMenu.css" media="screen" title="no title">
   <link rel="stylesheet" href="../css/adminEdit.css">
   <link rel="stylesheet" href="../css/adminDashboard.css" media="screen" title="no title">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
+  <div id="overlay-black"></div>
 	<h5 id="status"></h5>
 
     <div class="main-menu">
-      <a class="main-menu-item" id="dashboard-button" href="/admin/dashboard">Dashboard</a>
-      <a class="main-menu-item" id="edit-products-button" href="#">Edit products</a>
-      <button class="main-menu-item" id="close-session" type="button" name="name">Exit admin</button>
+      <button id="contenedor-burger" class="main-menu-item">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+      </button>
+      <a id="dashboard-button" href="/admin/dashboard">Dashboard</a>
+      <a id="see-products-button" href="/admin/edit-products">Edit Products</a>
+      <a id="close-session" href="/close-session">Exit admin</a>
     </div>
 
     <div id="contenedor-total">
-    	<section id="seccion-menu">
-       <button id="button-reload" class="button-no-style" onclick="crearCajasProductos()">Reload</button>
-       <button id="button-nuevo-producto">Nuevo producto</button>
-       <br/>
-       <div id="contenedor-categorias">
-         <div class="titulo-categorias-lateral">categorías <a id="boton-limpiar-filtro-categoria" href="javascript:void(0)">Limpiar</a></div>
-        </div>
-      </section>
 	    
-      <section id="seccion-productos"></section>
+      <section id="seccion-productos">
+        <div id="contenedor-opciones-productos">
+          <select id="contenedor-categorias">
+            <option>Todas</option>
+          </select>
+          <button id="button-nuevo-producto">Nuevo producto</button>
+        </div>
 
+        <div id="contenedor-productos"></div>
+      </section>
 	    <section id="seccion-preview">
         <!--Widget imágenes-->
         <div id="contenedor-imagenes">

@@ -769,3 +769,19 @@ Mañana continuaré trabajando en el menú responsive y esto es lo que tengo pen
 - Que se oculte el menú en dispositivos más  pequeños de fora automática (ya lo hace pero falta mejorarlo).
 - Que vuelva a funcionar el filtro de categorias ya que con los cambios dejo de funcioinar.
 - Que el botón de hamburguesa funcione en los 2 modos que tengo pensado de manera efectiva y ordenada (ahora mismo es un desorden).
+
+### Dia 31
+
+Hoy fue un día de poco trabajo. He estado creando el menú principal de las páginas publicas que no son de administrador y tras muchas vueltas y cambios, he decidido implantar flexbox puesto que al principio no conseguí el look que buscaba pero lo acabé logrando tras trastear con los margins y los flexs.
+
+### Día 32 
+
+Son las 11 y acabo de completar el menú con responsive y un diseño a lo amazon muy acertado.
+
+Este menú tiene un dropdown con las categorías o departamentos que se muestra al hacer click en "departamentos".
+
+Se ve igualmente bien en todos los dispositivos y creo que he logrado un diseño bastante agradable.
+
+A continuación, toca implantar javascript para conseguir las categorias del servidor, darle funcionalidad al buscador, crear la página de usuario con registro y crear el carrito de la compra.
+
+De momento voy a descansar y a aprender un poco de desarrollo android con un curso de edx que tiene muy buena pinta. Más tarde continuo con esto. Mi objetivo para hoy es tener las categorías y el buscador listos con autosuggest.

@@ -22,6 +22,42 @@ let buscarProducto = function(permalink, callback){
     });
   });
 };
+let buscarProductos = function(keyword, limite, cb){
+  console.log('BuscarProductos, functions.js');
+  if(limite == undefined || limite == null){
+    limite = 0;
+  }
+  limite = parseInt(limite);
+  //Transformamos la keyword a regex para hacer la query. 1º a array de palabras
+  keyword = keyword.split(" ");
+  //Luego creamos el regex
+  let keywordRegex = "";
+  for(let i = 0; i < keyword.length; i++){
+    //Si estamos en la última palabra, no añadir operador | or.
+    if(i != (keyword.length - 1)){
+      keywordRegex += keyword[i]+'|';
+    }else{
+      keywordRegex += keyword[i];
+    }
+  }
+  keywordRegex = new RegExp(keywordRegex, "g");
+  Mongo.connect(MongoUrl, (err, db) => {
+    if(err){
+      db.close();
+      return cb('Error, could not connect to the database', null);
+    }
+    db.collection('productos').find({
+      'titulo': keywordRegex
+    }).limit(limite).toArray((err, results) => {
+      db.close();
+      if(err){
+        return cb('Error, could not find those products', null);
+      }else{
+        return cb(null, results);
+      }
+    });
+  });
+};
 //Funcion para reemplazar o añadir un producto si no existe
 let createUpdateProduct = function(permalink, productData, cb){
   console.log('CreateUpdateProduct, functions,js');
@@ -397,3 +433,4 @@ exports.borrarProducto = borrarProducto;
 exports.createUpdateProduct = createUpdateProduct;
 exports.uploadPublicImages = uploadPublicImages;
 exports.borrarDirectorio = borrarDirectorio;
+exports.buscarProductos = buscarProductos;

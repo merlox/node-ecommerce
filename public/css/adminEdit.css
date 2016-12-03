@@ -103,7 +103,7 @@ PRODUCTOS
 #button-nuevo-producto{
 	width: 50%;
 }
-.animate-menu{
+.ocultar-menu{
 	transform: translate(-500px);
 }
 #overlay-black{
@@ -133,11 +133,11 @@ PREVIEW
   	margin-left: 150vw;
 	display: flex;
 }
-#seccion-preview.animate-preview{
+#seccion-preview.animar-menu-visible{
 	width: 100%;
 	margin-left: 350px;
 }
-#seccion-preview.animar-menu{
+#seccion-preview.animar-menu-oculto{
 	width: 100%;
 	margin-left: 0;
 }

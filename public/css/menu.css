@@ -1,0 +1,128 @@
+*{
+	transition: all 0.3s ease-out;
+}
+body{
+	margin: 0;
+}
+#menu-principal{
+	width: 100%;
+	height: 70px;
+	background-color: #000420;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center; 
+	font-family: verdana;
+}
+#menu-principal > a{
+	margin: 0 20px;
+	color: white;
+	text-decoration: none;
+}
+#logo{
+	flex: none;
+	height: 100%;
+}
+#departamentos{
+	color: white;
+}
+#expandible-departamentos{
+	background-color: white;
+	position: absolute;
+	left: 90px;
+	top: -400px;
+	width: 125px;
+	box-sizing: border-box;
+}
+#expandible-departamentos ul{
+	list-style-type: none;
+	padding-left: 0;
+}
+#expandible-departamentos ul li a{
+	text-decoration: none;
+	color: black;
+	display: block;
+}
+#expandible-departamentos ul li a:hover{
+	padding: 10px 0;
+	background-color: lightblue;
+}
+#expandible-departamentos.animar-mostrar-departamentos{
+	top: 50px;
+}
+#expandible-departamentos.animar-mostrar-departamentos-responsive{
+	display: block;
+}
+#contenedor-buscador{
+	width: 100%;
+	display: flex;
+	align-items: center;
+	margin: 0 10%;
+	position: relative;
+}
+#buscador{
+	border: none;
+	border-radius: 5px 0 0 5px;
+	height: 30px;
+	box-sizing: border-box;
+	width: 90%;
+}
+#buscador-sugerencias{
+	display: none;
+	min-height: 100%;
+	width: 90%;
+	background-color: lightblue;
+	z-index: 10;
+	position: absolute;
+	top: 30px;
+}
+#icono-busqueda{
+	background-color: orange;
+	border-radius: 0 5px 5px 0;
+	width: 10%;
+	height: 30px;
+	padding: 5px;
+	box-sizing: border-box;
+	cursor: pointer;
+	background-image: url('../images/search.png');
+	background-size: 20px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+#icono-busqueda:hover{
+	background-color: #FFB400;
+}
+#icono-busqueda:active{
+	background-color: #D97805;	
+}
+@media (max-width: 900px){
+	#contenedor-buscador{
+		margin: 0 0 0 0;
+	}
+}
+@media (max-width: 650px){
+	#logo{
+		height: 100px;
+	}
+	#menu-principal{
+		height: 100%;
+		flex-direction: column;
+	}
+	#menu-principal > a{
+		margin: 20px 0; 
+	}
+	a#usuario{
+		margin-top: 0;
+	}
+	#contenedor-buscador{
+		flex: initial;
+		width: 80%;
+	}
+	#contenedor-contenedor-buscador{
+	}
+	#expandible-departamentos{
+		position: static;
+		margin-bottom: 20px;
+		display: none;
+	}
+}

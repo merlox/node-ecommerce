@@ -8,7 +8,7 @@ let express = require('express'),
 
 const routes = express.Router();
 
-routes.get('/p/:permalink', (req, res) => {
+routes.get('/p/:permalink', (req, res) => { 
   functions.buscarProducto(req.params.permalink, (err, result) => {
     if(err) console.log(err);
     if(result.publicado == 'no'){
@@ -19,6 +19,20 @@ routes.get('/p/:permalink', (req, res) => {
       });
     }
   });
+});
+
+routes.get('/search/:keyword', (req, res) => {
+	let keyword = decodeURI(req.params.keyword);
+	console.log('Query: '+req.query);
+	let limite = req.params.limite;
+    if(limite == undefined || limite == null){
+  	  limite = 0;
+    }
+	functions.buscarProductos(keyword, limite, (err, results) => {
+		if(err) console.log(err);
+		console.log(results);
+		return res.send(results);
+	});
 });
 
 routes.get('/deleteSession', function(req, res){

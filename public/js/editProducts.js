@@ -1,46 +1,53 @@
-let domainName = 'localhost:8000';
-let isToggleMenu = false;
+let domainName = '192.168.1.100:8000';
+let isMenuVisible = true;
 let isMenuResponsive = false;
 
 //Al tener una pantalla de 1000 o menos, ocultar el menú si no lo estuviese ya y añadirle nueva funcionalidad
 window.addEventListener('resize', () => {
 	if(window.innerWidth <= 1000){
-		if(!isMenuResponsive){
-			toggleMenu();
-		}
+		isMenuResponsive = true;
+		ocultarMenu();
+	}else{
+		isMenuResponsive = false;
+		mostrarMenu();
+	}
+});
+
+window.onload = () => {
+	if(window.innerWidth <= 1000){
 		isMenuResponsive = true;
 	}else{
 		isMenuResponsive = false;
 	}
-});
+};
 
-if(window.innerWidth <= 1000){
-	isMenuResponsive = true;
-}else{
-	isMenuResponsive = false;
+function toggleMenu(){
+	if(isMenuVisible){
+		ocultarMenu();
+	}else{
+		mostrarMenu(); 
+	}
 }
 
-//Para ocultar el menú a voluntad
-function toggleMenu(){
-	//Si es responsive y el menú está cerrado
-	if(isMenuResponsive && isToggleMenu){
-		id('overlay-black').style.display = 'block';
-		id('seccion-productos').className = 'animate-preview sombra-seccion-productos';
+//Dependiendo del tamaño de la pantalla, mostrará un tipo u otro de overlay
+function mostrarMenu(){
+	isMenuVisible = true;
+	id('seccion-productos').className = '';
+	id('seccion-preview').className = 'animar-menu-visible';
+	if(isMenuResponsive){
+	 	id('overlay-black').style.display = 'block';
+	 	id('seccion-productos').className = 'sombra-seccion-productos';
+	 	id('seccion-preview').className = 'animar-menu-oculto';
 	}else{
-		id('overlay-black').style.display = 'none';
-		id('seccion-productos').className = 'animate-preview';
-		//Si el menú está visible
-		if(!isToggleMenu){
-			//Ocultar menu lateral
-			id('seccion-productos').className = 'animate-menu';
-			//Expandir seccion preview
-			id('seccion-preview').className = 'animar-menu';
-		}else{
-			id('seccion-preview').className = 'animate-preview';
-			id('seccion-productos').className = '';
-		}
+		id('seccion-preview').className = 'animar-menu-visible';
 	}
-	isToggleMenu = !isToggleMenu;
+}
+
+function ocultarMenu(){
+	isMenuVisible = false;
+ 	id('seccion-preview').className = 'animar-menu-oculto';
+	id('overlay-black').style.display = 'none';
+	id('seccion-productos').className = 'ocultar-menu';
 }
 
 function id(id){
@@ -69,7 +76,11 @@ function httpGet(url, cb){
 
 //TODO poner los datos del producto para editarlo
 function loadFullProduct(productPermalink){
-	id('seccion-preview').className = 'animate-preview';
+	if(isMenuResponsive){
+		ocultarMenu();
+	}else{
+		mostrarMenu();
+	}
 	objetoAtributos = {};
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
 		fullProduct = JSON.parse(fullProduct);
@@ -203,7 +214,13 @@ function crearCajasProductos(){
 //Animar el seccion preview para añadir un nuevo producto
 id('button-nuevo-producto').addEventListener('click', () => {
 	crearCajasProductos();
-	id('seccion-preview').className = 'animate-preview';
+	if(isMenuResponsive){
+		ocultarMenu();
+		id('seccion-preview').className = 'animar-menu-oculto';
+	}else{
+		id('seccion-preview').className = 'animar-menu-visible';
+	}
+
 });
 
 id('contenedor-categorias').addEventListener('change', (e) => {
@@ -216,6 +233,10 @@ id('contenedor-categorias').addEventListener('change', (e) => {
 
 id('contenedor-burger').addEventListener('click', () => {
 	toggleMenu();
+});
+
+id('overlay-black').addEventListener('click', () => {
+	ocultarMenu();
 });
 
 crearCajasProductos();

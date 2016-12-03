@@ -12,6 +12,8 @@ h1, h2, h3, h4, h5, h6, button{
 }
 #contenedor-principal{
 	display: flex;
+	margin: 0 20px;
+	margin-top: 10px;
 	justify-content: center;
 }
 
@@ -119,7 +121,7 @@ RESPONSIVE CSS
 
 */
 
-@media (max-width: 1000px){
+@media screen and (max-width: 1000px){
 	#contenedor-informacion-producto{
 		width: 50%;
 	}
@@ -128,13 +130,13 @@ RESPONSIVE CSS
 	}
 }
 
-@media (max-width: 800px){
+@media screen and (max-width: 800px){
 	#producto-title{
 		font-size: 18pt;
 	}
 }
 
-@media (max-width: 650px){
+@media screen and (max-width: 650px){
 	#contenedor-principal{
 		flex-direction: column;
 	}

@@ -30,24 +30,33 @@ function ocultarMostrarDepartamentos(){
 
 //Para buscar productos y mostrar palabras sugeridas
 function buscarProducto(keyword){
-	keyword = encodeURI(keyword);
-	httpGet('/search/'+keyword+'?limit=20', (results) => {
-		q('#buscador-sugerencias').firstChild.innerHTML = '';
-		console.log(results);
-		if(results != null && results != undefined){
-			q('#buscador-sugerencias').style.display = 'block';
-			results = JSON.parse(results);
-			//Show suggested searches or products
-			for(let i = 0; i < results.length; i++){
-				let htmlProducto = '<li><a href="http://192.168.1.100:8000/'+results[i].permalink+'">'
-					+results[i].titulo+'</a></li>';
-				q('#buscador-sugerencias').firstChild.insertAdjacentHTML('beforeend', htmlProducto);
+	if(keyword.length >= 3){
+		keyword = encodeURI(keyword);
+		httpGet('/search/'+keyword+'?limite=7', (results) => {
+			q('#buscador-sugerencias').firstChild.innerHTML = '';
+			if(results != null && results != undefined){
+				q('#buscador-sugerencias').style.display = 'block';
+				results = JSON.parse(results);
+				//Show suggested searches or products
+				let htmlProducto = "";
+				for(let i = 0; i < results.length; i++){
+					if(i < results.length - 1){
+						htmlProducto = '<a href="http://192.168.1.100:8000/p/'+results[i].permalink+'"><li>'
+							+results[i].titulo+'</a></li><hr/>';
+					}else{
+						htmlProducto = '<a href="http://192.168.1.100:8000/p/'+results[i].permalink+'"><li>'
+							+results[i].titulo+'</a></li>';
+					}
+					q('#buscador-sugerencias').firstChild.insertAdjacentHTML('beforeend', htmlProducto);
+				}
+			}else{
+				//Si no hay resultados, ocultar la barra de results
+				q('#buscador-sugerencias').style.display = 'none';
 			}
-		}else{
-			//Si no hay resultados, ocultar la barra de results
-			q('#buscador-sugerencias').style.display = 'none';
-		}
-	});
+		});
+	}else{
+		q('#buscador-sugerencias').style.display = 'none';
+	}
 }
 
 //Ocultar o mostrar el menu de departamentos

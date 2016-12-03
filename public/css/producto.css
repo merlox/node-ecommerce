@@ -12,7 +12,7 @@ h1, h2, h3, h4, h5, h6, button{
 }
 #contenedor-principal{
 	display: flex;
-	margin: 0 20px;
+	margin: 0 80px;
 	margin-top: 10px;
 	justify-content: center;
 }
@@ -127,6 +127,10 @@ RESPONSIVE CSS
 	}
 	#contenedor-imagenes{
 		width: 50%;
+	}
+	#contenedor-principal{
+		margin: 0 10px;
+		margin-top: 20px;
 	}
 }
 

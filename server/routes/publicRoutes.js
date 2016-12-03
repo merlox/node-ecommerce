@@ -21,18 +21,20 @@ routes.get('/p/:permalink', (req, res) => {
   });
 });
 
-routes.get('/search/:keyword', (req, res) => {
+routes.get('/search/:keyword?', (req, res) => {
 	let keyword = decodeURI(req.params.keyword);
-	console.log('Query: '+req.query);
-	let limite = req.params.limite;
+	let limite = req.query.limite;
     if(limite == undefined || limite == null){
   	  limite = 0;
     }
-	functions.buscarProductos(keyword, limite, (err, results) => {
-		if(err) console.log(err);
-		console.log(results);
-		return res.send(results);
-	});
+    if(keyword != 'undefined' && keyword != 'null' && keyword != ''){
+		functions.buscarProductos(keyword, limite, (err, results) => {
+			if(err) console.log(err);
+			return res.send(results);
+		});
+	}else{
+		return res.send(null);
+	}
 });
 
 routes.get('/deleteSession', function(req, res){

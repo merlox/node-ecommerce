@@ -4,8 +4,13 @@
 body{
 	margin: 0;
 }
+hr{
+	border: 1px solid lightgrey;
+}
 #menu-principal{
 	width: 100%;
+	padding: 0 80px;
+	box-sizing: border-box;
 	height: 70px;
 	background-color: #000420;
 	display: flex;
@@ -65,21 +70,32 @@ body{
 	border-radius: 5px 0 0 5px;
 	height: 30px;
 	box-sizing: border-box;
-	width: 90%;
+	width: 80%;
 }
 #buscador-sugerencias{
 	display: none;
 	min-height: 100%;
-	width: 90%;
-	background-color: lightblue;
+	width: 80%;
+	background-color: whitesmoke;
 	z-index: 10;
 	position: absolute;
 	top: 30px;
 }
+#buscador-sugerencias ul{
+	list-style-type: none;
+	padding-left: 0;
+}
+#buscador-sugerencias ul li a{
+	text-decoration: none;
+	color: #00265F;
+}
+#buscador-sugerencias ul li a:hover{
+	color: grey;
+}
 #icono-busqueda{
 	background-color: orange;
 	border-radius: 0 5px 5px 0;
-	width: 10%;
+	width: 20%;
 	height: 30px;
 	padding: 5px;
 	box-sizing: border-box;
@@ -95,9 +111,12 @@ body{
 #icono-busqueda:active{
 	background-color: #D97805;	
 }
-@media (max-width: 900px){
+@media (max-width: 1000px){
 	#contenedor-buscador{
 		margin: 0 0 0 0;
+	}
+	#menu-principal{
+		padding: 0;
 	}
 }
 @media (max-width: 650px){

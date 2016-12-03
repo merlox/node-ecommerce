@@ -28,26 +28,14 @@ let buscarProductos = function(keyword, limite, cb){
     limite = 0;
   }
   limite = parseInt(limite);
-  //Transformamos la keyword a regex para hacer la query. 1º a array de palabras
-  keyword = keyword.split(" ");
-  //Luego creamos el regex
-  let keywordRegex = "";
-  for(let i = 0; i < keyword.length; i++){
-    //Si estamos en la última palabra, no añadir operador | or.
-    if(i != (keyword.length - 1)){
-      keywordRegex += keyword[i]+'|';
-    }else{
-      keywordRegex += keyword[i];
-    }
-  }
-  keywordRegex = new RegExp(keywordRegex, "g");
+  keyword = new RegExp(keyword, "g");
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
       db.close();
       return cb('Error, could not connect to the database', null);
     }
     db.collection('productos').find({
-      'titulo': keywordRegex
+      'titulo': keyword
     }).limit(limite).toArray((err, results) => {
       db.close();
       if(err){

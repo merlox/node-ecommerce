@@ -60,7 +60,7 @@ PRODUCT INFORMATION
 #contenedor-informacion-producto{
 	width: 55%;
 }
-#producto-precio{
+.producto-precio{
 	color: #FC2828;
 	font-size: 15pt;
 }

@@ -14,4 +14,8 @@ admin.get('/edit-products', (req, res) => {
     return res.sendFile(path.join(__dirname, '../../public/html/adminEditProducts.html'));
 });
 
+admin.get('/edit-index', (req, res) => {
+	return res.sendFile(path.join(__dirname, '../../public/html/adminEditIndex.html'));
+});
+
 module.exports = admin;

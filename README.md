@@ -785,3 +785,23 @@ Se ve igualmente bien en todos los dispositivos y creo que he logrado un diseño
 A continuación, toca implantar javascript para conseguir las categorias del servidor, darle funcionalidad al buscador, crear la página de usuario con registro y crear el carrito de la compra.
 
 De momento voy a descansar y a aprender un poco de desarrollo android con un curso de edx que tiene muy buena pinta. Más tarde continuo con esto. Mi objetivo para hoy es tener las categorías y el buscador listos con autosuggest.
+
+### Día 33
+
+Hoy continuo trabajando en la web. Acabo de mejorar la barra de busqueda de forma que te sugiera los productos y te muestre el precio a su lado.
+
+Luego he hecho que las búsquedas que hace el usuario se pasen como parámetro en la url y se guarden en la base de datos en una nueva entidad llamada 'busquedas' con la palabra buscada y las veces que se buscó.
+
+Esto es extremadamente útil para tener un registro de lo que quiere comprar la gente, lo que les interesa. Más adelante consideraré la opción de guardar además la acción que toma el usuario tras buscar para hacer un poco de SEO mostrando los productos que la gente más busca los primeros. Además de registrar cuales se hacen click tras las búsquedas al igual que hace amazon.
+
+Hoy voy a avanzar creando la página principal en la que se verán los productos directamente por orden de publicación, esto avanzará a un diseño más completo más adelante.
+
+### Dia 34
+
+Hoy simplemente he trabajado en mejorar la barra de búsqueda y en reorganizar un poco el código.
+
+### Día 35
+
+Hoy estoy trabajando en la pagina principal. He descubierto que para alinear siempre en el centro hay que combinar las propiedades top y margin-top y left y margin-left.
+
+De forma que se le pone un top 50% o un left de 50% y el margin negativo de la mitad del tamaño de la imagen. Si es top, sera un margin-top -tamañoImagen. Siempre con el position absolute o relative activado puesto que es lo que permite usar las propiedades top, left, bottom y right.

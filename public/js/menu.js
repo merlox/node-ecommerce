@@ -12,6 +12,9 @@ window.onload = () => {
 			}
 		}
 	});
+	if(getParameterByName('searched')){
+		httpPost('/api/guardar-busqueda', getParameterByName('searched'));
+	}
 };
 
 //Para ocultar o mostrar el menu de departamentos para ir a uno determinado
@@ -32,7 +35,7 @@ function ocultarMostrarDepartamentos(){
 function buscarProducto(keyword){
 	if(keyword.length >= 3){
 		keyword = encodeURI(keyword);
-		httpGet('/search/'+keyword+'?limite=7', (results) => {
+		httpGet('/api/search/'+keyword+'?limite=7', (results) => {
 			q('#buscador-sugerencias').firstChild.innerHTML = '';
 			if(results != null && results != undefined){
 				q('#buscador-sugerencias').style.display = 'block';
@@ -41,11 +44,13 @@ function buscarProducto(keyword){
 				let htmlProducto = "";
 				for(let i = 0; i < results.length; i++){
 					if(i < results.length - 1){
-						htmlProducto = '<a href="http://192.168.1.100:8000/p/'+results[i].permalink+'"><li>'
-							+results[i].titulo+'</a></li><hr/>';
+						htmlProducto = '<li><a href="http://192.168.1.100:8000/p/'+results[i].permalink
+							+'?searched='+encodeURI(q('#buscador').value)+'">'+results[i].titulo+'</a><span class="producto-precio"> '
+							+results[i].precio+'€</span></li><hr/>';
 					}else{
-						htmlProducto = '<a href="http://192.168.1.100:8000/p/'+results[i].permalink+'"><li>'
-							+results[i].titulo+'</a></li>';
+						htmlProducto = '<li><a href="http://192.168.1.100:8000/p/'+results[i].permalink
+							+'?searched='+encodeURI(q('#buscador').value)+'">'+results[i].titulo+'</a><span class="producto-precio"> '
+							+results[i].precio+'€</span></li>';
 					}
 					q('#buscador-sugerencias').firstChild.insertAdjacentHTML('beforeend', htmlProducto);
 				}
@@ -64,6 +69,14 @@ q('#departamentos').addEventListener('click', () => {
 	ocultarMostrarDepartamentos();
 });
 
+//Para buscar sugerencias a cada toque
 q('#buscador').addEventListener('keyup', () => {
 	buscarProducto(q('#buscador').value);
+});
+
+q('#icono-busqueda').addEventListener('click', () => {
+	//Si la busqueda no esta vacía, redirigir a resultados de busqueda en caso de hacer click a buscar
+	if(q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
+		window.location = '//192.168.1.100:8000/search/?searched='+encodeURI(q('#buscador').value);
+	}
 });

@@ -22,19 +22,7 @@ routes.get('/p/:permalink', (req, res) => {
 });
 
 routes.get('/search/:keyword?', (req, res) => {
-	let keyword = decodeURI(req.params.keyword);
-	let limite = req.query.limite;
-    if(limite == undefined || limite == null){
-  	  limite = 0;
-    }
-    if(keyword != 'undefined' && keyword != 'null' && keyword != ''){
-		functions.buscarProductos(keyword, limite, (err, results) => {
-			if(err) console.log(err);
-			return res.send(results);
-		});
-	}else{
-		return res.send(null);
-	}
+    return res.sendFile(__dirname, '../../public/views/busqueda.html');
 });
 
 routes.get('/deleteSession', function(req, res){
@@ -46,8 +34,12 @@ routes.get('/chat', function(req, res){
 	if(typeof req.session.isLogged == 'undefined' || !req.session.isLogged){
 	  return res.redirect('/?status=Error&message=You are not logged');
 	}else if(req.session.isLogged){
-	  return res.sendFile(path.join(__dirname, '/public/html/chat.html'));
+	  return res.sendFile(path.join(__dirname, '../../public/html/chat.html'));
 	}
+});
+
+routes.get('/login', (req, res) =>{
+	return res.sendFile(path.join(__dirname, '../../public/views/login.html'));
 });
 
 routes.post('/register', function(req, res){
@@ -107,13 +99,22 @@ routes.get('/close-session', (req, res) => {
 	return res.redirect('/');
 });
 
-routes.use((req, res) => {
-  if(!res.heardersSent){
-    if(req.session.username == 'merunas'){
+routes.get('/admin', (req, res) => {
+	if(req.session.username == 'merunas'){
       console.log('redirecting');
       res.redirect('/admin/dashboard');
     }
-    else res.sendFile(path.join(__dirname, '../../public/html/main.html'));
+    else res.redirect('/');
+});
+
+routes.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, '../../public/views/index.html'));
+});
+
+routes.use((req, res) => {
+  if(!res.heardersSent){
+  	console.log('redirecting');
+	res.redirect('/');
   }
 });
 

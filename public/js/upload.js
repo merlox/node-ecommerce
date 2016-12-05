@@ -3,20 +3,20 @@ let informacionProducto = {};
 let contenidosMainMenu = "";
 
 //imagenesProducto = {
-//  "1" : {
+//  "1" : [
 //    "ubicación": "ubicación imagen"
-//  },
+//  ],
 //  "2": ...
 //}
 //El 1 representa la ubicación, siendo 1 la imágen más grande y el resto miniaturas.
 
 function guardarPublicarProducto(publicar){
-  informacionProducto.titulo = document.getElementById('producto-title').value;
-  informacionProducto.permalink = document.getElementById('permalink').value;
-  informacionProducto.precio = document.getElementById('producto-precio').value;
-  informacionProducto.descripcion = document.getElementById('producto-descripcion').value;
+  informacionProducto.titulo = id('producto-title').value;
+  informacionProducto.permalink = id('permalink').value;
+  informacionProducto.precio = id('producto-precio').value;
+  informacionProducto.descripcion = id('producto-descripcion').value;
   //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
-  let productoCategorias = document.getElementById('producto-categorias');
+  let productoCategorias = id('producto-categorias');
   informacionProducto.categoria = productoCategorias.childNodes[productoCategorias.selectedIndex].innerHTML;
   informacionProducto.atributos = objetoAtributos;
   informacionProducto.imagenes = imagenesProducto;
@@ -44,6 +44,7 @@ function guardarPublicarProducto(publicar){
       messageStatus(request.responseText, 'info');
       resetAllProductData();
 
+      getCategoriesFromServer();
       //Funcion del editProducts.js para generar las cajas de productos
       crearCajasProductos();
     }else{
@@ -53,52 +54,48 @@ function guardarPublicarProducto(publicar){
   };
   request.send(JSON.stringify(informacionProducto));
 }
-
 function resetAllProductData(){
   informacionProducto = {};
   imagenesProducto = {};
   //Objeto del atributo.js
   objetoAtributos = {};
-  document.getElementById('seccion-preview').className = '';
-  document.getElementById('contenedor-productos').innerHTML = '';
-  document.getElementById('lista-atributos').innerHTML = '';
-  document.getElementById('producto-title').value = '';
-  document.getElementById('permalink').value = '';
-  document.getElementById('producto-precio').value = '';
-  document.getElementById('producto-descripcion').value = '';
-  document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
-  if(document.getElementById('contenedor-imagen-principal')){
-    document.getElementById('contenedor-imagen-principal').remove();
+  id('seccion-preview').className = '';
+  id('contenedor-productos').innerHTML = '';
+  id('lista-atributos').innerHTML = '';
+  id('producto-title').value = '';
+  id('permalink').value = '';
+  id('producto-precio').value = '';
+  id('producto-descripcion').value = '';
+  id('contenedor-imagenes-secundarias').innerHTML = '';
+  if(id('contenedor-imagen-principal')){
+    id('contenedor-imagen-principal').remove();
   }
-  document.getElementById('imagen-principal').style.display = 'flex';
+  id('imagen-principal').style.display = 'flex';
   //Ocultar los atributos
-  document.getElementById('lista-atributos').innerHTML = '';
-  document.getElementById('lista-atributos').style.display = 'none';
+  id('lista-atributos').innerHTML = '';
+  id('lista-atributos').style.display = 'none';
 }
+//Funcion para activar el overlay negro "cambiar imagenes"
 function showChangeImage(e){
-  document.getElementById('contenedor-imagen-principal').style.height = document.getElementById('imagen-principal-uploaded').offsetHeight+"px";
-  if(document.getElementById('imagen-principal-uploaded-active') == null){
+  if(id('imagen-principal-uploaded-active') == null){
     e.insertAdjacentHTML('beforeend', '<div id="imagen-principal-uploaded-active">cambiar imágenes</div>');
-    document.getElementById('imagen-principal-uploaded-active').style.width = document.getElementById('imagen-principal-uploaded').width+"px";
-    document.getElementById('imagen-principal-uploaded-active').style.height = document.getElementById('imagen-principal-uploaded').height+"px";
-    document.getElementById('imagen-principal-uploaded-active').addEventListener('click', () => {
-      document.getElementById('image-upload-input').click();
+    id('imagen-principal-uploaded-active').addEventListener('click', () => {
+      id('image-upload-input').click();
     });
   }
 }
-
 //Funcion para guardar las imagenes en la carpeta de public-uploads
 function saveClientImages(){
-  let files = document.getElementById('image-upload-input').files;
+  let files = id('image-upload-input').files;
   let requestResults;
 
   if(files.length > 0){
     if(files.length <= 10){
 
-      if(document.getElementById('contenedor-imagen-principal')){
-        document.getElementById('contenedor-imagen-principal').remove();
+      if(id('contenedor-imagen-principal')){
+        id('contenedor-imagen-principal').remove();
       }
-      document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
+      id('contenedor-imagenes-secundarias').innerHTML = '';
       let formData = new FormData();
 
       for(let i = 0; i < files.length; i++){
@@ -134,14 +131,13 @@ function saveClientImages(){
     messageStatus('Error, files not recognized.', 'error');
   }
 }
-
 //Para mostrar las imágenes en el DOM
 function mostrarImagenesCliente(imagenesProducto){
 
   //Vaciamos las imágenes para que no se acumulen
-  document.getElementById('contenedor-imagenes-secundarias').innerHTML = '';
-  if(document.getElementById('contenedor-imagen-principal') != null){
-    document.getElementById('contenedor-imagen-principal').remove();
+  id('contenedor-imagenes-secundarias').innerHTML = '';
+  if(id('contenedor-imagen-principal') != null){
+    id('contenedor-imagen-principal').remove();
   }
 
   //Ponemos las imágenes sacadas del objeto de imagenes
@@ -152,7 +148,7 @@ function mostrarImagenesCliente(imagenesProducto){
       imagenSecundaria.onload = () => {
         let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
         imagenSecundaria.className = 'imagen-secundaria';
-        document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
+        id('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
         '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
         let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
         contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
@@ -163,11 +159,11 @@ function mostrarImagenesCliente(imagenesProducto){
       imagenPrincipal.src = '../public-uploads/'+imagenesProducto[i];
       imagenPrincipal.onload = () => {
         imagenPrincipal.id = 'imagen-principal-uploaded';
-        document.getElementById('imagen-principal').style.display = 'none';
-        document.getElementById('contenedor-interior-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
-        document.getElementById('contenedor-imagen-principal').appendChild(imagenPrincipal);
-        document.getElementById('contenedor-imagen-principal').style.height = imagenSubidaAltura+'vw';
-        document.getElementById('imagen-principal-uploaded').style.height = imagenSubidaAltura+'vw';
+        id('imagen-principal').style.display = 'none';
+        id('contenedor-interior-imagenes').insertAdjacentHTML('beforeend', '<div onmouseenter="showChangeImage(this);" onmouseleave="hideChangeImage(this);" id="contenedor-imagen-principal"></div>');
+        id('contenedor-imagen-principal').appendChild(imagenPrincipal);
+        id('contenedor-imagen-principal').style.height = imagenSubidaAltura+'vw';
+        id('imagen-principal-uploaded').style.height = imagenSubidaAltura+'vw';
       };
     }else{
       let imagenSecundaria = new Image();
@@ -176,7 +172,7 @@ function mostrarImagenesCliente(imagenesProducto){
         let imagenSubidaAltura = (imagenSecundaria.height*40)/imagenSecundaria.width;
         imagenSecundaria.style.order = i;
         imagenSecundaria.className = 'imagen-secundaria';
-        document.getElementById('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
+        id('contenedor-imagenes-secundarias').insertAdjacentHTML('beforeend',
         '<div onmouseenter="showChangeSecondaryImage(this)" onmouseleave="hideChangeSecondaryImage(this)" id="imagen-secundaria-orden-'+i+'" class="imagen-secundaria-contenedor"></div>');
         let contenedoresImagenesSecundarias = document.getElementsByClassName('imagen-secundaria-contenedor');
         contenedoresImagenesSecundarias[contenedoresImagenesSecundarias.length-1].appendChild(imagenSecundaria);
@@ -185,14 +181,10 @@ function mostrarImagenesCliente(imagenesProducto){
     }
   }
 }
-
-function hideChangeImage(e){
-  document.getElementById('imagen-principal-uploaded-active').remove();
-}
 //Función para reorganizar miniaturas
 function showChangeSecondaryImage(e){
   e.insertAdjacentHTML('beforeend', '<div id="imagen-secundaria-activa-hover"><span id="imagen-secundaria-activa-hover-flecha-up"></span><span id="imagen-secundaria-activa-hover-flecha-down"></span></div>');
-  document.getElementById('imagen-secundaria-activa-hover-flecha-down').addEventListener('click', (e) => {
+  id('imagen-secundaria-activa-hover-flecha-down').addEventListener('click', (e) => {
     let elementos = document.getElementsByClassName('imagen-secundaria-contenedor');
     let elementoSeleccionado = e.target.parentNode.parentNode; //Contenedor de la imagen miniatura
     let orderInicial = parseInt(elementoSeleccionado.id.replace('imagen-secundaria-orden-', ""));
@@ -203,11 +195,11 @@ function showChangeSecondaryImage(e){
       imagenesProducto[orderInicial] = propiedadBajar;
 
       let findId = 'imagen-secundaria-orden-'+(orderInicial+1);
-      document.getElementById(findId).id = 'imagen-secundaria-orden-'+orderInicial;
+      id(findId).id = 'imagen-secundaria-orden-'+orderInicial;
       elementoSeleccionado.id = 'imagen-secundaria-orden-'+(orderInicial+1);
     };
   });
-  document.getElementById('imagen-secundaria-activa-hover-flecha-up').addEventListener('click', (e) => {
+  id('imagen-secundaria-activa-hover-flecha-up').addEventListener('click', (e) => {
     let elementos = document.getElementsByClassName('imagen-secundaria-contenedor');
     let elementoSeleccionado = e.target.parentNode.parentNode //Contenedor de la imagen miniatura
     let orderInicial = parseInt(elementoSeleccionado.id.replace('imagen-secundaria-orden-', ""));
@@ -218,31 +210,38 @@ function showChangeSecondaryImage(e){
       imagenesProducto[orderInicial] = propiedadBajar;
 
       let findId = 'imagen-secundaria-orden-'+(orderInicial-1);
-      document.getElementById(findId).id = 'imagen-secundaria-orden-'+orderInicial;
+      id(findId).id = 'imagen-secundaria-orden-'+orderInicial;
       elementoSeleccionado.id = 'imagen-secundaria-orden-'+(orderInicial-1);
     };
     if(orderInicial == 2){
-      let imagenPrincipalNueva = document.getElementById('imagen-secundaria-orden-1').firstChild;
-      document.getElementById('imagen-principal-uploaded').src = imagenPrincipalNueva.src;
+      let imagenPrincipalNueva = id('imagen-secundaria-orden-1').firstChild;
+      id('imagen-principal-uploaded').src = imagenPrincipalNueva.src;
     }
   });
 }
+//Para eliminar el overlay de flechas negro sobre las imagenes secundarias
 function hideChangeSecondaryImage(e){
   e.lastChild.remove();
 }
-document.getElementById('button-guardar-producto').addEventListener('click', () => {
+//Para ocultar el overlay de "Cambiar imagenes"
+function hideChangeImage(e){
+  id('imagen-principal-uploaded-active').remove();
+}
+//Guardar el producto con publicado : 'no'
+id('button-guardar-producto').addEventListener('click', () => {
   guardarPublicarProducto(false);
 });
-document.getElementById('button-publicar-producto').addEventListener('click', () => {
+//Guardar el producto con publicado : 'si'
+id('button-publicar-producto').addEventListener('click', () => {
   guardarPublicarProducto(true);
 });
-document.getElementById('imagen-principal').addEventListener('click', () => {
-  document.getElementById('image-upload-input').click();
+id('imagen-principal').addEventListener('click', () => {
+  id('image-upload-input').click();
   contenidosMainMenu = document.getElementsByClassName('main-menu')[0].innerHTML;
   document.getElementsByClassName('main-menu')[0].style.width = '0%';
   document.getElementsByClassName('main-menu')[0].innerHTML = '0%';
 });
 //Funcion que se encarga de mostrar las imágenes
-document.getElementById('image-upload-input').addEventListener('change', () => {
+id('image-upload-input').addEventListener('change', () => {
   saveClientImages();
 });

@@ -64,9 +64,10 @@ let createUpdateProduct = function(permalink, productData, cb){
       'descripcion': productData.descripcion,
       'categoria': productData.categoria,
       'atributos': productData.atributos,
-      'publicado': productData.publicado
+      'publicado': productData.publicado,
+      'fecha': productData.fecha
     }, {
-      upsert: true
+      'upsert': true
     }, (err, result) => {
       db.close();
       if(err){
@@ -331,7 +332,7 @@ let guardarCategorias = function(categorias, callback){
     }, {
       'arrayCategorias': categorias
     }, {
-      upsert: true
+      'upsert': true
     }, (err, countFilesModified, result) => {
       db.close();
       if(err){
@@ -409,6 +410,43 @@ let copyDirectory = function(origin, end, callback){
     }
   }
 };
+let guardarBusqueda = function(busqueda, cb){
+  console.log('GuardarBusqueda, functions.js');
+  if(busqueda){
+    Mongo.connect(MongoUrl, (err, db) => {
+      if(err){
+        db.close();
+        return cb('Err, could not connect to the db.');
+      }
+      db.collection('busquedas').findOne({
+        'search': busqueda
+      }, (err, busquedaExistente) => {
+        if(err){
+          db.close();
+          return cb('Error searching busquedas');
+        }else{
+          if(!busquedaExistente){
+            busquedaExistente = {};
+            busquedaExistente.veces = 0;
+          }
+          //Para actualizar o crear un nuevo registro
+          db.collection('busquedas').update({
+            'search': busqueda
+          }, {
+            'search': busqueda,
+            'veces': (busquedaExistente.veces + 1)
+          }, {
+            'upsert': true
+          }, (err, result) => {
+            db.close();
+            if(err) return cb('Err, could not save the search in the database');
+            return cb(null);
+          });
+        }
+      });
+    });
+  }
+};
 
 exports.buscarProducto = buscarProducto;
 exports.render = render;
@@ -422,3 +460,4 @@ exports.createUpdateProduct = createUpdateProduct;
 exports.uploadPublicImages = uploadPublicImages;
 exports.borrarDirectorio = borrarDirectorio;
 exports.buscarProductos = buscarProductos;
+exports.guardarBusqueda = guardarBusqueda;

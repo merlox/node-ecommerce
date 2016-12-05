@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Admin edit products</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/status.css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="../css/adminMenu.css" media="screen" title="no title">
+  <link rel="stylesheet" href="../css/adminEditIndex.css">
+</head>
+<body>
+
+	<h5 id="status"></h5>
+
+    <div class="main-menu">
+        <a id="dashboard-button" href="/admin/dashboard">Dashboard</a>
+        <a id="see-products-button" href="/admin/edit-products">Edit Products</a>
+        <a id="edit-index" href="/admin/edit-index">Edit index</a>
+        <a id="close-session" href="/close-session">Exit admin</a>
+    </div>
+
+    <div id="contenedor-total">
+        <div id="placeholder-slider"></div>
+        <input id="input-slider" type="file" name="uploads[]" multiple="multiple">
+        <div id="contenedor-imagenes-slider"></div>
+    </div><!--Contenedor total-->
+
+    <script src="../js/functions.js" charset="utf-8"></script>
+    <script src="../js/status.js" charset="utf-8"></script>
+    <script src="../js/adminDashboard.js" charset="utf-8"></script>
+    <script src="../js/adminEditIndex.js"></script>
+</body>
+</html>

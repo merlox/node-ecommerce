@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="../css/adminMenu.css" media="screen" title="no title">
   <link rel="stylesheet" href="../css/adminEdit.css">
   <link rel="stylesheet" href="../css/adminDashboard.css" media="screen" title="no title">
-  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -17,10 +16,11 @@
 
     <div class="main-menu">
       <button id="contenedor-burger" class="main-menu-item">
-        <i class="fa fa-bars" aria-hidden="true"></i>
+        <img id="icono-menu" src="../images/menu.png">
       </button>
       <a id="dashboard-button" href="/admin/dashboard">Dashboard</a>
       <a id="see-products-button" href="/admin/edit-products">Edit Products</a>
+      <a id="edit-index" href="/admin/edit-index">Edit index</a>
       <a id="close-session" href="/close-session">Exit admin</a>
     </div>
 
@@ -28,9 +28,8 @@
 	    
       <section id="seccion-productos">
         <div id="contenedor-opciones-productos">
-          <select id="contenedor-categorias">
-            <option>Todas</option>
-          </select>
+          <!--Muy importante mantener este orden para que se detecten bien los child nodes-->
+          <select id="contenedor-categorias"><option>Todas</option></select>
           <button id="button-nuevo-producto">Nuevo producto</button>
         </div>
 
@@ -97,6 +96,7 @@
 	    </section>
     </div><!--Contenedor total-->
 
+    <script src="../js/functions.js" charset="utf-8"></script>
     <script src="../js/status.js" charset="utf-8"></script>
     <script src="../js/upload.js" charset="utf-8"></script>
     <script src="../js/atributo.js" charset="utf-8"></script>

@@ -5,7 +5,7 @@ GENERALES
 */
 	
 *{
-	transition: all 0.5s ease-out;
+	transition: all 0.2s ease-out;
 }
 body{
 	overflow-x: hidden;
@@ -130,7 +130,7 @@ PREVIEW
 	height: calc(100vh - 50px);
   	justify-content: center;
   	margin-top: 50px;
-  	margin-left: 150vw;
+  	margin-left: 200vw;
 	display: flex;
 }
 #seccion-preview.animar-menu-visible{

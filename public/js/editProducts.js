@@ -1,25 +1,30 @@
 let domainName = '192.168.1.100:8000';
 let isMenuVisible = true;
 let isMenuResponsive = false;
+//Para no mostrar el preview productos al hacer resize de la pantalla onload
+let esperarInteraccionMenu = true;
 
-//Al tener una pantalla de 1000 o menos, ocultar el menú si no lo estuviese ya y añadirle nueva funcionalidad
-window.addEventListener('resize', () => {
+window.addEventListener('load', () => {
+	crearCajasProductos();
 	if(window.innerWidth <= 1000){
 		isMenuResponsive = true;
-		ocultarMenu();
 	}else{
 		isMenuResponsive = false;
-		mostrarMenu();
 	}
 });
 
-window.onload = () => {
-	if(window.innerWidth <= 1000){
-		isMenuResponsive = true;
-	}else{
-		isMenuResponsive = false;
+//Al tener una pantalla de 1000 o menos, ocultar el menú si no lo estuviese ya y añadirle nueva funcionalidad
+window.addEventListener('resize', () => {
+	if(!esperarInteraccionMenu){
+		if(window.innerWidth <= 1000){
+			isMenuResponsive = true;
+			ocultarMenu();
+		}else{
+			isMenuResponsive = false;
+			mostrarMenu();
+		}
 	}
-};
+});
 
 function toggleMenu(){
 	if(isMenuVisible){
@@ -28,7 +33,6 @@ function toggleMenu(){
 		mostrarMenu(); 
 	}
 }
-
 //Dependiendo del tamaño de la pantalla, mostrará un tipo u otro de overlay
 function mostrarMenu(){
 	isMenuVisible = true;
@@ -42,45 +46,23 @@ function mostrarMenu(){
 		id('seccion-preview').className = 'animar-menu-visible';
 	}
 }
-
+//Para ocultar el menú de la izquierda
 function ocultarMenu(){
 	isMenuVisible = false;
  	id('seccion-preview').className = 'animar-menu-oculto';
 	id('overlay-black').style.display = 'none';
 	id('seccion-productos').className = 'ocultar-menu';
 }
-
-function id(id){
-	return document.getElementById(id);
-}
-
-function httpGet(url, cb){
-	//If no callback is provided in the function calling, ignore the callback
-	if(cb == undefined){
-		cb = () => {};	
-	}
-	let request = new XMLHttpRequest();
-	request.open('GET', url);
-	request.onreadystatechange = () => {
-      if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-		return cb(request.responseText);      
-      }else if(request.readyState == XMLHttpRequest.DONE){
-      	return cb(null);
-      }
-	}	
-	request.send();
-}
-
 //El estado de publicado o borrador se establece con los botones de "Guardar borrador" y "Publicar producto"
 //de modo que si quieres quitar un producto publicado le das a guardar borrador.
-
-//TODO poner los datos del producto para editarlo
 function loadFullProduct(productPermalink){
+	esperarInteraccionMenu = false;
 	if(isMenuResponsive){
 		ocultarMenu();
 	}else{
 		mostrarMenu();
 	}
+
 	objetoAtributos = {};
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
 		fullProduct = JSON.parse(fullProduct);
@@ -114,7 +96,6 @@ function loadFullProduct(productPermalink){
 		mostrarImagenesCliente(fullProduct.imagenes);
 	});
 }
-//TODO this
 function borrarProducto(productPermalink){
 	httpGet('/api/borrar-producto/'+productPermalink, (success) => {
 		if(success){
@@ -125,20 +106,21 @@ function borrarProducto(productPermalink){
 		}
 	});
 }
-
+//TODO Arreglar esto
 //Funcion para filtrar los objetos por categoria para ver solo los que pertenezcan a dicha categoria
 function filtrarVistaCategoria(e){
 	e = e.target;
 	let permalinks = document.getElementsByClassName('categoria-producto-unico');
+	let categoriaFiltroSeleccionada = id('contenedor-categorias').childNodes[e.selectedIndex].innerHTML;
 	for(let i = 0; i < permalinks.length; i++){
-		if(permalinks[i].innerHTML != e.innerHTML && permalinks[i].innerHTML != e.innerHTML+' (Borrador)'){
+		if(permalinks[i].innerHTML != categoriaFiltroSeleccionada &&
+		   permalinks[i].innerHTML != categoriaFiltroSeleccionada+' (Borrador)'){
 			document.getElementsByClassName('contenedor-producto')[i].style.display = 'none';
 		}else{
 			document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
 		}
 	}
 }
-
 //Función para quitar los filtros de vista por categoria y ver todos los productos en orden
 function quitarFiltroVistaCategoria(){
 	let cajasProductos = document.getElementsByClassName('contenedor-producto');
@@ -146,13 +128,10 @@ function quitarFiltroVistaCategoria(){
 		document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
 	}
 }
-
-//Funcion para crear el dom del objeto atributos pasandole el objeto.
+//Funcion para crear el dom del widget atributos pasandole el objeto.
 function mostrarObjetoAtributos(objetoAtributos){
 	let indexAtributo = 0;
-
 	id('lista-atributos').innerHTML = '';
-
 	for(let keyArrayAtributo in objetoAtributos){
 		//Mostrar atributo. Función del atributo.js para crear el nodo en el DOM.
 		crearNuevoAtributo(keyArrayAtributo);
@@ -210,9 +189,9 @@ function crearCajasProductos(){
 		}
 	});
 }
-
 //Animar el seccion preview para añadir un nuevo producto
 id('button-nuevo-producto').addEventListener('click', () => {
+	esperarInteraccionMenu = false;
 	crearCajasProductos();
 	if(isMenuResponsive){
 		ocultarMenu();
@@ -220,9 +199,8 @@ id('button-nuevo-producto').addEventListener('click', () => {
 	}else{
 		id('seccion-preview').className = 'animar-menu-visible';
 	}
-
 });
-
+//Para filtrar las imágenes por categorías
 id('contenedor-categorias').addEventListener('change', (e) => {
 	if(e.target.selectedIndex == 0){
 		quitarFiltroVistaCategoria();
@@ -238,5 +216,3 @@ id('contenedor-burger').addEventListener('click', () => {
 id('overlay-black').addEventListener('click', () => {
 	ocultarMenu();
 });
-
-crearCajasProductos();

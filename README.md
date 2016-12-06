@@ -805,3 +805,17 @@ Hoy simplemente he trabajado en mejorar la barra de búsqueda y en reorganizar u
 Hoy estoy trabajando en la pagina principal. He descubierto que para alinear siempre en el centro hay que combinar las propiedades top y margin-top y left y margin-left.
 
 De forma que se le pone un top 50% o un left de 50% y el margin negativo de la mitad del tamaño de la imagen. Si es top, sera un margin-top -tamañoImagen. Siempre con el position absolute o relative activado puesto que es lo que permite usar las propiedades top, left, bottom y right.
+
+Otro truco para alinear que he descubierto es usar position relative o absolute y ponerle top: 0 bottom: 0 y margin auto o en el left y right si lo quieres alinear justo en el centro;
+
+### Día 36
+
+Hoy he comenzado trabajando en la página del slider. No ha sido mucho, pero he hecho algunos pequeños cambios a mejor solucionando errores. Además de añadir la opción de resetear el slider.
+
+Particularmente esa función me ha tomado bastante tiempo puesto que no sabía porqué no podía publicar otra vez las imágenes tras resetear. Resultó ser que el value del input file se mantenia aunque resetease y si publicaba exactamente las mismas imágenes, no se activaba el listener onchange del input.
+
+Lo solucioné y luego añadí la funcionalidad de subir el slider al servidor además de guardar las imágenes en la base de datos para poder acceder a ellas más adelante en la página inicial de la web.
+
+Mañana trabajaré en crear las cajas mini slider que permitan ver muchos productos por tipo como "Los más vendidos", "Los más valorados", "Mejor calidad precio" y similares. Por eso hoy pensaré en cuales poner y en cómo hacerlo. Además me gustaría poner mini sliders con recomendaciones personalizadas a lo que busca y mira cada cliente aunque eso es más adelante como funcionalidad importante.
+
+También voy a mirar cómo ir haciendo la pasarela de pagos por paypal y tarjetas de crédito con seguridad ssl en el servidor. Lo de integrar paypal ya lo hice una vez el año pasado pero no consegui implementar pagos por tarjeta directamente, lo cual voy a investigar a fondo, aunque pagar por stripe es una muy buena elección.

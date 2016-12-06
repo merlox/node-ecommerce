@@ -26,9 +26,45 @@
 	display: none;
 	height: 300px;
 	width: 100%;
-	border: 1px solid grey;
+	position: relative;
 }
-.imagen-slider{
+#flecha-izquierda-slider{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	left: 60px;
+	height: 40px;
+	cursor: pointer;
+	z-index: 10;
+}
+#flecha-izquierda-slider:hover{
+	height: 45px;
+}
+#flecha-derecha-slider{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	right: 60px;
+	height: 40px;
+	cursor: pointer;
+	z-index: 10;
+}
+#flecha-derecha-slider:hover{
+	height: 45px;
+}
+#imagen-slider{
 	position: relative;
 	left: 50%;
+}
+#contenedor-botones-slider{
+	margin: 0 auto;
+	width: 405px;
+}
+#button-publicar-slider{
+	width: 200px;
+}
+#button-reset-slider{
+	width: 200px;
 }

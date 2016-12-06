@@ -83,8 +83,14 @@ api.post('/upload-image-product', (req, res) => {
     //Le cambiamos el nombre en caso de que tenga códigos html
     file.name = file.name.replace(/&.*;+/g, '-');
     //Esta linea es la que se encarga de subir el archivo en el servidor.
-    fs.rename(file.path, path.join(__dirname, '../../public/public-uploads/', file.name), (err) => {
+    functions.copyFile(file.path, path.join(__dirname, '../../public/public-uploads/'), file.name, (err) => {
       if(err) console.log(err);
+      else{
+        //Borramos el temporal para subir el definitivo
+        fs.unlink(file.path, (err) => {
+          if(err) console.log(err);
+        });
+      }
     });
 
     productImages[counterImage] = file.name;
@@ -125,6 +131,17 @@ api.post('/guardar-busqueda', (req, res) => {
   functions.guardarBusqueda(req.body.data, (err) => {
     if(err) console.log(err);
     return res.send(null);
+  });
+});
+//Para guardar las imágenes del slider en el servidor y base de datos
+api.post('/upload-slider-server', (req, res) => {
+  functions.guardarSliderImages(req.body.data, (err) => {
+    if(err){
+      console.log(err);
+      res.send(err);
+    }else{
+      res.send(null);
+    }
   });
 });
 //Para devolver los resultados en forma de objeto

@@ -191,20 +191,23 @@ let borrarProducto = function(permalink, cb){
 //Funcion para borrar el directorio y todas sus imagenes
 let borrarDirectorio = function(permalink){
   console.log('BorrarDirectorio, functions.js');
+
   let imagenesServer = path.join(__dirname, '/uploads/', permalink);
   fs.readdir(imagenesServer, (err, files) => {
     let i = 0;
     if(err) console.log('Error, no se pudo leer el directorio '+imagenesServer+': '+err);
-    files.forEach((file) => {
-      fs.unlink(path.join(imagenesServer, file), (err) => {
-        if(err) console.log('Error, no se pudo borrar la imagen '+path.join(imagenesServer, file)+'del servidor');
-        i++;
+    if(files.length != null){
+      files.forEach((file) => {
+        fs.unlink(path.join(imagenesServer, file), (err) => {
+          if(err) console.log('Error, no se pudo borrar la imagen '+path.join(imagenesServer, file)+'del servidor');
+          i++;
+        });
       });
-    });
-    if(i >= files.length){
-      fs.unlink(imagenesServer, (err) => {
-        if(err) console.log('Error, no se pudo borrar el dir '+imagenesServer+': '+err);
-      });
+      if(i >= files.length){
+        fs.unlink(imagenesServer, (err) => {
+          if(err) console.log('Error, no se pudo borrar el dir '+imagenesServer+': '+err);
+        });
+      }
     }
   });
 }
@@ -292,6 +295,7 @@ let render = function(page, dataObject, cb){
     return cb(null, resultado);
   });
 };
+//Origin es el archivo con path y end es solo directorio sin nombre de archivo
 let copyFile = function(origin, end, fileName, callback){
   console.log('CopyFile, functions.js');
   let callbackCalled = false;
@@ -447,6 +451,75 @@ let guardarBusqueda = function(busqueda, cb){
     });
   }
 };
+//Para guardar imagenes en el servidor y base de datos
+function guardarSliderImages(objectImages, cb){
+  console.log('GuardarSliderImages, functions.js');
+  let origin = path.join(__dirname, '../public/public-uploads/');
+  let end = path.join(__dirname, '/uploads/Slider/');
+  let tamañoObjectImages = Object.keys(objectImages).length;
+
+  borrarSliderFolder((err) => {
+    if(err) return cb(err);
+    for(let key in objectImages){
+      let fileLocation = path.join(origin, objectImages[key]);
+      copyFile(fileLocation, end, objectImages[key], (err) => {
+        if(err){
+          console.log(err);
+          return cb('Err, could not copy the image: '+objectImages[key]+' to the server /Slider/: '+err);
+        }
+      });
+    }
+    Mongo.connect(MongoUrl, (err, db) => {
+      if(err){
+        return cb('Err, could not connect to the db to save the slider images');
+      }
+      db.collection('utils').update({
+        'sliderImages': {$exists: true}
+      }, {
+        'sliderImages': objectImages
+      }, {
+        'upsert': true
+      }, (err, countFilesModified, result) => {
+        if(err) return cb('Err, could not save the slider images to the db: '+err);
+        else{
+          console.log('Done without errors');
+          return cb(null);
+        }
+      });
+    });
+  });
+
+  //Para borrar cada imagen en el Slider si las hubiera y crear el folder si no existiera
+  function borrarSliderFolder(cb){
+    fs.stat(end, (err, stats) => {
+      //Si el directorio no existe, lo creamos y terminamos
+      if(err){
+        fs.mkdir(end, (err) => {
+          if(err) cb(err);
+          else return cb(null);
+        });
+      //Sino, borramos su contenido si lo hubiera
+      }else{
+        fs.readdir(end, (err, files) => {
+          if(err) return cb(err);
+          //Si no está vacio el directorio borrar cada imagen
+          if(files.length != 0){
+            for(let i = 0; i < files.length; i++){
+              fs.unlink(path.join(end, files[i]), (err) => {
+                if(err) return cb(err);
+                if(i >= files.length-1){
+                  return cb(null);
+                }
+              });
+            }
+          }else{
+            return cb(null);
+          }
+        });
+      }
+    });
+  }
+};
 
 exports.buscarProducto = buscarProducto;
 exports.render = render;
@@ -461,3 +534,4 @@ exports.uploadPublicImages = uploadPublicImages;
 exports.borrarDirectorio = borrarDirectorio;
 exports.buscarProductos = buscarProductos;
 exports.guardarBusqueda = guardarBusqueda;
+exports.guardarSliderImages = guardarSliderImages;

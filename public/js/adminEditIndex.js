@@ -31,9 +31,7 @@ function resetSlider(){
 };
 function uploadSliderServer(){
 	//Post expects an object
-	httpPost('/api/upload-slider-server', objetoImagenes, (result) => {
-
-	});
+	httpPost('/api/upload-slider-server', objetoImagenes);
 };
 /*
 

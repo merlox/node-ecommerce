@@ -3,7 +3,7 @@ let Mongo = require('mongodb').MongoClient,
   path = require('path'),
   MongoUrl = 'mongodb://localhost:27017/ecommerce';
 
-let buscarProducto = function(permalink, callback){
+function buscarProducto(permalink, callback){
   console.log('BuscarProducto, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
@@ -22,7 +22,7 @@ let buscarProducto = function(permalink, callback){
     });
   });
 };
-let buscarProductos = function(keyword, limite, cb){
+function buscarProductos(keyword, limite, cb){
   console.log('BuscarProductos, functions.js');
   if(limite == undefined || limite == null){
     limite = 0;
@@ -47,7 +47,7 @@ let buscarProductos = function(keyword, limite, cb){
   });
 };
 //Funcion para reemplazar o añadir un producto si no existe
-let createUpdateProduct = function(permalink, productData, cb){
+function createUpdateProduct(permalink, productData, cb){
   console.log('CreateUpdateProduct, functions,js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
@@ -65,7 +65,9 @@ let createUpdateProduct = function(permalink, productData, cb){
       'categoria': productData.categoria,
       'atributos': productData.atributos,
       'publicado': productData.publicado,
-      'fecha': productData.fecha
+      'fecha': productData.fecha,
+      'visitas': 0,
+      'vendidos': 0
     }, {
       'upsert': true
     }, (err, result) => {
@@ -79,7 +81,7 @@ let createUpdateProduct = function(permalink, productData, cb){
   });
 };
 //Funcion para subir las imagenes publicas al servidor en uploads
-let uploadPublicImages = function(objectImages, permalinkName, cb){
+function uploadPublicImages(objectImages, permalinkName, cb){
   console.log('UploadPublicImages, functions.js');
   let publicUploads = path.join(__dirname, '../public/public-uploads/');
   let serverUploads = path.join(__dirname, '/uploads/');
@@ -118,7 +120,7 @@ let uploadPublicImages = function(objectImages, permalinkName, cb){
   });
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
-let getAllProducts = function(callback){
+function getAllProducts(callback){
   console.log('GetAllProducts, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
@@ -159,7 +161,7 @@ let getAllProducts = function(callback){
     });
   });
 };
-let borrarProducto = function(permalink, cb){
+function borrarProducto(permalink, cb){
   console.log('BorrarProducto, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
@@ -189,9 +191,8 @@ let borrarProducto = function(permalink, cb){
   });
 };
 //Funcion para borrar el directorio y todas sus imagenes
-let borrarDirectorio = function(permalink){
+function borrarDirectorio(permalink){
   console.log('BorrarDirectorio, functions.js');
-
   let imagenesServer = path.join(__dirname, '/uploads/', permalink);
   fs.readdir(imagenesServer, (err, files) => {
     let i = 0;
@@ -211,7 +212,7 @@ let borrarDirectorio = function(permalink){
     }
   });
 }
-let render = function(page, dataObject, cb){
+function render(page, dataObject, cb){
   console.log('Render, functions.js');
   fs.readFile(page, (err, content) => {
     if(err) throw err;
@@ -296,7 +297,7 @@ let render = function(page, dataObject, cb){
   });
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
-let copyFile = function(origin, end, fileName, callback){
+function copyFile(origin, end, fileName, callback){
   console.log('CopyFile, functions.js');
   let callbackCalled = false;
   let readStream = fs.createReadStream(origin);
@@ -320,7 +321,8 @@ let copyFile = function(origin, end, fileName, callback){
     }
   }
 };
-let guardarCategorias = function(categorias, callback){
+//Para guardar las categorías
+function guardarCategorias(categorias, callback){
   console.log('GuardarCategorias, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
@@ -347,7 +349,7 @@ let guardarCategorias = function(categorias, callback){
     });
   });
 };
-let getCategories = function(callback){
+function getCategories(callback){
   console.log('GetCategories, functions.js');
   Mongo.connect(MongoUrl, (err, db) => {
     if(err){
@@ -357,6 +359,7 @@ let getCategories = function(callback){
     db.collection('categorias').findOne({
       'arrayCategorias': {$exists : true}
     }, (err, result) => {
+      db.close();
       if(err){
         return callback('Err, could not find the categories.', null);
       }else{
@@ -365,7 +368,7 @@ let getCategories = function(callback){
     });
   });
 }
-let copyDirectory = function(origin, end, callback){
+function copyDirectory(origin, end, callback){
   console.log('CopyDirectory, functions.js');
   if(callback == undefined){
     callback = () => {};
@@ -414,7 +417,7 @@ let copyDirectory = function(origin, end, callback){
     }
   }
 };
-let guardarBusqueda = function(busqueda, cb){
+function guardarBusqueda(busqueda, cb){
   console.log('GuardarBusqueda, functions.js');
   if(busqueda){
     Mongo.connect(MongoUrl, (err, db) => {
@@ -471,6 +474,7 @@ function guardarSliderImages(objectImages, cb){
     }
     Mongo.connect(MongoUrl, (err, db) => {
       if(err){
+        db.close();
         return cb('Err, could not connect to the db to save the slider images');
       }
       db.collection('utils').update({
@@ -480,6 +484,7 @@ function guardarSliderImages(objectImages, cb){
       }, {
         'upsert': true
       }, (err, countFilesModified, result) => {
+        db.close();
         if(err) return cb('Err, could not save the slider images to the db: '+err);
         else{
           console.log('Done without errors');
@@ -520,6 +525,67 @@ function guardarSliderImages(objectImages, cb){
     });
   }
 };
+//Para copiar las imagenes del slider al cliente y retornar el objeto imagenes
+function getSlider(cb){
+  console.log('GetSlider, functions.js');
+  Mongo.connect(MongoUrl, (err, db) => {
+    if(err){
+      db.close();
+      return cb('Could not connect to the db', null);
+    }
+    db.collection('utils').findOne({
+      'sliderImages': {$exists: true}
+    }, (err, result) => {
+      db.close();
+      if(err) return cb('Error searching slider images: '+err, null);
+      let images = result.sliderImages;
+      let originDir = path.join(__dirname, '/uploads/Slider/');
+      let end = path.join(__dirname, '../public/public-uploads/');
+      for(let key in images){
+        copyFile(path.join(originDir, images[key]), end, images[key], (err) => {
+          if(err) return cb('Error copying the slider images to the client '+err, null);
+        });
+        if(key >= Object.keys(images).length){
+          //Si se han copiado todas las imágenes con exito
+          return cb(null, images);
+        }
+      }
+    });
+  });
+};
+//Para conseguir los 5 productos más vendidos para el minislider
+function getMasVendidos(cb){
+  console.log('GetMasVendidos, functions.js');
+  Mongo.connect(MongoUrl, (err, db) => {
+    if(err){
+      db.close();
+      return cb('Err, could not connect to the database.', null);
+    }
+    db.collection('productos').find({}, {
+      "_id": false,
+      "titulo": true,
+      "permalink": true,
+      "precio": true,
+      "imagenes": true,
+      "categoria": true
+    }).sort({
+      "vendidos": -1
+    }).limit(5).toArray((err, results) => {
+      db.close();
+      if(err) return cb('Error searching products, '+err, null);
+      let origin = path.join(__dirname, '/uploads/');
+      let end = path.join(__dirname, '../public/public-uploads');
+      for(let i = 0; i < results.length; i++){
+        copyFile(path.join(origin, results[i].permalink, results[i].imagenes[1]), end, results[i].imagenes[1], (err) => {
+          if(err) return cb('Err, could not copy the image '+results[i].imagenes[1]+' to the client, '+err, null);
+        });
+        if(i >= results.length-1){
+          return cb(null, results);
+        }
+      }
+    });
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.render = render;
@@ -535,3 +601,5 @@ exports.borrarDirectorio = borrarDirectorio;
 exports.buscarProductos = buscarProductos;
 exports.guardarBusqueda = guardarBusqueda;
 exports.guardarSliderImages = guardarSliderImages;
+exports.getSlider = getSlider;
+exports.getMasVendidos = getMasVendidos;

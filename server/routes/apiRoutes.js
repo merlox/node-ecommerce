@@ -117,7 +117,9 @@ api.post('/upload-product', (req, res) => {
     'categoria': req.body.categoria,
     'atributos': req.body.atributos,
     'publicado': req.body.publicado,
-    'fecha': new Date()
+    'fecha': new Date(),
+    'visitas': 0,
+    'vendidos': 0
   };
   functions.uploadPublicImages(req.body.imagenes, req.body.permalink.toLowerCase(), (err) => {
     if(err) console.log(err);
@@ -160,6 +162,17 @@ api.get('/search/:keyword?', (req, res) => {
     return res.send(null);
   }
 });
-
+api.get('/get-slider', (req, res) => {
+  functions.getSlider((err, result) => {
+    if(err) console.log(err);
+    return res.send(result);
+  });
+});
+api.get('/get-mas-vendidos', (req, res) => {
+  functions.getMasVendidos((err, results) => {
+    if(err) console.log(err);
+    return res.send(results);
+  });
+});
 
 module.exports = api;

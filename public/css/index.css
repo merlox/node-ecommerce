@@ -1,0 +1,95 @@
+/*
+
+SLIDER
+
+*/
+#contenedor-imagenes-slider{
+	overflow: hidden; 
+	display: none;
+	height: 300px;
+	width: 100%;
+	position: relative;
+}
+#flecha-izquierda-slider{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	left: 60px;
+	height: 40px;
+	cursor: pointer;
+	z-index: 10;
+}
+#flecha-izquierda-slider:hover{
+	height: 45px;
+}
+#flecha-derecha-slider{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	right: 60px;
+	height: 40px;
+	cursor: pointer;
+	z-index: 10;
+}
+#flecha-derecha-slider:hover{
+	height: 45px;
+}
+#imagen-slider{
+	position: relative;
+	left: 50%;
+}
+/*
+
+MINISLIDER
+
+*/
+#contenedor-minislider-vendidos{
+	width: 400px;
+	height: 400px;
+	border: 1px solid lightgrey;
+	padding: 5px;
+	margin-left: 50px;
+	position: relative;
+}
+#contenedor-minislider-vendidos h2{
+	font-family: 'heebo';
+}
+.flecha-izquierda-minislider{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	left: 10px;
+	height: 40px;
+	cursor: pointer;
+	z-index: 10;
+}
+.flecha-izquierda-minislider:hover{
+	height: 45px;
+}
+.flecha-derecha-minislider{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	right: 10px;
+	height: 40px;
+	cursor: pointer;
+	z-index: 10;
+}
+.flecha-derecha-minislider:hover{
+	height: 45px;
+}
+.imagen-minislider{
+	max-width: 400px;
+	max-height: 250px;
+}
+.precio-minislider{
+	color: tomato;
+}
+.categoria-minislider{
+	color: lightgrey;
+	font-size: 9pt;
+}

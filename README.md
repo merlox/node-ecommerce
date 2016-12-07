@@ -819,3 +819,9 @@ Lo solucioné y luego añadí la funcionalidad de subir el slider al servidor ad
 Mañana trabajaré en crear las cajas mini slider que permitan ver muchos productos por tipo como "Los más vendidos", "Los más valorados", "Mejor calidad precio" y similares. Por eso hoy pensaré en cuales poner y en cómo hacerlo. Además me gustaría poner mini sliders con recomendaciones personalizadas a lo que busca y mira cada cliente aunque eso es más adelante como funcionalidad importante.
 
 También voy a mirar cómo ir haciendo la pasarela de pagos por paypal y tarjetas de crédito con seguridad ssl en el servidor. Lo de integrar paypal ya lo hice una vez el año pasado pero no consegui implementar pagos por tarjeta directamente, lo cual voy a investigar a fondo, aunque pagar por stripe es una muy buena elección.
+
+### Día 37
+
+Hoy ha sido un día jodido, mi madre no para de gritar constantemente coo una loca, lo cual me dificulta mucho trabajar en la web app.
+
+Sin embargo he logrado crear el primer minislider de los productos más vendidos para que se vayan mostrando automáticamente. Le falta mejorar bastante el diseño y reparar el setinterval para que se vayan mostrando solas las imágenes.

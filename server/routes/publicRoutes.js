@@ -70,7 +70,10 @@ routes.post('/register', function(req, res){
 
 routes.post('/login', function(req, res){
 	Mongo.connect(MongoUrl, function(err, db){
-	  if(err) throw(err);
+	  if(err) {
+	  	db.close();
+	  	throw(err);
+	  }
 	  db.collection('users').find({
 	    'username': req.body.nombreUsuario,
 	    'password': req.body.passUsuario

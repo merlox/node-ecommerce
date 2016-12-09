@@ -38,7 +38,6 @@ SLIDER
 }
 #imagen-slider{
 	position: relative;
-	left: 50%;
 }
 /*
 
@@ -52,9 +51,11 @@ MINISLIDER
 	padding: 5px;
 	margin-left: 50px;
 	position: relative;
+	font-family: 'Crimson Text', serif;
 }
 #contenedor-minislider-vendidos h2{
 	font-family: 'heebo';
+	font-variant: small-caps;
 }
 .flecha-izquierda-minislider{
 	position: absolute;
@@ -84,12 +85,18 @@ MINISLIDER
 }
 .imagen-minislider{
 	max-width: 400px;
-	max-height: 250px;
+	max-height: 200px;
+	display: block;
+	margin: 0 auto;
 }
 .precio-minislider{
 	color: tomato;
+	font-weight: bold;
 }
 .categoria-minislider{
-	color: lightgrey;
-	font-size: 9pt;
+	color: #A1A1A1;
+	font-size: 12pt;
+}
+.producto-link{
+	text-decoration: none;
 }

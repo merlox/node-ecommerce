@@ -43,8 +43,6 @@ function guardarPublicarProducto(publicar){
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
       messageStatus(request.responseText, 'info');
       resetAllProductData();
-
-      getCategoriesFromServer();
       //Funcion del editProducts.js para generar las cajas de productos
       crearCajasProductos();
     }else{
@@ -70,10 +68,12 @@ function resetAllProductData(){
   if(id('contenedor-imagen-principal')){
     id('contenedor-imagen-principal').remove();
   }
+  id('producto-categorias').innerHTML = '';
   id('imagen-principal').style.display = 'flex';
   //Ocultar los atributos
   id('lista-atributos').innerHTML = '';
   id('lista-atributos').style.display = 'none';
+  getCategoriesFromServer();
 }
 //Funcion para activar el overlay negro "cambiar imagenes"
 function showChangeImage(e){
@@ -102,15 +102,18 @@ function saveClientImages(){
         let file = files[i];
         formData.append('uploads[]', file, file.name);
       }
+      contenidosMainMenu = q('.main-menu').innerHTML;
+      q('.main-menu').style.width = '0%';
+      q('.main-menu').innerHTML = '0%';
 
       let request = new XMLHttpRequest();
       request.upload.addEventListener('progress', (e) => {
         if(e.lengthComputable){
           percentComplete = parseInt(e.loaded/e.total * 100);
-          document.getElementsByClassName('main-menu')[0].innerHTML = percentComplete + '%';
-          document.getElementsByClassName('main-menu')[0].style.width = percentComplete + '%';
+          q('.main-menu').innerHTML = percentComplete + '%';
+          q('.main-menu').style.width = percentComplete + '%';
           if(percentComplete >= 100){
-            document.getElementsByClassName('main-menu')[0].innerHTML = contenidosMainMenu;
+            q('.main-menu').innerHTML = contenidosMainMenu;
           }
         }
       }, false);
@@ -237,9 +240,6 @@ id('button-publicar-producto').addEventListener('click', () => {
 });
 id('imagen-principal').addEventListener('click', () => {
   id('image-upload-input').click();
-  contenidosMainMenu = document.getElementsByClassName('main-menu')[0].innerHTML;
-  document.getElementsByClassName('main-menu')[0].style.width = '0%';
-  document.getElementsByClassName('main-menu')[0].innerHTML = '0%';
 });
 //Funcion que se encarga de mostrar las imágenes
 id('image-upload-input').addEventListener('change', () => {

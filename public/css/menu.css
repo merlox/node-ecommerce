@@ -36,6 +36,7 @@ hr{
 	position: absolute;
 	left: 170px;
 	top: -400px;
+	z-index: 12;
 	width: 125px;
 	box-sizing: border-box;
 }

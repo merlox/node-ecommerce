@@ -12,13 +12,13 @@ let functions = require('./../functions.js'),
   api = express.Router();
 
 api.get('/get-images/:permalink', (req, res) => {
-  functions.copyDirectory(path.join(__dirname, '../uploads/', req.params.permalink), path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
+  functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURI(req.params.permalink)), path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
     if(err) console.log(err);
     res.send('Images copied');
   });
 });
 api.get('/permalink-check/:permalink', (req, res) => {
-	functions.buscarProducto(req.params.permalink, (err, result) => {
+	functions.buscarProducto(encodeURI(req.params.permalink), (err, result) => {
 		if(err) return res.send(err);
 		if(result != null){
 			return res.send(true);
@@ -53,17 +53,23 @@ api.get('/get-all-products/:imagenesLimit?', (req, res) => {
 	});
 });
 api.get('/get-single-product/:permalink', (req, res) => {
-  functions.buscarProducto(req.params.permalink, (err, result) => {
-    if(err) return res.send(err);
-    functions.copyDirectory(path.join(__dirname, '../uploads/', req.params.permalink), 
+  functions.buscarProducto(encodeURI(req.params.permalink), (err, result) => {
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }
+    functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURI(req.params.permalink)), 
         path.join(__dirname, '../../public/public-uploads/'), (err) => {
-      if(err) console.log(err);
-      else return res.send(result);
+      if(err) {
+        console.log(err);
+        return res.send('There was an error getting the product, please try again.');
+      }
+      return res.send(result);
     });
   });
 });
 api.get('/borrar-producto/:permalink', (req, res) => {
-  functions.borrarProducto(req.params.permalink, (err) => {
+  functions.borrarProducto(encodeURI(req.params.permalink), (err) => {
     if(err){
       console.log(err);
       return res.send(err);
@@ -108,10 +114,12 @@ api.post('/upload-image-product', (req, res) => {
 //1. Create a folder for each product images and then copy the folder to uploads in the server
 api.post('/upload-product', (req, res) => {
   //Guardamos el producto en la base de datos
+  console.log(req.body.permalink);
+  console.log(encodeURI(req.body.permalink));
   informacionProducto = {
     'titulo': req.body.titulo,
     'imagenes': req.body.imagenes,
-    'permalink': req.body.permalink.toLowerCase(),
+    'permalink': req.body.permalink,
     'precio': req.body.precio,
     'descripcion': req.body.descripcion,
     'categoria': req.body.categoria,

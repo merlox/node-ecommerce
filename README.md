@@ -825,3 +825,19 @@ También voy a mirar cómo ir haciendo la pasarela de pagos por paypal y tarjeta
 Hoy ha sido un día jodido, mi madre no para de gritar constantemente coo una loca, lo cual me dificulta mucho trabajar en la web app.
 
 Sin embargo he logrado crear el primer minislider de los productos más vendidos para que se vayan mostrando automáticamente. Le falta mejorar bastante el diseño y reparar el setinterval para que se vayan mostrando solas las imágenes.
+
+### Día 38
+
+Hoy he reparado unos pequeños bugs que había en la interfaz de añadir productos para poder crear directorios y demas cosas relacionadas con las imagenes.
+
+No ha sido mucho pero estamos avanzando. Mañana seguiré con los minisliders.
+
+### Día 39
+
+Hoy he mejorado un poco el widget del minislider pero me he centrado más en una nueva funcionalidad: añadir productos random al ejecutar un comando en el servidor.
+
+Me ha costado más de 100 líneas y 2 o 3 horas pero lo he conseguido. Ahora se añaden productos al servidor si quiero ver cómo quedarían.
+
+Por otro lado, la función copyFile del servidor me está dando muchos problemas. Las imágenes no cargan o se saturan, no se exactamente que está pasando y tendré que repararlo mañana.
+
+Esa función utiliza lo que son las "pipes" de node para transmitir archivos constantemente hasta completarlo, es algo que he implementado sin conocer mucho su alcance. Por suerte tengo un libro bastante avanzado de node llamado "Nodejs design patterns" en el cual explica en detalle el funcionamiento de las pipes así que lo voy a mirar hoy para entender mejor cual es el problema.

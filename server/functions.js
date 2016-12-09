@@ -12,6 +12,8 @@ function buscarProducto(permalink, callback){
     }
     db.collection('productos').findOne({
       'permalink': permalink
+    }, {
+      '_id': false
     }, (err, result) => {
       db.close();
       if(err){
@@ -137,20 +139,27 @@ function getAllProducts(callback){
         for(let i = 0; i<results.length; i++){
           let folderServer = path.join(__dirname, '/uploads/', results[i].permalink);
           let folderClient = path.join(__dirname, '../public/public-uploads/');
-          fs.readdir(folderServer, (err, imagesInFolder) => {
-            if(err) return callback(err, null);
+          //Comprobamos que exista el directorio
+          fs.stat(folderServer, (err, stats) => {
+            if(err){
+              console.log('El directorio: '+folderServer+' no existe para ese producto ,'+err);
+            }else{
+              fs.readdir(folderServer, (err, imagesInFolder) => {
+                if(err) return callback(err, null);
 
-            //Buscar la primera imagen guardada en la bd para copiarla
-            for(let f = 1; f<imagesInFolder.length; f++){
-              if(results[i].imagenes[1] == imagesInFolder[f]){
-                let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
-                copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
-                  console.log('Imagen copiadas a public-uploads ', firstImageInFolder);
-                  if(err){
-                    callback(err, false);
+                //Buscar la primera imagen guardada en la bd para copiarla
+                for(let f = 1; f<imagesInFolder.length; f++){
+                  if(results[i].imagenes[1] == imagesInFolder[f]){
+                    let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
+                    copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
+                      console.log('Imagen copiadas a public-uploads ', firstImageInFolder);
+                      if(err){
+                        callback(err, false);
+                      }
+                    });
                   }
-                });
-              }
+                }
+              });
             }
           });
         }
@@ -182,6 +191,8 @@ function borrarProducto(permalink, cb){
         if(err){
           console.log(err);
           return cb('Error, could not delete the product');
+        }else{
+          console.log('Se ha borrado el producto: '+permalink+ 'con exito.');
         }
         //Borramos el directorio y todas sus imagenes
         borrarDirectorio(permalink);
@@ -205,7 +216,7 @@ function borrarDirectorio(permalink){
         });
       });
       if(i >= files.length){
-        fs.unlink(imagenesServer, (err) => {
+        fs.rmdir(imagenesServer, (err) => {
           if(err) console.log('Error, no se pudo borrar el dir '+imagenesServer+': '+err);
         });
       }
@@ -302,11 +313,13 @@ function copyFile(origin, end, fileName, callback){
   let callbackCalled = false;
   let readStream = fs.createReadStream(origin);
   readStream.on('error', (err) => {
+    console.log(err);
     done(err);
   });
   let finalName = path.join(end, fileName);
   let writeStream = fs.createWriteStream(finalName);
   writeStream.on('error', (err) => {
+    console.log(err);
     done(err);
   });
   writeStream.on('close', (ex) => {

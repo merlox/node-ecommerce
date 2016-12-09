@@ -8,10 +8,12 @@ let intervaloMiniSlider;
 window.addEventListener('load', () => {
 	httpGet('/api/get-slider', (result) => {
 		colocarImagenesSlider(result);
+		intervaloCambiarImagenes();
 	});
 	httpGet('/api/get-mas-vendidos', (results) => {
 		let resultados = JSON.parse(results);
 		colocarMasVendidos(resultados, 0);
+		iniciarIntervaloMiniSlider();
 	});
 });
 /*
@@ -24,15 +26,13 @@ function colocarImagenesSlider(jsonData){
 	objetoImagenes = JSON.parse(jsonData);
 	let contenedorImagenes = q('#contenedor-imagenes-slider');
 	contenedorImagenes.style.display = 'block';
-	//Para añadir un margin negativo de la mitad del tamaño que combinado 
-	//con left 50% alinea perfecto en el centro siempre
-	let img = new Image();
-	img.src = '../public-uploads/'+objetoImagenes[1];
-	img.id = 'imagen-slider';
 	indexImagenActiva = 1;
-	img.style.marginLeft = (-(img.width/2))+'px';
-	contenedorImagenes.insertAdjacentHTML('beforeend', img.outerHTML);
-	q('#imagen-slider').style.width = (-(img.width/2))+'px';
+	contenedorImagenes.insertAdjacentHTML('beforeend', 
+		'<img id="imagen-slider" src="../public-uploads/'+objetoImagenes[1]+'">');
+	q('#imagen-slider').addEventListener('load', (e) => {
+		e.target.style.marginLeft = -e.target.width/2+"px";
+		e.target.style.left = "50%";
+	});
 };
 //Para poner la siguiete imagen a la derecha
 function cambiarImagenDerecha(){
@@ -56,6 +56,9 @@ function cambiarImagenIzquierda(){
 		indexImagenActiva = --indexImagenActiva;
 	}
 	q('#imagen-slider').src = '../public-uploads/'+objetoImagenes[indexImagenActiva];
+	//Reseteamos el intervalo si el usuario hace click
+	clearInterval(intervaloSlider);
+	intervaloCambiarImagenes();
 };
 //Para cambiar las imágenes a la derecha cada 5 segundos
 function intervaloCambiarImagenes(){
@@ -72,19 +75,31 @@ function colocarMasVendidos(data, index){
 	let productoHtml = '';
 	let producto = productosMasVendidos[index];
 	indexProductosVendidos = index;
-	if(producto.categoria == 'Default'){
-		productoHtml = '<div id="contenedor-producto-minislider">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h4>'
-			+producto.titulo+'</h4><span class="precio-minislider">'
-			+producto.precio+'€</span></div>';
+	let tituloOriginal = producto.titulo;
+	let tituloCorto = '';
+	if(producto.titulo.length > 70){
+		tituloCorto = producto.titulo.substring(0, 70);
+		tituloCorto += '...';
 	}else{
-		productoHtml = '<div id="contenedor-producto-minislider">'
+		tituloCorto = producto.titulo;
+	}
+	if(producto.categoria == 'Default'){
+		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+			+encodeURI(producto.permalink)
+			+'"><div id="contenedor-producto-minislider">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h4>'
-			+producto.titulo+'</h4><span class="precio-minislider">'
-			+producto.precio+'€</span><span class="categoria-minislider">'
-			+producto.categoria+'</span></div>';
+			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
+			+tituloCorto+'</h3><span class="precio-minislider"> '
+			+producto.precio+'€</span></div></a>';
+	}else{
+		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+			+encodeURI(producto.permalink)
+			+'"><div id="contenedor-producto-minislider">'
+			+'<img class="imagen-minislider" src="../public-uploads/'
+			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
+			+tituloCorto+'</h3><span class="precio-minislider">'
+			+producto.precio+'€</span><span class="categoria-minislider"> '
+			+producto.categoria+'</span></div></a>';
 	}
 	if(q('#contenedor-producto-minislider') != undefined || q('#contenedor-producto-minislider') != null){
 		q('#contenedor-producto-minislider').remove();

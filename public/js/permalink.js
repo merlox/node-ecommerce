@@ -15,18 +15,17 @@ function checkPermalinkState(){
 	request.send();
 }
 
-function replaceBadCharacters(string, cb){
+function replaceBadCharacters(string){
 	string = string.replace(/(ñ)+/g, 'n');
-	return cb(string.replace(/(\?|\\|\/|:|\*|"|<|>|\|| )+/g, "-"));
+	string = string.toLowerCase();
+	string = string.replace(/(\?|\\|\/|:|\*|"|<|>|\|,|\.|:|;| )+/g, "-");
+	string = encodeURI(string);
+	return string;
 }
 
 document.getElementById('producto-title').addEventListener('keyup', () => {
-  	
-  	replaceBadCharacters(document.getElementById('producto-title').value, (result) => {
-  		document.getElementById('permalink').value = result;
-  		document.getElementById('permalink').value = encodeURI(result);
-  	});
-  		
+  	let goodPermalink = replaceBadCharacters(document.getElementById('producto-title').value);
+  	document.getElementById('permalink').value = goodPermalink;
   	checkPermalinkState();
 });
 document.getElementById('permalink').addEventListener('keyup', () => {

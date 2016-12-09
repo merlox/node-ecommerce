@@ -65,6 +65,7 @@ function loadFullProduct(productPermalink){
 
 	objetoAtributos = {};
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
+		console.log(fullProduct);
 		fullProduct = JSON.parse(fullProduct);
 		id('producto-title').value = fullProduct.titulo;
 		id('producto-precio').value = fullProduct.precio;
@@ -153,7 +154,7 @@ function crearCajasProductos(){
 				let objetoProducto = arrayProductos[i];
 				let tituloProducto = objetoProducto.titulo;
 				let addEspacioTitulo = '';
-				if(objetoProducto.titulo.length > 54){
+				if(objetoProducto.titulo.length >= 50){
 					objetoProducto.titulo = objetoProducto.titulo.substring(0, 55);
 					objetoProducto.titulo += "...";
 				}else{

@@ -55,6 +55,10 @@ function q(selector){
 	return document.querySelector(selector);
 }
 
+function qAll(selector){
+	return document.querySelectorAll(selector);
+}
+
 function id(id){
 	return document.getElementById(id);
 }

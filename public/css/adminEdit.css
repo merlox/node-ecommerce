@@ -67,8 +67,6 @@ PRODUCTOS
 	padding: 5px;
 	padding-left: 0;
 	width: 100%;
-	display: flex;
-	flex-direction: column;
 }
 .contenedor-producto-informacion h3{
 	margin: 0;
@@ -98,7 +96,8 @@ PRODUCTOS
 	display: flex;
 }
 #contenedor-categorias{
-	width: 50%;
+	width: 40%;
+	border-right: 0; 
 }
 #button-nuevo-producto{
 	width: 50%;
@@ -117,6 +116,31 @@ PRODUCTOS
 }
 .sombra-seccion-productos{
 	box-shadow: 13px 8px 35px -8px rgba(0,0,0, 0.3);
+}
+.paginador-productos{
+	list-style-type: none;
+	padding-left: 0;
+	padding: 5px;
+	margin: 0;
+	display: flex;
+	width: 100%;
+	overflow-x: auto;
+}
+.paginador-productos li{
+	border: 1px solid grey;
+	padding: 4px;
+	margin-left: 3px;
+	cursor: pointer;
+}
+.paginador-productos li:hover{
+	background-color: lightblue;
+}
+.paginador-productos li.active{
+	background-color: grey;
+	color: white;
+}
+#limitar-productos{
+	float: right;
 }
 
 /**

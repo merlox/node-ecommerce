@@ -59,6 +59,7 @@ function resetAllProductData(){
   objetoAtributos = {};
   id('seccion-preview').className = '';
   id('contenedor-productos').innerHTML = '';
+  id('contenedor-categorias').innerHTML = '<option>Todas</option>';
   id('lista-atributos').innerHTML = '';
   id('producto-title').value = '';
   id('permalink').value = '';

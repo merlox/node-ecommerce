@@ -1,12 +1,16 @@
 let express = require('express'),
+	Mongo = require('mongodb').MongoClient,
+	MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
 	app = express(),
 	functions = require('./../functions.js'),
 	path = require('path'),
-	Mongo = require('mongodb').MongoClient,
- 	MongoUrl = 'mongodb://localhost:27017/ecommerce';
-;
+	routes = express.Router(),
+	db = {};
 
-const routes = express.Router();
+Mongo.connect(MongoUrl, (err, database) => {
+	if(err) console.log(err);
+	db = database;
+});
 
 routes.get('/p/:permalink', (req, res) => { 
   functions.buscarProducto(req.params.permalink, (err, result) => {
@@ -43,58 +47,44 @@ routes.get('/login', (req, res) =>{
 });
 
 routes.post('/register', function(req, res){
-	Mongo.connect(MongoUrl, function(err, db){
-	  if(err) throw(err);
-
-	  db.collection('users').find({
-	      'username': req.body.nombreUsuario
-	    }).toArray(function(err, results){
-	      if(err) throw(err);
-	      if(typeof(results) != 'undefined' && results.length>0){
-	        db.close();
-	        return res.redirect('/?status=Error&message=User already exists');
-	      }else{
-	        db.collection('users').insert({
-	          'username': req.body.nombreUsuario,
-	          'password': req.body.passUsuario
-	        }, function(err, result){
-	          if(err) throw(err);
-	        });
-	        db.close();
-	        req.session.isLogged = true;
-	        return res.redirect('/login?status=Success&message=User created successfully!');
-	      }
-	    });
-	});
+  db.collection('users').find({
+      'username': req.body.nombreUsuario
+    }).toArray(function(err, results){
+      if(err) throw(err);
+      if(typeof(results) != 'undefined' && results.length>0){
+        return res.redirect('/?status=Error&message=User already exists');
+      }else{
+        db.collection('users').insert({
+          'username': req.body.nombreUsuario,
+          'password': req.body.passUsuario
+        }, function(err, result){
+          if(err) throw(err);
+        });
+        req.session.isLogged = true;
+        return res.redirect('/login?status=Success&message=User created successfully!');
+      }
+    });
 });
 
 routes.post('/login', function(req, res){
-	Mongo.connect(MongoUrl, function(err, db){
-	  if(err) {
-	  	db.close();
-	  	throw(err);
-	  }
-	  db.collection('users').find({
-	    'username': req.body.nombreUsuario,
-	    'password': req.body.passUsuario
-	  }).toArray(function(err, results){
-	    if(err) throw(err);
-	    if(typeof(results) != 'undefined' && results.length > 0){
-	      req.session.isLogged = true;
-	      req.session.username = req.body.nombreUsuario;
-	      usernameLogged = req.session.username;
-	      if(req.session.username == 'merunas' && results[0].password == 'Merunas@1'){
-	        console.log('Hello admin');
-	        return res.redirect('/admin/dashboard');
-	      }
-	      db.close();
-	      return res.redirect('/user/dashboard');
-	    }else{
-	      db.close();
-	      return res.redirect('/?status=Error&message=Bad username or password');
-	    }
-	  });
-	});
+  db.collection('users').find({
+    'username': req.body.nombreUsuario,
+    'password': req.body.passUsuario
+  }).toArray(function(err, results){
+    if(err) throw(err);
+    if(typeof(results) != 'undefined' && results.length > 0){
+      req.session.isLogged = true;
+      req.session.username = req.body.nombreUsuario;
+      usernameLogged = req.session.username;
+      if(req.session.username == 'merunas' && results[0].password == 'Merunas@1'){
+        console.log('Hello admin');
+        return res.redirect('/admin/dashboard');
+      }
+      return res.redirect('/user/dashboard');
+    }else{
+      return res.redirect('/?status=Error&message=Bad username or password');
+    }
+  });
 });
 
 routes.get('/close-session', (req, res) => {

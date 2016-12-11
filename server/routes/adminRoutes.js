@@ -18,4 +18,8 @@ admin.get('/edit-index', (req, res) => {
 	return res.sendFile(path.join(__dirname, '../../public/html/adminEditIndex.html'));
 });
 
+admin.get('/', (req, res) => {
+	res.redirect('/admin/dashboard');
+});
+
 module.exports = admin;

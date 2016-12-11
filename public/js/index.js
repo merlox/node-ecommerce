@@ -1,9 +1,12 @@
-let objetoImagenes = {};
-let productosMasVendidos = {};
-let indexImagenActiva = '';
-let indexProductosVendidos = '';
-let intervaloSlider;
-let intervaloMiniSlider;
+let objetoImagenes = {},
+	productosMasVendidos = {},
+	productosMasPopulares = {},
+	indexImagenActiva = '',
+	indexProductosVendidos = '',
+	indexProductosPopulares = '',
+	intervaloSlider,
+	intervaloMiniSliderVendidos,
+	intervaloMiniSliderPopulares;
 
 window.addEventListener('load', () => {
 	httpGet('/api/get-slider', (result) => {
@@ -13,7 +16,12 @@ window.addEventListener('load', () => {
 	httpGet('/api/get-mas-vendidos', (results) => {
 		let resultados = JSON.parse(results);
 		colocarMasVendidos(resultados, 0);
-		iniciarIntervaloMiniSlider();
+		iniciarIntervaloMiniSliderVendidos();
+	});
+	httpGet('/api/get-mas-populares', (results) => {
+		let resultados = JSON.parse(results);
+		colocarMasPopulares(resultados, 0);
+		iniciarIntervaloMiniSliderPopulares();
 	});
 });
 /*
@@ -85,57 +93,135 @@ function colocarMasVendidos(data, index){
 	}
 	if(producto.categoria == 'Default'){
 		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
-			+encodeURI(producto.permalink)
-			+'"><div id="contenedor-producto-minislider">'
+			+producto.permalink
+			+'"><div id="contenedor-producto-minislider-vendidos">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
 			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
 			+tituloCorto+'</h3><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
 		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
-			+encodeURI(producto.permalink)
-			+'"><div id="contenedor-producto-minislider">'
+			+producto.permalink
+			+'"><div id="contenedor-producto-minislider-vendidos">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
 			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
 			+tituloCorto+'</h3><span class="precio-minislider">'
 			+producto.precio+'€</span><span class="categoria-minislider"> '
 			+producto.categoria+'</span></div></a>';
 	}
-	if(q('#contenedor-producto-minislider') != undefined || q('#contenedor-producto-minislider') != null){
-		q('#contenedor-producto-minislider').remove();
+	if(q('#contenedor-producto-minislider-vendidos') != undefined || q('#contenedor-producto-minislider-vendidos') != null){
+		q('#contenedor-producto-minislider-vendidos').remove();
 	}
 	q('#contenedor-minislider-vendidos').insertAdjacentHTML('beforeend', productoHtml);
-	// iniciarIntervaloMiniSlider();
 };
-function flechaDerechaMiniSlider(){
-	let tamañoProductosVendidos = Object.keys(productosMasVendidos).length;
-	if(indexProductosVendidos >= tamañoProductosVendidos-1){
+function colocarMasPopulares(data, index){
+	productosMasPopulares = data;
+	let productoHtml = '';
+	let producto = productosMasPopulares[index];
+	indexProductosPopulares = index;
+	let tituloOriginal = producto.titulo;
+	let tituloCorto = '';
+	if(producto.titulo.length > 70){
+		tituloCorto = producto.titulo.substring(0, 70);
+		tituloCorto += '...';
+	}else{
+		tituloCorto = producto.titulo;
+	}
+	if(producto.categoria == 'Default'){
+		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+			+producto.permalink
+			+'"><div id="contenedor-producto-minislider-populares">'
+			+'<img class="imagen-minislider" src="../public-uploads/'
+			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
+			+tituloCorto+'</h3><span class="precio-minislider"> '
+			+producto.precio+'€</span></div></a>';
+	}else{
+		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+			+producto.permalink
+			+'"><div id="contenedor-producto-minislider-populares">'
+			+'<img class="imagen-minislider" src="../public-uploads/'
+			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
+			+tituloCorto+'</h3><span class="precio-minislider">'
+			+producto.precio+'€</span><span class="categoria-minislider"> '
+			+producto.categoria+'</span></div></a>';
+	}
+	if(q('#contenedor-producto-minislider-populares') != undefined || q('#contenedor-producto-minislider-populares') != null){
+		q('#contenedor-producto-minislider-populares').remove();
+	}
+	q('#contenedor-minislider-populares').insertAdjacentHTML('beforeend', productoHtml);
+};
+function flechaDerechaMiniSliderVendidos(){
+	let tamañoProductos = Object.keys(productosMasVendidos).length;
+	if(indexProductosVendidos >= tamañoProductos-1){
 		indexProductosVendidos = 0;
 	}else{
 		indexProductosVendidos++;
 	}
 	colocarMasVendidos(productosMasVendidos, indexProductosVendidos);
 	//Reseteamos el intervalo si el usuario hace click
-	clearInterval(intervaloMiniSlider);
-	iniciarIntervaloMiniSlider();
+	clearInterval(intervaloMiniSliderVendidos);
+	iniciarIntervaloMiniSliderVendidos();
 };
-function flechaIzquierdaMiniSlider(){
-	let tamañoProductosVendidos = Object.keys(productosMasVendidos).length;
+function flechaIzquierdaMiniSliderVendidos(){
+	let tamañoProductos = Object.keys(productosMasVendidos).length;
 	if(indexProductosVendidos <= 0){
-		indexProductosVendidos = tamañoProductosVendidos-1;
+		indexProductosVendidos = tamañoProductos-1;
 	}else{
 		indexProductosVendidos--;
 	}
 	colocarMasVendidos(productosMasVendidos, indexProductosVendidos);
 	//Reseteamos el intervalo si el usuario hace click
-	clearInterval(intervaloMiniSlider);
-	iniciarIntervaloMiniSlider();
+	clearInterval(intervaloMiniSliderVendidos);
+	iniciarIntervaloMiniSliderVendidos();
 };
-function iniciarIntervaloMiniSlider(){
-	intervaloMiniSlider = setInterval(flechaDerechaMiniSlider, 4000);
+function flechaDerechaMiniSliderPopulares(){
+	let tamañoProductos = Object.keys(productosMasPopulares).length;
+	if(indexProductosPopulares >= tamañoProductos-1){
+		indexProductosPopulares = 0;
+	}else{
+		indexProductosPopulares++;
+	}
+	colocarMasVendidos(productosMasPopulares, indexProductosPopulares);
+	//Reseteamos el intervalo si el usuario hace click
+	clearInterval(intervaloMiniSliderPopulares);
+	iniciarIntervaloMiniSliderPopulares();
+};
+function flechaIzquierdaMiniSliderPopulares(){
+	let tamañoProductos = Object.keys(productosMasVendidos).length;
+	if(indexProductosPopulares <= 0){
+		indexProductosPopulares = tamañoProductos-1;
+	}else{
+		indexProductosPopulares--;
+	}
+	colocarMasVendidos(productosMasPopulares, indexProductosPopulares);
+	//Reseteamos el intervalo si el usuario hace click
+	clearInterval(intervaloMiniSliderPopulares);
+	iniciarIntervaloMiniSliderPopulares();
+};
+function iniciarIntervaloMiniSliderVendidos(){
+	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 4000);
+};
+function iniciarIntervaloMiniSliderPopulares(){
+	intervaloMiniSliderPopulares = setInterval(flechaDerechaMiniSliderPopulares, 4000);
 };
 
 q('#flecha-izquierda-slider').addEventListener('click', cambiarImagenIzquierda);
 q('#flecha-derecha-slider').addEventListener('click', cambiarImagenDerecha);
-q('.flecha-izquierda-minislider').addEventListener('click', flechaIzquierdaMiniSlider);
-q('.flecha-derecha-minislider').addEventListener('click', flechaDerechaMiniSlider);
+qAll('.flecha-izquierda-minislider').forEach((flechaIzq) => {
+	flechaIzq.addEventListener('click', (e) => {		
+		if(e.target.parentNode.id == 'contenedor-minislider-vendidos'){
+			flechaIzquierdaMiniSliderVendidos();
+		}else if(e.target.parentNode.id == 'contenedor-minislider-populares'){
+			flechaIzquierdaMiniSliderPopulares();
+		}
+	});
+});
+qAll('.flecha-derecha-minislider').forEach((flechaDer) => {
+	flechaDer.addEventListener('click', (e) => {
+		if(e.target.parentNode.id == 'contenedor-minislider-vendidos'){
+			flechaDerechaMiniSliderVendidos();
+		}else if(e.target.parentNode.id == 'contenedor-minislider-populares'){
+			flechaDerechaMiniSliderPopulares();
+		}
+	});
+});

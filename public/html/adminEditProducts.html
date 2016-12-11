@@ -28,12 +28,20 @@
 	    
       <section id="seccion-productos">
         <div id="contenedor-opciones-productos">
-          <!--Muy importante mantener este orden para que se detecten bien los child nodes-->
           <select id="contenedor-categorias"><option>Todas</option></select>
-          <button id="button-nuevo-producto">Nuevo producto</button>
+          <select id="limitar-productos">
+            <option>10</option>
+            <option>30</option>
+            <option selected="selected">50</option>
+            <option>100</option>
+            <option>200</option>
+            <option>500</option>
+          </select>
+          <button id="button-nuevo-producto">Nuevo producto</button>          
         </div>
-
+        <ul class="paginador-productos"></ul>
         <div id="contenedor-productos"></div>
+        <ul class="paginador-productos"></ul>
       </section>
 	    <section id="seccion-preview">
         <!--Widget imágenes-->

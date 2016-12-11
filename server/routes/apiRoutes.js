@@ -12,13 +12,14 @@ let functions = require('./../functions.js'),
   api = express.Router();
 
 api.get('/get-images/:permalink', (req, res) => {
-  functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURI(req.params.permalink)), path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
+  functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURIComponent(req.params.permalink)), 
+    path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
     if(err) console.log(err);
     res.send('Images copied');
   });
 });
 api.get('/permalink-check/:permalink', (req, res) => {
-	functions.buscarProducto(encodeURI(req.params.permalink), (err, result) => {
+	functions.buscarProducto(req.params.permalink, (err, result) => {
 		if(err) return res.send(err);
 		if(result != null){
 			return res.send(true);
@@ -43,22 +44,27 @@ api.get('/get-categories', (req, res) => {
 	});
 });
 api.get('/get-all-products/:imagenesLimit?', (req, res) => {
-	functions.getAllProducts((err, results) => {
+  let imagesLimit = 400;
+  let page = 1;
+  if(req.params.imagenesLimit) imagesLimit = parseInt(req.params.imagenesLimit);
+  if(req.query.page) page = parseInt(req.query.page);
+	functions.getAllProducts(imagesLimit, page, (err, results) => {
 		if(err){
 			console.log(err);
 			return res.send(err);
 		}else{
+      console.log('hola');
 			return res.send(results);
 		}
 	});
 });
 api.get('/get-single-product/:permalink', (req, res) => {
-  functions.buscarProducto(encodeURI(req.params.permalink), (err, result) => {
+  functions.buscarProducto(req.params.permalink, (err, result) => {
     if(err){
       console.log(err);
       return res.send(err);
     }
-    functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURI(req.params.permalink)), 
+    functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURIComponent(req.params.permalink)), 
         path.join(__dirname, '../../public/public-uploads/'), (err) => {
       if(err) {
         console.log(err);
@@ -69,7 +75,7 @@ api.get('/get-single-product/:permalink', (req, res) => {
   });
 });
 api.get('/borrar-producto/:permalink', (req, res) => {
-  functions.borrarProducto(encodeURI(req.params.permalink), (err) => {
+  functions.borrarProducto(req.params.permalink, (err) => {
     if(err){
       console.log(err);
       return res.send(err);
@@ -114,8 +120,6 @@ api.post('/upload-image-product', (req, res) => {
 //1. Create a folder for each product images and then copy the folder to uploads in the server
 api.post('/upload-product', (req, res) => {
   //Guardamos el producto en la base de datos
-  console.log(req.body.permalink);
-  console.log(encodeURI(req.body.permalink));
   informacionProducto = {
     'titulo': req.body.titulo,
     'imagenes': req.body.imagenes,
@@ -180,6 +184,27 @@ api.get('/get-mas-vendidos', (req, res) => {
   functions.getMasVendidos((err, results) => {
     if(err) console.log(err);
     return res.send(results);
+  });
+});
+api.get('/get-mas-populares', (req, res) => {
+  functions.getMasPopulares((err, results) => {
+    if(err) console.log(err);
+    return res.send(results);
+  });
+});
+api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
+  let limite = 100;
+  if(req.params.productLimit) limite = parseInt(req.params.productLimit);
+  functions.getPaginacion(limite, (err, paginas) => {
+    if(err){
+      console.log(err);
+      return res.send(null);
+    }else{
+      let objetoPaginas = {paginas: paginas};
+      objetoPaginas = JSON.stringify(objetoPaginas);
+      console.log(objetoPaginas);
+      return res.send(objetoPaginas);
+    }
   });
 });
 

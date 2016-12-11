@@ -1,27 +1,27 @@
 let Mongo = require('mongodb').MongoClient,
+  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
   fs = require('fs'),
   path = require('path'),
-  MongoUrl = 'mongodb://localhost:27017/ecommerce';
+  db = {};
+
+Mongo.connect(MongoUrl, (err, database) => {
+  if(err) console.log(err);
+  db = database;
+});
 
 function buscarProducto(permalink, callback){
   console.log('BuscarProducto, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
+  permalink = encodeURIComponent(permalink);
+  db.collection('productos').findOne({
+    'permalink': permalink
+  }, {
+    '_id': false
+  }, (err, result) => {
     if(err){
-      db.close();
-      return callback('Error, could not connect to the database', null);
+      return callback('Error, could not find that product', null);
+    }else{
+      return callback(null, result);
     }
-    db.collection('productos').findOne({
-      'permalink': permalink
-    }, {
-      '_id': false
-    }, (err, result) => {
-      db.close();
-      if(err){
-        return callback('Error, could not find that product', null);
-      }else{
-        return callback(null, result);
-      }
-    });
   });
 };
 function buscarProductos(keyword, limite, cb){
@@ -31,55 +31,42 @@ function buscarProductos(keyword, limite, cb){
   }
   limite = parseInt(limite);
   keyword = new RegExp(keyword, "g");
-  Mongo.connect(MongoUrl, (err, db) => {
+  db.collection('productos').find({
+    'titulo': keyword
+  }).limit(limite).toArray((err, results) => {
     if(err){
-      db.close();
-      return cb('Error, could not connect to the database', null);
+      return cb('Error, could not find those products', null);
+    }else{
+      return cb(null, results);
     }
-    db.collection('productos').find({
-      'titulo': keyword
-    }).limit(limite).toArray((err, results) => {
-      db.close();
-      if(err){
-        return cb('Error, could not find those products', null);
-      }else{
-        return cb(null, results);
-      }
-    });
   });
 };
 //Funcion para reemplazar o añadir un producto si no existe
 function createUpdateProduct(permalink, productData, cb){
   console.log('CreateUpdateProduct, functions,js');
-  Mongo.connect(MongoUrl, (err, db) => {
+  permalink = encodeURIComponent(permalink);
+  db.collection('productos').update({
+    'permalink': permalink.toLowerCase()
+  }, {
+    'titulo': productData.titulo,
+    'imagenes': productData.imagenes,
+    'permalink': productData.permalink.toLowerCase(),
+    'precio': productData.precio,
+    'descripcion': productData.descripcion,
+    'categoria': productData.categoria,
+    'atributos': productData.atributos,
+    'publicado': productData.publicado,
+    'fecha': productData.fecha,
+    'visitas': 0,
+    'vendidos': 0
+  }, {
+    'upsert': true
+  }, (err, result) => {  
     if(err){
-      db.close();
-      return cb('Error: could not connect to the database');
+      return cb('Error: '+err);
+    }else{
+      return cb(null);
     }
-    db.collection('productos').update({
-      'permalink': permalink.toLowerCase()
-    }, {
-      'titulo': productData.titulo,
-      'imagenes': productData.imagenes,
-      'permalink': productData.permalink.toLowerCase(),
-      'precio': productData.precio,
-      'descripcion': productData.descripcion,
-      'categoria': productData.categoria,
-      'atributos': productData.atributos,
-      'publicado': productData.publicado,
-      'fecha': productData.fecha,
-      'visitas': 0,
-      'vendidos': 0
-    }, {
-      'upsert': true
-    }, (err, result) => {
-      db.close();
-      if(err){
-        return cb('Error: '+err);
-      }else{
-        return cb(null);
-      }
-    });
   });
 };
 //Funcion para subir las imagenes publicas al servidor en uploads
@@ -89,6 +76,7 @@ function uploadPublicImages(objectImages, permalinkName, cb){
   let serverUploads = path.join(__dirname, '/uploads/');
   let objectImagenesSize = Object.keys(objectImages).length;
   let counter = 0;
+  permalinkName = encodeURIComponent(permalinkName);
   fs.stat(path.join(serverUploads, permalinkName), (err, stats) => {
     if(err){
       fs.mkdirSync(path.join(serverUploads, permalinkName));
@@ -122,88 +110,95 @@ function uploadPublicImages(objectImages, permalinkName, cb){
   });
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
-function getAllProducts(callback){
+function getAllProducts(imageLimit, page, callback){
   console.log('GetAllProducts, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
+  let skipProducts = 0;
+  if(page > 1){
+    skipProducts = (page-1)*imageLimit;
+  } 
+  db.collection('productos').find({}).limit(imageLimit).skip(skipProducts).toArray((err, results) => {
     if(err){
-      db.close();
-      return callback('Err, could not connect to the db: '+err, false);
+      return callback('Err, error searching products: '+err, false);
     }
-    db.collection('productos').find({}).toArray((err, results) => {
-      db.close();
-      if(err){
-        return callback('Err, error searching products: '+err, false);
-      }
-      if(results != undefined && results.length > 0){
-        //Acceder a la carpeta título y copiar la 1º imagen
-        for(let i = 0; i<results.length; i++){
-          let folderServer = path.join(__dirname, '/uploads/', results[i].permalink);
-          let folderClient = path.join(__dirname, '../public/public-uploads/');
-          //Comprobamos que exista el directorio
-          fs.stat(folderServer, (err, stats) => {
-            if(err){
-              console.log('El directorio: '+folderServer+' no existe para ese producto ,'+err);
-            }else{
-              fs.readdir(folderServer, (err, imagesInFolder) => {
-                if(err) return callback(err, null);
-
-                //Buscar la primera imagen guardada en la bd para copiarla
-                for(let f = 1; f<imagesInFolder.length; f++){
-                  if(results[i].imagenes[1] == imagesInFolder[f]){
-                    let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
-                    copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
-                      console.log('Imagen copiadas a public-uploads ', firstImageInFolder);
-                      if(err){
-                        callback(err, false);
-                      }
-                    });
+    if(results != undefined && results.length > 0){
+      //Acceder a la carpeta título y copiar la 1º imagen
+      copyFirstImage(results, (err) => {
+        if(err) return callback(err, false);
+        else return callback(null, results);
+      });
+    }else{
+      return callback(null, false);
+    }
+  });
+    
+  function copyFirstImage(results, cb){
+    let error = null;
+    for(let i = 0; i<results.length; i++){
+      let folderServer = path.join(__dirname, '/uploads/', results[i].permalink);
+      let folderClient = path.join(__dirname, '../public/public-uploads/');
+      //Comprobamos que exista el directorio
+      fs.stat(folderServer, (err, stats) => {
+        if(err){
+          console.log('El directorio: '+folderServer+' no existe para ese producto ,'+err);
+          error = 'El directorio: '+folderServer+' no existe para ese producto ,'+err;
+        }else{
+          fs.readdir(folderServer, (err, imagesInFolder) => {
+            if(err) {
+              error = 'Could not read the images in the folder. Try again.';
+            }
+            //Buscar la primera imagen guardada en la bd para copiarla
+            for(let f = 0; f<imagesInFolder.length; f++){
+              if(results[i].imagenes[1] == imagesInFolder[f]){
+                let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
+                copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
+                  if(err){
+                    error = 'Could not copy the images to the client. Try again.';
                   }
-                }
-              });
+                });
+              }
             }
           });
         }
-        callback(null, results);
-      }else{
-       callback(null, false);
+      });
+
+      if(i >= results.length - 1){
+        if(error){
+          cb(error);
+        }else{
+          cb(null);
+        }
       }
-    });
-  });
+    }
+  };
 };
 function borrarProducto(permalink, cb){
   console.log('BorrarProducto, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
+  permalink = encodeURIComponent(permalink);
+  db.collection('productos').findOne({
+    'permalink': permalink
+  }, (err, result) => {
     if(err){
-      db.close();
-      return cb('Error, could not connect to the database');
+      return cb('Error, could not find the product to delete');
     }
-    db.collection('productos').findOne({
+    db.collection('productos').remove({
       'permalink': permalink
-    }, (err, result) => {
+    }, (err, numberRemoved) => {
       if(err){
-        db.close();
-        return cb('Error, could not find the product to delete');
+        console.log(err);
+        return cb('Error, could not delete the product');
+      }else{
+        console.log('Se ha borrado el producto: '+permalink+ 'con exito.');
       }
-      db.collection('productos').remove({
-        'permalink': permalink
-      }, (err, numberRemoved) => {
-        db.close();
-        if(err){
-          console.log(err);
-          return cb('Error, could not delete the product');
-        }else{
-          console.log('Se ha borrado el producto: '+permalink+ 'con exito.');
-        }
-        //Borramos el directorio y todas sus imagenes
-        borrarDirectorio(permalink);
-        return cb(null);
-      });
+      //Borramos el directorio y todas sus imagenes
+      borrarDirectorio(permalink);
+      return cb(null);
     });
   });
 };
 //Funcion para borrar el directorio y todas sus imagenes
 function borrarDirectorio(permalink){
   console.log('BorrarDirectorio, functions.js');
+  //El permalink ya está encoded de la funcion borrarProducto
   let imagenesServer = path.join(__dirname, '/uploads/', permalink);
   fs.readdir(imagenesServer, (err, files) => {
     let i = 0;
@@ -222,7 +217,7 @@ function borrarDirectorio(permalink){
       }
     }
   });
-}
+};
 function render(page, dataObject, cb){
   console.log('Render, functions.js');
   fs.readFile(page, (err, content) => {
@@ -260,7 +255,6 @@ function render(page, dataObject, cb){
         matchKeyBig = reKeyWithTagsBig.exec(resultado);
         matchArray = reArrayWithTags.exec(matchKeyBig[3]);
         for(let key in loopObject){
-          
           textoFinal += matchKeyBig[1]+key+matchKeyBig[2]+'\n';
           //Lo que hay antes del <option> es matcharray[1]
           textoFinal += matchArray[1];
@@ -337,50 +331,36 @@ function copyFile(origin, end, fileName, callback){
 //Para guardar las categorías
 function guardarCategorias(categorias, callback){
   console.log('GuardarCategorias, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
+  //1º Buscamos el array
+  //2º Lo actualizamos, categorias es un param de la funcion
+  //3º Si no existe, crear uno nuevo
+  //4º Callback
+  db.collection('categorias').update({
+    'arrayCategorias': {$exists : true}
+  }, {
+    'arrayCategorias': categorias
+  }, {
+    'upsert': true
+  }, (err, countFilesModified, result) => {    
     if(err){
-      db.close();
-      return callback('Error, could not connect to the database', null);
+      return callback('Error, could not update categories', null);
+    }else{
+      return callback(null, 'Categories saved correctly');
     }
-    //1º Buscamos el array
-    //2º Lo actualizamos, categorias es un param de la funcion
-    //3º Si no existe, crear uno nuevo
-    //4º Callback
-    db.collection('categorias').update({
-      'arrayCategorias': {$exists : true}
-    }, {
-      'arrayCategorias': categorias
-    }, {
-      'upsert': true
-    }, (err, countFilesModified, result) => {
-      db.close();
-      if(err){
-        return callback('Error, could not update categories', null);
-      }else{
-        return callback(null, 'Categories saved correctly');
-      }
-    });
   });
 };
 function getCategories(callback){
   console.log('GetCategories, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
+  db.collection('categorias').findOne({
+    'arrayCategorias': {$exists : true}
+  }, (err, result) => {    
     if(err){
-      db.close();
-      return callback('Err, could not connect to the db.', null);
+      return callback('Err, could not find the categories.', null);
+    }else{
+      return callback(null, result);
     }
-    db.collection('categorias').findOne({
-      'arrayCategorias': {$exists : true}
-    }, (err, result) => {
-      db.close();
-      if(err){
-        return callback('Err, could not find the categories.', null);
-      }else{
-        return callback(null, result);
-      }
-    });
   });
-}
+};
 function copyDirectory(origin, end, callback){
   console.log('CopyDirectory, functions.js');
   if(callback == undefined){
@@ -433,37 +413,29 @@ function copyDirectory(origin, end, callback){
 function guardarBusqueda(busqueda, cb){
   console.log('GuardarBusqueda, functions.js');
   if(busqueda){
-    Mongo.connect(MongoUrl, (err, db) => {
-      if(err){
-        db.close();
-        return cb('Err, could not connect to the db.');
-      }
-      db.collection('busquedas').findOne({
-        'search': busqueda
-      }, (err, busquedaExistente) => {
-        if(err){
-          db.close();
-          return cb('Error searching busquedas');
-        }else{
-          if(!busquedaExistente){
-            busquedaExistente = {};
-            busquedaExistente.veces = 0;
-          }
-          //Para actualizar o crear un nuevo registro
-          db.collection('busquedas').update({
-            'search': busqueda
-          }, {
-            'search': busqueda,
-            'veces': (busquedaExistente.veces + 1)
-          }, {
-            'upsert': true
-          }, (err, result) => {
-            db.close();
-            if(err) return cb('Err, could not save the search in the database');
-            return cb(null);
-          });
+    db.collection('busquedas').findOne({
+      'search': busqueda
+    }, (err, busquedaExistente) => {
+      if(err){        
+        return cb('Error searching busquedas');
+      }else{
+        if(!busquedaExistente){
+          busquedaExistente = {};
+          busquedaExistente.veces = 0;
         }
-      });
+        //Para actualizar o crear un nuevo registro
+        db.collection('busquedas').update({
+          'search': busqueda
+        }, {
+          'search': busqueda,
+          'veces': (busquedaExistente.veces + 1)
+        }, {
+          'upsert': true
+        }, (err, result) => {          
+          if(err) return cb('Err, could not save the search in the database');
+          return cb(null);
+        });
+      }
     });
   }
 };
@@ -485,25 +457,18 @@ function guardarSliderImages(objectImages, cb){
         }
       });
     }
-    Mongo.connect(MongoUrl, (err, db) => {
-      if(err){
-        db.close();
-        return cb('Err, could not connect to the db to save the slider images');
+    db.collection('utils').update({
+      'sliderImages': {$exists: true}
+    }, {
+      'sliderImages': objectImages
+    }, {
+      'upsert': true
+    }, (err, countFilesModified, result) => {      
+      if(err) return cb('Err, could not save the slider images to the db: '+err);
+      else{
+        console.log('Done without errors');
+        return cb(null);
       }
-      db.collection('utils').update({
-        'sliderImages': {$exists: true}
-      }, {
-        'sliderImages': objectImages
-      }, {
-        'upsert': true
-      }, (err, countFilesModified, result) => {
-        db.close();
-        if(err) return cb('Err, could not save the slider images to the db: '+err);
-        else{
-          console.log('Done without errors');
-          return cb(null);
-        }
-      });
     });
   });
 
@@ -541,64 +506,89 @@ function guardarSliderImages(objectImages, cb){
 //Para copiar las imagenes del slider al cliente y retornar el objeto imagenes
 function getSlider(cb){
   console.log('GetSlider, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
-    if(err){
-      db.close();
-      return cb('Could not connect to the db', null);
-    }
-    db.collection('utils').findOne({
-      'sliderImages': {$exists: true}
-    }, (err, result) => {
-      db.close();
-      if(err) return cb('Error searching slider images: '+err, null);
-      let images = result.sliderImages;
-      let originDir = path.join(__dirname, '/uploads/Slider/');
-      let end = path.join(__dirname, '../public/public-uploads/');
-      for(let key in images){
-        copyFile(path.join(originDir, images[key]), end, images[key], (err) => {
-          if(err) return cb('Error copying the slider images to the client '+err, null);
-        });
-        if(key >= Object.keys(images).length){
-          //Si se han copiado todas las imágenes con exito
-          return cb(null, images);
-        }
+  db.collection('utils').findOne({
+    'sliderImages': {$exists: true}
+  }, (err, result) => {    
+    if(err) return cb('Error searching slider images: '+err, null);
+    let images = result.sliderImages;
+    let originDir = path.join(__dirname, '/uploads/_Slider/');
+    let end = path.join(__dirname, '../public/public-uploads/');
+    for(let key in images){
+      copyFile(path.join(originDir, images[key]), end, images[key], (err) => {
+        if(err) return cb('Error copying the slider images to the client '+err, null);
+      });
+      if(key >= Object.keys(images).length){
+        //Si se han copiado todas las imágenes con exito
+        return cb(null, images);
       }
-    });
+    }
   });
 };
 //Para conseguir los 5 productos más vendidos para el minislider
 function getMasVendidos(cb){
   console.log('GetMasVendidos, functions.js');
-  Mongo.connect(MongoUrl, (err, db) => {
-    if(err){
-      db.close();
-      return cb('Err, could not connect to the database.', null);
-    }
-    db.collection('productos').find({}, {
-      "_id": false,
-      "titulo": true,
-      "permalink": true,
-      "precio": true,
-      "imagenes": true,
-      "categoria": true
-    }).sort({
-      "vendidos": -1
-    }).limit(5).toArray((err, results) => {
-      db.close();
-      if(err) return cb('Error searching products, '+err, null);
-      let origin = path.join(__dirname, '/uploads/');
-      let end = path.join(__dirname, '../public/public-uploads');
-      for(let i = 0; i < results.length; i++){
-        copyFile(path.join(origin, results[i].permalink, results[i].imagenes[1]), end, results[i].imagenes[1], (err) => {
-          if(err) return cb('Err, could not copy the image '+results[i].imagenes[1]+' to the client, '+err, null);
-        });
-        if(i >= results.length-1){
-          return cb(null, results);
-        }
+  db.collection('productos').find({}, {
+    "_id": false,
+    "titulo": true,
+    "permalink": true,
+    "precio": true,
+    "imagenes": true,
+    "categoria": true
+  }).sort({
+    "vendidos": -1
+  }).limit(5).toArray((err, results) => {
+    if(err) return cb('Error searching products, '+err, null);
+    let origin = path.join(__dirname, '/uploads/');
+    let end = path.join(__dirname, '../public/public-uploads');
+    for(let i = 0; i < results.length; i++){
+      copyFile(path.join(origin, results[i].permalink, results[i].imagenes[1]), end, results[i].imagenes[1], (err) => {
+        if(err) return cb('Err, could not copy the image '+results[i].imagenes[1]+' to the client, '+err, null);
+      });
+      if(i >= results.length-1){
+        return cb(null, results);
       }
-    });
+    }
   });
 };
+//Para conseguir los 5 productos con más visitas para el minislider correspondiente
+function getMasPopulares(cb){
+  console.log('GetMasPopulares, functions.js');
+  db.collection('productos').find({}, {
+    "_id": false,
+    "titulo": true,
+    "permalink": true,
+    "precio": true,
+    "imagenes": true,
+    "categoria": true
+  }).sort({
+    "visitas": -1
+  }).limit(5).toArray((err, results) => {
+    if(err) return cb('Error searching products, '+err, null);
+    let origin = path.join(__dirname, '/uploads/');
+    let end = path.join(__dirname, '../public/public-uploads');
+    for(let i = 0; i < results.length; i++){
+      copyFile(path.join(origin, results[i].permalink, results[i].imagenes[1]), end, results[i].imagenes[1], (err) => {
+        if(err) return cb('Err, could not copy the image '+results[i].imagenes[1]+' to the client, '+err, null);
+      });
+      if(i >= results.length-1){
+        return cb(null, results);
+      }
+    }
+  });
+};
+//Function que me dice cuantas páginas hay en total para ese límite de productos por página.
+function getPaginacion(limite, cb){
+  console.log('GetPaginacion, functions.js');
+  db.collection('productos').count((err, count) => {
+    if(err){
+      console.log(err);
+      return cb('Error calculando la paginación de los productos. Intentalo de nuevo.', null);
+    }
+    //Las páginas totales incluida la última que puede ser menor del límite.
+    let paginas = Math.ceil(count/limite);
+    return cb(null, paginas);
+  });
+}; 
 
 exports.buscarProducto = buscarProducto;
 exports.render = render;
@@ -616,3 +606,5 @@ exports.guardarBusqueda = guardarBusqueda;
 exports.guardarSliderImages = guardarSliderImages;
 exports.getSlider = getSlider;
 exports.getMasVendidos = getMasVendidos;
+exports.getMasPopulares = getMasPopulares;
+exports.getPaginacion = getPaginacion;

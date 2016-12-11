@@ -19,7 +19,7 @@ function replaceBadCharacters(string){
 	string = string.replace(/(ñ)+/g, 'n');
 	string = string.toLowerCase();
 	string = string.replace(/(\?|\\|\/|:|\*|"|<|>|\|,|\.|:|;| )+/g, "-");
-	string = encodeURI(string);
+	string = encodeURIComponent(string);
 	return string;
 }
 

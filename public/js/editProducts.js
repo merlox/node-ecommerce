@@ -1,10 +1,12 @@
 let domainName = '192.168.1.100:8000';
 let isMenuVisible = true;
 let isMenuResponsive = false;
+let productosPorPagina = 50;
 //Para no mostrar el preview productos al hacer resize de la pantalla onload
 let esperarInteraccionMenu = true;
 
 window.addEventListener('load', () => {
+	crearPaginacion();
 	crearCajasProductos();
 	if(window.innerWidth <= 1000){
 		isMenuResponsive = true;
@@ -62,7 +64,6 @@ function loadFullProduct(productPermalink){
 	}else{
 		mostrarMenu();
 	}
-
 	objetoAtributos = {};
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
 		console.log(fullProduct);
@@ -144,9 +145,20 @@ function mostrarObjetoAtributos(objetoAtributos){
 	}
 }
 //Para generar las cajas de productos
-function crearCajasProductos(){
+function crearCajasProductos(page){
+	if(page == null || page == undefined){
+		page = 1;
+	}
+	document.querySelectorAll('.paginador-productos').forEach((paginad) => {
+		for(let i = 0; i < paginad.childNodes.length; i++){
+			paginad.childNodes[i].className = '';
+		}
+		if(paginad.childNodes[page-1] != undefined){
+			paginad.childNodes[page-1].className = 'active';
+		}
+	});
 	resetAllProductData();
-	httpGet('/api/get-all-products/', (results) => {
+	httpGet('/api/get-all-products/'+productosPorPagina+'?page='+page, (results) => {
 		results = JSON.parse(results);
 		if(results != false){
 			let arrayProductos = results;
@@ -189,7 +201,43 @@ function crearCajasProductos(){
 				'<p class="no-products-found">No hay productos para mostrar.</p>';
 		}
 	});
-}
+};
+function crearPaginacion(){
+	let paginador = document.querySelectorAll('.paginador-productos');
+	httpGet('/api/get-paginacion-admin-productos/'+productosPorPagina, (paginas) => {
+		paginas = JSON.parse(paginas).paginas;
+		if(paginas != null){
+			if(paginas > 1){
+				paginador.forEach((paginado) => {
+					paginado.style.display = 'flex';
+					paginado.innerHTML = '';
+				});
+				for(let i = 1; i <= paginas; i++){
+					let htmlPaginas = '';
+					if(i == 1){
+						htmlPaginas = '<li class="active" onclick="crearCajasProductos('+i+')">'+i+'</li>';
+					}else{
+						htmlPaginas = '<li onclick="crearCajasProductos('+i+')">'+i+'</li>';
+					}
+					if(i >= paginas){
+						htmlPaginas = '<li onclick="crearCajasProductos('+i+')">'+i+'</li>';
+					}
+					paginador.forEach((paginado) => {
+						paginado.insertAdjacentHTML('beforeend', htmlPaginas);
+					});
+				}
+			}else{
+				paginador.forEach((paginado) => {
+					paginado.style.display = 'none';
+				});
+			}
+		}else{
+			paginador.forEach((paginado) => {
+				paginado.style.display = 'none';
+			});
+		}
+	});
+};
 //Animar el seccion preview para añadir un nuevo producto
 id('button-nuevo-producto').addEventListener('click', () => {
 	esperarInteraccionMenu = false;
@@ -209,11 +257,16 @@ id('contenedor-categorias').addEventListener('change', (e) => {
 		filtrarVistaCategoria(e);
 	}
 });
-
 id('contenedor-burger').addEventListener('click', () => {
 	toggleMenu();
 });
-
 id('overlay-black').addEventListener('click', () => {
 	ocultarMenu();
+});
+//Para filtrar la cantidad de productos a mostrar
+id('limitar-productos').addEventListener('change', (e) => {
+	//Establecemos los productos por pagina segun lo seleccionado
+	productosPorPagina = parseInt(id('limitar-productos').children[e.target.selectedIndex].innerHTML);
+	crearPaginacion()
+	crearCajasProductos();
 });

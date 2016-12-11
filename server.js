@@ -4,14 +4,13 @@ const express = require('express'),
     http = require('http').Server(app),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    Mongo = require('mongodb').MongoClient,
     MongoStore = require('connect-mongo')(session),
     path = require('path'),
-    MongoUrl = 'mongodb://localhost:27017/ecommerce',
+    MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
     apiRoutes = require('./server/routes/apiRoutes.js'),
     adminRoutes = require('./server/routes/adminRoutes.js'),
     publicRoutes = require('./server/routes/publicRoutes.js');
-
+  
 //Inicializamos configuracion de express y sessión
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));

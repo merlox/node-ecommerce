@@ -1,7 +1,7 @@
 //Onload get categories
 window.onload = () => {
 	httpGet('/api/get-categories', (categories) => {
-		if(categories != null){
+		if(categories && categories != '' && categories != undefined){
 			categories = JSON.parse(categories);
 			categories = categories.arrayCategorias;
 			for(let i = 0; i < categories.length; i++){

@@ -841,3 +841,19 @@ Me ha costado más de 100 líneas y 2 o 3 horas pero lo he conseguido. Ahora se 
 Por otro lado, la función copyFile del servidor me está dando muchos problemas. Las imágenes no cargan o se saturan, no se exactamente que está pasando y tendré que repararlo mañana.
 
 Esa función utiliza lo que son las "pipes" de node para transmitir archivos constantemente hasta completarlo, es algo que he implementado sin conocer mucho su alcance. Por suerte tengo un libro bastante avanzado de node llamado "Nodejs design patterns" en el cual explica en detalle el funcionamiento de las pipes así que lo voy a mirar hoy para entender mejor cual es el problema.
+
+### Día 40
+
+Hoy me he puesto a trabajar por la mañana y he conseguido crear la paginación en la sección de administrador de editar productos.
+
+Ya que ahora puedo añadir muchos productos en grandes cantidad de muestra para ver cómo funciona el sistema, lo he hecho y me he dado cuenta de ese problema de paginación. Ahora se puede mostrar productos por 100, 200, 500, 50 por página. Por cierto, las páginas cargan con ajax lo cual es muy agradable al usuario.
+
+### Día 41
+
+Hoy he comenzado reorganizando el código para usar de manera más eficiente la base de datos. He conseguido primero un hosting de mongo db gratuito de 500 megabytes. Luego he ordenado el código de forma que solo se use una conexión a la base de datos y no una conexion por cada función. He hecho pruebas y se nota mucho la mejora de rendimiento.
+
+Ahora voy a trabajar en crear el siguiente minislider: el minislider de los productos más populares, los que más visitas tienen.
+
+--
+
+Ya está medio funcionando con errores el nuevo slider de productos populares. He tenido que duplicar el código y cambiar algunas cosas para que funcione aunque las flechas no responden bien. Mañana lo arreglaré.

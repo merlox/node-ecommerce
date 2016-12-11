@@ -46,10 +46,12 @@ MINISLIDER
 */
 #contenedor-minislider-vendidos{
 	width: 400px;
-	height: 400px;
+	float: left;
+	min-height: 400px;
 	border: 1px solid lightgrey;
 	padding: 5px;
-	margin-left: 50px;
+	margin-left: 30px;
+	margin-top: 20px;
 	position: relative;
 	font-family: 'Crimson Text', serif;
 }
@@ -85,7 +87,7 @@ MINISLIDER
 }
 .imagen-minislider{
 	max-width: 400px;
-	max-height: 200px;
+	max-height: 400px;
 	display: block;
 	margin: 0 auto;
 }
@@ -99,4 +101,24 @@ MINISLIDER
 }
 .producto-link{
 	text-decoration: none;
+}
+/*
+
+MINISLIDER MÁS POPULARES
+
+*/
+#contenedor-minislider-populares{
+	width: 400px;
+	min-height: 400px;
+	border: 1px solid lightgrey;
+	float: left;
+	padding: 5px;
+	margin-left: 10px;
+	margin-top: 20px;
+	position: relative;
+	font-family: 'Crimson Text', serif;
+}
+#contenedor-minislider-populares h2{
+	font-family: 'heebo';
+	font-variant: small-caps;
 }

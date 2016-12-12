@@ -65,6 +65,7 @@ MINISLIDER
 	bottom: 0;
 	margin: auto;
 	left: 10px;
+	width: 50px;
 	height: 40px;
 	cursor: pointer;
 	z-index: 10;
@@ -78,6 +79,7 @@ MINISLIDER
 	bottom: 0;
 	margin: auto;
 	right: 10px;
+	width: 50px;
 	height: 40px;
 	cursor: pointer;
 	z-index: 10;
@@ -119,6 +121,26 @@ MINISLIDER MÁS POPULARES
 	font-family: 'Crimson Text', serif;
 }
 #contenedor-minislider-populares h2{
+	font-family: 'heebo';
+	font-variant: small-caps;
+}
+/*
+
+MINISLIDER RECOMENDADOS
+
+*/
+#contenedor-minislider-recomendados{
+	width: 400px;
+	min-height: 400px;
+	border: 1px solid lightgrey;
+	float: left;
+	padding: 5px;
+	margin-left: 10px;
+	margin-top: 20px;
+	position: relative;
+	font-family: 'Crimson Text', serif;
+}
+#contenedor-minislider-recomendados h2{
 	font-family: 'heebo';
 	font-variant: small-caps;
 }

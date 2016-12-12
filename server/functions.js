@@ -524,8 +524,8 @@ function getSlider(cb){
     }
   });
 };
-//Para conseguir los 5 productos más vendidos para el minislider
-function getMasVendidos(cb){
+//Para conseguir los 5 productos más vendidos para el minislider //Visitas //Vendidos
+function getMiniSlider(tipo, cb){
   console.log('GetMasVendidos, functions.js');
   db.collection('productos').find({}, {
     "_id": false,
@@ -535,33 +535,7 @@ function getMasVendidos(cb){
     "imagenes": true,
     "categoria": true
   }).sort({
-    "vendidos": -1
-  }).limit(5).toArray((err, results) => {
-    if(err) return cb('Error searching products, '+err, null);
-    let origin = path.join(__dirname, '/uploads/');
-    let end = path.join(__dirname, '../public/public-uploads');
-    for(let i = 0; i < results.length; i++){
-      copyFile(path.join(origin, results[i].permalink, results[i].imagenes[1]), end, results[i].imagenes[1], (err) => {
-        if(err) return cb('Err, could not copy the image '+results[i].imagenes[1]+' to the client, '+err, null);
-      });
-      if(i >= results.length-1){
-        return cb(null, results);
-      }
-    }
-  });
-};
-//Para conseguir los 5 productos con más visitas para el minislider correspondiente
-function getMasPopulares(cb){
-  console.log('GetMasPopulares, functions.js');
-  db.collection('productos').find({}, {
-    "_id": false,
-    "titulo": true,
-    "permalink": true,
-    "precio": true,
-    "imagenes": true,
-    "categoria": true
-  }).sort({
-    "visitas": -1
+    tipo: -1
   }).limit(5).toArray((err, results) => {
     if(err) return cb('Error searching products, '+err, null);
     let origin = path.join(__dirname, '/uploads/');
@@ -605,6 +579,5 @@ exports.buscarProductos = buscarProductos;
 exports.guardarBusqueda = guardarBusqueda;
 exports.guardarSliderImages = guardarSliderImages;
 exports.getSlider = getSlider;
-exports.getMasVendidos = getMasVendidos;
-exports.getMasPopulares = getMasPopulares;
+exports.getMiniSlider = getMiniSlider;
 exports.getPaginacion = getPaginacion;

@@ -181,13 +181,19 @@ api.get('/get-slider', (req, res) => {
   });
 });
 api.get('/get-mas-vendidos', (req, res) => {
-  functions.getMasVendidos((err, results) => {
+  functions.getMiniSlider("ventas", (err, results) => {
     if(err) console.log(err);
     return res.send(results);
   });
 });
 api.get('/get-mas-populares', (req, res) => {
-  functions.getMasPopulares((err, results) => {
+  functions.getMiniSlider("visitas", (err, results) => {
+    if(err) console.log(err);
+    return res.send(results);
+  });
+});
+api.get('/get-recomendados', (req, res) => {
+  functions.getMiniSlider("imagenes", (err, results) => {
     if(err) console.log(err);
     return res.send(results);
   });

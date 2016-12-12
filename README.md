@@ -857,3 +857,9 @@ Ahora voy a trabajar en crear el siguiente minislider: el minislider de los prod
 --
 
 Ya está medio funcionando con errores el nuevo slider de productos populares. He tenido que duplicar el código y cambiar algunas cosas para que funcione aunque las flechas no responden bien. Mañana lo arreglaré.
+
+### Día 42
+
+Hoy he reparado el anterior minislider y he añadido uno nuevo. Resulta que está funcionando perfectamente aunque una mejore visual no le vendría nada mal a cada uno de los minisliders aparte de centrarlos en mitad de la pantalla.
+
+Mañana trabajaré en mejorarles el aspecto visualmente y en centrarlos en mitad de la página.

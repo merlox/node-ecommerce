@@ -46,8 +46,8 @@ function insertarUnProducto(imagenes, insideDir, cb){
 		'descripcion': descripcion,
 		'publicado': 'si',
 		'fecha': new Date(),
-		'visitas': 0,
-		'vendidos': 0,
+		'visitas': Math.floor(Math.random()*1000),
+		'vendidos': Math.floor(Math.random()*100),
 		'categoria': 'Automaticos',
 		'atributos': {}
 	}, (err, result) => {

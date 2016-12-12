@@ -13,8 +13,7 @@ function httpGet(url, cb){
       }
 	}	
 	request.send();
-}
-
+};
 function httpPost(url, data, cb){
 	if(cb == undefined){
 		cb = () => {};	
@@ -33,7 +32,7 @@ function httpPost(url, data, cb){
       }
 	}	
 	request.send(JSON.stringify(dataJson));	
-}
+};
 function httpPostPlain(url, data, cb){
 	if(cb == undefined){
 		cb = () => {};	
@@ -48,23 +47,19 @@ function httpPostPlain(url, data, cb){
       }
 	}	
 	request.send(data);	
-}
-
+};
 //Acortador para seleccionar a los elementos de manera sencilla y rápida en el código
 function q(selector){
 	return document.querySelector(selector);
-}
-
+};
 function qAll(selector){
 	return document.querySelectorAll(selector);
-}
-
+};
 function id(id){
 	return document.getElementById(id);
-}
-
+};
 //Para extraer los query values de la url
 function getParameterByName(name) {
     var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-}
+};

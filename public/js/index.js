@@ -1,12 +1,15 @@
 let objetoImagenes = {},
 	productosMasVendidos = {},
 	productosMasPopulares = {},
+	productosRecomendados = {},
 	indexImagenActiva = '',
 	indexProductosVendidos = '',
 	indexProductosPopulares = '',
+	indexProductosRecomendados = '',
 	intervaloSlider,
 	intervaloMiniSliderVendidos,
-	intervaloMiniSliderPopulares;
+	intervaloMiniSliderPopulares,
+	intervaloMiniSliderRecomendados;
 
 window.addEventListener('load', () => {
 	httpGet('/api/get-slider', (result) => {
@@ -22,6 +25,11 @@ window.addEventListener('load', () => {
 		let resultados = JSON.parse(results);
 		colocarMasPopulares(resultados, 0);
 		iniciarIntervaloMiniSliderPopulares();
+	});
+	httpGet('/api/get-recomendados', (results) => {
+		let resultados = JSON.parse(results);
+		colocarRecomendados(resultados, 0);
+		iniciarIntervaloMiniSliderRecomendados();
 	});
 });
 /*
@@ -174,6 +182,66 @@ function flechaIzquierdaMiniSliderVendidos(){
 	clearInterval(intervaloMiniSliderVendidos);
 	iniciarIntervaloMiniSliderVendidos();
 };
+function colocarRecomendados(data, index){
+	productosRecomendados = data;
+	let productoHtml = '';
+	let producto = productosRecomendados[index];
+	indexProductosRecomendados = index;
+	let tituloOriginal = producto.titulo;
+	let tituloCorto = '';
+	if(producto.titulo.length > 70){
+		tituloCorto = producto.titulo.substring(0, 70);
+		tituloCorto += '...';
+	}else{
+		tituloCorto = producto.titulo;
+	}
+	if(producto.categoria == 'Default'){
+		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+			+producto.permalink
+			+'"><div id="contenedor-producto-minislider-recomendados">'
+			+'<img class="imagen-minislider" src="../public-uploads/'
+			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
+			+tituloCorto+'</h3><span class="precio-minislider"> '
+			+producto.precio+'€</span></div></a>';
+	}else{
+		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+			+producto.permalink
+			+'"><div id="contenedor-producto-minislider-recomendados">'
+			+'<img class="imagen-minislider" src="../public-uploads/'
+			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
+			+tituloCorto+'</h3><span class="precio-minislider">'
+			+producto.precio+'€</span><span class="categoria-minislider"> '
+			+producto.categoria+'</span></div></a>';
+	}
+	if(q('#contenedor-producto-minislider-recomendados') != undefined || q('#contenedor-producto-minislider-recomendados') != null){
+		q('#contenedor-producto-minislider-recomendados').remove();
+	}
+	q('#contenedor-minislider-recomendados').insertAdjacentHTML('beforeend', productoHtml);
+};
+function flechaDerechaMiniSliderRecomendados(){
+	let tamañoProductos = Object.keys(productosRecomendados).length;
+	if(indexProductosRecomendados >= tamañoProductos-1){
+		indexProductosRecomendados = 0;
+	}else{
+		indexProductosRecomendados++;
+	}
+	colocarRecomendados(productosRecomendados, indexProductosRecomendados);
+	//Reseteamos el intervalo si el usuario hace click
+	clearInterval(intervaloMiniSliderRecomendados);
+	iniciarIntervaloMiniSliderRecomendados();
+};
+function flechaIzquierdaMiniSliderRecomendados(){
+	let tamañoProductos = Object.keys(productosRecomendados).length;
+	if(indexProductosRecomendados <= 0){
+		indexProductosRecomendados = tamañoProductos-1;
+	}else{
+		indexProductosRecomendados--;
+	}
+	colocarRecomendados(productosRecomendados, indexProductosRecomendados);
+	//Reseteamos el intervalo si el usuario hace click
+	clearInterval(intervaloMiniSliderRecomendados);
+	iniciarIntervaloMiniSliderRecomendados();
+};
 function flechaDerechaMiniSliderPopulares(){
 	let tamañoProductos = Object.keys(productosMasPopulares).length;
 	if(indexProductosPopulares >= tamañoProductos-1){
@@ -181,7 +249,7 @@ function flechaDerechaMiniSliderPopulares(){
 	}else{
 		indexProductosPopulares++;
 	}
-	colocarMasVendidos(productosMasPopulares, indexProductosPopulares);
+	colocarMasPopulares(productosMasPopulares, indexProductosPopulares);
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloMiniSliderPopulares);
 	iniciarIntervaloMiniSliderPopulares();
@@ -193,26 +261,37 @@ function flechaIzquierdaMiniSliderPopulares(){
 	}else{
 		indexProductosPopulares--;
 	}
-	colocarMasVendidos(productosMasPopulares, indexProductosPopulares);
+	colocarMasPopulares(productosMasPopulares, indexProductosPopulares);
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloMiniSliderPopulares);
 	iniciarIntervaloMiniSliderPopulares();
 };
 function iniciarIntervaloMiniSliderVendidos(){
-	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 4000);
+	let timer = 4000*Math.random();
+	timer = timer < 1000 ? timer + 1000 : timer;
+	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, timer);
 };
 function iniciarIntervaloMiniSliderPopulares(){
-	intervaloMiniSliderPopulares = setInterval(flechaDerechaMiniSliderPopulares, 4000);
+	let timer = 4000*Math.random();
+	timer = timer < 1000 ? timer + 1000 : timer;
+	intervaloMiniSliderPopulares = setInterval(flechaDerechaMiniSliderPopulares, timer);
+};
+function iniciarIntervaloMiniSliderRecomendados(){
+	let timer = 4000*Math.random();
+	timer = timer < 1000 ? timer + 1000 : timer;
+	intervaloMiniSliderRecomendados = setInterval(flechaDerechaMiniSliderRecomendados, timer);
 };
 
 q('#flecha-izquierda-slider').addEventListener('click', cambiarImagenIzquierda);
 q('#flecha-derecha-slider').addEventListener('click', cambiarImagenDerecha);
 qAll('.flecha-izquierda-minislider').forEach((flechaIzq) => {
-	flechaIzq.addEventListener('click', (e) => {		
+	flechaIzq.addEventListener('click', (e) => {	
 		if(e.target.parentNode.id == 'contenedor-minislider-vendidos'){
 			flechaIzquierdaMiniSliderVendidos();
 		}else if(e.target.parentNode.id == 'contenedor-minislider-populares'){
 			flechaIzquierdaMiniSliderPopulares();
+		}else if(e.target.parentNode.id == 'contenedor-minislider-recomendados'){
+			flechaIzquierdaMiniSliderRecomendados();
 		}
 	});
 });
@@ -222,6 +301,8 @@ qAll('.flecha-derecha-minislider').forEach((flechaDer) => {
 			flechaDerechaMiniSliderVendidos();
 		}else if(e.target.parentNode.id == 'contenedor-minislider-populares'){
 			flechaDerechaMiniSliderPopulares();
+		}else if(e.target.parentNode.id == 'contenedor-minislider-recomendados'){
+			flechaDerechaMiniSliderRecomendados();
 		}
 	});
 });

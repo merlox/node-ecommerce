@@ -88,7 +88,7 @@ function borrarTodosProductos(){
 	let uploads = path.join(__dirname, '../uploads/');
 	fs.readdir(uploads, (err, uploadsFolder) => {
 		uploadsFolder.forEach((folder) => {
-			if(folder != 'Slider'){
+			if(folder != '_Slider'){
 				fs.readdir(path.join(uploads, folder), (err, files) => {
 					if(err) return console.log(err);
 					if(files.length == 0){

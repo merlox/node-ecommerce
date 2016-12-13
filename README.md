@@ -863,3 +863,11 @@ Ya está medio funcionando con errores el nuevo slider de productos populares. H
 Hoy he reparado el anterior minislider y he añadido uno nuevo. Resulta que está funcionando perfectamente aunque una mejore visual no le vendría nada mal a cada uno de los minisliders aparte de centrarlos en mitad de la pantalla.
 
 Mañana trabajaré en mejorarles el aspecto visualmente y en centrarlos en mitad de la página.
+
+### Día 43
+
+Hoy simplemente he alineado las cajas.
+
+Estoy más centrado en otro proyecto con lo que le voy a dedicar menos tiempo a este al menos hasta que el otro se ponga activo en la web.
+
+Mañana continuaré cambiando y haciendo responsive el diseño de la página inicial index.

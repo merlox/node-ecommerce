@@ -1,3 +1,10 @@
+*{
+	box-sizing: border-box;
+}
+#contenedor-minisliders{
+	margin: 0 auto;
+	max-width: 1200px;
+}
 /*
 
 SLIDER
@@ -50,8 +57,6 @@ MINISLIDER
 	min-height: 400px;
 	border: 1px solid lightgrey;
 	padding: 5px;
-	margin-left: 30px;
-	margin-top: 20px;
 	position: relative;
 	font-family: 'Crimson Text', serif;
 }
@@ -115,8 +120,6 @@ MINISLIDER MÁS POPULARES
 	border: 1px solid lightgrey;
 	float: left;
 	padding: 5px;
-	margin-left: 10px;
-	margin-top: 20px;
 	position: relative;
 	font-family: 'Crimson Text', serif;
 }
@@ -135,8 +138,6 @@ MINISLIDER RECOMENDADOS
 	border: 1px solid lightgrey;
 	float: left;
 	padding: 5px;
-	margin-left: 10px;
-	margin-top: 20px;
 	position: relative;
 	font-family: 'Crimson Text', serif;
 }

@@ -2,6 +2,8 @@ let Mongo = require('mongodb').MongoClient,
   MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
   fs = require('fs'),
   path = require('path'),
+  //Ponemos la secret key de stripe para realizar pagos
+  stripe = require('stripe')('sk_test_F2AInFtMIJJpjEQYGvlgdIJ6'),
   db = {};
 
 Mongo.connect(MongoUrl, (err, database) => {
@@ -220,85 +222,123 @@ function borrarDirectorio(permalink){
 };
 function render(page, dataObject, cb){
   console.log('Render, functions.js');
+  let callbackCalled = false;
   fs.readFile(page, (err, content) => {
-    if(err) throw err;
+    if(err) return cb(err, null);
     let resultado = content.toString();
+    //Le quitamos los tabuladores
     resultado = resultado.replace(/\t*/gm, '');
-    for(let propiedad in dataObject){
-      let re = new RegExp("{{"+propiedad+"}}+", "gm");
-      //Loop de una key
-      let reItem = new RegExp("{{loop "+propiedad+" [^-]+}}" ,"gm");
-      //Empieza el loop por el key indicado
-      let reTotalItem = new RegExp("{{loop "+propiedad+" -.*-}}" ,"gm");
-      let reTotal = new RegExp("{{loop "+propiedad+"}}" ,"gm");
-      let reLoopKey = new RegExp("{{loopKey "+propiedad+"}}", "gm");
 
-      if(re.test(resultado)){
-        resultado = resultado.replace(re, dataObject[propiedad]);
-      }
+    if(dataObject != undefined || dataObject != null){
+      for(let propiedad in dataObject){
+        let re = new RegExp("{{"+propiedad+"}}+", "gm");
+        //Loop de una key
+        let reItem = new RegExp("{{loop "+propiedad+" [^-]+}}" ,"gm");
+        //Empieza el loop por el key indicado
+        let reTotalItem = new RegExp("{{loop "+propiedad+" -.*-}}" ,"gm");
+        let reTotal = new RegExp("{{loop "+propiedad+"}}" ,"gm");
+        let reLoopKey = new RegExp("{{loopKey "+propiedad+"}}", "gm");
 
-      if(reItem.test(resultado)){
-        let loopObject = dataObject[propiedad];
-        for(let key in loopObject){
-          let reItemFind = new RegExp("{{loop "+propiedad+" [^-]?"+key+"[^-]?}}" ,"gm");
-          resultado = resultado.replace(reItemFind, loopObject[key]);  
+        if(re.test(resultado)){
+          resultado = resultado.replace(re, dataObject[propiedad]);
         }
-      }
 
-      if(reLoopKey.test(resultado)){
-        let loopObject = dataObject[propiedad];
-        let reKeyWithTagsBig = new RegExp("^(.*){{loopKey "+propiedad+"}}(.*)([\\s\\S]*){{\\/loopKey "+propiedad+"}}.*$", "gm");
-        let reArrayWithTags = new RegExp("^([\\s\\S]*)\n(.*){{loopArray "+propiedad+"}}(.*)([\\s\\S]*)$", "gm");
-        let matchKeyBig;
-        let matchArray; 
-        let textoFinal = "";
-        matchKeyBig = reKeyWithTagsBig.exec(resultado);
-        matchArray = reArrayWithTags.exec(matchKeyBig[3]);
-        for(let key in loopObject){
-          textoFinal += matchKeyBig[1]+key+matchKeyBig[2]+'\n';
-          //Lo que hay antes del <option> es matcharray[1]
-          textoFinal += matchArray[1];
-          for(let i = 0; i<loopObject[key].length; i++){
-            let itemArray = matchArray[2]+loopObject[key][i]+matchArray[3]+"\n";
-            textoFinal += itemArray;
-          }
-          //Lo que hay despues del <option> es matcharray[4]
-          textoFinal += matchArray[4];
-        }
-        resultado = resultado.replace(reKeyWithTagsBig, textoFinal);
-        textoFinal = "";
-      }
-
-      if(reTotalItem.test(resultado)){
-        let loopObject = dataObject[propiedad];
-        let reTotalWithTags = new RegExp("^(.*){{loop "+propiedad+" -(.*)-}}(.*)$" ,"gm");
-        let match = reTotalWithTags.exec(resultado);
-        let textoFinal = "";
-        let doneWaiting = false;
-        for(let key in loopObject){
-          //en match[2] se encuentra la key por la que empezar 
-          if(key == match[2] || doneWaiting){
-            doneWaiting = true;
-            if(match != null && loopObject[key] != undefined) textoFinal += match[1]+loopObject[key]+match[3]+"\n";
+        if(reItem.test(resultado)){
+          let loopObject = dataObject[propiedad];
+          for(let key in loopObject){
+            let reItemFind = new RegExp("{{loop "+propiedad+" [^-]?"+key+"[^-]?}}" ,"gm");
+            resultado = resultado.replace(reItemFind, loopObject[key]);  
           }
         }
-        resultado = resultado.replace(reTotalWithTags, textoFinal);
-        textoFinal = "";
-      }
 
-      if(reTotal.test(resultado)){
-        let loopObject = dataObject[propiedad];
-        reTotal = new RegExp("^(.*){{loop "+propiedad+"}}(.*)$" ,"gm");
-        let match = reTotal.exec(resultado);
-        let textoFinal = "";
-        for(let key in loopObject){
-          if(match != null && loopObject[key] != undefined) textoFinal += match[1]+loopObject[key]+match[2]+"\n";
+        if(reLoopKey.test(resultado)){
+          let loopObject = dataObject[propiedad];
+          let reKeyWithTagsBig = new RegExp("^(.*){{loopKey "+propiedad+"}}(.*)([\\s\\S]*){{\\/loopKey "+propiedad+"}}.*$", "gm");
+          let reArrayWithTags = new RegExp("^([\\s\\S]*)\n(.*){{loopArray "+propiedad+"}}(.*)([\\s\\S]*)$", "gm");
+          let matchKeyBig;
+          let matchArray; 
+          let textoFinal = "";
+          matchKeyBig = reKeyWithTagsBig.exec(resultado);
+          matchArray = reArrayWithTags.exec(matchKeyBig[3]);
+          for(let key in loopObject){
+            textoFinal += matchKeyBig[1]+key+matchKeyBig[2]+'\n';
+            //Lo que hay antes del <option> es matcharray[1]
+            textoFinal += matchArray[1];
+            for(let i = 0; i<loopObject[key].length; i++){
+              let itemArray = matchArray[2]+loopObject[key][i]+matchArray[3]+"\n";
+              textoFinal += itemArray;
+            }
+            //Lo que hay despues del <option> es matcharray[4]
+            textoFinal += matchArray[4];
+          }
+          resultado = resultado.replace(reKeyWithTagsBig, textoFinal);
+          textoFinal = "";
         }
-        resultado = resultado.replace(reTotal, textoFinal);
-        textoFinal = "";
-      } 
+
+        if(reTotalItem.test(resultado)){
+          let loopObject = dataObject[propiedad];
+          let reTotalWithTags = new RegExp("^(.*){{loop "+propiedad+" -(.*)-}}(.*)$" ,"gm");
+          let match = reTotalWithTags.exec(resultado);
+          let textoFinal = "";
+          let doneWaiting = false;
+          for(let key in loopObject){
+            //en match[2] se encuentra la key por la que empezar 
+            if(key == match[2] || doneWaiting){
+              doneWaiting = true;
+              if(match != null && loopObject[key] != undefined) textoFinal += match[1]+loopObject[key]+match[3]+"\n";
+            }
+          }
+          resultado = resultado.replace(reTotalWithTags, textoFinal);
+          textoFinal = "";
+        }
+
+        if(reTotal.test(resultado)){
+          let loopObject = dataObject[propiedad];
+          reTotal = new RegExp("^(.*){{loop "+propiedad+"}}(.*)$" ,"gm");
+          let match = reTotal.exec(resultado);
+          let textoFinal = "";
+          for(let key in loopObject){
+            if(match != null && loopObject[key] != undefined) textoFinal += match[1]+loopObject[key]+match[2]+"\n";
+          }
+          resultado = resultado.replace(reTotal, textoFinal);
+          textoFinal = "";
+        } 
+      }
     }
-    return cb(null, resultado);
+
+    //Renderizamos los partiales
+    let reIncludePartial = new RegExp("{{> (.*)}}", "gm");
+    if(reIncludePartial.test(resultado)){
+      //Reseteamos el last index para que nos dé todos los resultados desde el principio, porque
+      //al ejecutar el if se pasa al siguiente resultado. Cada vez que se ejecuta cualquier metodo
+      //de un objeto regex, se mueve el puntero solo si tenemos puesta la flag global "g".
+      reIncludePartial.lastIndex = 0;
+      //El include partial es un regex que busca cualquier include sin saber su valor
+      let error = null;
+      let partiales = [];
+      //Creamos un array con los nombres de los includes a poner
+      while((partialName = reIncludePartial.exec(resultado)) != null){
+        partiales.push(partialName[1]);
+      }
+      //Los ponemos
+      partiales.forEach((partialName, index) => {
+        //El partialName[1] es el grupo regex primero entre parentesis ( ) para sacar el nombre partial
+        let partial = path.join(__dirname, '../public/views/partials/', partialName+'.html');
+        fs.readFile(partial, 'utf-8', (err, partialContent) => {
+          if(err) error = err;
+          resultado = resultado.replace(reIncludePartial, partialContent);
+          if(index + 1 == partiales.length){
+            if(error) cb(error, null);
+            else cb(null, resultado);                    
+          }
+        });
+      });
+    }else{
+
+      //Si no hay includes devolver la pagina con los cambios del dataObject
+      return cb(null, resultado);
+
+    }
   });
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
@@ -563,7 +603,36 @@ function getPaginacion(limite, cb){
     return cb(null, paginas);
   });
 }; 
-
+//TODO realizar el pago una vez que tengamos los detalles del producto y del cliente al usar stripe.js
+// function payProduct(token, precio, descripcion, cb){
+//   db.collection('facturas').count((err, count) => {
+//     if(err) return cb('There was an error processing your card, please try again.');
+//     let idPago = count+1;
+//     stripe.charges.create({
+//       amount: precio, //Cantidad en centimos
+//       currency: 'eur',
+//       source: token,
+//       description: descripcion,
+//       metadata: {'idPago': idPago}
+//     }, (err, charge) => {
+//       if(err && err.type == 'StripeCardError'){
+//         //The card has been declined
+//         return cb('Your card has been declined, please verify your card data and try again.');
+//       }else{
+//         db.collection('facturas').insert({
+//           'idPago': idPago,
+//           'cantidadPagada': charge.amount,
+//           'fechaCompra': charge.created,
+//           'descripcion': charge.description,
+//           'estaPagado': charge.paid,
+//           'emailComprador': charge.source.name,
+//           'productoComprado': 
+//         });
+//         return cb(charge);
+//       }
+//     });
+//   });
+// };
 exports.buscarProducto = buscarProducto;
 exports.render = render;
 exports.copyFile = copyFile;
@@ -581,3 +650,4 @@ exports.guardarSliderImages = guardarSliderImages;
 exports.getSlider = getSlider;
 exports.getMiniSlider = getMiniSlider;
 exports.getPaginacion = getPaginacion;
+//exports.payProduct = payProduct;

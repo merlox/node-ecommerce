@@ -9,20 +9,8 @@
 	<link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
 </head>
 <body>
-	<div id="menu-principal">
-		<img id="logo" src="../images/logo.png">
-		<a id="departamentos" href="javascript:void(0)">Departamentos</a>
-		<div id="expandible-departamentos">
-			<ul></ul>
-		</div>
-		<div id="contenedor-buscador">
-			<input id="buscador" type="text" name="buscador">
-			<div id="buscador-sugerencias"><ul></ul></div>
-			<i id="icono-busqueda"></i>
-		</div>
-		<a id="carrito" href="#">Carrito</a>
-		<a id="usuario" href="#">Mi cuenta</a>
-	</div>
+
+	{{> menu}}
 
     <div id="contenedor-principal">
         <div id="contenedor-imagenes-slider">
@@ -46,9 +34,14 @@
 	            <img class="flecha-derecha-minislider" src="../images/next.svg">
 	        </div>        
 	    </div>
+
+	    <div id="contenedor-productos">
+	    		    	
+	    </div>
 	</div>
 	<script type="text/javascript" src="../js/functions.js"></script>
 	<script type="text/javascript" src="../js/menu.js"></script>
+	<script type="text/javascript" src="../js/cesta.js"></script>
 	<script type="text/javascript" src="../js/index.js"></script>
 </body>
 </html>

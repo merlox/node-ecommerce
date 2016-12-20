@@ -871,3 +871,28 @@ Hoy simplemente he alineado las cajas.
 Estoy más centrado en otro proyecto con lo que le voy a dedicar menos tiempo a este al menos hasta que el otro se ponga activo en la web.
 
 Mañana continuaré cambiando y haciendo responsive el diseño de la página inicial index.
+
+### Día 44
+
+Hoy voy a integrar los pagos de stripe para poder realizar pagos con tarjeta de manera segura con los usuarios. Ahora mismo tengo 2 opciones: 
+
+1. Usar stripe checkout que es un formulario ya preparado por ellos para facilitar los pagos.
+2. Crear un formulario personalizado para guardar la información que me interese.
+
+Estoy probando la version 1 y luego incorporaré la versión 2.
+
+Esto es lo que necesito crea en la tienda:
+
+- Facturas que se verán desde el panel de admin y que se le enviará por correo la factura de cada usuario al comprar.
+En este caso hay que guardar la siguiente información:
+-- Id de compra.
+-- Fecha de compra.
+-- Email del comprador.
+-- Cantidad pagada.
+-- Objeto comprado.
+-- Información de la tarjeta de crédito, cuando expira, ultimos 4 digitos y marca.
+-- Estado pagado o no.
+
+Entonces tengo que crear una tabla en la base de datos llamada "Facturas" donde guardar ese tipo de información.
+
+Acabo de mirar como funciona el checkout y es bastante sencillo. Sin embargo esta limitado en el aspecto de que no te deja enviar información personalizada al servidor, solamente se realiza el pago y termina con lo que tengo que implementar un pago personalizado usando stripe.js. Para ello crearé una página de pago que se cargará con ajax e incluirá la información necesaria para completar el pedido.

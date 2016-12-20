@@ -19,6 +19,7 @@ routes.get('/p/:permalink', (req, res) => {
       return res.redirect('/?message=That page is not available');
     }else if(result.publicado == 'si'){
       functions.render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
+        if(err) return res.send(err);
         return res.send(data);
       });
     }
@@ -26,7 +27,10 @@ routes.get('/p/:permalink', (req, res) => {
 });
 
 routes.get('/search/:keyword?', (req, res) => {
-    return res.sendFile(__dirname, '../../public/views/busqueda.html');
+    functions.render(path.join(__dirname, '../../public/views/busqueda.html'), null, (err, data) => {
+      if(err) return res.send(err);
+      return res.send(data);
+    });
 });
 
 routes.get('/deleteSession', function(req, res){
@@ -92,23 +96,27 @@ routes.get('/close-session', (req, res) => {
 	return res.redirect('/');
 });
 
-routes.get('/admin', (req, res) => {
-	if(req.session.username == 'merunas'){
-      console.log('redirecting');
-      res.redirect('/admin/dashboard');
-    }
-    else res.redirect('/');
+routes.post('/pay-product', (req, res) => {
+  functions.payProduct(req.body.stripeToken, (err) => {
+    console.log(err);
+    if(err) return res.send(err);
+    else return res.send('ok');
+  });
+});
+
+routes.get('/cesta', (req, res) => {
+  //TODO pasarle los datos en formato lista
+  functions.render(path.join(__dirname, '../../public/views/cesta.html'), null, (err, data) => {
+    if(err) return res.send(err);
+    return res.send(data);
+  });
 });
 
 routes.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '../../public/views/index.html'));
-});
-
-routes.use((req, res) => {
-  if(!res.heardersSent){
-  	console.log('redirecting');
-	res.redirect('/');
-  }
+  functions.render(path.join(__dirname, '../../public/views/index.html'), null, (err, data) => {
+    if(err) return res.send(err);
+    return res.send(data);
+  });
 });
 
 module.exports = routes;

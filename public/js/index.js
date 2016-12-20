@@ -100,7 +100,7 @@ function colocarMasVendidos(data, index){
 		tituloCorto = producto.titulo;
 	}
 	if(producto.categoria == 'Default'){
-		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+		productoHtml = '<a class="producto-link productos-vendidos" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-vendidos">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
@@ -108,7 +108,7 @@ function colocarMasVendidos(data, index){
 			+tituloCorto+'</h3><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
-		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+		productoHtml = '<a class="producto-link productos-vendidos" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-vendidos">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
@@ -120,6 +120,9 @@ function colocarMasVendidos(data, index){
 	if(q('#contenedor-producto-minislider-vendidos') != undefined || q('#contenedor-producto-minislider-vendidos') != null){
 		q('#contenedor-producto-minislider-vendidos').remove();
 	}
+	qAll('.productos-vendidos').forEach((producto) => {
+		producto.remove();
+	});
 	q('#contenedor-minislider-vendidos').insertAdjacentHTML('beforeend', productoHtml);
 };
 function colocarMasPopulares(data, index){
@@ -136,7 +139,7 @@ function colocarMasPopulares(data, index){
 		tituloCorto = producto.titulo;
 	}
 	if(producto.categoria == 'Default'){
-		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+		productoHtml = '<a class="producto-link producto-popular" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-populares">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
@@ -144,7 +147,7 @@ function colocarMasPopulares(data, index){
 			+tituloCorto+'</h3><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
-		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+		productoHtml = '<a class="producto-link producto-popular" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-populares">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
@@ -156,6 +159,9 @@ function colocarMasPopulares(data, index){
 	if(q('#contenedor-producto-minislider-populares') != undefined || q('#contenedor-producto-minislider-populares') != null){
 		q('#contenedor-producto-minislider-populares').remove();
 	}
+	qAll('.producto-popular').forEach((producto) => {
+		producto.remove();
+	});
 	q('#contenedor-minislider-populares').insertAdjacentHTML('beforeend', productoHtml);
 };
 function flechaDerechaMiniSliderVendidos(){
@@ -196,7 +202,7 @@ function colocarRecomendados(data, index){
 		tituloCorto = producto.titulo;
 	}
 	if(producto.categoria == 'Default'){
-		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+		productoHtml = '<a class="producto-link producto-recomendado" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-recomendados">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
@@ -204,7 +210,7 @@ function colocarRecomendados(data, index){
 			+tituloCorto+'</h3><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
-		productoHtml = '<a class="producto-link" href="http://192.168.1.100:8000/p/'
+		productoHtml = '<a class="producto-link producto-recomendado" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-recomendados">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
@@ -216,6 +222,9 @@ function colocarRecomendados(data, index){
 	if(q('#contenedor-producto-minislider-recomendados') != undefined || q('#contenedor-producto-minislider-recomendados') != null){
 		q('#contenedor-producto-minislider-recomendados').remove();
 	}
+	qAll('.producto-recomendado').forEach((producto) => {
+		producto.remove();
+	});
 	q('#contenedor-minislider-recomendados').insertAdjacentHTML('beforeend', productoHtml);
 };
 function flechaDerechaMiniSliderRecomendados(){
@@ -280,6 +289,14 @@ function iniciarIntervaloMiniSliderRecomendados(){
 	let timer = 4000*Math.random();
 	timer = timer < 1000 ? timer + 1000 : timer;
 	intervaloMiniSliderRecomendados = setInterval(flechaDerechaMiniSliderRecomendados, timer);
+};
+/*
+
+PRODUCTOS PRINCIPALES
+
+*/
+function getMainProducts() {
+
 };
 
 q('#flecha-izquierda-slider').addEventListener('click', cambiarImagenIzquierda);

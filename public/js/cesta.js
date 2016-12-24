@@ -28,14 +28,14 @@ function getCesta(){
 					<td><input type="number" min="1" onfocusout="editarCantidadCesta('${productoCesta.permalink}', event, true)"
 						onkeypress="editarCantidadCesta('${productoCesta.permalink}', event)" 
 						value="${productoCesta.cantidad}"/></td>
-					<td class="cesta-precio-cantidad cesta-precio">${precioCalculado}€</td>
-					<td><span onclick="deleteCestaItem('${productoCesta.permalink}', this)" class="x-icon">&#10006</span></td>
+					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
+					<td><span onclick="deleteCestaItem('${productoCesta.permalink}', this)" class="x-icon">×</span></td>
 				</tr>`;
 				precioTotal += parseFloat(precioCalculado);
 				if(index + 1 >= response.cesta.length){
 					cestaHtml += 
 					`<tr>
-						<td></td>
+						<td class="separador-tabla"></td>
 						<td colspan="2">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
 						<td colspan="3"><button>Pasar por caja</button></td>
 					</tr>`;

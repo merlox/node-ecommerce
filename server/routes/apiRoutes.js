@@ -230,7 +230,6 @@ api.post('/add-cesta/', (req, res) => {
   });
 });
 api.get('/get-cesta', (req, res) => {
-  console.log(req.session);
   let responseObject = {
     error: null,
     cesta: null
@@ -246,10 +245,16 @@ api.get('/get-cesta', (req, res) => {
       }
     });
   }else{
-    console.log('Sending non logged user');
-    responseObject.cesta = req.session.cesta;
-    console.log(responseObject.cesta);
-    res.send(responseObject);
+    //Para usuarios no registrados copiar la 1ª imagen de cada producto con copy file
+    functions.getOfflineCesta(req.session.cesta, (err, cesta) => {
+      if(err){
+        responseObject.error = 'Could not load your products, try again.';
+        res.send(responseObject);
+      }else{
+        responseObject.cesta = cesta;
+        res.send(responseObject);
+      }
+    });
   }
 });
 api.post('/change-cantidad-cesta', (req, res) => {

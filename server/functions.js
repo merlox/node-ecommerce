@@ -775,6 +775,38 @@ function saveCestaUser(cesta, username, cb){
     else return cb(null);
   });
 };
+//Para copiar las imagenes de los productos de la cesta cuando no has iniciado sesion
+function getOfflineCesta(cesta, cb){
+  let productosCesta = [];
+  for(let nombreProducto in cesta) productosCesta.push(nombreProducto);
+  db.collection('productos').find({
+    'permalink': {$in: productosCesta}
+  }, {
+    'permalink': true,
+    'imagenes': true,
+    'precio': true,
+    '_id': false
+  }).toArray((err, results) => {
+    if(err) return cb(err, null);
+    //Le ponemos la cantidad a cada objeto producto de la cesta
+    //Y solo seleccionamos la primera imagen
+    results.forEach((objetoProducto, index) => {
+      let cantidad = cesta[objetoProducto.permalink];
+      let nombreImagen = results[index].imagenes[1];
+      results[index].imagenes = nombreImagen;
+      results[index]['cantidad'] = cantidad;
+      //Le pasamos la imágen del producto al cliente
+      let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
+      let end = path.join(__dirname, '../public/public-uploads/');
+      copyFile(origen, end, nombreImagen, (err) => {
+        if(err) return cb(err, null);
+        if(index + 1 >= results.length){
+          cb(null, results);
+        }
+      });
+    });
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.render = render;
@@ -800,3 +832,4 @@ exports.loginUsuario = loginUsuario;
 exports.getCesta = getCesta;
 exports.addProductoCesta = addProductoCesta;
 exports.cambiarCantidadCesta = cambiarCantidadCesta;
+exports.getOfflineCesta = getOfflineCesta;

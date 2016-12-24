@@ -6,8 +6,6 @@ function addCesta(cantidad){
 	httpPost('/api/add-cesta/', dataObject);
 };
 function getCesta(){
-	q('#productos-cesta').style.display = 'block';
-	q('.triangulo-up').style.display = 'block';
 	q('.triangulo-up').style.borderBottomColor = 'white';
 	q('#cesta').insertAdjacentHTML('afterbegin', '<div class="spinner"></div>');
 	httpGet('/api/get-cesta', (response) => {
@@ -41,8 +39,10 @@ function getCesta(){
 					</tr>`;
 				}
 			});
-			q('#productos-cesta').innerHTML = cestaHtml;
 			q('.spinner').remove();
+			q('#productos-cesta').style.display = 'block';
+			q('.triangulo-up').style.display = 'block';
+			q('#productos-cesta').innerHTML = cestaHtml;
 			// //Para colorear la flecha del mismo color del fondo cuando hover firstchild
 			q('#productos-cesta').firstChild.firstChild.addEventListener('mouseenter', () => {
 				q('.triangulo-up').style.borderBottomColor = 'whitesmoke';

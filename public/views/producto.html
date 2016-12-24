@@ -2,11 +2,8 @@
 <html>
 <head>
 	<title>{{titulo}}</title>
-	<link rel="stylesheet" type="text/css" href="../css/framework.css">
+	{{> header}}
 	<link rel="stylesheet" type="text/css" href="../css/producto.css">
-	<link rel="stylesheet" type="text/css" href="../css/menu.css">
-	<link rel="stylesheet" type="text/css" href="../css/cesta.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -62,9 +59,9 @@
 			-->
 		</div>
 	</div>
-	<script type="text/javascript" src="../js/functions.js"></script>
-	<script type="text/javascript" src="../js/menu.js"></script>
-	<script type="text/javascript" src="../js/cesta.js"></script>
+
+	{{> footer}}
+
 	<script type="text/javascript" src="../js/producto.js"></script>
 </body>
 </html>

@@ -317,18 +317,19 @@ function render(page, dataObject, cb){
       //El include partial es un regex que busca cualquier include sin saber su valor
       let error = null;
       let partiales = [];
-      let partialName = '';
+      let partialNombre = '';
       //Creamos un array con los nombres de los includes a poner
-      while((partialName = reIncludePartial.exec(resultado)) != null){
-        partiales.push(partialName[1]);
+      while((partialNombre = reIncludePartial.exec(resultado)) != null){
+        partiales.push(partialNombre[1]);
       }
       //Los ponemos
       partiales.forEach((partialName, index) => {
         //El partialName[1] es el grupo regex primero entre parentesis ( ) para sacar el nombre partial
         let partial = path.join(__dirname, '../public/views/partials/', partialName+'.html');
         fs.readFile(partial, 'utf-8', (err, partialContent) => {
+          let re = new RegExp("{{> "+partialName+"}}", "gm");
           if(err) error = err;
-          resultado = resultado.replace(reIncludePartial, partialContent);
+          resultado = resultado.replace(re, partialContent);
           if(index + 1 == partiales.length){
             if(error) cb(error, null);
             else cb(null, resultado);                    

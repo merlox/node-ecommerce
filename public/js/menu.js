@@ -1,5 +1,6 @@
+'use strict';
 //Onload get categories
-window.onload = () => {
+window.addEventListener('load', () => {
 	httpGet('/api/get-categories', (categories) => {
 		if(categories && categories != '' && categories != undefined){
 			categories = JSON.parse(categories);
@@ -12,10 +13,22 @@ window.onload = () => {
 			}
 		}
 	});
+	httpGet('/api/get-logged-state', (state) => {
+		if(state == 'logged'){
+			q('#usuario').innerHTML = 'Mi cuenta ▼<div class="triangulo-up"></div>';
+			q('#usuario').href = '/micuenta';
+		}else if(state == 'admin'){
+			q('#usuario').innerHTML = 'Admin ▼<div class="triangulo-up"></div>';
+			q('#usuario').href = '/admin';
+		}else{
+			q('#usuario').innerHTML = 'Iniciar Sesión<div class="triangulo-up"></div>';
+			q('#usuario').href = '/login';
+		}
+	});
 	if(getParameterByName('searched')){
 		httpPost('/api/guardar-busqueda', getParameterByName('searched'));
 	}
-};
+});
 
 //Para ocultar o mostrar el menu de departamentos para ir a uno determinado
 let isDepartamentosActive = false;
@@ -74,9 +87,27 @@ q('#buscador').addEventListener('keyup', () => {
 	buscarProducto(q('#buscador').value);
 });
 
+//Para ir a la página de busqueda
 q('#icono-busqueda').addEventListener('click', () => {
 	//Si la busqueda no esta vacía, redirigir a resultados de busqueda en caso de hacer click a buscar
 	if(q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
 		window.location = '//192.168.1.100:8000/search/?searched='+encodeURI(q('#buscador').value);
+	}
+});
+
+//Para mostrar el desplegable de opciones de sesion al hover sesion
+q('#usuario').addEventListener('mouseenter', () => {
+	q('#menu-sesion').style.display = 'block';
+});
+
+//No ocultar si se hace click sobre el contenido cesta
+q('#menu-sesion').addEventListener('click', (e) => {
+	e.stopPropagation();
+});
+//Ocultar la cesta al hacer click fuera
+q('body').addEventListener('click', (e) => {
+	if(e.target != q('#usuario')){
+		q('#menu-sesion').style.display = 'none';
+		q('.triangulo-up').style.display = 'none';
 	}
 });

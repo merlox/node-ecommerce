@@ -1,3 +1,4 @@
+'use strict';
 document.getElementById('close-session').addEventListener('click', () => {
   window.location = 'http://localhost:8000/close-session';
 });

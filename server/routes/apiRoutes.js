@@ -1,3 +1,4 @@
+'use strict';
 /*
 
 Estas son las páginas de utilidades para cargar funciones en ajax
@@ -213,5 +214,48 @@ api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
     }
   });
 });
-
+api.get('/get-logged-state', (req, res) => {
+  if(req.session.username == 'merloxdixcontrol@gmail.com'){
+    return res.send('admin');
+  }else if(req.session.username != null && req.session.username != undefined){
+    return res.send('logged');
+  }else{
+    return res.send(null);
+  }
+});
+api.post('/add-cesta/', (req, res) => {
+  functions.addProductoCesta(req, (err) => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+api.get('/get-cesta', (req, res) => {
+  console.log(req.session);
+  let responseObject = {
+    error: null,
+    cesta: null
+  };
+  if(req.session.isLogged){
+    functions.getCesta(req.session.username, (err, cesta) => {
+      if(err){
+        responseObject.error = 'Could not load your products, try again.';
+        res.send(responseObject);
+      }else{
+        responseObject.cesta = cesta;
+        res.send(responseObject);
+      }
+    });
+  }else{
+    console.log('Sending non logged user');
+    responseObject.cesta = req.session.cesta;
+    console.log(responseObject.cesta);
+    res.send(responseObject);
+  }
+});
+api.post('/change-cantidad-cesta', (req, res) => {
+  functions.cambiarCantidadCesta(req, (err) => {
+    if(err) return res.send('Error updating cart');
+    res.send(null);
+  });
+});
 module.exports = api;

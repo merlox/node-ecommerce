@@ -1,3 +1,4 @@
+'use strict';
 function httpGet(url, cb){
 	//If no callback is provided in the function calling, ignore the callback
 	if(cb == undefined){

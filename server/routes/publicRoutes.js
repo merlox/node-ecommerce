@@ -1,3 +1,4 @@
+'use strict';
 let express = require('express'),
 	Mongo = require('mongodb').MongoClient,
 	MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
@@ -27,15 +28,10 @@ routes.get('/p/:permalink', (req, res) => {
 });
 
 routes.get('/search/:keyword?', (req, res) => {
-    functions.render(path.join(__dirname, '../../public/views/busqueda.html'), null, (err, data) => {
-      if(err) return res.send(err);
-      return res.send(data);
-    });
-});
-
-routes.get('/deleteSession', function(req, res){
-	req.session.isLogged = false;
-	res.redirect('/?status=Success&message=you closed your session');
+  functions.render(path.join(__dirname, '../../public/views/busqueda.html'), null, (err, data) => {
+    if(err) return res.send(err);
+    return res.send(data);
+  });
 });
 
 routes.get('/chat', function(req, res){
@@ -51,48 +47,32 @@ routes.get('/login', (req, res) =>{
 });
 
 routes.post('/register', function(req, res){
-  db.collection('users').find({
-      'username': req.body.nombreUsuario
-    }).toArray(function(err, results){
-      if(err) throw(err);
-      if(typeof(results) != 'undefined' && results.length>0){
-        return res.redirect('/?status=Error&message=User already exists');
-      }else{
-        db.collection('users').insert({
-          'username': req.body.nombreUsuario,
-          'password': req.body.passUsuario
-        }, function(err, result){
-          if(err) throw(err);
-        });
-        req.session.isLogged = true;
-        return res.redirect('/login?status=Success&message=User created successfully!');
-      }
-    });
+  functions.registerUsuario(req.body.nombreUsuario, req.body.passUsuario, (err) => {
+    if(err){
+      res.send(err);
+    }else{
+      req.session.username = req.body.nombreUsuario;
+      req.session.isLogged = true;
+      res.redirect('/');
+    }
+  });
 });
 
 routes.post('/login', function(req, res){
-  db.collection('users').find({
-    'username': req.body.nombreUsuario,
-    'password': req.body.passUsuario
-  }).toArray(function(err, results){
-    if(err) throw(err);
-    if(typeof(results) != 'undefined' && results.length > 0){
-      req.session.isLogged = true;
-      req.session.username = req.body.nombreUsuario;
-      usernameLogged = req.session.username;
-      if(req.session.username == 'merunas' && results[0].password == 'Merunas@1'){
-        console.log('Hello admin');
-        return res.redirect('/admin/dashboard');
-      }
-      return res.redirect('/user/dashboard');
+  functions.loginUsuario(req.body.nombreUsuario, req.body.passUsuario, (err) => {
+    if(err){
+      res.send(err);
     }else{
-      return res.redirect('/?status=Error&message=Bad username or password');
+      req.session.username = req.body.nombreUsuario;
+      req.session.isLogged = true;
+      res.redirect('/');
     }
   });
 });
 
 routes.get('/close-session', (req, res) => {
-	req.session.destroy();
+  req.session = null;
+	delete req.session;
 	return res.redirect('/');
 });
 
@@ -110,6 +90,10 @@ routes.get('/cesta', (req, res) => {
     if(err) return res.send(err);
     return res.send(data);
   });
+});
+
+routes.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/images/logo.png'));
 });
 
 routes.get('/', (req, res) => {

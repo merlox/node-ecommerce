@@ -1,3 +1,4 @@
+'use strict';
 let io = require('socket.io')(http),
 	express = require('express'),
 	app = express();

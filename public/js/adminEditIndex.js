@@ -1,3 +1,4 @@
+'use strict';
 let objetoImagenes = {};
 let indexImagenActiva = '';
 let intervaloSlider;

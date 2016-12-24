@@ -1,3 +1,4 @@
+'use strict';
 //Gets the url params and detects if it has some message or not
 function getQueryVariable(variable)
 {

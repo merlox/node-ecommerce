@@ -1,3 +1,4 @@
+'use strict';
 window.onload = () => {
 	//Al cargar la página, solicitamos el token de busqueda
 	if(getParameterByName('searched')){

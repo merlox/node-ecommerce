@@ -1,3 +1,4 @@
+'use strict';
 function checkPermalinkState(){
 	let request = new XMLHttpRequest();
 	request.open('GET', '/api/permalink-check/'+document.getElementById('permalink').value);

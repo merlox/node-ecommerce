@@ -4,12 +4,6 @@ GENERALES
 
 */
 
-body{
-	font-family: georgia;
-}
-h1, h2, h3, h4, h5, h6, button{
-	font-family: helvetica;
-}
 #contenedor-principal{
 	display: flex;
 	margin: 0 80px;
@@ -88,14 +82,7 @@ BUY SIDEBAR
 	width: 15%;
 }
 #button-añadir-cesta{
-	border-radius: 2px;
-	border: 1px solid grey;
-	background-color: #FFCC00;
-	padding: 10px;
-	width: 100%;
-	cursor: pointer;
-	color: #0F0F0F;
-	font-size: 13pt;
+	margin: 0 auto;
 }
 #button-añadir-cesta:hover{
 	background-color: #FFA210;

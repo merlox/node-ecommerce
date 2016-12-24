@@ -1,3 +1,4 @@
+'use strict';
 let domainName = '192.168.1.100:8000';
 let isMenuVisible = true;
 let isMenuResponsive = false;

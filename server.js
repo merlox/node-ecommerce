@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express'),
     app = express(),
     fs = require('fs'),
@@ -24,6 +25,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 30
   },
   resave: false,
+  unset: 'destroy',
   saveUninitialized: true
 }));
 

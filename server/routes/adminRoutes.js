@@ -1,6 +1,15 @@
+'use strict';
 const express = require('express'),
 	path = require('path'),
 	admin = express.Router();
+
+admin.use((req, res, next) => {
+	if(req.session.username == 'merloxdixcontrol@gmail.com'){
+		next();
+	}else{
+		return res.send('You can\'t enter here.');
+	}
+});
 
 admin.get('/dashboard', (req, res) => {
 	return res.sendFile(path.join(__dirname, '../../public/html/adminDashboard.html'));

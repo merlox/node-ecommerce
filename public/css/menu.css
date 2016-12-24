@@ -20,7 +20,7 @@ hr{
 	font-family: verdana;
 }
 #menu-principal > a{
-	margin: 0 20px;
+	width: 200px;
 	color: white;
 	text-decoration: none;
 }
@@ -111,6 +111,31 @@ hr{
 }
 #icono-busqueda:active{
 	background-color: #D97805;	
+}
+#usuario{
+	position: relative;
+}
+#menu-sesion{
+	display: none;
+	position: absolute;
+    background: white;
+    top: 70px;
+    right: 10px;
+    text-align: left;
+    border-radius: 5px;
+    border: 1px solid grey;
+    border-spacing: 0;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.36);
+}
+#menu-sesion td{
+	padding: 10px;
+}
+#menu-sesion a{
+	text-decoration: none;
+	color: black;
+}
+#menu-sesion tr:hover{
+	background-color: lightgrey;
 }
 @media (max-width: 1000px){
 	#contenedor-buscador{

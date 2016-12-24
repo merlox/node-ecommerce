@@ -1,3 +1,4 @@
+'use strict';
 let objetoAtributos = {};
 // objetoAtributos = {
 //  "atributo1": [

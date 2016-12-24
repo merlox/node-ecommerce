@@ -1,3 +1,4 @@
+'use strict';
 let Mongo = require('mongodb').MongoClient,
   MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
   fs = require('fs'),
@@ -316,6 +317,7 @@ function render(page, dataObject, cb){
       //El include partial es un regex que busca cualquier include sin saber su valor
       let error = null;
       let partiales = [];
+      let partialName = '';
       //Creamos un array con los nombres de los includes a poner
       while((partialName = reIncludePartial.exec(resultado)) != null){
         partiales.push(partialName[1]);
@@ -603,7 +605,7 @@ function getPaginacion(limite, cb){
     return cb(null, paginas);
   });
 }; 
-//TODO realizar el pago una vez que tengamos los detalles del producto y del cliente al usar stripe.js
+//TODO 2 realizar el pago una vez que tengamos los detalles del producto y del cliente al usar stripe.js
 // function payProduct(token, precio, descripcion, cb){
 //   db.collection('facturas').count((err, count) => {
 //     if(err) return cb('There was an error processing your card, please try again.');
@@ -633,6 +635,147 @@ function getPaginacion(limite, cb){
 //     });
 //   });
 // };
+
+function registerUsuario(email, password, cb){
+  console.log('RegisterUsuario, functions.js');
+  db.collection('users').findOne({
+    'email': email
+  }, function(err, result){
+    if(err) return cb('Error creating the user. Try again.')
+    if(result != 'undefined' && result != null){
+      return cb('User already exists');
+    }else{
+      db.collection('users').insert({
+        'username': email,
+        'password': password
+      }, function(err, result){
+        if(err) return cb('Could not create the user. Try again.');
+        else return cb(null);
+      });
+    }
+  });
+};
+function loginUsuario(email, password, cb){
+  console.log('LoginUsuario, functions.js');
+  db.collection('users').findOne({
+    'username': email,
+    'password': password
+  }, function(err, result){
+    if(err) cb('Error processing your request, try again.');
+    if(result != 'undefined' && result != null){
+      return cb(null);
+    }else{
+      return cb('Error, could not find that user. Try again.');
+    }
+  });
+};
+function getCesta(username, cb){
+  console.log('GetCesta, functions.js');
+  db.collection('users').findOne({
+    'username': username
+  }, {
+    'cesta': true,
+    '_id': false
+  }, (err, result) => {
+    if(err) return cb(err, null);
+    //Comprobamos que la cesta no esté vacía
+    if(Object.keys(result.cesta).length != 0){
+      let productosCesta = [];
+      for(let nombreProducto in result.cesta) productosCesta.push(nombreProducto);
+      db.collection('productos').find({
+        'permalink': {$in: productosCesta}
+      }, {
+        'permalink': true,
+        'imagenes': true,
+        'precio': true,
+        '_id': false
+      }).toArray((err, results) => {
+        if(err) return cb(err, null);
+        //Le ponemos la cantidad a cada objeto producto de la cesta
+        //Y solo seleccionamos la primera imagen
+        results.forEach((objetoProducto, index) => {
+          let cantidad = result.cesta[objetoProducto.permalink];
+          let nombreImagen = results[index].imagenes[1];
+          results[index].imagenes = nombreImagen;
+          results[index]['cantidad'] = cantidad;
+          //Le pasamos la imágen del producto al cliente
+          let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
+          let end = path.join(__dirname, '../public/public-uploads/');
+          copyFile(origen, end, nombreImagen, (err) => {
+            if(err) return cb(err, null);
+            if(index + 1 >= results.length){
+              cb(null, results);
+            }
+          });
+        });
+      });
+    }else{
+      cb(null, null);
+    }
+  });
+};
+function addProductoCesta(req, cb){
+  console.log('AddProductoCesta, functions.js');
+  //Sacamos el producto de la cesta con el for in
+  let productoCesta;
+  for(productoCesta in req.body.data) break;
+  let cantidadProductoCesta = req.body.data[productoCesta];
+  if(!req.session.cesta){
+    req.session.cesta = {};
+  }
+  //Si no existe ese producto en la cesta, ponerlo como cantidad 1
+  if(!(productoCesta in req.session.cesta)){
+    req.session.cesta[productoCesta] = cantidadProductoCesta;
+  }else{
+    //Si existe subirle la cantidad
+    req.session.cesta[productoCesta] = parseInt(req.session.cesta[productoCesta]) + parseInt(cantidadProductoCesta);
+  }
+  if(req.session.isLogged){
+    saveCestaUser(req.session.cesta, req.session.username, (err) => {
+      if(err) return cb(err);
+      cb(null);
+    });
+  }else{
+    cb(null);
+  }
+};
+function cambiarCantidadCesta(req, cb){
+  console.log('CambiarCantidadCesta, functions.js');
+  let producto = req.body.data.producto;
+  let cantidad = req.body.data.cantidad;
+  for(let productoCesta in req.session.cesta){
+    if(productoCesta == producto){
+      if(cantidad <= 0)
+        delete req.session.cesta[productoCesta];  
+      else
+        req.session.cesta[productoCesta] = cantidad;
+    }
+  }
+  if(req.session.isLogged){
+    saveCestaUser(req.session.cesta, req.session.username, (err) => {
+      if(err) return cb(err);
+      cb(null);
+    });
+  }else{
+    cb(null);
+  }
+};
+// Si esta logueado, guardar la info de la cesta en su cuenta. 
+// Si no guardar en el local storage.
+function saveCestaUser(cesta, username, cb){
+  console.log('SaveCestaUser, functions.js');
+  db.collection('users').update({
+    'username': username
+  }, {
+    $set: {
+      'cesta': cesta
+    }
+  }, (err, result) => {
+    if(err) return cb('Could not update your cart, try again.');
+    else return cb(null);
+  });
+};
+
 exports.buscarProducto = buscarProducto;
 exports.render = render;
 exports.copyFile = copyFile;
@@ -651,3 +794,9 @@ exports.getSlider = getSlider;
 exports.getMiniSlider = getMiniSlider;
 exports.getPaginacion = getPaginacion;
 //exports.payProduct = payProduct;
+exports.saveCestaUser = saveCestaUser;
+exports.registerUsuario = registerUsuario;
+exports.loginUsuario = loginUsuario;
+exports.getCesta = getCesta;
+exports.addProductoCesta = addProductoCesta;
+exports.cambiarCantidadCesta = cambiarCantidadCesta;

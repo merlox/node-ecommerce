@@ -896,3 +896,11 @@ En este caso hay que guardar la siguiente información:
 Entonces tengo que crear una tabla en la base de datos llamada "Facturas" donde guardar ese tipo de información.
 
 Acabo de mirar como funciona el checkout y es bastante sencillo. Sin embargo esta limitado en el aspecto de que no te deja enviar información personalizada al servidor, solamente se realiza el pago y termina con lo que tengo que implementar un pago personalizado usando stripe.js. Para ello crearé una página de pago que se cargará con ajax e incluirá la información necesaria para completar el pedido.
+
+### Día 45
+
+Hoy estuve recreando el sistema de login y registro para que sea más efectivo. Además de crear una nueva función del render del backend llamada {{> include}} donde pones el partial a incluir a tu página para no tener que repetir la misma información en multitud de páginas. Es importante que el partial a incluir se guarde dentro de public/views/partials y el nombre {{> nombre}} debe coincidir con algun archivo html de los partials.
+
+### Día 46
+
+Hoy he creado la cesta de compra en la que los usuarios almacenarán los productos que quieren comprar. En el backend he creado una session donde se guarda la información de la cesta y si el usuario está registrado, se le guardará en su cuenta para tener la cesta disponible en el futuro.

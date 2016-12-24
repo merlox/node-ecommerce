@@ -1,3 +1,4 @@
+'use strict';
 let imagenesProducto = {};
 let informacionProducto = {};
 let contenidosMainMenu = "";

@@ -1,3 +1,46 @@
+/*
+
+PÁGINA CESTA
+
+*/
+#contenedor-cesta-pagina{
+    max-width: 900px;
+    margin: 0 auto;
+}
+#contenedor-cesta-pagina input{
+    width: 45px;
+}
+#contenedor-cesta-pagina tr:hover{
+    background-color: whitesmoke;
+}
+#contenedor-cesta-pagina td{
+    padding: 10px;
+}
+#contenedor-cesta-pagina a{
+    text-decoration: none;
+    color: black;
+}
+#contenedor-cesta-pagina a:hover{
+    color: blue;
+}
+#contenedor-cesta-pagina{
+    border-spacing: 0;
+}
+.spinner-central{
+    margin-top: 20px;
+    width: 100px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100px;
+    margin: auto;
+    height: 100px;
+}
+/*
+
+WIDGET CESTA
+
+*/
 #cesta{
 	position: relative;
 	height: 100%;
@@ -52,6 +95,12 @@
     z-index: 20;
     left: 50%;
     transform: translateX(-50%);
+}
+.spinner-cesta{
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: 0;
 }
 .x-icon{
     font-size: 20pt;

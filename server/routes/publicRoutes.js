@@ -85,9 +85,11 @@ routes.post('/pay-product', (req, res) => {
 });
 
 routes.get('/cesta', (req, res) => {
-  //TODO pasarle los datos en formato lista
   functions.render(path.join(__dirname, '../../public/views/cesta.html'), null, (err, data) => {
-    if(err) return res.send(err);
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }
     return res.send(data);
   });
 });

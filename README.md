@@ -904,3 +904,21 @@ Hoy estuve recreando el sistema de login y registro para que sea más efectivo. 
 ### Día 46
 
 Hoy he creado la cesta de compra en la que los usuarios almacenarán los productos que quieren comprar. En el backend he creado una session donde se guarda la información de la cesta y si el usuario está registrado, se le guardará en su cuenta para tener la cesta disponible en el futuro.
+
+### Día 47
+
+Ayer estuve perfeccionando al máximo el widget de la cesta y la verdad es que estoy muy orgulloso del resultado final. Una cesta interactiva, bonita, rápida y eficiente para los consumidores que se puede acceder en cualquier momento desde el menú principal.
+
+Hoy no he avanzado mucho más. He arreglado varios bugs en la carga de páginas y en el funcionamiento del widget y he creado la página de cesta.html.
+
+En esta página es donde el usuario realizará el pago. Primero verá la cesta para comprobar que esté todo en orden tal y como el quiere. Luego, debajo, tendrá el formulario de compra. Será muy sencillo, información de envío dirección completa línea 1, linea 2, provincia, pais y localidad.
+
+A continuación tendrá la información de pago donde podrá seleccionar si pagar con tarjeta o con paypal. De momento solo voy a habilitar pagos con tarjeta porque paypal es un tema aparte del cual desconozco el procedimiento. Para los pagos con tarjeta usaré stripe con un formulario personalizado, posiblemente combinado con la información de envío.
+
+En algún lugar mostraré la siguiente información:
+
+- Precio del envio, precio total con envio.
+- Tiempo estimado de llegada del envío con la empresa que se encarga de realizarlo.
+- Tamaño del paquete, dimensiones de cada producto.
+- Email y teléfono del cliente para contactarle con la factura de compra.
+- Información sobre las devoluciones, qué tienes que hacer, cuánto cuesta y cúando puedes hacer una devolución.

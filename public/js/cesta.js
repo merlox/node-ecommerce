@@ -1,4 +1,8 @@
 'use strict';
+window.addEventListener('load', () => {
+	console.log('called');
+	if(window.location.pathname == "/cesta") renderCesta();
+});
 function addCesta(cantidad){
 	let permalinkProducto = window.location.pathname.substring(3);
 	let dataObject = {};
@@ -7,7 +11,7 @@ function addCesta(cantidad){
 };
 function getCesta(){
 	q('.triangulo-up').style.borderBottomColor = 'white';
-	q('#cesta').insertAdjacentHTML('afterbegin', '<div class="spinner"></div>');
+	q('#cesta').insertAdjacentHTML('afterbegin', '<div class="spinner spinner-cesta"></div>');
 	httpGet('/api/get-cesta', (response) => {
 		response = JSON.parse(response);
 		if(response.error) q('#productos-cesta').innerHTML = response.error;
@@ -35,7 +39,9 @@ function getCesta(){
 					`<tr>
 						<td class="separador-tabla"></td>
 						<td colspan="2">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
-						<td colspan="3"><button>Pasar por caja</button></td>
+						<td colspan="3">
+							<button onclick="window.location.href='/cesta?ref=${window.location.pathname}'">Pasar por caja</button>
+						</td>
 					</tr>`;
 				}
 			});
@@ -81,6 +87,54 @@ function deleteCestaItem(producto, element){
 	httpPost('/api/change-cantidad-cesta', data, (err) => {
 		if(err) alert(err);
 		getCesta();
+	});
+};
+//Para mostrar la cesta en la pantalla principal cesta.html
+function renderCesta(){
+	q('#contenedor-cesta-pagina').innerHTML = '<tr><td class="spinner spinner-central"></td></tr>';
+	httpGet('/api/get-cesta', (response) => {
+		response = JSON.parse(response);
+		if(response.error) q('#contenedor-cesta-pagina').innerHTML = response.error;
+		else if(response.cesta != null){
+			let cestaHtml = '';
+			let precioTotal = 0;
+			//Loop para cada producto de la cesta
+			response.cesta.forEach((productoCesta, index) => {
+				let precioCalculado = (productoCesta.precio*productoCesta.cantidad).toFixed(2);
+				cestaHtml += 
+				`<tr>
+					<td><img src="../public-uploads/${productoCesta.imagenes}" width="50px"/></td>
+					<td class="cesta-precio">${productoCesta.precio}€</td>
+					<td class="titulo-producto"><a href="/p/${productoCesta.permalink}">
+						${decodeURI(productoCesta.permalink)}</a></td>
+					<td><input type="number" min="1" onfocusout="editarCantidadCesta('${productoCesta.permalink}', event, true)"
+						onkeypress="editarCantidadCesta('${productoCesta.permalink}', event)" 
+						value="${productoCesta.cantidad}"/></td>
+					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
+					<td><span onclick="deleteCestaItem('${productoCesta.permalink}', this)" class="x-icon">×</span></td>
+				</tr>`;
+				precioTotal += parseFloat(precioCalculado);
+				if(index + 1 >= response.cesta.length){
+					cestaHtml += 
+					`<tr>
+						<td colspan="3">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
+						<td colspan="3"><button onclick="window.location.href='/checkout'">Pasar por caja</button></td>
+					</tr>`;
+				}
+			});
+			q('.spinner').remove();
+			q('#contenedor-cesta-pagina').innerHTML = cestaHtml;
+			// //Para colorear la flecha del mismo color del fondo cuando hover firstchild
+		}else{
+			//La cesta está vacía
+			q('#contenedor-cesta-pagina').innerHTML = 
+				`<tr>
+					<td id="mensaje-cesta-vacia">No hay productos en tu cesta.</td>
+					<td><button onclick="window.location.href='${getParameterByName('ref')}'">
+						Volver a la página anterior
+					</button></td>
+				</tr>`;
+		}
 	});
 };
 

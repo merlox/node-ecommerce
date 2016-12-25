@@ -223,14 +223,13 @@ function borrarDirectorio(permalink){
 };
 function render(page, dataObject, cb){
   console.log('Render, functions.js');
-  let callbackCalled = false;
   fs.readFile(page, (err, content) => {
     if(err) return cb(err, null);
     let resultado = content.toString();
     //Le quitamos los tabuladores
     resultado = resultado.replace(/\t*/gm, '');
 
-    if(dataObject != undefined || dataObject != null){
+    if(dataObject != undefined && dataObject != null){
       for(let propiedad in dataObject){
         let re = new RegExp("{{"+propiedad+"}}+", "gm");
         //Loop de una key
@@ -322,17 +321,20 @@ function render(page, dataObject, cb){
       while((partialNombre = reIncludePartial.exec(resultado)) != null){
         partiales.push(partialNombre[1]);
       }
-      //Los ponemos
-      partiales.forEach((partialName, index) => {
+      let index = 0;
+      partiales.forEach((partialName) => {
         //El partialName[1] es el grupo regex primero entre parentesis ( ) para sacar el nombre partial
         let partial = path.join(__dirname, '../public/views/partials/', partialName+'.html');
         fs.readFile(partial, 'utf-8', (err, partialContent) => {
-          let re = new RegExp("{{> "+partialName+"}}", "gm");
           if(err) error = err;
+
+          let re = new RegExp("{{> "+partialName+"}}", "gm");
           resultado = resultado.replace(re, partialContent);
-          if(index + 1 == partiales.length){
-            if(error) cb(error, null);
-            else cb(null, resultado);                    
+          index++;
+          console.log(resultado);
+          if(index >= partiales.length){
+            if(error) return cb(error, null);
+            cb(null, resultado);                    
           }
         });
       });

@@ -3,14 +3,42 @@
 <head>
 	<title>Cesta</title>
 	{{> header}}
+	<link rel="stylesheet" type="text/css" href="../css/checkout.css">
 </head>
 <body>
 
 	{{> menu}}
-
+	<!--Esta es la cesta-->
     <table id="contenedor-cesta-pagina">
 	</table>
 
+	<!--Este es el formulario de pago con tarjeta-->
+	<form action="/pagar-tarjeta" method="POST" id="payment-form">
+	  <span class="payment-errors"></span>
+
+	  <div class="form-row">
+	    <label for="num-tarjeta">Numero tarjeta:</label>
+	    <input id="num-tarjeta" type="number" size="18" data-stripe="number">
+	  </div>
+
+	  <div class="form-row" id="fila-expira">
+	    <label>Expira en:</label>
+	    <input id="expira-completo" type="text" maxlength="5">
+	    <input id="expira-mes" type="hidden" maxlength="2" data-stripe="exp_month">
+	    <input id="expira-ano" type="hidden" maxlength="2" data-stripe="exp_year">
+	  </div>
+
+	  <div class="form-row">
+	    <label>CVC:</label>
+	     <input type="number" maxlength="4" data-stripe="cvc">
+	  </div>
+
+
+	  <input type="submit" class="submit" value="Submit Payment">
+	</form>
+
 	{{> footer}}
+
+	<script type="text/javascript" src="../js/checkout.js"></script>
 </body>
 </html>

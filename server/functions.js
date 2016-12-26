@@ -331,7 +331,6 @@ function render(page, dataObject, cb){
           let re = new RegExp("{{> "+partialName+"}}", "gm");
           resultado = resultado.replace(re, partialContent);
           index++;
-          console.log(resultado);
           if(index >= partiales.length){
             if(error) return cb(error, null);
             cb(null, resultado);                    

@@ -1,0 +1,25 @@
+/*
+
+FORMULARIO DE PAGO CON TARJETA
+
+*/
+#payment-form{
+	display: none;
+	width: 300px;
+	box-shadow: 0 4px 10px #757575;
+	margin: auto;
+	border-radius: 5px;
+	padding: 10px;
+}
+.form-row{
+	padding: 5px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+#fila-expira input{
+	width: 50px;
+	height: 30px;
+}

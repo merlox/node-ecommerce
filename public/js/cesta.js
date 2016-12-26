@@ -1,6 +1,5 @@
 'use strict';
 window.addEventListener('load', () => {
-	console.log('called');
 	if(window.location.pathname == "/cesta") renderCesta();
 });
 function addCesta(cantidad){
@@ -87,6 +86,7 @@ function deleteCestaItem(producto, element){
 	httpPost('/api/change-cantidad-cesta', data, (err) => {
 		if(err) alert(err);
 		getCesta();
+		if(window.location.pathname == "/cesta") renderCesta();
 	});
 };
 //Para mostrar la cesta en la pantalla principal cesta.html
@@ -117,13 +117,13 @@ function renderCesta(){
 				if(index + 1 >= response.cesta.length){
 					cestaHtml += 
 					`<tr>
-						<td colspan="3">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
-						<td colspan="3"><button onclick="window.location.href='/checkout'">Pasar por caja</button></td>
+						<td colspan="6">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
 					</tr>`;
 				}
 			});
 			q('.spinner').remove();
 			q('#contenedor-cesta-pagina').innerHTML = cestaHtml;
+			q('#payment-form').style.display = 'block';
 			// //Para colorear la flecha del mismo color del fondo cuando hover firstchild
 		}else{
 			//La cesta está vacía

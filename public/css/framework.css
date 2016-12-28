@@ -40,7 +40,7 @@ button, input[type=submit]{
     padding: 10px 20px 10px 20px;
     cursor: pointer;
 }
-button[disabled]{
+button[disabled], button[disabled]:hover{
     background-image: linear-gradient(to bottom, lightgrey, lightgrey);
     cursor: not-allowed;
 }

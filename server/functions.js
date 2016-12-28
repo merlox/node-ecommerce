@@ -626,10 +626,6 @@ function payProduct(req, cb){
     for(let i = 0; i < arrayProductos.length; i++){
       let productoNombre = arrayProductos[i].nombre;
       let productoCantidad = arrayProductos[i].cantidad;
-
-      console.log('Nombre: '+productoNombre);
-      console.log('Cantidad: '+productoCantidad);
-
       if(arrayProductos[i].cantidad <= 0){
         error = 'Error, la cantidad del producto: '+arrayProductos[i]+' no puede ser menor o igual a 0';
       }
@@ -640,7 +636,7 @@ function payProduct(req, cb){
         if(err) error = 'Error procesando el pago, por favor inténtalo de nuevo.';
         if(!result) error = 'Este producto no existe o no está disponible: '+productoNombre+', por favor cambialo.';
         //Si se ha llegado al último producto sin errores, continuar
-        if(index + 1 >= arrayProductos.length){
+        if(index >= arrayProductos.length){
           if(error) return cb(error);
           crearCustomer();
         }
@@ -667,10 +663,13 @@ function payProduct(req, cb){
           }
         }, (err, result) => {
           if(err) return cb('Error procesando el pago, por favor inténtalo de nuevo.');
+          realizarPago();
         });
       });
     }
+  };
 
+  function realizarPago(){
     //Buscamos cada producto para saber su precio real y lo pagamos
     //Creamos un array con cada titulo para buscarlo en la bd
     let arrayTitulos = [];
@@ -687,68 +686,68 @@ function payProduct(req, cb){
       'titulo': true
     }).toArray((err, results) => {
       if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
-      let counter = 0;
-      results.forEach((producto) => {          
+
+      let precioTotalCentimos = null;
+      let metadataObject = {};
+      metadataObject['idPago'] = idPago;
+
+      results.forEach((producto, index) => {          
         let precioCentimos = producto.precio*100;
         let cantidad = null;
-        let tituloProducto = producto.titulo;
+        metadataObject['producto-'+index] = {};
+        metadataObject['producto-'+index]['precioCentimos'] = precioCentimos;
+        metadataObject['producto-'+index]['titulo'] = producto.titulo;
         //Conseguimos la cantidad comprada de ese producto
         for(let f = 0; f < arrayProductos.length; f++){
           if(arrayProductos[f].nombre == producto.titulo){
             cantidad = arrayProductos[f].cantidad;
+            metadataObject['producto-'+index]['cantidad'] = cantidad;
+            precioCentimos *= cantidad;
           }
         }
-        //Luego pagamos ese producto y luego guardamos la factura en la base de datos
-        pagarSingle(idPago, precioCentimos, cantidad, tituloProducto, (err) => {
-          error = 'Error procesando el pago, por favor inténtalo de nuevo.';
-          counter++;
-          if(counter + 1 >= results.length){
-            if(error) return cb(error);
-            else return cb(null);
-          }
-        });
+        precioTotalCentimos += precioCentimos;
+        if(index + 1 >= results.length){
+          metadataObject['precioTotal'] = precioTotalCentimos;
+        }
       });
-    });
-  };
 
-  //Para pagar un solo producto (de diferentes cantidades)
-  function pagarSingle(idPago, precioCentimos, cantidad, tituloProducto, cb){
-    let precioTotal = precioCentimos * cantidad;
-    stripe.charges.create({
-      "amount": precioTotal, //Cantidad en centimos
-      "currency": 'eur',
-      "customer": req.session.customerId,
-      "description": tituloProducto,
-      "metadata": {
-        'idPago': idPago,
-        'tituloProducto': tituloProducto,
-        'cantidad': cantidad,
-        'precioCentimos': precioCentimos
-      }
-    }, (err, charge) => {
-      if(err && err.type == 'StripeCardError'){
-        //The card has been declined
-        return cb('Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.');
-      }else{
+      //Luego pagamos el total  y luego guardamos la factura en la base de datos
+      let charge = stripe.charges.create({
+        "amount": precioTotalCentimos, //Cantidad en centimos
+        "currency": 'eur',
+        "customer": req.session.customerId,
+        "description": arrayTitulos[0],
+        "metadata": metadataObject
+      }, (err, charge) => {
+        console.log('Charge:')
         console.log(charge);
-        return cb(null);
-        //TODO mirar donde se guarda la informacion del metadata del titulo del producto, cantidad y precio pa meterlos en la bd
+        //TODO Guardar el 'idCharge': charge.id en la bd captured: true or false
+        if(err && err.type == 'StripeCardError'){
+          //The card has been declined
+          console.log(err);
+          return 'Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.';
+        }else{
+          return null;
+          //TODO mirar donde se guarda la informacion del metadata del titulo del producto, cantidad y precio pa meterlos en la bd
 
-        //Guardamos la factura en la base de datos
-        // db.collection('facturas').insert({
-        //   'idPago': idPago,
-        //   'cantidadPagada': charge.amount,
-        //   'fechaCompra': charge.created,
-        //   'descripcion': charge.description,
-        //   'estaPagado': charge.paid,
-        //   'emailComprador': charge.source.name,
-        //   'productoComprado': 
-        // }, (err, result) => {
-        //   if(err)
-        //             return cb(charge);
+          //Guardamos la factura en la base de datos
+          // db.collection('facturas').insert({
+          //   'idPago': idPago,
+          //   'cantidadPagada': charge.amount,
+          //   'fechaCompra': charge.created,
+          //   'descripcion': charge.description,
+          //   'estaPagado': charge.paid,
+          //   'emailComprador': charge.source.name,
+          //   'productoComprado': 
+          // }, (err, result) => {
+          //   if(err)
+          //             return cb(charge);
 
-        // });
-      }
+          // });
+        }
+      });
+      
+      console.log(charge);
     });
   }
 };

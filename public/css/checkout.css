@@ -1,25 +1,75 @@
 /*
 
+GENERALES
+
+*/
+.centrar{
+	text-align: center;
+}
+#contenedor-total-pagina{
+	display: none;
+}
+/*
+
+FORMULARIO DE DIRECCIÓN DE ENVÍO
+
+*/
+#formulario-direccion{
+	width: 600px;
+	margin: auto;
+	padding: 20px;
+}
+#formulario-direccion div{
+	padding: 5px 0;
+}
+#formulario-direccion label{
+	width: 200px;
+	display: inline-block;
+}
+#formulario-direccion input{
+	width: 355px;
+	display: inline-block;
+}
+/*
+
 FORMULARIO DE PAGO CON TARJETA
 
 */
-#payment-form{
-	display: none;
-	width: 300px;
-	box-shadow: 0 4px 10px #757575;
-	margin: auto;
-	border-radius: 5px;
-	padding: 10px;
-}
-.form-row{
-	padding: 5px;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+/*Para quitar las flechas de subir o bajar numero*/
+#payment-form input::-webkit-outer-spin-button,
+#payment-form input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+#contenedor-pago-tarjeta{
+	width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: auto;
+}
+#payment-form label{
+	display: inline-block;
+	width: 110px;
+}
+#payment-form{
+	width: 320px;
+	box-shadow: 0 4px 10px #757575;
+	border-radius: 5px;
+	padding: 10px;
 }
 #fila-expira input{
 	width: 50px;
 	height: 30px;
+}
+#cvc input{
+	width: 50px;
+	height: 30px;
+}
+.form-row{
+	padding: 5px;
+}
+.payment-errors{
+	display: none;
+	color: red;
 }

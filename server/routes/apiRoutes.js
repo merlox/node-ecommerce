@@ -215,13 +215,9 @@ api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
   });
 });
 api.get('/get-logged-state', (req, res) => {
-  if(req.session.username == 'merloxdixcontrol@gmail.com'){
-    return res.send('admin');
-  }else if(req.session.username != null && req.session.username != undefined){
-    return res.send('logged');
-  }else{
-    return res.send(null);
-  }
+  functions.getLoggedState(req, (state) => {
+    res.send(state);
+  });
 });
 api.post('/add-cesta/', (req, res) => {
   functions.addProductoCesta(req, (err) => {
@@ -261,6 +257,25 @@ api.post('/change-cantidad-cesta', (req, res) => {
   functions.cambiarCantidadCesta(req, (err) => {
     if(err) return res.send('Error updating cart');
     res.send(null);
+  });
+});
+api.post('/pagar-compra', (req, res) => {
+  let responseObject = {
+    'error': null,
+    'success': null
+  };
+  functions.getLoggedState(req, (state) => {
+    if(state == null){
+      responseObject.error = 'Tienes que iniciar sesión o registrarte para comprar.';
+      res.send(responseObject);
+    }else{
+      functions.payProduct(req, (err) => {
+        if(err) responseObject.error = err;
+        else responseObject.success = true;
+        console.log(responseObject);
+        res.send(responseObject);
+      });
+    }
   });
 });
 module.exports = api;

@@ -607,37 +607,152 @@ function getPaginacion(limite, cb){
     return cb(null, paginas);
   });
 }; 
-//TODO 2 realizar el pago una vez que tengamos los detalles del producto y del cliente al usar stripe.js
-// function payProduct(token, precio, descripcion, cb){
-//   db.collection('facturas').count((err, count) => {
-//     if(err) return cb('There was an error processing your card, please try again.');
-//     let idPago = count+1;
-//     stripe.charges.create({
-//       amount: precio, //Cantidad en centimos
-//       currency: 'eur',
-//       source: token,
-//       description: descripcion,
-//       metadata: {'idPago': idPago}
-//     }, (err, charge) => {
-//       if(err && err.type == 'StripeCardError'){
-//         //The card has been declined
-//         return cb('Your card has been declined, please verify your card data and try again.');
-//       }else{
-//         db.collection('facturas').insert({
-//           'idPago': idPago,
-//           'cantidadPagada': charge.amount,
-//           'fechaCompra': charge.created,
-//           'descripcion': charge.description,
-//           'estaPagado': charge.paid,
-//           'emailComprador': charge.source.name,
-//           'productoComprado': 
-//         });
-//         return cb(charge);
-//       }
-//     });
-//   });
-// };
+//Para pagar una compra
+function payProduct(req, cb){
+  let dataObject = req.body.data;
+  let direccion = dataObject.direccion;
+  let arrayProductos = dataObject.productos;
+  let token = dataObject.token;
+  let idPago = 0;
+  let customerId = null;
+  let error = null;
 
+  //Comprobamos que la cantidad sea correcta, que existan los productos puestos y que se cree un nuevo id de compra
+  db.collection('facturas').count((err, count) => {
+    if(err) return cb('There was an error processing your card, please try again.');
+    let index = 0;
+    idPago = count+1
+    //Comprobamos que los productos que ha puesto existan
+    for(let i = 0; i < arrayProductos.length; i++){
+      let productoNombre = arrayProductos[i].nombre;
+      let productoCantidad = arrayProductos[i].cantidad;
+
+      console.log('Nombre: '+productoNombre);
+      console.log('Cantidad: '+productoCantidad);
+
+      if(arrayProductos[i].cantidad <= 0){
+        error = 'Error, la cantidad del producto: '+arrayProductos[i]+' no puede ser menor o igual a 0';
+      }
+      db.collection('productos').findOne({
+        'titulo': productoNombre
+      }, (err, result) => {
+        index++;        
+        if(err) error = 'Error procesando el pago, por favor inténtalo de nuevo.';
+        if(!result) error = 'Este producto no existe o no está disponible: '+productoNombre+', por favor cambialo.';
+        //Si se ha llegado al último producto sin errores, continuar
+        if(index + 1 >= arrayProductos.length){
+          if(error) return cb(error);
+          crearCustomer();
+        }
+      });
+    }
+  });
+
+  //Para crear el customer si no tuviese su id ya y pagar por cada producto comprado
+  function crearCustomer(){
+    //Creamos un customer y pagamos por cada producto por separado
+    if(req.session.customerId == null || req.session.customerId == undefined){
+      stripe.customers.create({
+        "source": token,
+        "description": req.session.username
+      }).then((customer) => {
+        //En el customer.id se guarda el id que se usa para crear charges en stripe
+        req.session.customerId = customer.id;
+        //Guardamos el customer id en la base de datos del usuario
+        db.collection('users').update({
+          'email': req.session.email
+        },{
+          $set: {
+            'customerId': customer.id
+          }
+        }, (err, result) => {
+          if(err) return cb('Error procesando el pago, por favor inténtalo de nuevo.');
+        });
+      });
+    }
+
+    //Buscamos cada producto para saber su precio real y lo pagamos
+    //Creamos un array con cada titulo para buscarlo en la bd
+    let arrayTitulos = [];
+    for(let i = 0; i < arrayProductos.length; i++){
+      let titulo = arrayProductos[i].nombre;
+      arrayTitulos.push(titulo);
+    }
+    //Conseguimos el precio de cada producto
+    db.collection('productos').find({
+      'titulo': {$in: arrayTitulos}
+    }, {
+      '_id': false,
+      'precio': true,
+      'titulo': true
+    }).toArray((err, results) => {
+      if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
+      let counter = 0;
+      results.forEach((producto) => {          
+        let precioCentimos = producto.precio*100;
+        let cantidad = null;
+        let tituloProducto = producto.titulo;
+        //Conseguimos la cantidad comprada de ese producto
+        for(let f = 0; f < arrayProductos.length; f++){
+          if(arrayProductos[f].nombre == producto.titulo){
+            cantidad = arrayProductos[f].cantidad;
+          }
+        }
+        //Luego pagamos ese producto y luego guardamos la factura en la base de datos
+        pagarSingle(idPago, precioCentimos, cantidad, tituloProducto, (err) => {
+          error = 'Error procesando el pago, por favor inténtalo de nuevo.';
+          counter++;
+          if(counter + 1 >= results.length){
+            if(error) return cb(error);
+            else return cb(null);
+          }
+        });
+      });
+    });
+  };
+
+  //Para pagar un solo producto (de diferentes cantidades)
+  function pagarSingle(idPago, precioCentimos, cantidad, tituloProducto, cb){
+    let precioTotal = precioCentimos * cantidad;
+    stripe.charges.create({
+      "amount": precioTotal, //Cantidad en centimos
+      "currency": 'eur',
+      "customer": req.session.customerId,
+      "description": tituloProducto,
+      "metadata": {
+        'idPago': idPago,
+        'tituloProducto': tituloProducto,
+        'cantidad': cantidad,
+        'precioCentimos': precioCentimos
+      }
+    }, (err, charge) => {
+      if(err && err.type == 'StripeCardError'){
+        //The card has been declined
+        return cb('Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.');
+      }else{
+        console.log(charge);
+        return cb(null);
+        //TODO mirar donde se guarda la informacion del metadata del titulo del producto, cantidad y precio pa meterlos en la bd
+
+        //Guardamos la factura en la base de datos
+        // db.collection('facturas').insert({
+        //   'idPago': idPago,
+        //   'cantidadPagada': charge.amount,
+        //   'fechaCompra': charge.created,
+        //   'descripcion': charge.description,
+        //   'estaPagado': charge.paid,
+        //   'emailComprador': charge.source.name,
+        //   'productoComprado': 
+        // }, (err, result) => {
+        //   if(err)
+        //             return cb(charge);
+
+        // });
+      }
+    });
+  }
+};
+//Para registrar un usuario
 function registerUsuario(email, password, cb){
   console.log('RegisterUsuario, functions.js');
   db.collection('users').findOne({
@@ -688,6 +803,7 @@ function getCesta(username, cb){
         'permalink': {$in: productosCesta}
       }, {
         'permalink': true,
+        'titulo': true,
         'imagenes': true,
         'precio': true,
         '_id': false
@@ -772,6 +888,8 @@ function saveCestaUser(cesta, username, cb){
     $set: {
       'cesta': cesta
     }
+  },{
+    'upsert': true
   }, (err, result) => {
     if(err) return cb('Could not update your cart, try again.');
     else return cb(null);
@@ -783,6 +901,7 @@ function getOfflineCesta(cesta, cb){
   for(let nombreProducto in cesta) productosCesta.push(nombreProducto);
   db.collection('productos').find({
     'permalink': {$in: productosCesta}
+
   }, {
     'permalink': true,
     'imagenes': true,
@@ -809,6 +928,15 @@ function getOfflineCesta(cesta, cb){
     });
   });
 };
+function getLoggedState(req, cb){
+  if(req.session.username == 'merloxdixcontrol@gmail.com'){
+    cb('admin');
+  }else if(req.session.username != null && req.session.username != undefined){
+    cb('logged');
+  }else{
+    cb(null);
+  }
+};
 
 exports.buscarProducto = buscarProducto;
 exports.render = render;
@@ -827,7 +955,7 @@ exports.guardarSliderImages = guardarSliderImages;
 exports.getSlider = getSlider;
 exports.getMiniSlider = getMiniSlider;
 exports.getPaginacion = getPaginacion;
-//exports.payProduct = payProduct;
+exports.payProduct = payProduct;
 exports.saveCestaUser = saveCestaUser;
 exports.registerUsuario = registerUsuario;
 exports.loginUsuario = loginUsuario;
@@ -835,3 +963,4 @@ exports.getCesta = getCesta;
 exports.addProductoCesta = addProductoCesta;
 exports.cambiarCantidadCesta = cambiarCantidadCesta;
 exports.getOfflineCesta = getOfflineCesta;
+exports.getLoggedState = getLoggedState;

@@ -10,9 +10,6 @@ PÁGINA CESTA
 #contenedor-cesta-pagina input{
     width: 45px;
 }
-#contenedor-cesta-pagina tr:hover{
-    background-color: whitesmoke;
-}
 #contenedor-cesta-pagina td{
     padding: 10px;
 }

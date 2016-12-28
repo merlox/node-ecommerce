@@ -17,7 +17,7 @@ input{
     border: 1px solid lightgrey;
     padding: 5px;
 }
-.spinner {
+.spinner{
     border: 2px solid whitesmoke;
     border-top: 2px solid black;
     border-radius: 50%;
@@ -30,7 +30,7 @@ input{
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-button{
+button, input[type=submit]{
     background-image: linear-gradient(to bottom, #f5c60c, #f59f0a);
     border-radius: 5px;
     font-weight: bold;
@@ -40,9 +40,13 @@ button{
     padding: 10px 20px 10px 20px;
     cursor: pointer;
 }
-button:hover{
+button[disabled]{
+    background-image: linear-gradient(to bottom, lightgrey, lightgrey);
+    cursor: not-allowed;
+}
+button:hover, input[type=submit]:hover{
     background-image: linear-gradient(to bottom, #f59f0a, #f59f0a);
 }
-button:focus{
+button:focus, , input[type=submit]:focus{
     background-image: linear-gradient(to bottom, #FFBE4E, #FFBE4E);
 }

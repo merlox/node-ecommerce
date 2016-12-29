@@ -609,6 +609,7 @@ function getPaginacion(limite, cb){
 }; 
 //Para pagar una compra
 function payProduct(req, cb){
+  console.log('PayProduct, functions.js');
   let dataObject = req.body.data;
   let direccion = dataObject.direccion;
   let arrayProductos = dataObject.productos;
@@ -646,17 +647,20 @@ function payProduct(req, cb){
 
   //Para crear el customer si no tuviese su id ya y pagar por cada producto comprado
   function crearCustomer(){
+    console.log('CrearCustomer, functions.js');
     //Creamos un customer y pagamos por cada producto por separado
     if(req.session.customerId == null || req.session.customerId == undefined){
       stripe.customers.create({
         "source": token,
-        "description": req.session.username
+        "description": req.session.username,
+        "email": req.session.username
       }).then((customer) => {
         //En el customer.id se guarda el id que se usa para crear charges en stripe
-        req.session.customerId = customer.id;
+        req.session['customerId'] = customer.id;
+        req.session.save();
         //Guardamos el customer id en la base de datos del usuario
         db.collection('users').update({
-          'email': req.session.email
+          'username': req.session.username
         },{
           $set: {
             'customerId': customer.id
@@ -666,10 +670,13 @@ function payProduct(req, cb){
           realizarPago();
         });
       });
+    }else{
+      realizarPago();
     }
   };
 
   function realizarPago(){
+    console.log('RealizarPago, functions.js');
     //Buscamos cada producto para saber su precio real y lo pagamos
     //Creamos un array con cada titulo para buscarlo en la bd
     let arrayTitulos = [];
@@ -686,17 +693,17 @@ function payProduct(req, cb){
       'titulo': true
     }).toArray((err, results) => {
       if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
-
       let precioTotalCentimos = null;
       let metadataObject = {};
       metadataObject['idPago'] = idPago;
-
-      results.forEach((producto, index) => {          
-        let precioCentimos = producto.precio*100;
+      for(let index = 0; index < results.length; index++){
+        let producto = results[index];
+        let precioCentimos = (producto.precio*100).toFixed(0);
         let cantidad = null;
         metadataObject['producto-'+index] = {};
         metadataObject['producto-'+index]['precioCentimos'] = precioCentimos;
         metadataObject['producto-'+index]['titulo'] = producto.titulo;
+
         //Conseguimos la cantidad comprada de ese producto
         for(let f = 0; f < arrayProductos.length; f++){
           if(arrayProductos[f].nombre == producto.titulo){
@@ -707,9 +714,9 @@ function payProduct(req, cb){
         }
         precioTotalCentimos += precioCentimos;
         if(index + 1 >= results.length){
-          metadataObject['precioTotal'] = precioTotalCentimos;
+          metadataObject['precioTotal'] = precioTotalCentimos.toFixed(0);
         }
-      });
+      };
 
       //Luego pagamos el total  y luego guardamos la factura en la base de datos
       let charge = stripe.charges.create({
@@ -717,37 +724,36 @@ function payProduct(req, cb){
         "currency": 'eur',
         "customer": req.session.customerId,
         "description": arrayTitulos[0],
-        "metadata": metadataObject
+        "metadata": {
+          'idPago': idPago
+        }
       }, (err, charge) => {
-        console.log('Charge:')
-        console.log(charge);
-        //TODO Guardar el 'idCharge': charge.id en la bd captured: true or false
-        if(err && err.type == 'StripeCardError'){
-          //The card has been declined
+        if(err){
           console.log(err);
-          return 'Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.';
+          return cb('Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.');
         }else{
-          return null;
-          //TODO mirar donde se guarda la informacion del metadata del titulo del producto, cantidad y precio pa meterlos en la bd
-
-          //Guardamos la factura en la base de datos
-          // db.collection('facturas').insert({
-          //   'idPago': idPago,
-          //   'cantidadPagada': charge.amount,
-          //   'fechaCompra': charge.created,
-          //   'descripcion': charge.description,
-          //   'estaPagado': charge.paid,
-          //   'emailComprador': charge.source.name,
-          //   'productoComprado': 
-          // }, (err, result) => {
-          //   if(err)
-          //             return cb(charge);
-
-          // });
+          db.collection('facturas').insert({
+            'idPago': idPago,
+            'idCharge': charge.id,
+            'nombreApellidos': direccion.nombreApellidos,
+            'cantidad': charge.amount,
+            'estaProcesado': charge.captured,
+            'fecha': charge.created,
+            'moneda': charge.currency,
+            'customer': charge.customer,
+            'productos': metadataObject,
+            'estaPagado': charge.paid,
+            'email': charge.receipt_email,
+            'telefono': charge.receipt_number,
+            'direccion': direccion,
+            'terminacionTarjeta': charge.source.last4,
+            'chargeObject': charge
+          }, (err, result) => {
+            if(err) return cb('Error procesando el pago, por favor inténtalo de nuevo.');
+            cb(null);
+          });
         }
       });
-      
-      console.log(charge);
     });
   }
 };

@@ -24,7 +24,7 @@ app.use(session({
     //Un mes
     maxAge: 1000 * 60 * 60 * 24 * 30
   },
-  resave: false,
+  resave: true,
   unset: 'destroy',
   saveUninitialized: true
 }));

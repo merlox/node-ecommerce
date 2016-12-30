@@ -67,9 +67,6 @@ WIDGET CESTA
 #productos-cesta a:hover{
     color: blue;
 }
-.cesta-precio{
-    font-weight: bold;
-}
 #productos-cesta input{
 	width: 45px;
 }

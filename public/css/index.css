@@ -58,11 +58,6 @@ MINISLIDER
 	border: 1px solid lightgrey;
 	padding: 5px;
 	position: relative;
-	font-family: 'Crimson Text', serif;
-}
-#contenedor-minislider-vendidos h2{
-	font-family: 'heebo';
-	font-variant: small-caps;
 }
 .flecha-izquierda-minislider{
 	position: absolute;
@@ -121,11 +116,6 @@ MINISLIDER MÁS POPULARES
 	float: left;
 	padding: 5px;
 	position: relative;
-	font-family: 'Crimson Text', serif;
-}
-#contenedor-minislider-populares h2{
-	font-family: 'heebo';
-	font-variant: small-caps;
 }
 /*
 
@@ -139,11 +129,6 @@ MINISLIDER RECOMENDADOS
 	float: left;
 	padding: 5px;
 	position: relative;
-	font-family: 'Crimson Text', serif;
-}
-#contenedor-minislider-recomendados h2{
-	font-family: 'heebo';
-	font-variant: small-caps;
 }
 /*
 

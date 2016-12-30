@@ -54,7 +54,6 @@ api.get('/get-all-products/:imagenesLimit?', (req, res) => {
 			console.log(err);
 			return res.send(err);
 		}else{
-      console.log('hola');
 			return res.send(results);
 		}
 	});
@@ -121,7 +120,7 @@ api.post('/upload-image-product', (req, res) => {
 //1. Create a folder for each product images and then copy the folder to uploads in the server
 api.post('/upload-product', (req, res) => {
   //Guardamos el producto en la base de datos
-  informacionProducto = {
+  let informacionProducto = {
     'titulo': req.body.titulo,
     'imagenes': req.body.imagenes,
     'permalink': req.body.permalink,
@@ -209,7 +208,6 @@ api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
     }else{
       let objetoPaginas = {paginas: paginas};
       objetoPaginas = JSON.stringify(objetoPaginas);
-      console.log(objetoPaginas);
       return res.send(objetoPaginas);
     }
   });
@@ -272,7 +270,6 @@ api.post('/pagar-compra', (req, res) => {
       functions.payProduct(req, (err) => {
         if(err) responseObject.error = err;
         else responseObject.success = true;
-        console.log(responseObject);
         res.send(responseObject);
       });
     }

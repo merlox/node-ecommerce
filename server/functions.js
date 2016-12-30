@@ -510,7 +510,6 @@ function guardarSliderImages(objectImages, cb){
     }, (err, countFilesModified, result) => {      
       if(err) return cb('Err, could not save the slider images to the db: '+err);
       else{
-        console.log('Done without errors');
         return cb(null);
       }
     });
@@ -571,6 +570,8 @@ function getSlider(cb){
 //Para conseguir los 5 productos más vendidos para el minislider //Visitas //Vendidos
 function getMiniSlider(tipo, cb){
   console.log('GetMasVendidos, functions.js');
+  let orden = {};
+  orden[tipo] = -1;
   db.collection('productos').find({}, {
     "_id": false,
     "titulo": true,
@@ -578,9 +579,7 @@ function getMiniSlider(tipo, cb){
     "precio": true,
     "imagenes": true,
     "categoria": true
-  }).sort({
-    tipo: -1
-  }).limit(5).toArray((err, results) => {
+  }).sort(orden).limit(5).toArray((err, results) => {
     if(err) return cb('Error searching products, '+err, null);
     let origin = path.join(__dirname, '/uploads/');
     let end = path.join(__dirname, '../public/public-uploads');
@@ -801,7 +800,7 @@ function getCesta(username, cb){
   }, (err, result) => {
     if(err) return cb(err, null);
     //Comprobamos que la cesta no esté vacía
-    if(Object.keys(result.cesta).length != 0){
+    if(result.cesta != null && result.cesta != undefined && Object.keys(result.cesta).length != 0){
       let productosCesta = [];
       for(let nombreProducto in result.cesta) productosCesta.push(nombreProducto);
       db.collection('productos').find({

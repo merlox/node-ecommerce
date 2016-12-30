@@ -60,7 +60,7 @@
 
 			  <div class="form-row" id="fila-expira">
 			    <label>Expira:</label>
-			    <input id="expira-completo" type="text" maxlength="5" placeholder="MM/">
+			    <input id="expira-completo" type="text" maxlength="5">
 			    <input id="expira-mes" type="hidden" maxlength="2" required="required" data-stripe="exp_month">
 			    <input id="expira-ano" type="hidden" maxlength="2" required="required" data-stripe="exp_year">
 			  </div>
@@ -70,8 +70,9 @@
 			    <input type="text" maxlength="4" required="required" data-stripe="cvc">
 			  </div>
 			</form>
-
-			<button class="submit" id="submit-pago">Completar pago ahora</button>
+			<div id="contenedor-completar-pago">
+				<button class="submit" id="submit-pago">Completar pago ahora</button>
+			</div>
 		</div>
 	</div>
 	<br/><br/>

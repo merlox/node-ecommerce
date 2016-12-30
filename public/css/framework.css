@@ -1,6 +1,6 @@
 *{
-    font-family: sans-serif;
     box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
     transition: all 0.3s ease-out;
 }
 body{
@@ -8,6 +8,14 @@ body{
 }
 h1, h2, h3, h4, h5, h6, button{
 	font-family: helvetica;
+    font-weight: normal;
+    font-family: 'Open Sans Condensed', sans-serif;
+}
+h1{
+    font-size: 36pt;
+}
+h2{
+    font-size: 32pt;
 }
 hr{
     border: 1px solid lightgrey;
@@ -16,6 +24,7 @@ input{
     border-radius: 5px;
     border: 1px solid lightgrey;
     padding: 5px;
+    font-family: 'Open Sans', sans-serif;
 }
 .spinner{
     border: 2px solid whitesmoke;
@@ -39,14 +48,18 @@ button, input[type=submit]{
     border: none;
     padding: 10px 20px 10px 20px;
     cursor: pointer;
+    font-family: 'Open Sans', sans-serif;
 }
 button[disabled], button[disabled]:hover{
     background-image: linear-gradient(to bottom, lightgrey, lightgrey);
     cursor: not-allowed;
+    font-family: 'Open Sans', sans-serif;
 }
 button:hover, input[type=submit]:hover{
     background-image: linear-gradient(to bottom, #f59f0a, #f59f0a);
+    font-family: 'Open Sans', sans-serif;
 }
-button:focus, , input[type=submit]:focus{
+button:focus, input[type=submit]:focus{
     background-image: linear-gradient(to bottom, #FFBE4E, #FFBE4E);
+    font-family: 'Open Sans', sans-serif;
 }

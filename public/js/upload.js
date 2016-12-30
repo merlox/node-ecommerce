@@ -111,7 +111,7 @@ function saveClientImages(){
       let request = new XMLHttpRequest();
       request.upload.addEventListener('progress', (e) => {
         if(e.lengthComputable){
-          percentComplete = parseInt(e.loaded/e.total * 100);
+          let percentComplete = parseInt(e.loaded/e.total * 100);
           q('.main-menu').innerHTML = percentComplete + '%';
           q('.main-menu').style.width = percentComplete + '%';
           if(percentComplete >= 100){
@@ -124,7 +124,6 @@ function saveClientImages(){
           requestResults = JSON.parse(request.responseText);
           imagenesProducto = requestResults;
           mostrarImagenesCliente(imagenesProducto);
-
         }
       };
       request.open('POST', '/api/upload-image-product', true);

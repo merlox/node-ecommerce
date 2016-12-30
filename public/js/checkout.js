@@ -8,7 +8,9 @@ function checkExpireFormat(e){
 	let expiraAno = parseInt(e.target.value.substring(3, 5));
 	
 	//Añadimos el separador solo si no ha pulsado borrar
-	if(e.target.value.length == 2 && e.code != "Backspace" && e.code != "Delete") e.target.value += '/';
+	if(e.target.value.length >= 2 && e.code != "Backspace" && e.code != "Delete"){
+		e.target.value = e.target.value.substring(0, 2)+'/'+e.target.value.substring(3, 5);
+	}
 
 	if(expiraMes != null && !isNaN(expiraMes)){
 		q('#expira-mes').value = expiraMes;
@@ -19,9 +21,16 @@ function checkExpireFormat(e){
 };
 //Para comprobar el formato del numero de la tarjeta
 function checkNumberFormat(e){
-	if((e.target.value.length == 4 || e.target.value.length == 9 || e.target.value.length == 14)
-		&& e.code != "Backspace" && e.code != "Delete"){
-		e.target.value += ' ';
+	if(e.code != "Backspace" && e.code != "Delete"){
+		if(e.target.value.length >= 14){
+			e.target.value = e.target.value.substring(0, 4)+' '+e.target.value.substring(5, 9)+' '+e.target.value.substring(10, 14)+' '+e.target.value.substring(15);
+		}else if(e.target.value.length >= 9){
+			e.target.value = e.target.value.substring(0, 4)+' '+e.target.value.substring(5, 9)+' '+e.target.value.substring(10, 14);
+		}else if(e.target.value.length >= 5){
+			e.target.value = e.target.value.substring(0, 4)+' '+e.target.value.substring(5, 9);
+		}else if(e.target.value.length >= 4){
+			e.target.value = e.target.value.substring(0, 4)+' ';
+		}
 	}
 };
 //Para comprobar la tarjeta pasando por los servidores de stripe y realizar el pago seguro.
@@ -74,7 +83,12 @@ function completarPago(token){
 	};
 
 	httpPost('/api/pagar-compra', objetoCompra, (response) => {
-		//TODO mostrar respuesta
+		response = JSON.parse(response);
+		if(response.success){
+			window.location.href = "/pago-completado";
+		}else{
+
+		}
 	});
 };
 

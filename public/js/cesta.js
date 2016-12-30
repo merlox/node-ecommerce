@@ -135,12 +135,20 @@ function renderCesta(){
 						<td></td>
 						<td></td>
 						<td></td>
-						<td colspan="3"><b>Precio total: ${precioTotal.toFixed(2)}€</b></td>
+						<td colspan="3">Total: <b>${precioTotal.toFixed(2)}€</b></td>
 					</tr>`;
 				}
 			});
+			//Quitar spinner
 			q('.spinner-central').remove();
+			//Mostrar contenido de la página
 			q('#contenedor-total-pagina').style.display = 'block';
+			//Quitar el precio total al lado de la tarjeta
+			if(q('.precio-total')) q('.precio-total').remove();
+			//Insertar precio total al lado de la tarjeta de credito o debito
+			q('#contenedor-completar-pago').insertAdjacentHTML('afterbegin', 
+				`<span class="precio-total">Total: <b>${precioTotal.toFixed(2)}€</b></span>`);
+			//Poner el contenido de la cesta en la página
 			q('#contenedor-cesta-pagina').innerHTML = cestaHtml;
 		}else{
 			q('.spinner-central').remove();

@@ -8,10 +8,13 @@
 	justify-content: center;
 	align-items: center;
 	text-align: center; 
+	position: relative;
 	font-family: verdana;
 }
 #menu-principal > a{
 	width: 200px;
+	height: 100%;
+	line-height: 450%;
 	color: white;
 	text-decoration: none;
 }
@@ -21,15 +24,18 @@
 }
 #departamentos{
 	color: white;
+	position: relative;
 }
 #expandible-departamentos{
-	background-color: white;
-	position: absolute;
-	left: 170px;
-	top: -400px;
-	z-index: 12;
-	width: 125px;
-	box-sizing: border-box;
+    display: none;
+    background-color: white;
+    position: absolute;
+    left: -40px;
+    top: 70px;
+    border-radius: 10px;
+    z-index: 5;
+    width: 200px;
+    box-sizing: border-box;
 }
 #expandible-departamentos ul{
 	list-style-type: none;
@@ -44,7 +50,19 @@
 	background-color: lightblue;
 }
 #expandible-departamentos.animar-mostrar-departamentos{
-	top: 50px;
+	display: block;
+}
+/*La flecha superior del expandible departamentos*/
+#expandible-departamentos.animar-mostrar-departamentos:before{
+    content: '';
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid white;
+    position: absolute;
+    left: 50%;
+    top: -20px;
+    transform: translateX(-50%);
 }
 #expandible-departamentos.animar-mostrar-departamentos-responsive{
 	display: block;

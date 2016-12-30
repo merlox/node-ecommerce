@@ -105,16 +105,16 @@ function colocarMasVendidos(data, index){
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-vendidos">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
-			+tituloCorto+'</h3><span class="precio-minislider"> '
+			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
+			+tituloCorto+'</span><br/><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
 		productoHtml = '<a class="producto-link productos-vendidos" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-vendidos">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
-			+tituloCorto+'</h3><span class="precio-minislider">'
+			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
+			+tituloCorto+'</span><br/><span class="precio-minislider">'
 			+producto.precio+'€</span><span class="categoria-minislider"> '
 			+producto.categoria+'</span></div></a>';
 	}
@@ -144,16 +144,16 @@ function colocarMasPopulares(data, index){
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-populares">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
-			+tituloCorto+'</h3><span class="precio-minislider"> '
+			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
+			+tituloCorto+'</span><br/><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
 		productoHtml = '<a class="producto-link producto-popular" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-populares">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
-			+tituloCorto+'</h3><span class="precio-minislider">'
+			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
+			+tituloCorto+'</span><br/><span class="precio-minislider">'
 			+producto.precio+'€</span><span class="categoria-minislider"> '
 			+producto.categoria+'</span></div></a>';
 	}
@@ -207,16 +207,16 @@ function colocarRecomendados(data, index){
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-recomendados">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
-			+tituloCorto+'</h3><span class="precio-minislider"> '
+			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
+			+tituloCorto+'</span><br/><span class="precio-minislider"> '
 			+producto.precio+'€</span></div></a>';
 	}else{
 		productoHtml = '<a class="producto-link producto-recomendado" href="http://192.168.1.100:8000/p/'
 			+producto.permalink
 			+'"><div id="contenedor-producto-minislider-recomendados">'
 			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><h3 title="'+tituloOriginal+'">'
-			+tituloCorto+'</h3><span class="precio-minislider">'
+			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
+			+tituloCorto+'</span><br/><span class="precio-minislider">'
 			+producto.precio+'€</span><span class="categoria-minislider"> '
 			+producto.categoria+'</span></div></a>';
 	}

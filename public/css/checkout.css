@@ -11,11 +11,24 @@ GENERALES
 }
 /*
 
+CESTA PÁGINA
+
+*/
+#contenedor-cesta-pagina{
+	box-shadow: 0px 1px 3px grey;
+    width: 700px;
+    border-radius: 5px;
+    padding: 20px;
+}
+/*
+
 FORMULARIO DE DIRECCIÓN DE ENVÍO
 
 */
 #formulario-direccion{
-	width: 600px;
+	box-shadow: 0px 1px 3px grey;
+    width: 700px;
+    border-radius: 5px;
 	margin: auto;
 	padding: 20px;
 }
@@ -23,7 +36,7 @@ FORMULARIO DE DIRECCIÓN DE ENVÍO
 	padding: 5px 0;
 }
 #formulario-direccion label{
-	width: 200px;
+	width: 300px;
 	display: inline-block;
 }
 #formulario-direccion input{
@@ -42,9 +55,12 @@ FORMULARIO DE PAGO CON TARJETA
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 #contenedor-pago-tarjeta{
-	width: 600px;
+	box-shadow: 0px 1px 3px grey;
+    width: 700px;
+    border-radius: 5px;
+    padding: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: flex-start;
     margin: auto;
 }
@@ -54,7 +70,7 @@ FORMULARIO DE PAGO CON TARJETA
 }
 #payment-form{
 	width: 320px;
-	box-shadow: 0 4px 10px #757575;
+	border: 1px solid lightgrey;
 	border-radius: 5px;
 	padding: 10px;
 }
@@ -65,6 +81,13 @@ FORMULARIO DE PAGO CON TARJETA
 #cvc input{
 	width: 50px;
 	height: 30px;
+}
+#contenedor-completar-pago{
+	display: flex;
+	flex-direction: column;
+}
+#submit-pago{
+	margin-top: 15px;
 }
 .form-row{
 	padding: 5px;

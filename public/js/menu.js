@@ -78,7 +78,11 @@ function buscarProducto(keyword){
 }
 
 //Ocultar o mostrar el menu de departamentos
-q('#departamentos').addEventListener('click', () => {
+q('#departamentos').addEventListener('mouseenter', () => {
+	ocultarMostrarDepartamentos();
+});
+
+q('#departamentos').addEventListener('mouseleave', () => {
 	ocultarMostrarDepartamentos();
 });
 

@@ -25,7 +25,7 @@ Pagina index.html
 - *Arreglar todos los bugs conforme salgan.
 DONE - Arreglar cesta porque no muestra el mensaje de "La cesta está vacía".
 DONE - Reparar el botón de departamentos para que se muestre con una flecha superior y quitarle la animación además de mejorarle el aspecto.
-- Reparar la barra de búsqueda para que sólo se muestre cuando haya sugerencias y que las sugerencias sean bonitas con imágenes al estilo cesta.
+DONE - Reparar la barra de búsqueda para que sólo se muestre cuando haya sugerencias y que las sugerencias sean bonitas con imágenes al estilo cesta.
 - Que los minisliders se carguen más rápido y que se envíen los archivos conforme hagan falta no todos de golpe.
 - Crear un sistema de compresión de imágenes a la resolución mínima que permita el tamaño de la imagen donde se vaya a usar.
 - Que el slider principal del menú tenga enlaces que te lleven a páginas determinadas al hacer click.

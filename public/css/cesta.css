@@ -40,8 +40,11 @@ WIDGET CESTA
 */
 #cesta{
 	position: relative;
-	height: 100%;
-	line-height: 450%;
+    flex: none;
+    flex-direction: column;
+}
+#cesta img{
+    margin-right: 6px;
 }
 #productos-cesta{
 	display: none;
@@ -103,11 +106,6 @@ WIDGET CESTA
 }
 .x-icon:hover{
 	color: black;
-}
-.icono-cesta{
-    width: 30px;
-    margin-top: 5px;
-    display: inline;
 }
 .titulo-producto{
     max-width: 400px;

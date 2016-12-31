@@ -5,9 +5,20 @@ window.addEventListener('load', () => {
 		if(categories && categories != '' && categories != undefined){
 			categories = JSON.parse(categories);
 			categories = categories.arrayCategorias;
+			let htmlCategories = '';
 			for(let i = 0; i < categories.length; i++){
-				let htmlCategories = '<li><a href="http://192.168.1.100:8000/departamento/'+categories[i]+'">'
-				+categories[i]+'</a></li>';
+				if(i == 0){
+					htmlCategories = `<li onmouseenter="cambiarColorFlechaDepartamentos()"
+						onmouseleave="cambiarColorFlechaDepartamentos()">
+						<a href="http://192.168.1.100:8000/departamento/${categories[i]}">
+						${categories[i]}</a>
+					</li>`;
+				}else{
+					htmlCategories = `<li >
+						<a href="http://192.168.1.100:8000/departamento/${categories[i]}">
+						${categories[i]}</a>
+					</li>`;
+				}
 				//Seleccionamos el 2º child porque el texto indentado se considera como un child
 				q('#expandible-departamentos').children[0].insertAdjacentHTML('beforeend', htmlCategories);
 			}
@@ -15,18 +26,26 @@ window.addEventListener('load', () => {
 	});
 	httpGet('/api/get-logged-state', (state) => {
 		if(state == 'logged'){
-			q('#usuario').innerHTML = 'Mi cuenta ▼<div class="triangulo-up"></div>';
+			q('#usuario').innerHTML = 'mi cuenta ▼<div class="triangulo-up"></div>';
 			q('#usuario').href = '/micuenta';
 		}else if(state == 'admin'){
-			q('#usuario').innerHTML = 'Admin ▼<div class="triangulo-up"></div>';
+			q('#usuario').innerHTML = 'admin ▼<div class="triangulo-up"></div>';
 			q('#usuario').href = '/admin';
 		}else{
-			q('#usuario').innerHTML = 'Iniciar Sesión<div class="triangulo-up"></div>';
+			q('#usuario').innerHTML = 'iniciar sesión<div class="triangulo-up"></div>';
 			q('#usuario').href = '/login';
 		}
 	});
 	if(getParameterByName('searched')){
 		httpPost('/api/guardar-busqueda', getParameterByName('searched'));
+	}
+});
+
+window.addEventListener('resize', () => {
+	if(q('.texto-item-busqueda') && (window.outerWidth-16) <= 800 && (window.outerWidth-16) >= 650){
+		qAll('.texto-item-busqueda').forEach((e) => {
+			e.innerHTML = e.innerHTML.substring(0, 30) + '...';
+		});
 	}
 });
 
@@ -42,7 +61,7 @@ function ocultarMostrarDepartamentos(){
 		else q('#expandible-departamentos').className = '';
 	}
 	isDepartamentosActive = !isDepartamentosActive;
-}
+};
 
 //Para buscar productos y mostrar palabras sugeridas
 function buscarProducto(keyword){
@@ -60,12 +79,21 @@ function buscarProducto(keyword){
 					htmlProducto += 
 					`<tr>
 						<td><img class="thumbnail" src="../../public-uploads/${results[i].imagenes[1]}"/></td>
-						<td><a href="http://192.168.1.100:8000/p/${results[i].permalink}
-						?searched=${encodeURI(q('#buscador').value)}">${results[i].titulo}</a></td>
+						<td>
+						<a class="texto-item-busqueda" title="${results[i].titulo}" 
+						href="/p/${results[i].permalink}?searched=${encodeURIComponent(q('#buscador').value)}">
+						${results[i].titulo}</a></td>
 						<td class="producto-precio">${results[i].precio}€</td>
 					</tr>`;
 
-					q('#buscador-sugerencias').children[0].innerHTML = htmlProducto;
+					q('#buscador-sugerencias').children[0].innerHTML = htmlProducto;					
+					//Comprobamos el tamaño de la pantalla para hacer responsive los resultados de busqueda
+					//16 Es el espacio de la barra de scroll
+					if((window.outerWidth-16) <= 800 && (window.outerWidth-16) >= 650){
+						qAll('.texto-item-busqueda').forEach((e) => {
+							e.innerHTML = e.innerHTML.substring(0, 30) + '...';
+						});
+					}
 				}
 			}else{
 				q('#buscador').style.borderRadius = '5px 0 0 5px';
@@ -77,7 +105,17 @@ function buscarProducto(keyword){
 		q('#buscador').style.borderRadius = '5px 0 0 5px';
 		q('#buscador-sugerencias').style.display = 'none';
 	}
-}
+};
+let flechaActiva = false;
+function cambiarColorFlechaDepartamentos(){
+	if(!flechaActiva){
+		q('#flecha-departamentos').style.borderBottomColor = 'lightblue';
+		flechaActiva = true;
+	}else{
+		q('#flecha-departamentos').style.borderBottomColor = 'white';
+		flechaActiva = false;
+	}
+};
 
 //Ocultar o mostrar el menu de departamentos
 q('#departamentos').addEventListener('mouseenter', () => {

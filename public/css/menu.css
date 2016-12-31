@@ -1,30 +1,38 @@
 #menu-principal{
 	width: 100%;
 	padding: 0 80px;
-	box-sizing: border-box;
 	height: 70px;
 	background-color: #000420;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	text-align: center; 
 	position: relative;
-	font-family: verdana;
+	z-index: 20;
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
 }
-#menu-principal > a{
-	width: 200px;
-	height: 100%;
-	line-height: 450%;
-	color: white;
-	text-decoration: none;
+#menu-principal > a, #usuario, #contenedor-login-dropdown{
+    width: 120px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 10pt;
+    color: white;
+    text-decoration: none;
 }
-#logo{
+a#logo{
 	flex: none;
-	height: 50px;
+	height: 100%;
+	width: initial;
+	font-size: 37pt;
+	line-height: initial;
+	font-family: 'open sans condensed';
 }
 #departamentos{
-	color: white;
 	position: relative;
+	flex: none;
+	margin-left: 20px;
 }
 #expandible-departamentos{
     display: none;
@@ -41,23 +49,29 @@
 #expandible-departamentos ul{
 	list-style-type: none;
 	padding-left: 0;
+	margin: 0;
 }
 #expandible-departamentos ul li a{
     text-decoration: none;
     color: black;
-    padding-left: 30px;
     text-align: left;
+    padding: 10px 30px;
     display: block;
 }
-#expandible-departamentos ul li a:hover{
+#expandible-departamentos ul li:hover{
 	background-color: lightblue;
+}
+#expandible-departamentos ul li:nth-child(1):hover{
+	border-radius: 10px 10px 0 0;
+}
+#expandible-departamentos ul li:nth-last-child(1){
+	border-radius: 0 0 10px 10px;
 }
 #expandible-departamentos.animar-mostrar-departamentos{
 	display: block;
 }
 /*La flecha superior del expandible departamentos*/
-#expandible-departamentos.animar-mostrar-departamentos:before{
-    content: '';
+#flecha-departamentos{
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     border-top: 10px solid transparent;
@@ -65,7 +79,7 @@
     position: absolute;
     left: 50%;
     top: -20px;
-    transform: translateX(-50%);
+    transform: translateX(-50%);	
 }
 #expandible-departamentos.animar-mostrar-departamentos-responsive{
 	display: block;
@@ -74,7 +88,7 @@
 	width: 100%;
 	display: flex;
 	align-items: center;
-	margin: 0 10%;
+	margin: 0 20px;
 	position: relative;
 }
 #buscador{
@@ -133,6 +147,9 @@
 #icono-busqueda:active{
 	background-color: #D97805;	
 }
+#contenedor-login-dropdown{
+	position: relative;
+}
 #usuario{
 	position: relative;
 }
@@ -144,7 +161,6 @@
     right: 10px;
     text-align: left;
     border-radius: 5px;
-    border: 1px solid grey;
     border-spacing: 0;
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.36);
 }
@@ -157,6 +173,7 @@
 }
 #menu-sesion tr:hover{
 	background-color: lightgrey;
+	border-radius: 5px;
 }
 .thumbnail{
 	max-width: 50px;
@@ -178,13 +195,17 @@
 }
 @media (max-width: 1000px){
 	#contenedor-buscador{
-		margin: 0 0 0 0;
+		margin: 0 20px;
 	}
 	#menu-principal{
-		padding: 0;
+		padding: 10px;
 	}
 	#expandible-departamentos{
 		left: 90px;
+	}
+	a#cesta, a#departamentos, #contenedor-login-dropdown, #usuario {
+	    width: 70px;
+	    font-size: 8pt;
 	}
 }
 @media (max-width: 900px){

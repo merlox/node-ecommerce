@@ -1,9 +1,10 @@
 <div id="menu-principal">
-	<a href="/"><img id="logo" src="../../images/logo.png"></a>
+	<a href="/" id="logo">Tienda</a>
 	<a id="departamentos" href="javascript:void(0)">
-		Departamentos
+		departamentos
 		<div id="expandible-departamentos">
 			<ul></ul>
+			<span id="flecha-departamentos"></span>
 		</div>
 	</a>
 	<div id="contenedor-buscador">
@@ -14,16 +15,19 @@
 		<button id="icono-busqueda"><img src='../../images/search.png'/></button>
 	</div>
 	<a id="cesta" href="javascript:void(0)">
-		Cesta
+		<img src="../../images/cart.svg" width="30px"/>
+		cesta
 		<div class="triangulo-up"></div>
 	</a>
 	<table id="productos-cesta"></table>
-	<a id="usuario" href="/login">
-		Iniciar Sesión
-	</a>
-	<table id="menu-sesion">
-		<tr>
-			<td><a href="/close-session">Cerrar sesión</a></td>
-		</tr>
-	</table>
+	<div id="contenedor-login-dropdown">
+		<a id="usuario" href="/login">
+			iniciar sesión
+		</a>
+		<table id="menu-sesion">
+			<tr>
+				<td><a href="/close-session">cerrar sesión</a></td>
+			</tr>
+		</table>
+	</div>
 </div>

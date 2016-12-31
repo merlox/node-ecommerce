@@ -121,6 +121,7 @@ function borrarTodosProductos(){
 
 if(process.argv[2] == 'help'){
 	console.log('borrarTodosProductos insertarProductos');
+	process.exit(0);
 }else{
 	let vecesAEjecutar = parseInt(process.argv[3]);
 	if(vecesAEjecutar > 0){

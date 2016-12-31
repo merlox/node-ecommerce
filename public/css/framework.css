@@ -40,6 +40,7 @@ input{
     100% { transform: rotate(360deg); }
 }
 button, input[type=submit]{
+    background-color: orange;
     background-image: linear-gradient(to bottom, #f5c60c, #f59f0a);
     border-radius: 5px;
     font-weight: bold;

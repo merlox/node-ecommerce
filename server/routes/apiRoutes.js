@@ -12,6 +12,8 @@ let functions = require('./../functions.js'),
   formidable = require('formidable'),
   api = express.Router();
 
+let requestProcessing = false;
+
 api.get('/get-images/:permalink', (req, res) => {
   functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURIComponent(req.params.permalink)), 
     path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
@@ -165,9 +167,15 @@ api.get('/search/:keyword?', (req, res) => {
   if(limite == undefined || limite == null){
     limite = 0;
   }
-  if(keyword != 'undefined' && keyword != 'null' && keyword != ''){
+  if(keyword != 'undefined' && keyword != 'null' && keyword != '' && !requestProcessing){
+    //Comprobamos que no haya sobrecarga de request de forma que solo se inicie cuando termine la anterior
+    requestProcessing = true;
     functions.buscarProductos(keyword, limite, (err, results) => {
-      if(err) console.log(err);
+      requestProcessing = false;
+      if(err){
+        console.log(err);
+        return res.send(null);
+      }
       return res.send(results);
     });
   }else{

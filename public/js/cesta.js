@@ -15,6 +15,7 @@ function addCesta(cantidad){
 		getCesta();
 	});
 };
+//Para crear la cesta widget del menú principal
 function getCesta(){
 	q('.triangulo-up').style.borderBottomColor = 'white';
 	q('#cesta').insertAdjacentHTML('afterbegin', '<div class="spinner spinner-cesta"></div>');
@@ -64,6 +65,8 @@ function getCesta(){
 			});
 		//La cesta está vacía
 		}else{
+			q('#productos-cesta').style.display = 'block';
+			q('.triangulo-up').style.display = 'block';
 			q('#productos-cesta').innerHTML = '<div id="mensaje-cesta-vacia">No hay productos en tu cesta.</div>';
 			q('.spinner').remove();
 		}

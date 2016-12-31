@@ -9,7 +9,7 @@ window.addEventListener('load', () => {
 				let htmlCategories = '<li><a href="http://192.168.1.100:8000/departamento/'+categories[i]+'">'
 				+categories[i]+'</a></li>';
 				//Seleccionamos el 2º child porque el texto indentado se considera como un child
-				q('#expandible-departamentos').childNodes[1].insertAdjacentHTML('beforeend', htmlCategories);
+				q('#expandible-departamentos').children[0].insertAdjacentHTML('beforeend', htmlCategories);
 			}
 		}
 	});
@@ -47,32 +47,34 @@ function ocultarMostrarDepartamentos(){
 //Para buscar productos y mostrar palabras sugeridas
 function buscarProducto(keyword){
 	if(keyword.length >= 3){
-		keyword = encodeURI(keyword);
-		httpGet('/api/search/'+keyword+'?limite=7', (results) => {
+		keyword = encodeURIComponent(keyword);
+		httpGet('/api/search/'+keyword+'?limite=8', (results) => {
+			results = JSON.parse(results);
 			q('#buscador-sugerencias').firstChild.innerHTML = '';
 			if(results != null && results != undefined){
 				q('#buscador-sugerencias').style.display = 'block';
-				results = JSON.parse(results);
+				q('#buscador').style.borderRadius = '5px 0 0 0';
 				//Show suggested searches or products
 				let htmlProducto = "";
 				for(let i = 0; i < results.length; i++){
-					if(i < results.length - 1){
-						htmlProducto = '<li><a href="http://192.168.1.100:8000/p/'+results[i].permalink
-							+'?searched='+encodeURI(q('#buscador').value)+'">'+results[i].titulo+'</a><span class="producto-precio"> '
-							+results[i].precio+'€</span></li><hr/>';
-					}else{
-						htmlProducto = '<li><a href="http://192.168.1.100:8000/p/'+results[i].permalink
-							+'?searched='+encodeURI(q('#buscador').value)+'">'+results[i].titulo+'</a><span class="producto-precio"> '
-							+results[i].precio+'€</span></li>';
-					}
-					q('#buscador-sugerencias').firstChild.insertAdjacentHTML('beforeend', htmlProducto);
+					htmlProducto += 
+					`<tr>
+						<td><img class="thumbnail" src="../../public-uploads/${results[i].imagenes[1]}"/></td>
+						<td><a href="http://192.168.1.100:8000/p/${results[i].permalink}
+						?searched=${encodeURI(q('#buscador').value)}">${results[i].titulo}</a></td>
+						<td class="producto-precio">${results[i].precio}€</td>
+					</tr>`;
+
+					q('#buscador-sugerencias').children[0].innerHTML = htmlProducto;
 				}
 			}else{
+				q('#buscador').style.borderRadius = '5px 0 0 5px';
 				//Si no hay resultados, ocultar la barra de results
 				q('#buscador-sugerencias').style.display = 'none';
 			}
 		});
 	}else{
+		q('#buscador').style.borderRadius = '5px 0 0 5px';
 		q('#buscador-sugerencias').style.display = 'none';
 	}
 }
@@ -89,6 +91,15 @@ q('#departamentos').addEventListener('mouseleave', () => {
 //Para buscar sugerencias a cada toque
 q('#buscador').addEventListener('keyup', () => {
 	buscarProducto(q('#buscador').value);
+});
+//Al hacer focus al input
+q('#buscador').addEventListener('focus', () => {
+	buscarProducto(q('#buscador').value);
+});
+
+q('html').addEventListener('click', () => {
+	q('#buscador').style.borderRadius = '5px 0 0 5px';
+	q('#buscador-sugerencias').style.display = 'none';
 });
 
 //Para ir a la página de busqueda

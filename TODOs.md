@@ -23,8 +23,8 @@ Hacer el menú de cerrar sesión con flecha up.
 Pagina index.html
 
 - *Arreglar todos los bugs conforme salgan.
-- Arreglar cesta porque no muestra el mensaje de "La cesta está vacía".
-- Reparar el botón de departamentos para que se muestre con una flecha superior y quitarle la animación además de mejorarle el aspecto.
+DONE - Arreglar cesta porque no muestra el mensaje de "La cesta está vacía".
+DONE - Reparar el botón de departamentos para que se muestre con una flecha superior y quitarle la animación además de mejorarle el aspecto.
 - Reparar la barra de búsqueda para que sólo se muestre cuando haya sugerencias y que las sugerencias sean bonitas con imágenes al estilo cesta.
 - Que los minisliders se carguen más rápido y que se envíen los archivos conforme hagan falta no todos de golpe.
 - Crear un sistema de compresión de imágenes a la resolución mínima que permita el tamaño de la imagen donde se vaya a usar.
@@ -41,3 +41,4 @@ Pagina index.html
 - Crear sistema de emails para informar a los usuarios con las facturas de sus pedidos, para hacer email márketing y para recuperar la contraseña.
 - Que al pasar el ratón por encima de la cesta solo se cargue una vez en lugar de enviar 100 peticiones en poco tiempo.
 - Crear los breadcrumbs para saber donde está el usuario en cada momento.
+- Find out why my copyfile stream is hanging randomly, undestand streams.

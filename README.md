@@ -922,3 +922,11 @@ En algún lugar mostraré la siguiente información:
 - Tamaño del paquete, dimensiones de cada producto.
 - Email y teléfono del cliente para contactarle con la factura de compra.
 - Información sobre las devoluciones, qué tienes que hacer, cuánto cuesta y cúando puedes hacer una devolución.
+
+### Día 48
+
+Llevo varios días reparando bugs y mejorando el diseño en general. Han sido pocos cambios - todavía quedan bastantes pero está teniendo mucho mejor aspecto la web.
+
+Además he implementado la plataforma de pagos stripe y está funcionando a falta de testearla todavía más.
+
+He creado una lista de cosas por hacer para ir teniendo un orden, así que la seguiré hoy.

@@ -83,10 +83,10 @@ WIDGET CESTA
 	display: none;
     width: 0;
     height: 0;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 7px solid transparent;
-    border-bottom: 12px solid white;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid white;
     position: absolute;
     bottom: -1px;
     z-index: 20;

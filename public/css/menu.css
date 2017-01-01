@@ -1,3 +1,8 @@
+/*
+
+GENERALES
+
+*/
 #menu-principal{
 	width: 100%;
 	padding: 0 80px;
@@ -12,7 +17,7 @@
 }
 #menu-principal > a, #usuario, #contenedor-login-dropdown{
     width: 120px;
-    height: 100%;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,9 +34,16 @@ a#logo{
 	line-height: initial;
 	font-family: 'open sans condensed';
 }
+/*
+
+DEPARTAMENTOS
+
+*/
 #departamentos{
 	position: relative;
 	flex: none;
+	display: flex;
+	flex-direction: column;
 	margin-left: 20px;
 }
 #expandible-departamentos{
@@ -40,7 +52,7 @@ a#logo{
     position: absolute;
     left: -40px;
     top: 70px;
-    border-radius: 10px;
+    border-radius: 15px;
     z-index: 5;
     width: 200px;
     box-sizing: border-box;
@@ -59,13 +71,13 @@ a#logo{
     display: block;
 }
 #expandible-departamentos ul li:hover{
-	background-color: lightblue;
+	background-image: linear-gradient(120deg, #C1DCFF, #5DA4FF);
 }
-#expandible-departamentos ul li:nth-child(1):hover{
-	border-radius: 10px 10px 0 0;
+#expandible-departamentos ul li:nth-child(1){
+	border-radius: 15px 15px 0 0;
 }
 #expandible-departamentos ul li:nth-last-child(1){
-	border-radius: 0 0 10px 10px;
+	border-radius: 0 0 15px 15px;
 }
 #expandible-departamentos.animar-mostrar-departamentos{
 	display: block;
@@ -80,10 +92,16 @@ a#logo{
     left: 50%;
     top: -20px;
     transform: translateX(-50%);	
+    transition: none;
 }
 #expandible-departamentos.animar-mostrar-departamentos-responsive{
 	display: block;
 }
+/*
+
+BUSCADOR
+
+*/
 #contenedor-buscador{
 	width: 100%;
 	display: flex;
@@ -99,6 +117,7 @@ a#logo{
 	width: 80%;
 	z-index: 21;
 	padding-left: 7px;
+	transition: none;
 }
 /*Para ocultar la línea de borde al estar en focus*/
 #buscador:focus {
@@ -150,30 +169,61 @@ a#logo{
 #contenedor-login-dropdown{
 	position: relative;
 }
+/*
+
+SESIÓN
+
+*/
 #usuario{
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 #menu-sesion{
 	display: none;
 	position: absolute;
     background: white;
     top: 70px;
-    right: 10px;
+    margin: 0;
+    padding-left: 0; 
+    width: 200px;
     text-align: left;
-    border-radius: 5px;
-    border-spacing: 0;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.36);
+    list-style-type: none;
+    border-radius: 15px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5);
 }
-#menu-sesion td{
-	padding: 10px;
+#menu-sesion li{
+	padding: 10px 30px;
 }
 #menu-sesion a{
 	text-decoration: none;
 	color: black;
 }
-#menu-sesion tr:hover{
-	background-color: lightgrey;
-	border-radius: 5px;
+#menu-sesion li:hover{
+	background-image: linear-gradient(120deg, #C1DCFF, #5DA4FF);
+}
+#menu-sesion li:nth-child(1){
+	border-radius: 15px 15px 0 0;
+}
+#menu-sesion li:nth-last-child(1){
+	border-radius: 0 0 15px 15px;
+}
+#triangulo-up-sesion{
+	display: none;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid white;
+    position: absolute;
+    bottom: -1px;
+    z-index: 20;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: none;
 }
 .thumbnail{
 	max-width: 50px;
@@ -201,11 +251,14 @@ a#logo{
 		padding: 10px;
 	}
 	#expandible-departamentos{
-		left: 90px;
+		left: -65px;
 	}
 	a#cesta, a#departamentos, #contenedor-login-dropdown, #usuario {
 	    width: 70px;
 	    font-size: 8pt;
+	}
+	#menu-sesion{
+		right: 0;
 	}
 }
 @media (max-width: 900px){
@@ -231,12 +284,14 @@ a#logo{
 		flex: initial;
 		width: 80%;
 	}
-	#contenedor-contenedor-buscador{
+	table#productos-cesta{
+		top: 77.5%;
+	}
+	#menu-sesion{
+		right: initial;
 	}
 	#expandible-departamentos{
-		position: static;
-		margin-bottom: 20px;
-		display: none;
+		z-index: 40;	
 	}
 }
 @media (max-width: 400px){

@@ -1,6 +1,7 @@
 <div id="menu-principal">
 	<a href="/" id="logo">Tienda</a>
 	<a id="departamentos" href="javascript:void(0)">
+		<img src="../../images/store.svg" width="30px">
 		departamentos
 		<div id="expandible-departamentos">
 			<ul></ul>
@@ -17,17 +18,19 @@
 	<a id="cesta" href="javascript:void(0)">
 		<img src="../../images/cart.svg" width="30px"/>
 		cesta
-		<div class="triangulo-up"></div>
+		<span class="triangulo-up"></span>
 	</a>
 	<table id="productos-cesta"></table>
 	<div id="contenedor-login-dropdown">
 		<a id="usuario" href="/login">
 			iniciar sesión
 		</a>
-		<table id="menu-sesion">
-			<tr>
-				<td><a href="/close-session">cerrar sesión</a></td>
-			</tr>
-		</table>
+		<span id="triangulo-up-sesion"></span>
+		<ul id="menu-sesion">
+			<li onmouseenter="cambiarColorFlechaDepartamentos()" onmouseleave="cambiarColorFlechaDepartamentos()">
+				<a href="/mi-cuenta">mi cuenta</a>
+			</li>
+			<li><a href="/close-session">cerrar sesión</a></li>
+		</ul>
 	</div>
 </div>

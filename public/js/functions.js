@@ -49,6 +49,18 @@ function httpPostPlain(url, data, cb){
 	}	
 	request.send(data);	
 };
+function loadImage(src){
+	return new Promise((resolve, reject) => {
+		let img = new Image();
+		img.addEventListener('load', () => {
+			resolve(img);
+		});
+		img.addEventListener('error', (e) => {
+			reject(img);
+		});
+		img.src = src;		
+	});
+};
 //Acortador para seleccionar a los elementos de manera sencilla y rápida en el código
 function q(selector){
 	return document.querySelector(selector);

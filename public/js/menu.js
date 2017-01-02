@@ -27,12 +27,15 @@ window.addEventListener('load', () => {
 	httpGet('/api/get-logged-state', (state) => {
 		if(state == 'logged'){
 			q('#usuario').innerHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+			q('#menu-sesion li a').href = '/micuenta';
 			q('#usuario').href = '/micuenta';
 		}else if(state == 'admin'){
 			q('#usuario').innerHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+			q('#menu-sesion li a').href = '/admin';
 			q('#usuario').href = '/admin';
 		}else{
 			q('#usuario').innerHTML = '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>';
+			q('#menu-sesion li a').href = '/login';
 			q('#usuario').href = '/login';
 		}
 	});
@@ -198,9 +201,11 @@ SESIÓN
 */
 //Para mostrar el desplegable de opciones de sesion al hover sesion
 q('#contenedor-login-dropdown').addEventListener('mouseenter', () => {
-	ocultarCestaBuscadorHoverDropdown();
-	q('#triangulo-up-sesion').style.display = 'block';
-	q('#menu-sesion').style.display = 'block';
+	if(q('a#usuario').getAttribute('href') != '/login'){
+		ocultarCestaBuscadorHoverDropdown();
+		q('#triangulo-up-sesion').style.display = 'block';
+		q('#menu-sesion').style.display = 'block';
+	}
 });
 q('#contenedor-login-dropdown').addEventListener('mouseleave', () => {
 	q('#triangulo-up-sesion').style.display = 'none';

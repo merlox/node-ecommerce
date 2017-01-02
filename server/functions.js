@@ -378,6 +378,7 @@ function copyFile(origin, end, fileName, cb){
     error = err;
   });
   writeStream.on('finish', (ex) => {
+    console.log('Done copying image');
     if(error) return cb(error);
     return cb(null);
   });
@@ -498,7 +499,7 @@ function guardarBusqueda(busqueda, cb){
 function guardarSliderImages(objectImages, cb){
   console.log('GuardarSliderImages, functions.js');
   let origin = path.join(__dirname, '../public/public-uploads/');
-  let end = path.join(__dirname, '/uploads/Slider/');
+  let end = path.join(__dirname, '/uploads/_Slider/');
   let tamañoObjectImages = Object.keys(objectImages).length;
 
   borrarSliderFolder((err) => {
@@ -508,7 +509,7 @@ function guardarSliderImages(objectImages, cb){
       copyFile(fileLocation, end, objectImages[key], (err) => {
         if(err){
           console.log(err);
-          return cb('Err, could not copy the image: '+objectImages[key]+' to the server /Slider/: '+err);
+          return cb('Err, could not copy the image: '+objectImages[key]+' to the server /_Slider/: '+err);
         }
       });
     }

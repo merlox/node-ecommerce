@@ -180,6 +180,7 @@ SESIÓN
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	text-align: center;
 }
 #menu-sesion{
 	display: none;

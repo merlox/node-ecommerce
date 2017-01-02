@@ -1,60 +1,71 @@
-#contenedor-minisliders{
-	margin: 0 auto;
-	max-width: 1200px;
-}
 /*
 
 SLIDER
 
 */
-#contenedor-imagenes-slider{
+/*Para contener el slider y que solo se vea la imagen destacada*/
+#contenedor-contenedor-slider{
 	overflow: hidden; 
+	position: relative;
+}
+#contenedor-imagenes-slider{
 	display: none;
-	height: 300px;
-	width: 100%;
+	height: 500px;
 	position: relative;
 }
 #flecha-izquierda-slider{
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	margin: auto;
+	top: 50%;
+	transform: translateY(-50%);
 	left: 60px;
 	height: 40px;
 	cursor: pointer;
 	z-index: 10;
+	transition: none;
 }
 #flecha-izquierda-slider:hover{
 	height: 45px;
 }
 #flecha-derecha-slider{
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	margin: auto;
+	top: 50%;
+	transform: translateY(-50%);
 	right: 60px;
 	height: 40px;
 	cursor: pointer;
 	z-index: 10;
+	transition: none;
 }
 #flecha-derecha-slider:hover{
 	height: 45px;
 }
-#imagen-slider{
+.imagen-slider{
 	position: relative;
+	float: left;
 }
 /*
 
 MINISLIDER
 
 */
-#contenedor-minislider-vendidos{
-	width: 400px;
-	float: left;
-	min-height: 400px;
-	border: 1px solid lightgrey;
-	padding: 5px;
-	position: relative;
+#contenedor-minisliders{
+    max-width: 1200px;
+    position: absolute;
+    top: 430px;
+    right: 0;
+    left: 0;
+    margin: auto;
+}
+.minislider{
+    width: 400px;
+    float: left;
+    min-height: 400px;
+    background: white linear-gradient(to bottom, white, whitesmoke);
+    padding: 5px;
+    position: relative;
+}
+.minislider h2{
+	margin: 10px 0;
 }
 .flecha-izquierda-minislider{
 	position: absolute;
@@ -100,32 +111,6 @@ MINISLIDER
 }
 .producto-link{
 	text-decoration: none;
-}
-/*
-
-MINISLIDER MÁS POPULARES
-
-*/
-#contenedor-minislider-populares{
-	width: 400px;
-	min-height: 400px;
-	border: 1px solid lightgrey;
-	float: left;
-	padding: 5px;
-	position: relative;
-}
-/*
-
-MINISLIDER RECOMENDADOS
-
-*/
-#contenedor-minislider-recomendados{
-	width: 400px;
-	min-height: 400px;
-	border: 1px solid lightgrey;
-	float: left;
-	padding: 5px;
-	position: relative;
 }
 /*
 

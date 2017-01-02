@@ -12,6 +12,9 @@ let objetoImagenes = {},
 	intervaloMiniSliderPopulares,
 	intervaloMiniSliderRecomendados;
 
+let tamañoObjetoImagenes = 0;
+let alineador = 0;
+
 window.addEventListener('load', () => {
 	httpGet('/api/get-slider', (result) => {
 		colocarImagenesSlider(result);
@@ -42,37 +45,49 @@ MAIN SLIDER
 function colocarImagenesSlider(jsonData){
 	objetoImagenes = JSON.parse(jsonData);
 	let contenedorImagenes = q('#contenedor-imagenes-slider');
-	contenedorImagenes.style.display = 'block';
-	indexImagenActiva = 1;
-	contenedorImagenes.insertAdjacentHTML('beforeend', 
-		'<img id="imagen-slider" src="../public-uploads/'+objetoImagenes[1]+'">');
-	q('#imagen-slider').addEventListener('load', (e) => {
-		e.target.style.marginLeft = -e.target.width/2+"px";
-		e.target.style.left = "50%";
+	indexImagenActiva = 0;
+	let htmlImages = '';
+	let counter = 0;
+	for(let i in objetoImagenes){
+		htmlImages += `<img class="imagen-slider" src="../public-uploads/${objetoImagenes[i]}">`;
+		counter = i;
+	}
+	loadImage(`../public-uploads/${objetoImagenes[1]}`).then((image) => {
+		contenedorImagenes.width = (image.naturalWidth + 'px');
+		contenedorImagenes.style.width = (image.naturalWidth * counter + 'px');
+		alineador = (image.naturalWidth - window.outerWidth) / 2;
+		contenedorImagenes.style.transform = `translateX(-${alineador}px)`;
+		contenedorImagenes.innerHTML = htmlImages;
+		contenedorImagenes.style.display = 'block';
+	}).catch((image) => {
+		console.log('Error loading image: '+image.src);
 	});
+	tamañoObjetoImagenes = (Object.keys(objetoImagenes).length-1);
 };
 //Para poner la siguiete imagen a la derecha
 function cambiarImagenDerecha(){
-	let tamañoObjetoImagenes = Object.keys(objetoImagenes).length;
 	if(indexImagenActiva == tamañoObjetoImagenes){
-		indexImagenActiva = 1;
+		indexImagenActiva = 0;
 	}else{
 		indexImagenActiva = ++indexImagenActiva;
 	}
-	q('#imagen-slider').src = '../public-uploads/'+objetoImagenes[indexImagenActiva];
+	let tamañoImagen = q('.imagen-slider').naturalWidth;
+	alineador = (tamañoImagen - window.outerWidth) / 2;
+	q('#contenedor-imagenes-slider').style.transform = `translateX(${-((indexImagenActiva*tamañoImagen)+alineador)}px)`;
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloSlider);
 	intervaloCambiarImagenes();
 };
 //Para poner la siguiente a la izquierda
 function cambiarImagenIzquierda(){
-	let tamañoObjetoImagenes = Object.keys(objetoImagenes).length;
-	if(indexImagenActiva == 1){
+	if(indexImagenActiva == 0){
 		indexImagenActiva = tamañoObjetoImagenes;
 	}else{
 		indexImagenActiva = --indexImagenActiva;
 	}
-	q('#imagen-slider').src = '../public-uploads/'+objetoImagenes[indexImagenActiva];
+	let tamañoImagen = q('.imagen-slider').naturalWidth;
+	alineador = (tamañoImagen - window.outerWidth) / 2;
+	q('#contenedor-imagenes-slider').style.transform = `translateX(${-((indexImagenActiva*tamañoImagen)+alineador)}px)`;
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloSlider);
 	intervaloCambiarImagenes();

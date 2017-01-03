@@ -200,12 +200,6 @@ api.get('/get-mas-populares', (req, res) => {
     return res.send(results);
   });
 });
-api.get('/get-recomendados', (req, res) => {
-  functions.getMiniSlider("imagenes", (err, results) => {
-    if(err) console.log(err);
-    return res.send(results);
-  });
-});
 api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
   let limite = 100;
   if(req.params.productLimit) limite = parseInt(req.params.productLimit);

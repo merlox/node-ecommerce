@@ -100,6 +100,7 @@ routes.get('/favicon.ico', (req, res) => {
 
 routes.get('/', (req, res) => {
   functions.render(path.join(__dirname, '../../public/views/index.html'), null, (err, data) => {
+    functions.getSlider();
     if(err) return res.send(err);
     return res.send(data);
   });

@@ -559,29 +559,38 @@ function guardarSliderImages(objectImages, cb){
   }
 };
 //Para copiar las imagenes del slider al cliente y retornar el objeto imagenes
+//Si no le pasas callback copia las imagenes al cliente y con callback solo te da el array de nombres para el cliente
 function getSlider(cb){
   console.log('GetSlider, functions.js');
-  db.collection('utils').findOne({
-    'sliderImages': {$exists: true}
-  }, (err, result) => {    
-    if(err) return cb('Error searching slider images: '+err, null);
-    let images = result.sliderImages;
+  if(cb == undefined){
+    cb = () => {};
     let originDir = path.join(__dirname, '/uploads/_Slider/');
-    let end = path.join(__dirname, '../public/public-uploads/');
-    for(let key in images){
-      copyFile(path.join(originDir, images[key]), end, images[key], (err) => {
-        if(err) return cb('Error copying the slider images to the client '+err, null);
+    fs.readdir(originDir, (err, files) => {
+      if(err) return cb(null);
+      let images = files;
+      let end = path.join(__dirname, '../public/public-uploads/');
+      let counter = 0;
+      images.forEach((image) => {
+        copyFile(path.join(originDir, image), end, image, (err) => {
+          counter++;
+          if(err) return cb('Error copying the slider images to the client '+err, null);
+          if(counter >= images.length){
+            return cb(null);  
+          }
+        });
       });
-      if(key >= Object.keys(images).length){
-        //Si se han copiado todas las imágenes con exito
-        return cb(null, images);
-      }
-    }
-  });
+    });
+  }else{
+    let originDir = path.join(__dirname, '/uploads/_Slider/');
+    fs.readdir(originDir, (err, files) => {
+      if(err) return cb('Error copying the images.', null);
+      return cb(null, files);
+    });
+  }
 };
 //Para conseguir los 5 productos más vendidos para el minislider //Visitas //Vendidos
 function getMiniSlider(tipo, cb){
-  console.log('GetMasVendidos, functions.js');
+  console.log('GetMiniSlider, functions.js');
   let orden = {};
   orden[tipo] = -1;
   db.collection('productos').find({}, {
@@ -589,15 +598,17 @@ function getMiniSlider(tipo, cb){
     "titulo": true,
     "permalink": true,
     "precio": true,
-    "imagenes": true,
+    "imagenes.1": true,
     "categoria": true
   }).sort(orden).limit(5).toArray((err, results) => {
     if(err) return cb('Error searching products, '+err, null);
     let origin = path.join(__dirname, '/uploads/');
     let end = path.join(__dirname, '../public/public-uploads');
     for(let i = 0; i < results.length; i++){
-      copyFile(path.join(origin, results[i].permalink, results[i].imagenes[1]), end, results[i].imagenes[1], (err) => {
-        if(err) return cb('Err, could not copy the image '+results[i].imagenes[1]+' to the client, '+err, null);
+      results[i]['imagen'] = results[i].imagenes[1];
+      delete results[i].imagenes;
+      copyFile(path.join(origin, results[i].permalink, results[i].imagen), end, results[i].imagen, (err) => {
+        if(err) return cb('Err, could not copy the image '+results[i].imagen+' to the client, '+err, null);
       });
       if(i >= results.length-1){
         return cb(null, results);

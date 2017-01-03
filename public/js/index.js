@@ -1,18 +1,9 @@
 'use strict';
-let objetoImagenes = {},
-	productosMasVendidos = {},
-	productosMasPopulares = {},
-	productosRecomendados = {},
+let arrayImagenes = [],
 	indexImagenActiva = '',
-	indexProductosVendidos = '',
-	indexProductosPopulares = '',
-	indexProductosRecomendados = '',
 	intervaloSlider,
-	intervaloMiniSliderVendidos,
-	intervaloMiniSliderPopulares,
-	intervaloMiniSliderRecomendados;
+	intervaloMiniSliderVendidos;
 
-let tamañoObjetoImagenes = 0;
 let alineador = 0;
 
 window.addEventListener('load', () => {
@@ -22,18 +13,8 @@ window.addEventListener('load', () => {
 	});
 	httpGet('/api/get-mas-vendidos', (results) => {
 		let resultados = JSON.parse(results);
-		colocarMasVendidos(resultados, 0);
+		colocarMasVendidos(resultados);
 		iniciarIntervaloMiniSliderVendidos();
-	});
-	httpGet('/api/get-mas-populares', (results) => {
-		let resultados = JSON.parse(results);
-		colocarMasPopulares(resultados, 0);
-		iniciarIntervaloMiniSliderPopulares();
-	});
-	httpGet('/api/get-recomendados', (results) => {
-		let resultados = JSON.parse(results);
-		colocarRecomendados(resultados, 0);
-		iniciarIntervaloMiniSliderRecomendados();
 	});
 });
 /*
@@ -43,18 +24,16 @@ MAIN SLIDER
 */
 //Para colocar las imagenes pasandole el nombre en json
 function colocarImagenesSlider(jsonData){
-	objetoImagenes = JSON.parse(jsonData);
+	arrayImagenes = JSON.parse(jsonData);
 	let contenedorImagenes = q('#contenedor-imagenes-slider');
 	indexImagenActiva = 0;
 	let htmlImages = '';
-	let counter = 0;
-	for(let i in objetoImagenes){
-		htmlImages += `<img class="imagen-slider" src="../public-uploads/${objetoImagenes[i]}">`;
-		counter = i;
+	for(let i = 0; i < arrayImagenes.length; i++){
+		htmlImages += `<img class="imagen-slider" src="../public-uploads/${arrayImagenes[i]}">`;
 	}
-	loadImage(`../public-uploads/${objetoImagenes[1]}`).then((image) => {
-		contenedorImagenes.width = (image.naturalWidth + 'px');
-		contenedorImagenes.style.width = (image.naturalWidth * counter + 'px');
+	//Cargamos una imagen para calcular el alineador y colocar la imagen en el centro de la pantalla
+	loadImage(`../public-uploads/${arrayImagenes[0]}`).then((image) => {
+		contenedorImagenes.style.width = (image.naturalWidth * arrayImagenes.length + 'px');
 		alineador = (image.naturalWidth - window.outerWidth) / 2;
 		contenedorImagenes.style.transform = `translateX(-${alineador}px)`;
 		contenedorImagenes.innerHTML = htmlImages;
@@ -62,11 +41,10 @@ function colocarImagenesSlider(jsonData){
 	}).catch((image) => {
 		console.log('Error loading image: '+image.src);
 	});
-	tamañoObjetoImagenes = (Object.keys(objetoImagenes).length-1);
 };
 //Para poner la siguiete imagen a la derecha
 function cambiarImagenDerecha(){
-	if(indexImagenActiva == tamañoObjetoImagenes){
+	if(indexImagenActiva == (arrayImagenes.length-1)){
 		indexImagenActiva = 0;
 	}else{
 		indexImagenActiva = ++indexImagenActiva;
@@ -81,7 +59,7 @@ function cambiarImagenDerecha(){
 //Para poner la siguiente a la izquierda
 function cambiarImagenIzquierda(){
 	if(indexImagenActiva == 0){
-		indexImagenActiva = tamañoObjetoImagenes;
+		indexImagenActiva = (arrayImagenes.length-1);
 	}else{
 		indexImagenActiva = --indexImagenActiva;
 	}
@@ -102,240 +80,86 @@ MINISLIDERS
 
 */
 //Para colocar el dom de los productos mas vendidos
-function colocarMasVendidos(data, index){
-	productosMasVendidos = data;
+function colocarMasVendidos(data){
+	let productosMasVendidos = data;
+
 	let productoHtml = '';
-	let producto = productosMasVendidos[index];
-	indexProductosVendidos = index;
-	let tituloOriginal = producto.titulo;
-	let tituloCorto = '';
-	if(producto.titulo.length > 70){
-		tituloCorto = producto.titulo.substring(0, 70);
-		tituloCorto += '...';
-	}else{
-		tituloCorto = producto.titulo;
+	for(let i = 0; i < productosMasVendidos.length; i++){
+		let producto = productosMasVendidos[i];
+
+		//Acortamos el título si fuese demasiado largo para que encaje en la caja	
+		let tituloOriginal = producto.titulo;
+		let tituloCorto = '';
+		if(producto.titulo.length > 70){
+			tituloCorto = producto.titulo.substring(0, 70);
+			tituloCorto += '...';
+		}else{
+			tituloCorto = producto.titulo;
+		}
+		productoHtml += 
+			`<div class="contenedor-producto-minislider">
+				<a href="/p/${producto.permalink}" title="${tituloOriginal}">
+					<img class="imagen-minislider" src="../public-uploads/${producto.imagen}" width="300px" height="300px">
+				</a>
+				<a href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
+				<span class="precio-minislider">${producto.precio}€</span>
+				<span class="categoria-minislider">${producto.categoria}</span>
+			</div>`;
 	}
-	if(producto.categoria == 'Default'){
-		productoHtml = '<a class="producto-link productos-vendidos" href="http://192.168.1.100:8000/p/'
-			+producto.permalink
-			+'"><div id="contenedor-producto-minislider-vendidos">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
-			+tituloCorto+'</span><br/><span class="precio-minislider"> '
-			+producto.precio+'€</span></div></a>';
-	}else{
-		productoHtml = '<a class="producto-link productos-vendidos" href="http://192.168.1.100:8000/p/'
-			+producto.permalink
-			+'"><div id="contenedor-producto-minislider-vendidos">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
-			+tituloCorto+'</span><br/><span class="precio-minislider">'
-			+producto.precio+'€</span><span class="categoria-minislider"> '
-			+producto.categoria+'</span></div></a>';
-	}
-	if(q('#contenedor-producto-minislider-vendidos') != undefined || q('#contenedor-producto-minislider-vendidos') != null){
-		q('#contenedor-producto-minislider-vendidos').remove();
-	}
-	qAll('.productos-vendidos').forEach((producto) => {
-		producto.remove();
-	});
-	q('#contenedor-minislider-vendidos').insertAdjacentHTML('beforeend', productoHtml);
+
+	//Calculamos el tamaño del minislider
+	q('.minislider').style.width = (productosMasVendidos.length * 400) + 'px';
+	q('.minislider').innerHTML = productoHtml;
 };
-function colocarMasPopulares(data, index){
-	productosMasPopulares = data;
-	let productoHtml = '';
-	let producto = productosMasPopulares[index];
-	indexProductosPopulares = index;
-	let tituloOriginal = producto.titulo;
-	let tituloCorto = '';
-	if(producto.titulo.length > 70){
-		tituloCorto = producto.titulo.substring(0, 70);
-		tituloCorto += '...';
-	}else{
-		tituloCorto = producto.titulo;
-	}
-	if(producto.categoria == 'Default'){
-		productoHtml = '<a class="producto-link producto-popular" href="http://192.168.1.100:8000/p/'
-			+producto.permalink
-			+'"><div id="contenedor-producto-minislider-populares">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
-			+tituloCorto+'</span><br/><span class="precio-minislider"> '
-			+producto.precio+'€</span></div></a>';
-	}else{
-		productoHtml = '<a class="producto-link producto-popular" href="http://192.168.1.100:8000/p/'
-			+producto.permalink
-			+'"><div id="contenedor-producto-minislider-populares">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
-			+tituloCorto+'</span><br/><span class="precio-minislider">'
-			+producto.precio+'€</span><span class="categoria-minislider"> '
-			+producto.categoria+'</span></div></a>';
-	}
-	if(q('#contenedor-producto-minislider-populares') != undefined || q('#contenedor-producto-minislider-populares') != null){
-		q('#contenedor-producto-minislider-populares').remove();
-	}
-	qAll('.producto-popular').forEach((producto) => {
-		producto.remove();
-	});
-	q('#contenedor-minislider-populares').insertAdjacentHTML('beforeend', productoHtml);
-};
+//Para saber cuánto tiene que moverse el slider al hacer click en las flechas
+let counterPosition = 0;
 function flechaDerechaMiniSliderVendidos(){
-	let tamañoProductos = Object.keys(productosMasVendidos).length;
-	if(indexProductosVendidos >= tamañoProductos-1){
-		indexProductosVendidos = 0;
-	}else{
-		indexProductosVendidos++;
-	}
-	colocarMasVendidos(productosMasVendidos, indexProductosVendidos);
+	counterPosition--;
+	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloMiniSliderVendidos);
 	iniciarIntervaloMiniSliderVendidos();
 };
 function flechaIzquierdaMiniSliderVendidos(){
-	let tamañoProductos = Object.keys(productosMasVendidos).length;
-	if(indexProductosVendidos <= 0){
-		indexProductosVendidos = tamañoProductos-1;
-	}else{
-		indexProductosVendidos--;
-	}
-	colocarMasVendidos(productosMasVendidos, indexProductosVendidos);
+	counterPosition++;
+	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloMiniSliderVendidos);
 	iniciarIntervaloMiniSliderVendidos();
 };
-function colocarRecomendados(data, index){
-	productosRecomendados = data;
-	let productoHtml = '';
-	let producto = productosRecomendados[index];
-	indexProductosRecomendados = index;
-	let tituloOriginal = producto.titulo;
-	let tituloCorto = '';
-	if(producto.titulo.length > 70){
-		tituloCorto = producto.titulo.substring(0, 70);
-		tituloCorto += '...';
-	}else{
-		tituloCorto = producto.titulo;
-	}
-	if(producto.categoria == 'Default'){
-		productoHtml = '<a class="producto-link producto-recomendado" href="http://192.168.1.100:8000/p/'
-			+producto.permalink
-			+'"><div id="contenedor-producto-minislider-recomendados">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
-			+tituloCorto+'</span><br/><span class="precio-minislider"> '
-			+producto.precio+'€</span></div></a>';
-	}else{
-		productoHtml = '<a class="producto-link producto-recomendado" href="http://192.168.1.100:8000/p/'
-			+producto.permalink
-			+'"><div id="contenedor-producto-minislider-recomendados">'
-			+'<img class="imagen-minislider" src="../public-uploads/'
-			+producto.imagenes[1]+'"><span title="'+tituloOriginal+'">'
-			+tituloCorto+'</span><br/><span class="precio-minislider">'
-			+producto.precio+'€</span><span class="categoria-minislider"> '
-			+producto.categoria+'</span></div></a>';
-	}
-	if(q('#contenedor-producto-minislider-recomendados') != undefined || q('#contenedor-producto-minislider-recomendados') != null){
-		q('#contenedor-producto-minislider-recomendados').remove();
-	}
-	qAll('.producto-recomendado').forEach((producto) => {
-		producto.remove();
-	});
-	q('#contenedor-minislider-recomendados').insertAdjacentHTML('beforeend', productoHtml);
-};
-function flechaDerechaMiniSliderRecomendados(){
-	let tamañoProductos = Object.keys(productosRecomendados).length;
-	if(indexProductosRecomendados >= tamañoProductos-1){
-		indexProductosRecomendados = 0;
-	}else{
-		indexProductosRecomendados++;
-	}
-	colocarRecomendados(productosRecomendados, indexProductosRecomendados);
-	//Reseteamos el intervalo si el usuario hace click
-	clearInterval(intervaloMiniSliderRecomendados);
-	iniciarIntervaloMiniSliderRecomendados();
-};
-function flechaIzquierdaMiniSliderRecomendados(){
-	let tamañoProductos = Object.keys(productosRecomendados).length;
-	if(indexProductosRecomendados <= 0){
-		indexProductosRecomendados = tamañoProductos-1;
-	}else{
-		indexProductosRecomendados--;
-	}
-	colocarRecomendados(productosRecomendados, indexProductosRecomendados);
-	//Reseteamos el intervalo si el usuario hace click
-	clearInterval(intervaloMiniSliderRecomendados);
-	iniciarIntervaloMiniSliderRecomendados();
-};
-function flechaDerechaMiniSliderPopulares(){
-	let tamañoProductos = Object.keys(productosMasPopulares).length;
-	if(indexProductosPopulares >= tamañoProductos-1){
-		indexProductosPopulares = 0;
-	}else{
-		indexProductosPopulares++;
-	}
-	colocarMasPopulares(productosMasPopulares, indexProductosPopulares);
-	//Reseteamos el intervalo si el usuario hace click
-	clearInterval(intervaloMiniSliderPopulares);
-	iniciarIntervaloMiniSliderPopulares();
-};
-function flechaIzquierdaMiniSliderPopulares(){
-	let tamañoProductos = Object.keys(productosMasVendidos).length;
-	if(indexProductosPopulares <= 0){
-		indexProductosPopulares = tamañoProductos-1;
-	}else{
-		indexProductosPopulares--;
-	}
-	colocarMasPopulares(productosMasPopulares, indexProductosPopulares);
-	//Reseteamos el intervalo si el usuario hace click
-	clearInterval(intervaloMiniSliderPopulares);
-	iniciarIntervaloMiniSliderPopulares();
-};
 function iniciarIntervaloMiniSliderVendidos(){
-	let timer = 4000*Math.random();
-	timer = timer < 1000 ? timer + 1000 : timer;
-	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, timer);
-};
-function iniciarIntervaloMiniSliderPopulares(){
-	let timer = 4000*Math.random();
-	timer = timer < 1000 ? timer + 1000 : timer;
-	intervaloMiniSliderPopulares = setInterval(flechaDerechaMiniSliderPopulares, timer);
-};
-function iniciarIntervaloMiniSliderRecomendados(){
-	let timer = 4000*Math.random();
-	timer = timer < 1000 ? timer + 1000 : timer;
-	intervaloMiniSliderRecomendados = setInterval(flechaDerechaMiniSliderRecomendados, timer);
-};
-/*
-
-PRODUCTOS PRINCIPALES
-
-*/
-function getMainProducts() {
-
+	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
 };
 
+/*Inicio slider principal*/
+//Opacidad de las flechas al hover slider
+q('#contenedor-contenedor-slider').addEventListener('mouseenter', () => {
+	q('#flecha-izquierda-slider').style.opacity = 1;
+	q('#flecha-derecha-slider').style.opacity = 1;
+});
+q('#contenedor-contenedor-slider').addEventListener('mouseleave', () => {
+	q('#flecha-izquierda-slider').style.opacity = 0.5;
+	q('#flecha-derecha-slider').style.opacity = 0.5;
+});
+
+//Cambiar imagenes al click en las flechas del slider
 q('#flecha-izquierda-slider').addEventListener('click', cambiarImagenIzquierda);
 q('#flecha-derecha-slider').addEventListener('click', cambiarImagenDerecha);
-qAll('.flecha-izquierda-minislider').forEach((flechaIzq) => {
-	flechaIzq.addEventListener('click', (e) => {	
-		if(e.target.parentNode.id == 'contenedor-minislider-vendidos'){
-			flechaIzquierdaMiniSliderVendidos();
-		}else if(e.target.parentNode.id == 'contenedor-minislider-populares'){
-			flechaIzquierdaMiniSliderPopulares();
-		}else if(e.target.parentNode.id == 'contenedor-minislider-recomendados'){
-			flechaIzquierdaMiniSliderRecomendados();
-		}
-	});
+/*Fin slider principal*/
+
+/*Inicio minislider*/
+q('.contenedor-minislider').addEventListener('mouseenter', () => {
+	q('.flecha-izquierda-minislider').style.opacity = 1;
+	q('.flecha-derecha-minislider').style.opacity = 1;
 });
-qAll('.flecha-derecha-minislider').forEach((flechaDer) => {
-	flechaDer.addEventListener('click', (e) => {
-		if(e.target.parentNode.id == 'contenedor-minislider-vendidos'){
-			flechaDerechaMiniSliderVendidos();
-		}else if(e.target.parentNode.id == 'contenedor-minislider-populares'){
-			flechaDerechaMiniSliderPopulares();
-		}else if(e.target.parentNode.id == 'contenedor-minislider-recomendados'){
-			flechaDerechaMiniSliderRecomendados();
-		}
-	});
+q('.contenedor-minislider').addEventListener('mouseleave', () => {
+	q('.flecha-izquierda-minislider').style.opacity = 0.5;
+	q('.flecha-derecha-minislider').style.opacity = 0.5;
 });
+q('.flecha-derecha-minislider').addEventListener('click', () => {
+	flechaDerechaMiniSliderVendidos();
+});
+q('.flecha-izquierda-minislider').addEventListener('click', () => {
+	flechaIzquierdaMiniSliderVendidos();
+});
+/*Fin minislider*/

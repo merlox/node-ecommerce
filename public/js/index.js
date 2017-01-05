@@ -2,7 +2,8 @@
 let arrayImagenes = [],
 	indexImagenActiva = '',
 	intervaloSlider,
-	intervaloMiniSliderVendidos;
+	intervaloMiniSliderVendidos,
+	maxMinislider = 0;
 
 let alineador = 0;
 
@@ -107,22 +108,30 @@ function colocarMasVendidos(data){
 			</div>`;
 	}
 
+	maxMinislider = productosMasVendidos.length;
 	//Calculamos el tamaño del minislider
 	q('.minislider').style.width = (productosMasVendidos.length * 400) + 'px';
 	q('.minislider').innerHTML = productoHtml;
 };
 //Para saber cuánto tiene que moverse el slider al hacer click en las flechas
 let counterPosition = 0;
+let counterLimit = 4;
 function flechaDerechaMiniSliderVendidos(){
-	counterPosition--;
-	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
+	if(counterLimit < maxMinislider){
+		counterPosition--;
+		counterLimit++;
+		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
+	}
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloMiniSliderVendidos);
 	iniciarIntervaloMiniSliderVendidos();
 };
 function flechaIzquierdaMiniSliderVendidos(){
-	counterPosition++;
-	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
+	if(counterLimit > 4){
+		counterPosition++;
+		counterLimit--;
+		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
+	}
 	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloMiniSliderVendidos);
 	iniciarIntervaloMiniSliderVendidos();

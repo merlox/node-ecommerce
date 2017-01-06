@@ -102,7 +102,7 @@ function colocarMasVendidos(data){
 				<a href="/p/${producto.permalink}" title="${tituloOriginal}">
 					<img class="imagen-minislider" src="../public-uploads/${producto.imagen}" width="300px" height="300px">
 				</a>
-				<a href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
+				<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
 				<span class="precio-minislider">${producto.precio}€</span>
 				<span class="categoria-minislider">${producto.categoria}</span>
 			</div>`;
@@ -115,7 +115,7 @@ function colocarMasVendidos(data){
 };
 //Para saber cuánto tiene que moverse el slider al hacer click en las flechas
 let counterPosition = 0;
-let counterLimit = 4;
+let counterLimit = 3;
 function flechaDerechaMiniSliderVendidos(){
 	if(counterLimit < maxMinislider){
 		counterPosition--;
@@ -127,7 +127,7 @@ function flechaDerechaMiniSliderVendidos(){
 	iniciarIntervaloMiniSliderVendidos();
 };
 function flechaIzquierdaMiniSliderVendidos(){
-	if(counterLimit > 4){
+	if(counterLimit > 3){
 		counterPosition++;
 		counterLimit--;
 		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
@@ -137,7 +137,11 @@ function flechaIzquierdaMiniSliderVendidos(){
 	iniciarIntervaloMiniSliderVendidos();
 };
 function iniciarIntervaloMiniSliderVendidos(){
-	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
+	if(counterLimit >= maxMinislider){
+		intervaloMiniSliderVendidos = setInterval(flechaIzquierdaMiniSliderVendidosa, 5000);	
+	}else{
+		intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
+	}
 };
 
 /*Inicio slider principal*/

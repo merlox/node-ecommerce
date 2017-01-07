@@ -54,7 +54,8 @@ MINISLIDER
 
 */
 .contenedor-minislider{
-	width: 940px;
+	/*El width 15px del margin-right 300px por cada producto que quires que se muestre*/
+	width: 955px;
 	height: 100%;
 	padding: 5px 20px;
 	position: relative;
@@ -73,11 +74,26 @@ MINISLIDER
 .titulo-minislider{
 	text-decoration: none;
 	color: black;
-	
+	/*Para que se baje de línea y se vea correctamente*/
+	display: block;
+}
+.precio-minislider{
+	font-family: 'open sans condensed';
+	color: red;
+	font-size: 17pt;
+	display: block;
+}
+.categoria-minislider{
+	color: lightgrey;
+	text-decoration: none;
+}
+.categoria-minislider:hover{
+	color: blue;
 }
 .contenedor-producto-minislider{
 	width: 300px;
 	float: left;
+	margin-right: 5px;
 }
 .flecha-minislider{
 	height: 60px;

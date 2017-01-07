@@ -104,7 +104,7 @@ function colocarMasVendidos(data){
 				</a>
 				<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
 				<span class="precio-minislider">${producto.precio}€</span>
-				<span class="categoria-minislider">${producto.categoria}</span>
+				<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>
 			</div>`;
 	}
 
@@ -117,7 +117,7 @@ function colocarMasVendidos(data){
 let counterPosition = 0;
 let counterLimit = 3;
 function flechaDerechaMiniSliderVendidos(){
-	if(counterLimit < maxMinislider){
+	if(counterLimit <= maxMinislider){
 		counterPosition--;
 		counterLimit++;
 		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
@@ -137,11 +137,12 @@ function flechaIzquierdaMiniSliderVendidos(){
 	iniciarIntervaloMiniSliderVendidos();
 };
 function iniciarIntervaloMiniSliderVendidos(){
-	if(counterLimit >= maxMinislider){
-		intervaloMiniSliderVendidos = setInterval(flechaIzquierdaMiniSliderVendidosa, 5000);	
-	}else{
-		intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
+	if(counterLimit > maxMinislider){
+		counterLimit = 3;
+		counterPosition = 0;
+		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
 	}
+	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
 };
 
 /*Inicio slider principal*/

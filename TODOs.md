@@ -35,7 +35,7 @@ DONE - Reparar la barra de búsqueda para que sólo se muestre cuando haya suger
 -- Quienes somos, condiciones de compra, aviso legal, privacidad.
 -- Ayuda para comprar, contactar por email, devoluciones, garantías.
 -- Iconos de redes sociales
-- Mejorar la barra del menú principal para que tenga un diseño más bonito y arreglar el "Mi cuenta" para que tenga una flecha hacia abajo más pequeña.
+DONE - Mejorar la barra del menú principal para que tenga un diseño más bonito y arreglar el "Mi cuenta" para que tenga una flecha hacia abajo más pequeña.
 - Mejorar el botón de cerrar sesión y crear página de usuario en la que ver ajustes, pedidos e información general de esa cuenta.
 - Crear página en admin sobre facturas en la que poder marcar pedidos como vendidos, enviados y en proceso.
 - Crear sistema de emails para informar a los usuarios con las facturas de sus pedidos, para hacer email márketing y para recuperar la contraseña.

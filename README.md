@@ -930,3 +930,15 @@ Llevo varios días reparando bugs y mejorando el diseño en general. Han sido po
 Además he implementado la plataforma de pagos stripe y está funcionando a falta de testearla todavía más.
 
 He creado una lista de cosas por hacer para ir teniendo un orden, así que la seguiré hoy.
+
+### Día 49
+
+Continuo trabajando en la lista.
+
+### Día 50
+
+He mejorado considerablemente la página inicial, ahora solo hay 1 widget minislider que permite desplazarse por las imagenes en forma horizontal.
+
+Ahora voy a trabajar en terminar el diseño del miniwidget para que el texto se vea correctamente y el precio esté bien colocado.
+
+Luego trabajaré en crear la página de categorías y de busqueda que será igual puesto que solo tiene que mostrar multiples productos con filtros para ordenar la búsqueda.

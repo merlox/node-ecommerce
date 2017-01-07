@@ -1,11 +1,18 @@
 'use strict';
+//Variables Slider
 let arrayImagenes = [],
 	indexImagenActiva = '',
 	intervaloSlider,
-	intervaloMiniSliderVendidos,
-	maxMinislider = 0;
+	alineador = 0;
 
-let alineador = 0;
+//Variables minislider
+let intervaloMiniSliderVendidos,
+	maxMinislider = 0,
+	counterPosition = 0,
+	//Para calcular cuánto tiene que moverse el slider al hacer click en las flechas
+	counterLimit = 0,
+	//Tamaño widgets es cuántas imágenes se muestran en la pantalla principal del minislider
+	tamañoWidgets = 1;
 
 window.addEventListener('load', () => {
 	httpGet('/api/get-slider', (result) => {
@@ -17,6 +24,16 @@ window.addEventListener('load', () => {
 		colocarMasVendidos(resultados);
 		iniciarIntervaloMiniSliderVendidos();
 	});
+
+	calcularTamañoMinisliderResponsive();
+});
+window.addEventListener('resize', () => {
+	//Recalcular el tamaño del minislider para que siga funcionando correctamente y detecte su tamaño nuevo
+	calcularTamañoMinisliderResponsive();
+	//Reiniciamos el intervalo para que no se salga del límite
+	counterLimit = tamañoWidgets;
+	counterPosition = 0;
+	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
 });
 /*
 
@@ -113,16 +130,6 @@ function colocarMasVendidos(data){
 	q('.minislider').style.width = (productosMasVendidos.length * 400) + 'px';
 	q('.minislider').innerHTML = productoHtml;
 };
-//Para saber cuánto tiene que moverse el slider al hacer click en las flechas
-let counterPosition = 0;
-let tamañoWidgets = 1;
-if(q('.contenedor-minislider').offsetWidth.toString().substring(0).length > 3){
-	tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 2))/3;
-}else{
-	tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 1))/3;
-}
-let counterLimit = tamañoWidgets;
-console.log(tamañoWidgets);
 function flechaDerechaMiniSliderVendidos(){
 	if(counterLimit <= maxMinislider){
 		counterPosition--;
@@ -151,6 +158,18 @@ function iniciarIntervaloMiniSliderVendidos(){
 	}
 	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
 };
+function calcularTamañoMinisliderResponsive(){
+	console.log('called');
+	//Si el tamaño tiene más de 4 cifras hacer un substring de las dos primeras
+	if(q('.contenedor-minislider').offsetWidth.toString().substring(0).length > 3){
+		tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 2))/3;
+	}else{
+		tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 1))/3;
+	}
+
+	counterLimit = tamañoWidgets;
+};
+
 
 /*Inicio slider principal*/
 //Opacidad de las flechas al hover slider

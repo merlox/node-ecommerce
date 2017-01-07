@@ -77,6 +77,9 @@ MINISLIDER
 	/*Para que se baje de línea y se vea correctamente*/
 	display: block;
 }
+.titulo-minislider:hover{
+	color: blue;
+}
 .precio-minislider{
 	font-family: 'open sans condensed';
 	color: red;
@@ -116,4 +119,20 @@ MINISLIDER
 }
 .flecha-derecha-minislider{
 	right: 20px;
+}
+/*Reducir el tamaño del minislider*/
+@media (max-width: 1280px){
+	.contenedor-minislider{
+		width: 955px;
+	}
+}
+@media (max-width: 1000px){
+	.contenedor-minislider{
+		width: 655px;
+	}
+}
+@media (max-width: 700px){
+	.contenedor-minislider{
+		width: 355px;
+	}
 }

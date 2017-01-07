@@ -30,7 +30,7 @@ function getCesta(){
 				let precioCalculado = (productoCesta.precio*productoCesta.cantidad).toFixed(2);
 				cestaHtml += 
 				`<tr>
-					<td><img src="../public-uploads/${productoCesta.imagenes}" width="50px"/></td>
+					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
 					<td class="cesta-precio">${productoCesta.precio}€</td>
 					<td class="titulo-producto"><a href="/p/${productoCesta.permalink}">
 						${productoCesta.titulo}</a></td>
@@ -120,7 +120,7 @@ function renderCesta(){
 				//Importante mantener la estructura html o dará errores raros
 				cestaHtml += 
 				`<tr>
-					<td><img src="../public-uploads/${productoCesta.imagenes}" width="50px"/></td>
+					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
 					<td class="cesta-precio">${productoCesta.precio}€</td>
 					<td class="titulo-producto">
 					<a class="permalink-producto" href="/p/${productoCesta.permalink}">${productoCesta.titulo}</a></td>
@@ -169,9 +169,11 @@ function renderCesta(){
 };
 
 //Añadir un producto a la cesta en backend y front end
-if(q('#button-añadir-cesta')){
-	q('#button-añadir-cesta').addEventListener('click', () => {
-		addCesta(q('#input-cantidad').value);
+if(q('.button-añadir-cesta')){
+	qAll('.button-añadir-cesta').forEach(button => {
+		button.addEventListener('click', () => {
+			addCesta(q('#input-cantidad').value);
+		});
 	});
 }
 //Mostrar la cesta on hover

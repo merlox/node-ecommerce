@@ -159,7 +159,6 @@ function iniciarIntervaloMiniSliderVendidos(){
 	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);
 };
 function calcularTamañoMinisliderResponsive(){
-	console.log('called');
 	//Si el tamaño tiene más de 4 cifras hacer un substring de las dos primeras
 	if(q('.contenedor-minislider').offsetWidth.toString().substring(0).length > 3){
 		tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 2))/3;

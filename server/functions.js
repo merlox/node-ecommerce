@@ -824,39 +824,53 @@ function getCesta(username, cb){
     if(err) return cb(err, null);
     //Comprobamos que la cesta no esté vacía
     if(result.cesta != null && result.cesta != undefined && Object.keys(result.cesta).length != 0){
-      let productosCesta = [];
-      for(let nombreProducto in result.cesta) productosCesta.push(nombreProducto);
-      db.collection('productos').find({
-        'permalink': {$in: productosCesta}
-      }, {
-        'permalink': true,
-        'titulo': true,
-        'imagenes': true,
-        'precio': true,
-        '_id': false
-      }).toArray((err, results) => {
+      crearCesta(result.cesta, (err, productosCesta) => {
         if(err) return cb(err, null);
-        //Le ponemos la cantidad a cada objeto producto de la cesta
-        //Y solo seleccionamos la primera imagen
-        results.forEach((objetoProducto, index) => {
-          let cantidad = result.cesta[objetoProducto.permalink];
-          let nombreImagen = results[index].imagenes[1];
-          results[index].imagenes = nombreImagen;
-          results[index]['cantidad'] = cantidad;
-          //Le pasamos la imágen del producto al cliente
-          let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
-          let end = path.join(__dirname, '../public/public-uploads/');
-          copyFile(origen, end, nombreImagen, (err) => {
-            if(err) return cb(err, null);
-            if(index + 1 >= results.length){
-              cb(null, results);
-            }
-          });
-        });
+        cb(null, productosCesta);
       });
     }else{
-      cb(null, null);
+      cb('No hay productos en la cesta', null);
     }
+  });
+};
+//Para buscar los productos en la cesta sin importar el estado de login del usuario, copiarlos y retornar 
+//sus propiedades necesarias. Obligatorio pasarle el objeto cesta.
+function crearCesta(cesta, cb){
+  console.log('CrearCesta, functions.js');
+  let productosCesta = [];
+  for(let nombreProducto in cesta) productosCesta.push(nombreProducto);
+  db.collection('productos').find({
+    'permalink': {$in: productosCesta}
+  }, {
+    'permalink': true,
+    'titulo': true,
+    'imagenes': true,
+    'precio': true,
+    '_id': false
+  }).toArray((err, results) => {
+    if(err) return cb('No se han encontrado productos para esa cesta.', null);
+    //Le ponemos la cantidad a cada objeto producto de la cesta
+    //Y solo seleccionamos la primera imagen
+    let error = null;
+    let counter = 0;
+    results.forEach((objetoProducto, index) => {
+      let cantidad = cesta[objetoProducto.permalink];
+      let nombreImagen = results[index].imagenes[1];
+      results[index]['imagen'] = nombreImagen;
+      results[index]['cantidad'] = cantidad;
+      delete results[index].imagenes;
+      //Le pasamos la imágen del producto al cliente
+      let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
+      let end = path.join(__dirname, '../public/public-uploads/');
+      copyFile(origen, end, nombreImagen, (err) => {
+        counter++;
+        if(err) error = 'No se pudo copiar la imagen de ese producto de la cesta.';
+        if(counter >= results.length){
+          if(error) return cb(error, null);
+          cb(null, results);
+        }
+      });
+    });
   });
 };
 function addProductoCesta(req, cb){
@@ -922,39 +936,6 @@ function saveCestaUser(cesta, username, cb){
     else return cb(null);
   });
 };
-//Para copiar las imagenes de los productos de la cesta cuando no has iniciado sesion
-function getOfflineCesta(cesta, cb){
-  let productosCesta = [];
-  for(let nombreProducto in cesta) productosCesta.push(nombreProducto);
-  db.collection('productos').find({
-    'permalink': {$in: productosCesta}
-
-  }, {
-    'permalink': true,
-    'imagenes': true,
-    'precio': true,
-    '_id': false
-  }).toArray((err, results) => {
-    if(err) return cb(err, null);
-    //Le ponemos la cantidad a cada objeto producto de la cesta
-    //Y solo seleccionamos la primera imagen
-    results.forEach((objetoProducto, index) => {
-      let cantidad = cesta[objetoProducto.permalink];
-      let nombreImagen = results[index].imagenes[1];
-      results[index].imagenes = nombreImagen;
-      results[index]['cantidad'] = cantidad;
-      //Le pasamos la imágen del producto al cliente
-      let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
-      let end = path.join(__dirname, '../public/public-uploads/');
-      copyFile(origen, end, nombreImagen, (err) => {
-        if(err) return cb(err, null);
-        if(index + 1 >= results.length){
-          cb(null, results);
-        }
-      });
-    });
-  });
-};
 function getLoggedState(req, cb){
   if(req.session.username == 'merloxdixcontrol@gmail.com'){
     cb('admin');
@@ -987,7 +968,7 @@ exports.saveCestaUser = saveCestaUser;
 exports.registerUsuario = registerUsuario;
 exports.loginUsuario = loginUsuario;
 exports.getCesta = getCesta;
+exports.crearCesta = crearCesta;
 exports.addProductoCesta = addProductoCesta;
 exports.cambiarCantidadCesta = cambiarCantidadCesta;
-exports.getOfflineCesta = getOfflineCesta;
 exports.getLoggedState = getLoggedState;

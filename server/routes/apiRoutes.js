@@ -233,6 +233,7 @@ api.get('/get-cesta', (req, res) => {
   if(req.session.isLogged){
     functions.getCesta(req.session.username, (err, cesta) => {
       if(err){
+        console.log(err);
         responseObject.error = 'Could not load your products, try again.';
         res.send(responseObject);
       }else{
@@ -242,8 +243,9 @@ api.get('/get-cesta', (req, res) => {
     });
   }else{
     //Para usuarios no registrados copiar la 1ª imagen de cada producto con copy file
-    functions.getOfflineCesta(req.session.cesta, (err, cesta) => {
+    functions.crearCesta(req.session.cesta, (err, cesta) => {
       if(err){
+        console.log(err);
         responseObject.error = 'Could not load your products, try again.';
         res.send(responseObject);
       }else{

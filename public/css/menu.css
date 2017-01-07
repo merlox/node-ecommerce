@@ -46,6 +46,9 @@ DEPARTAMENTOS
 	flex-direction: column;
 	margin-left: 20px;
 }
+#departamentos:hover{
+	font-weight: bold;
+}
 #expandible-departamentos{
     display: none;
     background-color: white;
@@ -61,6 +64,7 @@ DEPARTAMENTOS
 #expandible-departamentos ul{
 	list-style-type: none;
 	padding-left: 0;
+	font-weight: normal;
 	margin: 0;
 }
 #expandible-departamentos ul li a{
@@ -181,6 +185,9 @@ SESIÓN
 	justify-content: center;
 	align-items: center;
 	text-align: center;
+}
+#usuario:hover{
+	font-weight: bold;
 }
 #menu-sesion{
 	display: none;

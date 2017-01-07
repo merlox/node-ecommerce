@@ -43,6 +43,9 @@ WIDGET CESTA
     flex: none;
     flex-direction: column;
 }
+#cesta:hover{
+    font-weight: bold;
+}
 #cesta img{
     margin-right: 6px;
 }

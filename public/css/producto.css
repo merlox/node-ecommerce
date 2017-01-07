@@ -81,14 +81,8 @@ BUY SIDEBAR
 #contenedor-comprar-producto{
 	width: 15%;
 }
-#button-añadir-cesta{
-	margin: 0 auto;
-}
-#button-añadir-cesta:hover{
-	background-color: #FFA210;
-}
-#button-añadir-cesta:active{
-	background-color: #FFBA00;
+.button-añadir-cesta{
+	width: 100%;
 }
 #contenedor-input-cantidad{
 	display: flex;

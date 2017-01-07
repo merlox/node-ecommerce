@@ -115,7 +115,14 @@ function colocarMasVendidos(data){
 };
 //Para saber cuánto tiene que moverse el slider al hacer click en las flechas
 let counterPosition = 0;
-let counterLimit = 3;
+let tamañoWidgets = 1;
+if(q('.contenedor-minislider').offsetWidth.toString().substring(0).length > 3){
+	tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 2))/3;
+}else{
+	tamañoWidgets = parseInt(q('.contenedor-minislider').offsetWidth.toString().substring(0, 1))/3;
+}
+let counterLimit = tamañoWidgets;
+console.log(tamañoWidgets);
 function flechaDerechaMiniSliderVendidos(){
 	if(counterLimit <= maxMinislider){
 		counterPosition--;
@@ -127,7 +134,7 @@ function flechaDerechaMiniSliderVendidos(){
 	iniciarIntervaloMiniSliderVendidos();
 };
 function flechaIzquierdaMiniSliderVendidos(){
-	if(counterLimit > 3){
+	if(counterLimit > tamañoWidgets){
 		counterPosition++;
 		counterLimit--;
 		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
@@ -138,7 +145,7 @@ function flechaIzquierdaMiniSliderVendidos(){
 };
 function iniciarIntervaloMiniSliderVendidos(){
 	if(counterLimit > maxMinislider){
-		counterLimit = 3;
+		counterLimit = tamañoWidgets;
 		counterPosition = 0;
 		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
 	}

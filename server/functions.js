@@ -45,7 +45,8 @@ function buscarProductos(keyword, limite, cb){
     'imagenes': true,
     'permalink': true,
     'precio': true,
-    'titulo': true
+    'titulo': true,
+    'categoria': true
   }).limit(limite).toArray((err, results) => {
     if(err){
       return cb('Error, could not find those products', null);
@@ -255,6 +256,7 @@ function render(page, dataObject, cb){
         let reTotalItem = new RegExp("{{loop "+propiedad+" -.*-}}" ,"gm");
         let reTotal = new RegExp("{{loop "+propiedad+"}}" ,"gm");
         let reLoopKey = new RegExp("{{loopKey "+propiedad+"}}", "gm");
+        let reArray = new RegExp("{{array "+propiedad+"}}([\\s\\S]*?){{\\/array}}", "gm");
 
         if(re.test(resultado)){
           resultado = resultado.replace(re, dataObject[propiedad]);
@@ -320,6 +322,33 @@ function render(page, dataObject, cb){
           resultado = resultado.replace(reTotal, textoFinal);
           textoFinal = "";
         } 
+  
+        if(reArray.test(resultado)){
+          //Al ejecutar el .test el index se mueve al ser un buscador global /g con lo que al hacer el exec,
+          //el resultado ya se a pasado hasta el final
+          reArray.lastIndex = 0;
+          let contenidoMatch = reArray.exec(resultado)[1];
+          let array = dataObject[propiedad];
+          let contenidoFinal = '';
+          //Para cada ocurrencia del array crear texto
+          //[{objetoProducto1},{objetoProducto2},{objetoProducto3}]
+          //1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
+          //2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html
+          //3. Guardar cada html con su valor reemplazado en una variable contenidoFinal
+          //4. Reemplazar la ocurrencia de {{array propiedad}} con el contenidoFinal
+          for(let i = 0; i < array.length; i++){
+            let objetoProducto = array[i];
+            let contenidoProducto = contenidoMatch;
+            for(let propiedadProducto in objetoProducto){
+              let newRe = new RegExp("{{"+propiedadProducto+"}}");
+              if(newRe.test(contenidoProducto)){
+                contenidoProducto = contenidoProducto.replace(newRe, objetoProducto[propiedadProducto]);
+              }
+            }
+            contenidoFinal += contenidoProducto;
+          }
+          resultado = resultado.replace(reArray, contenidoFinal);
+        }
       }
     }
 
@@ -355,10 +384,8 @@ function render(page, dataObject, cb){
         });
       });
     }else{
-
       //Si no hay includes devolver la pagina con los cambios del dataObject
       return cb(null, resultado);
-
     }
   });
 };

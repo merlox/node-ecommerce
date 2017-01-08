@@ -70,7 +70,7 @@ function ocultarMostrarDepartamentos(){
 function buscarProducto(keyword){
 	if(keyword.length >= 3){
 		keyword = encodeURIComponent(keyword);
-		httpGet('/api/search/'+keyword+'?limite=8', (results) => {
+		httpGet(`/api/search/${keyword}?limite=8`, (results) => {
 			try{
 				results = JSON.parse(results);
 			}catch(e){
@@ -190,7 +190,7 @@ q('html').addEventListener('click', () => {
 q('#icono-busqueda').addEventListener('click', () => {
 	//Si la busqueda no esta vacía, redirigir a resultados de busqueda en caso de hacer click a buscar
 	if(q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
-		window.location.href = '/search/?searched='+encodeURI(q('#buscador').value);
+		window.location.href = `/search?q=${encodeURI(q('#buscador').value)}`;
 	}
 });
 

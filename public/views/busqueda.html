@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{titulo}}</title>
+	<title>Resultados de buscar: "{{busqueda}}"</title>
 	{{> header}}
 </head>
 <!--//TODO pagina de búsqueda de productos-->
@@ -9,8 +9,17 @@
 
 	{{> menu}}
 
+	<h2>Resultados de buscar: {{busqueda}}</h2>
+	<i>Mostrando {{limite}} resultados.</i>
     <div id="contenedor-principal">
-
+    	{{array productos}}
+		<div class="producto">
+			<a href="/p/{{permalink}}"><img class="producto-imagen" src="../public-uploads/{{imagen}}" width="300px"></a>
+			<span class="producto-precio">{{precio}}€</span>
+			<span class="producto-titulo">{{titulo}}</span>
+			<span class="producto-categoria">{{categoria}}</span>
+    	</div>
+    	{{/array}}    	
 	</div>
 
 	{{> footer}}

@@ -27,11 +27,31 @@ routes.get('/p/:permalink', (req, res) => {
   });
 });
 
-routes.get('/search/:keyword?', (req, res) => {
-  functions.render(path.join(__dirname, '../../public/views/busqueda.html'), null, (err, data) => {
-    if(err) return res.send(err);
-    return res.send(data);
+//Para mostrar resultados en la página de busqueda
+routes.get('/search', (req, res) => {
+  let limite = 30;
+  let error = null;
+  functions.buscarProductos(req.query.q, limite, (err, arrayProductos) => {
+    if(err) error = 'No se han encontrado productos para esa búsqueda.';
+
+    //Quitamos las imágenes para solo mostrar 1 imagen
+    for(let i = 0; i<arrayProductos.length; i++){
+      arrayProductos[i]['imagen'] = arrayProductos[i]['imagenes'][1];
+      delete arrayProductos[i]['imagenes'];
+    }
+
+    let dataObject = {
+      'busqueda': req.query.q,
+      'limite': limite,
+      'productos': arrayProductos
+    };
+    
+    functions.render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+      if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+      return res.send(data);
+    });
   });
+  //Buscar los productos que coincidan con la busqueda y renderizar la página
 });
 
 routes.get('/chat', function(req, res){

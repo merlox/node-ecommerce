@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Resultados de buscar: "qui"</title>
+<link rel="stylesheet" type="text/css" href="../css/busqueda.css">
+{{> header}}
+</head>
+<!--//TODO pagina de búsqueda de productos-->
+<body>
+
+{{> menu}}
+
+    <div id="contenedor-principal">
+       {{if bitch}}
+    <kjdsafnka>what up biatch<kjdsafnka>
+    {{else}}
+    <kjdsafnka>yo hommie<kjdsafnka>
+    {{/if}}
+
+    
+    <div>
+    <h2>Resultados de buscar: <b>qui</b></h2>
+<i>Mostrando 30 resultados.</i>
+<div class="paginacion"></div>
+</div>
+    
+<div class="producto">
+<a href="/p/cillum%20commodo%20aute%20deserunt%20amet%20dolore%20laboris%20qui%20dolor%20quis"><img class="producto-imagen" src="../public-uploads/CamisetasSITHS.jpg" width="300px"></a>
+<span class="producto-precio">50.99€</span>
+<span class="producto-titulo">cillum commodo aute deserunt amet dolore laboris qui dolor quis</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/qui%20exercitation%20laboris%20commodo%20laborum%20pariatur%20culpa%20sunt%20exercitation%20ea"><img class="producto-imagen" src="../public-uploads/cuadradoONEPIECE2.jpg" width="300px"></a>
+<span class="producto-precio">33.99€</span>
+<span class="producto-titulo">qui exercitation laboris commodo laborum pariatur culpa sunt exercitation ea</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/consectetur%20consectetur%20minim%20aliqua%20pariatur%20aliquip%20enim%20amet%20cillum%20proident"><img class="producto-imagen" src="../public-uploads/CamisetasREDRIBBON.jpg" width="300px"></a>
+<span class="producto-precio">37.99€</span>
+<span class="producto-titulo">consectetur consectetur minim aliqua pariatur aliquip enim amet cillum proident</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/proident%20consectetur%20culpa%20nostrud%20esse%20nulla%20quis%20culpa%20fugiat%20sint"><img class="producto-imagen" src="../public-uploads/41C3gsNiUSL.jpg" width="300px"></a>
+<span class="producto-precio">53.99€</span>
+<span class="producto-titulo">proident consectetur culpa nostrud esse nulla quis culpa fugiat sint</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/aliquip%20pariatur%20do%20magna%20ullamco%20ut%20laboris%20voluptate%20occaecat%20exercitation"><img class="producto-imagen" src="../public-uploads/CamisetasTRAITOR.jpg" width="300px"></a>
+<span class="producto-precio">44.99€</span>
+<span class="producto-titulo">aliquip pariatur do magna ullamco ut laboris voluptate occaecat exercitation</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/cillum%20consectetur%20elit%20ut%20aliquip%20quis%20mollit%20nostrud%20laboris%20non"><img class="producto-imagen" src="../public-uploads/CamisetasSITHS.jpg" width="300px"></a>
+<span class="producto-precio">79.99€</span>
+<span class="producto-titulo">cillum consectetur elit ut aliquip quis mollit nostrud laboris non</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/tempor%20deserunt%20nisi%20et%20laborum%20irure%20ipsum%20ipsum%20quis%20officia"><img class="producto-imagen" src="../public-uploads/CamisetasTESLARocks.jpg" width="300px"></a>
+<span class="producto-precio">93.99€</span>
+<span class="producto-titulo">tempor deserunt nisi et laborum irure ipsum ipsum quis officia</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/est%20veniam%20aliquip%20incididunt%20est%20ea%20ea%20nulla%20minim%20nostrud"><img class="producto-imagen" src="../public-uploads/yosoytunieto_ml.jpg" width="300px"></a>
+<span class="producto-precio">71.99€</span>
+<span class="producto-titulo">est veniam aliquip incididunt est ea ea nulla minim nostrud</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/excepteur%20amet%20ea%20enim%20qui%20aliquip%20nisi%20velit%20anim%20magna"><img class="producto-imagen" src="../public-uploads/CamisetasTRAITOR.jpg" width="300px"></a>
+<span class="producto-precio">88.99€</span>
+<span class="producto-titulo">excepteur amet ea enim qui aliquip nisi velit anim magna</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/voluptate%20minim%20duis%20labore%20sint%20ex%20qui%20aliqua%20do%20Lorem"><img class="producto-imagen" src="../public-uploads/cuadradoKEMEhouse_ml.jpg" width="300px"></a>
+<span class="producto-precio">40.99€</span>
+<span class="producto-titulo">voluptate minim duis labore sint ex qui aliqua do Lorem</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/laboris%20minim%20occaecat%20veniam%20minim%20occaecat%20cillum%20quis%20est%20cupidatat"><img class="producto-imagen" src="../public-uploads/41C3gsNiUSL.jpg" width="300px"></a>
+<span class="producto-precio">76.99€</span>
+<span class="producto-titulo">laboris minim occaecat veniam minim occaecat cillum quis est cupidatat</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/et%20aute%20sit%20quis%20nostrud%20mollit%20voluptate%20aliquip%20sit%20sunt"><img class="producto-imagen" src="../public-uploads/CamisetaVENOM.jpg" width="300px"></a>
+<span class="producto-precio">96.99€</span>
+<span class="producto-titulo">et aute sit quis nostrud mollit voluptate aliquip sit sunt</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/aliquip%20officia%20cupidatat%20aliqua%20aliquip%20sit%20exercitation%20laboris%20incididunt%20id"><img class="producto-imagen" src="../public-uploads/CamisetasSITHS.jpg" width="300px"></a>
+<span class="producto-precio">19.99€</span>
+<span class="producto-titulo">aliquip officia cupidatat aliqua aliquip sit exercitation laboris incididunt id</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/ex%20nostrud%20culpa%20consequat%20quis%20est%20aute%20ut%20adipisicing%20enim"><img class="producto-imagen" src="../public-uploads/yosoytunieto_ml.jpg" width="300px"></a>
+<span class="producto-precio">15.99€</span>
+<span class="producto-titulo">ex nostrud culpa consequat quis est aute ut adipisicing enim</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/dolor%20minim%20fugiat%20voluptate%20ipsum%20aliquip%20eiusmod%20Lorem%20eu%20exercitation"><img class="producto-imagen" src="../public-uploads/CamisetasREDRIBBON.jpg" width="300px"></a>
+<span class="producto-precio">19.99€</span>
+<span class="producto-titulo">dolor minim fugiat voluptate ipsum aliquip eiusmod Lorem eu exercitation</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/nulla%20commodo%20amet%20fugiat%20esse%20non%20aliquip%20aliquip%20deserunt%20sit"><img class="producto-imagen" src="../public-uploads/cuadradoKEMEhouse_ml.jpg" width="300px"></a>
+<span class="producto-precio">13.99€</span>
+<span class="producto-titulo">nulla commodo amet fugiat esse non aliquip aliquip deserunt sit</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/Lorem%20laborum%20minim%20sint%20non%20aliquip%20anim%20laborum%20elit%20exercitation"><img class="producto-imagen" src="../public-uploads/CamisetaVENOM.jpg" width="300px"></a>
+<span class="producto-precio">40.99€</span>
+<span class="producto-titulo">Lorem laborum minim sint non aliquip anim laborum elit exercitation</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/anim%20quis%20esse%20ex%20ex%20nulla%20nulla%20dolor%20non%20proident"><img class="producto-imagen" src="../public-uploads/CamisetaVENOM.jpg" width="300px"></a>
+<span class="producto-precio">48.99€</span>
+<span class="producto-titulo">anim quis esse ex ex nulla nulla dolor non proident</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/anim%20velit%20irure%20ex%20occaecat%20eiusmod%20sint%20quis%20ullamco%20proident"><img class="producto-imagen" src="../public-uploads/cuadradoONEPIECE2.jpg" width="300px"></a>
+<span class="producto-precio">9.99€</span>
+<span class="producto-titulo">anim velit irure ex occaecat eiusmod sint quis ullamco proident</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/culpa%20sint%20minim%20officia%20laborum%20incididunt%20veniam%20qui%20exercitation%20nulla"><img class="producto-imagen" src="../public-uploads/41C3gsNiUSL.jpg" width="300px"></a>
+<span class="producto-precio">29.99€</span>
+<span class="producto-titulo">culpa sint minim officia laborum incididunt veniam qui exercitation nulla</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/qui%20labore%20nulla%20qui%20sunt%20aute%20velit%20officia%20cillum%20veniam"><img class="producto-imagen" src="../public-uploads/cuadradoKEMEhouse_ml.jpg" width="300px"></a>
+<span class="producto-precio">77.99€</span>
+<span class="producto-titulo">qui labore nulla qui sunt aute velit officia cillum veniam</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/sit%20duis%20magna%20ea%20nulla%20sunt%20deserunt%20consequat%20qui%20voluptate"><img class="producto-imagen" src="../public-uploads/yosoytunieto_ml.jpg" width="300px"></a>
+<span class="producto-precio">59.99€</span>
+<span class="producto-titulo">sit duis magna ea nulla sunt deserunt consequat qui voluptate</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/aliqua%20aliqua%20aliquip%20est%20dolore%20sunt%20reprehenderit%20veniam%20voluptate%20mollit"><img class="producto-imagen" src="../public-uploads/41C3gsNiUSL.jpg" width="300px"></a>
+<span class="producto-precio">79.99€</span>
+<span class="producto-titulo">aliqua aliqua aliquip est dolore sunt reprehenderit veniam voluptate mollit</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/Lorem%20exercitation%20velit%20laborum%20cupidatat%20sit%20Lorem%20dolor%20qui%20esse"><img class="producto-imagen" src="../public-uploads/yosoytunieto_ml.jpg" width="300px"></a>
+<span class="producto-precio">90.99€</span>
+<span class="producto-titulo">Lorem exercitation velit laborum cupidatat sit Lorem dolor qui esse</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/cillum%20consectetur%20exercitation%20aute%20nostrud%20consectetur%20quis%20ad%20consectetur%20commodo"><img class="producto-imagen" src="../public-uploads/CamisetasSITHS.jpg" width="300px"></a>
+<span class="producto-precio">87.99€</span>
+<span class="producto-titulo">cillum consectetur exercitation aute nostrud consectetur quis ad consectetur commodo</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/non%20exercitation%20quis%20incididunt%20proident%20ea%20ut%20dolor%20veniam%20culpa"><img class="producto-imagen" src="../public-uploads/CamisetaVENOM.jpg" width="300px"></a>
+<span class="producto-precio">63.99€</span>
+<span class="producto-titulo">non exercitation quis incididunt proident ea ut dolor veniam culpa</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/velit%20dolor%20commodo%20fugiat%20fugiat%20consectetur%20veniam%20ex%20do%20aliquip"><img class="producto-imagen" src="../public-uploads/CamisetasTESLARocks.jpg" width="300px"></a>
+<span class="producto-precio">13.99€</span>
+<span class="producto-titulo">velit dolor commodo fugiat fugiat consectetur veniam ex do aliquip</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/voluptate%20ipsum%20nulla%20pariatur%20quis%20anim%20duis%20reprehenderit%20mollit%20anim"><img class="producto-imagen" src="../public-uploads/CamisetasTRAITOR.jpg" width="300px"></a>
+<span class="producto-precio">39.99€</span>
+<span class="producto-titulo">voluptate ipsum nulla pariatur quis anim duis reprehenderit mollit anim</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/enim%20pariatur%20aliquip%20et%20Lorem%20culpa%20sit%20irure%20exercitation%20nisi"><img class="producto-imagen" src="../public-uploads/CamisetasREDRIBBON.jpg" width="300px"></a>
+<span class="producto-precio">20.99€</span>
+<span class="producto-titulo">enim pariatur aliquip et Lorem culpa sit irure exercitation nisi</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+    
+<div class="producto">
+<a href="/p/duis%20anim%20enim%20adipisicing%20dolor%20proident%20quis%20culpa%20eu%20consectetur"><img class="producto-imagen" src="../public-uploads/Camisetasmazinger_ml.jpg" width="300px"></a>
+<span class="producto-precio">21.99€</span>
+<span class="producto-titulo">duis anim enim adipisicing dolor proident quis culpa eu consectetur</span>
+<span class="producto-categoria">Automaticos</span>
+    </div>
+        
+    
+</div>
+
+{{> footer}}
+
+<script type="text/javascript" src="../js/busqueda.js"></script>
+</body>
+</html>

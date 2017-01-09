@@ -942,3 +942,54 @@ He mejorado considerablemente la página inicial, ahora solo hay 1 widget minisl
 Ahora voy a trabajar en terminar el diseño del miniwidget para que el texto se vea correctamente y el precio esté bien colocado.
 
 Luego trabajaré en crear la página de categorías y de busqueda que será igual puesto que solo tiene que mostrar multiples productos con filtros para ordenar la búsqueda.
+
+### Día 51
+
+Hoy y ayer estuve trabajando en la página de resultados de búsqueda, la cual será la misma página que mostrará las categorías y productos.
+
+A quedado muy bonita y realmente vale la pena porque tiene muy buen rendimiento.
+
+Para hacerla funcionar, he creado 2 nuevas funciones en mi propio template engine que permiten mostrar arrays de objetos y usar ifs.
+
+De modo que poniendo:
+
+- {{array ejemplo}}{{/array}}
+
+Consumirá el contenido que haya dentro y duplicará todo lo que haya a su alrededor para repetir los contenedores. Es decir, que si pongo lo siguiente:
+
+```
+{{array productoCoche}}
+<div>{{tituloCoche}}</div>
+<div>{{marcaCoche}}</div>
+<div>{{precioCoche}}</div>
+{{/array}}
+```
+Me creará esas 3 propiedades por cada valor del array de objetos.
+
+Por otro lado, he creado la conocida función "if" para mostrar un contenido u otro. Se usa así:
+
+```
+{{if esValido}}
+  <h2>Exito</h2>
+{{else}}
+  <h2>Error</h2>
+{{/if}}
+```
+
+Si el boleano "esValido" se cumple se muestra lo que hay en el if y si no lo que hay en el else.
+
+Además se puede usar solo como if sin el else aunque no tengo pensado usarlo así de momento.
+
+```
+{{if esValido}}
+  <h2>Exito</h2>
+{{/if}}
+```
+
+En resumen. Entre hoy y ayer estuve tratando de hacer que esto funcione entre otros proyectos de páginas de videos y festividades con lo que puedo decir que estoy muy contento con el progreso.
+
+Mañana continuaré con la página de búsqueda para mostrar paginación y crearé los filtros que se usarán más adelante en las páginas de categorias que cualquier tienda suele tener.
+
+El recuento de días que voy mostrando cada vez no es continuo, puede que trabaje dos o 3 días seguidos y simplemente comente el progreso en un día lo cual no es problema porque igualmente os estaré informados.
+
+Aparte tengo pensado crear un sistema de bloggin propio en el cual todo el contenido que publique aquí, en este archivo README.md, se publique a mi propia página web Merunas.com. El servidor será una instancia de amazon y continuaré pensando en cómo crear este sistema.

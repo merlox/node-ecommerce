@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Resultados de buscar: "{{busqueda}}"</title>
+	<link rel="stylesheet" type="text/css" href="../css/busqueda.css">
 	{{> header}}
 </head>
 <!--//TODO pagina de búsqueda de productos-->
@@ -9,17 +10,27 @@
 
 	{{> menu}}
 
-	<h2>Resultados de buscar: {{busqueda}}</h2>
-	<i>Mostrando {{limite}} resultados.</i>
     <div id="contenedor-principal">
-    	{{array productos}}
-		<div class="producto">
-			<a href="/p/{{permalink}}"><img class="producto-imagen" src="../public-uploads/{{imagen}}" width="300px"></a>
-			<span class="producto-precio">{{precio}}€</span>
-			<span class="producto-titulo">{{titulo}}</span>
-			<span class="producto-categoria">{{categoria}}</span>
-    	</div>
-    	{{/array}}    	
+    	{{if isProductos}}
+		    <div>
+		    	<h2>Resultados de buscar: <b>{{busqueda}}</b></h2>
+				<i>Mostrando {{limite}} resultados.</i>
+				<div class="paginacion"></div>
+			</div>
+	    	{{array productos}}
+			<div class="producto">
+				<a href="/p/{{permalink}}"><img class="producto-imagen" src="../public-uploads/{{imagen}}" width="300px"></a>
+				<span class="producto-precio">{{precio}}€</span>
+				<span class="producto-titulo">{{titulo}}</span>
+				<span class="producto-categoria">{{categoria}}</span>
+	    	</div>
+	    	{{/array}}    
+    	{{else}}
+    		<div class="mensaje-error">
+	    		<h3>{{errorMessage}}</h3>
+	    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
+	    	</div>
+    	{{/if}}
 	</div>
 
 	{{> footer}}

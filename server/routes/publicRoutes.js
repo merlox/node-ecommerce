@@ -29,27 +29,42 @@ routes.get('/p/:permalink', (req, res) => {
 
 //Para mostrar resultados en la página de busqueda
 routes.get('/search', (req, res) => {
+  let loadTime = new Date().getTime();
   let limite = 30;
   let error = null;
-  functions.buscarProductos(req.query.q, limite, (err, arrayProductos) => {
-    if(err) error = 'No se han encontrado productos para esa búsqueda.';
+  functions.buscarProductos(req.query.q, limite, (err, arrayProductos, cantidad) => {
+    if(err) error = `No se han encontrado productos buscando <b>${req.query.q}</b>`;
+    if(arrayProductos != null && arrayProductos != undefined){
+      //Quitamos las imágenes para solo mostrar 1 imagen
+      for(let i = 0; i<arrayProductos.length; i++){
+        arrayProductos[i]['imagen'] = arrayProductos[i]['imagenes'][1];
+        delete arrayProductos[i]['imagenes'];
+      }
 
-    //Quitamos las imágenes para solo mostrar 1 imagen
-    for(let i = 0; i<arrayProductos.length; i++){
-      arrayProductos[i]['imagen'] = arrayProductos[i]['imagenes'][1];
-      delete arrayProductos[i]['imagenes'];
+      let dataObject = {
+        'busqueda': req.query.q,
+        'limite': limite,
+        'productos': arrayProductos,
+        'isProductos': true
+      };
+      
+      functions.render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+        console.log(`Load Time: ${new Date().getTime() - loadTime}`);
+        if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+        return res.send(data);
+      });
+    }else{
+      let dataObject = {
+        'busqueda': req.query.q,
+        'isProductos': false,
+        'errorMessage': error
+      };
+      let start = new Date().getTime();
+      functions.render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+        if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+        return res.send(data);
+      });
     }
-
-    let dataObject = {
-      'busqueda': req.query.q,
-      'limite': limite,
-      'productos': arrayProductos
-    };
-    
-    functions.render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
-      if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-      return res.send(data);
-    });
   });
   //Buscar los productos que coincidan con la busqueda y renderizar la página
 });

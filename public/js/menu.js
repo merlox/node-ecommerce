@@ -193,7 +193,11 @@ q('#icono-busqueda').addEventListener('click', () => {
 		window.location.href = `/search?q=${encodeURI(q('#buscador').value)}`;
 	}
 });
-
+q('#buscador').addEventListener('keypress', (e) => {
+	if(e.keyCode == 13 && q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
+		window.location.href = `/search?q=${encodeURI(q('#buscador').value)}`;
+	}
+});
 /*
 
 SESIÓN

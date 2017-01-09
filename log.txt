@@ -1,0 +1,154 @@
+[33m[nodemon] 1.11.0[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching: *.*[39m
+[32m[nodemon] starting `node server.js`[39m
+Server started at localhost:8000
+
+Requesting: /search?q=iojdfiadsf 192.168.1.105
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+No results found
+Render, functions.js
+Render time: 16
+
+Requesting: /api/get-categories 192.168.1.105
+GetCategories, functions.js
+
+Requesting: /api/get-logged-state 192.168.1.105
+
+Requesting: /search?q=iojdfiadsf 192.168.1.105
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+No results found
+Render, functions.js
+Render time: 3
+
+Requesting: /api/get-categories 192.168.1.105
+GetCategories, functions.js
+
+Requesting: /api/get-logged-state 192.168.1.105
+
+Requesting: /search?q=iojdfiadsf 192.168.1.105
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+No results found
+Render, functions.js
+Render time: 3
+
+Requesting: /api/get-categories 192.168.1.105
+GetCategories, functions.js
+
+Requesting: /api/get-logged-state 192.168.1.105
+
+Requesting: /api/search/qui?limite=8 192.168.1.105
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+
+Requesting: /search?q=qui 192.168.1.105
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+
+Requesting: /api/search/qui?limite=8 192.168.1.105
+BuscarProductos, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+Interna - CopyFirstImage, functions.js
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Render, functions.js
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Done copying image
+Render time: 111
+Load Time: 380
+
+Requesting: /api/get-categories 192.168.1.105
+GetCategories, functions.js
+
+Requesting: /api/get-logged-state 192.168.1.105
+¨Desea terminar el trabajo por lotes (S/N)? 

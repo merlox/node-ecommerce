@@ -240,13 +240,16 @@ function borrarDirectorio(permalink){
   });
 };
 function render(page, dataObject, cb){
+  let renderTime = new Date().getTime();
   console.log('Render, functions.js');
-  fs.readFile(page, (err, content) => {
+  fs.readFile(page, 'utf-8', (err, content) => {
     if(err) return cb(err, null);
-    let resultado = content.toString();
+    startRender(content);
+  });
+
+  function startRender(resultado){
     //Le quitamos los tabuladores
     resultado = resultado.replace(/\t*/gm, '');
-
     if(dataObject != undefined && dataObject != null){
       for(let propiedad in dataObject){
         let re = new RegExp("{{"+propiedad+"}}+", "gm");
@@ -256,7 +259,49 @@ function render(page, dataObject, cb){
         let reTotalItem = new RegExp("{{loop "+propiedad+" -.*-}}" ,"gm");
         let reTotal = new RegExp("{{loop "+propiedad+"}}" ,"gm");
         let reLoopKey = new RegExp("{{loopKey "+propiedad+"}}", "gm");
+        //Para hacer loop sobre un array de objetos
         let reArray = new RegExp("{{array "+propiedad+"}}([\\s\\S]*?){{\\/array}}", "gm");
+        //El reif solo acepta un booleano
+        let reIf = new RegExp("{{if "+propiedad+"}}", "m");
+
+        //El reif va primero porque tiene que rerender hasta calcular todos los ifs elses
+        if(reIf.test(resultado)){
+          //Suponiendo que solo hay un if con el mismo nombre. Para cuando haya más con el mismo nombre 
+          //Reescribir la función con la flag "g" en el regex y hacer un while loop para sacar cada uno de ellos.
+          //1. Comprobamos que si hay if else
+          //2. Extraemos lo que hay en el if y lo que hay en el else
+          //3. Si el valor de la propiedad es true, ponemos lo del if y viceversa con el else
+          //4. Reejecutar la función para renderizar lo de dentro del if o del else
+          let reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else}}([\\s\\S]*?){{\\/if}}", "m");
+          let reIfClassic = new RegExp("({{if "+propiedad+"}}([\\s\\S]*?){{\\/if}})", "m");
+          //Sustituimos el if else y al quitarlo de enmedio no habrá problemas con el if clásico.
+
+          if(reIfElse.test(resultado)){
+            let contenidoIfElse = reIfElse.exec(resultado);
+            let valorPropiedad = dataObject[propiedad];
+            if(valorPropiedad == true){
+              resultado = resultado.replace(reIfElse, contenidoIfElse[1]);
+              //Render partial de nuevo
+              return startRender(resultado);
+            }else{
+              resultado = resultado.replace(reIfElse, contenidoIfElse[2]);
+              //Render partial de nuevo
+              return startRender(resultado);
+            }
+          }else if(reIfClassic.test(resultado)){
+            let contenidoIf = reIfClassic.exec(resultado);
+            let valorPropiedad = dataObject[propiedad];
+            if(valorPropiedad == true){
+              resultado = resultado.replace(reIfClassic, contenidoIfElse[1]);
+              //Render partial de nuevo
+              return startRender(resultado);
+            }else{
+              //Si el if no se cumple simplemente no mostrar nada ni volver a renderizar.
+              resultado = resultado.replace(reIfClassic, '');
+            }
+          }
+
+        }
 
         if(re.test(resultado)){
           resultado = resultado.replace(re, dataObject[propiedad]);
@@ -325,7 +370,7 @@ function render(page, dataObject, cb){
   
         if(reArray.test(resultado)){
           //Al ejecutar el .test el index se mueve al ser un buscador global /g con lo que al hacer el exec,
-          //el resultado ya se a pasado hasta el final
+          //el resultado ya se ha pasado hasta el final
           reArray.lastIndex = 0;
           let contenidoMatch = reArray.exec(resultado)[1];
           let array = dataObject[propiedad];
@@ -378,16 +423,20 @@ function render(page, dataObject, cb){
           resultado = resultado.replace(re, partialContent);
           index++;
           if(index >= partiales.length){
-            if(error) return cb(error, null);
-            cb(null, resultado);                    
+            renderTime = (new Date().getTime() - renderTime);
+            console.log('Render time: '+renderTime);
+            if(error) cb(error, null);
+            else cb(null, resultado);
           }
         });
       });
     }else{
+      renderTime = (new Date().getTime() - renderTime);
+      console.log('Render time: '+renderTime);
       //Si no hay includes devolver la pagina con los cambios del dataObject
-      return cb(null, resultado);
+      cb(null, resultado);
     }
-  });
+  };
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
 function copyFile(origin, end, fileName, cb){

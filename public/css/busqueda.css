@@ -1,0 +1,20 @@
+.producto{
+	width: 300px;
+	float: left;
+	height: 450px;
+}
+#contenedor-principal{
+	width: 900px;
+	margin: 0 auto;
+}
+.paginacion{
+	float: right;
+}
+.mensaje-error{
+	margin: 0 auto;
+}
+.mensaje-error h3{
+	display: inline-block;
+	position: relative;
+	top: 7px;
+}

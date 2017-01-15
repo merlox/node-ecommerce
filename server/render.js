@@ -22,34 +22,31 @@ function render(page, dataObject, cb) {
 */
 
 function renderData(content, dataObject, cb) {
-  let tag = /{{(?!else)([^>|\/].*?)}}/gm,
+  let tag = /{{(?!else)([^>|\/].*?)}}/,
       selectedTag = '',
       renderTime = new Date().getTime();
 
   while ((selectedTag = tag.exec(content)) !== null) {
-    tag.lastIndex = 0;
     selectedTag = selectedTag[1];
+
     let propiedad = selectedTag;
 
     //Extraemos la key de la tag en orden. Si no es {{propiedad}}
     if(selectedTag.split(' ').length === 2){
       propiedad = selectedTag.split(' ')[1];
     }else if(selectedTag.split(' ').length === 3){
-      propiedad = selectedTag.split(' ')[2];
+      propiedad = selectedTag.split(' ')[1];
     }
 
     let re = new RegExp("{{"+propiedad+"}}", "g"),
-      reItem = new RegExp("{{loop " + propiedad + " [^-]+}}"),
-      reTotalItem = new RegExp("{{loop " + propiedad + " -.*-}}"),
-      reTotal = new RegExp("{{loop " + propiedad + "}}"),
+      reObject = new RegExp("{{object "+propiedad+" [0-9]}}"),
+      reObjectFull = new RegExp("{{object "+propiedad+"}}"),
       reLoopKey = new RegExp("{{loopKey " + propiedad + "}}"),
       //Para hacer loop sobre un array de objetos
       reArray = new RegExp("{{array " + propiedad + "}}([\\s\\S]*?){{\\/array}}"),
       //El reif solo acepta un booleano y tiene que estar en una nueva linea
       reIfElse = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{else "+propiedad+"}}([\\s\\S]*){{\\/if "+propiedad+"}}"),
       reIfClassic = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{\\/if "+propiedad+"}}");;
-
-    // fs.writeFileSync(path.join(__dirname, 'debuggin', `tags${i}.html`),content);
 
     if (reIfElse.test(content)) {
       let valorPropiedad = dataObject[propiedad];
@@ -83,19 +80,27 @@ function renderData(content, dataObject, cb) {
       continue;
     }
 
-    if (reItem.test(content)) {
-      let loopObject = dataObject[propiedad];
+    if (reObjectFull.test(content)) {
+      reObjectFull = new RegExp("(.*){{object "+propiedad+"}}(.*)");
+      let loopObject = dataObject[propiedad],
+        textoFinal = "",
+        match = reObjectFull.exec(content);
+
       for (let key in loopObject) {
-          let reItemFind = new RegExp("{{loop " + propiedad + " [^-]?" + key + "[^-]?}}", "gm");
-          content = content.replace(reItemFind, loopObject[key]);
+        if (match != null && loopObject[key] != undefined) textoFinal += match[1] + loopObject[key] + match[2] + "\n";
       }
+      content = content.replace(reObjectFull, textoFinal);
+      continue;
+    }else if (reObject.test(content)) {
+      let key = selectedTag.split(' ')[2];
+      content = content.replace(reObject, dataObject[propiedad][key]);
       continue;
     }
 
     if (reLoopKey.test(content)) {
       let loopObject = dataObject[propiedad];
       let reKeyWithTagsBig = new RegExp("^(.*){{loopKey " + propiedad + "}}(.*)([\\s\\S]*){{\\/loopKey " + propiedad + "}}.*$", "gm");
-      let reArrayWithTags = new RegExp("^([\\s\\S]*)\n(.*){{loopArray " + propiedad + "}}(.*)([\\s\\S]*)$", "gm");
+      let reArrayWithTags = new RegExp("^([\\s\\S]*)[\n|\r](.*){{loopArray " + propiedad + "}}(.*)([\\s\\S]*)$", "gm");
       let matchKeyBig;
       let matchArray;
       let textoFinal = "";
@@ -113,37 +118,6 @@ function renderData(content, dataObject, cb) {
           textoFinal += matchArray[4];
       }
       content = content.replace(reKeyWithTagsBig, textoFinal);
-      textoFinal = "";
-      continue;
-    }
-
-    if (reTotalItem.test(content)) {
-      let loopObject = dataObject[propiedad];
-      let reTotalWithTags = new RegExp("^(.*){{loop " + propiedad + " -(.*)-}}(.*)$", "gm");
-      let match = reTotalWithTags.exec(content);
-      let textoFinal = "";
-      let doneWaiting = false;
-      for (let key in loopObject) {
-          //en match[2] se encuentra la key por la que empezar 
-          if (key == match[2] || doneWaiting) {
-              doneWaiting = true;
-              if (match != null && loopObject[key] != undefined) textoFinal += match[1] + loopObject[key] + match[3] + "\n";
-          }
-      }
-      content = content.replace(reTotalWithTags, textoFinal);
-      textoFinal = "";
-      continue;
-    }
-
-    if (reTotal.test(content)) {
-      let loopObject = dataObject[propiedad],
-        match = reTotal.exec(content),
-        textoFinal = "";
-      reTotal = new RegExp("^(.*){{loop " + propiedad + "}}(.*)$", "gm");
-      for (let key in loopObject) {
-          if (match != null && loopObject[key] != undefined) textoFinal += match[1] + loopObject[key] + match[2] + "\n";
-      }
-      content = content.replace(reTotal, textoFinal);
       textoFinal = "";
       continue;
     }

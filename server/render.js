@@ -38,8 +38,6 @@ function renderData(content, dataObject, cb) {
       propiedad = selectedTag.split(' ')[2];
     }
 
-    console.log(propiedad);
-
     let re = new RegExp("{{"+propiedad+"}}", "g"),
       reItem = new RegExp("{{loop " + propiedad + " [^-]+}}"),
       reTotalItem = new RegExp("{{loop " + propiedad + " -.*-}}"),
@@ -47,34 +45,32 @@ function renderData(content, dataObject, cb) {
       reLoopKey = new RegExp("{{loopKey " + propiedad + "}}"),
       //Para hacer loop sobre un array de objetos
       reArray = new RegExp("{{array " + propiedad + "}}([\\s\\S]*?){{\\/array}}"),
-      //El reif solo acepta un booleano
-      reIfElse = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{else}}([\\s\\S]*){{\\/if}}"),
-      reIfClassic = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{\\/if}}");;
+      //El reif solo acepta un booleano y tiene que estar en una nueva linea
+      reIfElse = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{else "+propiedad+"}}([\\s\\S]*){{\\/if "+propiedad+"}}"),
+      reIfClassic = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{\\/if "+propiedad+"}}");;
 
     // fs.writeFileSync(path.join(__dirname, 'debuggin', `tags${i}.html`),content);
 
     if (reIfElse.test(content)) {
-      
       let valorPropiedad = dataObject[propiedad];
-      console.log(reIfElse);
       if (valorPropiedad === true) {
         let contenidoIf = reIfElse.exec(content)[1];
-        //Ahora podemos sustituir pero el {{else}} que hay que eliminar donde queda? ande andara?
         content = content.replace(reIfElse, contenidoIf);
       } else {
         let contenidoElse = reIfElse.exec(content)[2];
         content = content.replace(reIfElse, contenidoElse);          
       }
+      continue;
     } else if (reIfClassic.test(content)) {
-      let contenidoIf = reIfClassic.exec(content);
-      let valorPropiedad = dataObject[propiedad];
+      let contenidoIf = reIfClassic.exec(content)[1],
+        valorPropiedad = dataObject[propiedad];
       if (valorPropiedad == true) {
-        content = content.replace(reIfClassic, contenidoIf[1]);
-        delete dataObject[propiedad];
+        content = content.replace(reIfClassic, contenidoIf);
       } else {
         //Si el if no se cumple simplemente no mostrar nada ni volver a renderizar.
         content = content.replace(reIfClassic, '');
       }
+      continue;
     }
 
     if (re.test(content)) {
@@ -84,14 +80,16 @@ function renderData(content, dataObject, cb) {
       while((match = re.exec(content)) != null){
         content = content.replace(re, dataObject[propiedad]);
       }
+      continue;
     }
 
     if (reItem.test(content)) {
-        let loopObject = dataObject[propiedad];
-        for (let key in loopObject) {
-            let reItemFind = new RegExp("{{loop " + propiedad + " [^-]?" + key + "[^-]?}}", "gm");
-            content = content.replace(reItemFind, loopObject[key]);
-        }
+      let loopObject = dataObject[propiedad];
+      for (let key in loopObject) {
+          let reItemFind = new RegExp("{{loop " + propiedad + " [^-]?" + key + "[^-]?}}", "gm");
+          content = content.replace(reItemFind, loopObject[key]);
+      }
+      continue;
     }
 
     if (reLoopKey.test(content)) {
@@ -116,6 +114,7 @@ function renderData(content, dataObject, cb) {
       }
       content = content.replace(reKeyWithTagsBig, textoFinal);
       textoFinal = "";
+      continue;
     }
 
     if (reTotalItem.test(content)) {
@@ -133,6 +132,7 @@ function renderData(content, dataObject, cb) {
       }
       content = content.replace(reTotalWithTags, textoFinal);
       textoFinal = "";
+      continue;
     }
 
     if (reTotal.test(content)) {
@@ -145,6 +145,7 @@ function renderData(content, dataObject, cb) {
       }
       content = content.replace(reTotal, textoFinal);
       textoFinal = "";
+      continue;
     }
 
     if (reArray.test(content)) {
@@ -172,8 +173,7 @@ function renderData(content, dataObject, cb) {
       }
       content = content.replace(reArray, contenidoFinal);
     }
-
-    delete dataObject[propiedad];
+    continue;
   }
 
   if(selectedTag == null){

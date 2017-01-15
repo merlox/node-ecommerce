@@ -11,18 +11,18 @@
 	{{> menu}}
 
     <div id="contenedor-principal">
-    	{{if isProductos}}
+		{{if isProductos}}
 		    <div>
 		    	<h2>Resultados de buscar: <b>{{busqueda}}</b></h2>
 		    	{{if resultadoUnico}}
 					<i>Mostrando {{cantidadProductos}} resultado.</i>
-				{{else}}
+				{{else resultadoUnico}}
 					<i>Mostrando {{cantidadProductos}} resultados.</i>
-				{{/if}}
+				{{/if resultadoUnico}}
 
 				{{if hayPaginas}}
 					<div class="paginacion">{{paginas}}</div>
-				{{/if}}
+				{{/if hayPaginas}}
 			</div>
 	    	{{array productos}}
 			<div class="producto">
@@ -32,12 +32,12 @@
 				<span class="producto-categoria">{{categoria}}</span>
 	    	</div>
 	    	{{/array}}    
-    	{{else}}
+    	{{else isProductos}}
     		<div class="mensaje-error">
 	    		<h3>{{errorMessage}}</h3>
 	    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
 	    	</div>
-    	{{/if}}
+    	{{/if isProductos}}
 	</div>
 
 	{{> footer}}

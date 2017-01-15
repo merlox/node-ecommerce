@@ -10,6 +10,7 @@ let intervaloMiniSliderVendidos,
 	maxMinislider = 0,
 	counterPosition = 0,
 	//Para calcular cuánto tiene que moverse el slider al hacer click en las flechas
+	//Counterlimit es lo mismo que tamaño widgets pero va cambiando dinamicamente al usar las flechas
 	counterLimit = 0,
 	//Tamaño widgets es cuántas imágenes se muestran en la pantalla principal del minislider
 	tamañoWidgets = 1;
@@ -28,12 +29,14 @@ window.addEventListener('load', () => {
 	calcularTamañoMinisliderResponsive();
 });
 window.addEventListener('resize', () => {
-	//Recalcular el tamaño del minislider para que siga funcionando correctamente y detecte su tamaño nuevo
-	calcularTamañoMinisliderResponsive();
 	//Reiniciamos el intervalo para que no se salga del límite
 	counterLimit = tamañoWidgets;
 	counterPosition = 0;
-	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
+	q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;	
+	//Recalcular el tamaño del minislider para que siga funcionando correctamente y detecte su tamaño nuevo
+	setTimeout(() => {
+		calcularTamañoMinisliderResponsive();
+	}, 1e3);
 });
 /*
 
@@ -141,7 +144,7 @@ function flechaDerechaMiniSliderVendidos(){
 	iniciarIntervaloMiniSliderVendidos();
 };
 function flechaIzquierdaMiniSliderVendidos(){
-	if(counterLimit > tamañoWidgets){
+	if(counterLimit >= tamañoWidgets){
 		counterPosition++;
 		counterLimit--;
 		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
@@ -154,6 +157,10 @@ function iniciarIntervaloMiniSliderVendidos(){
 	if(counterLimit > maxMinislider){
 		counterLimit = tamañoWidgets;
 		counterPosition = 0;
+		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
+	}else if(counterPosition > 0){
+		counterLimit = maxMinislider;
+		counterPosition = -(maxMinislider-tamañoWidgets);
 		q('.minislider').style.transform = `translateX(${300*counterPosition}px)`;
 	}
 	intervaloMiniSliderVendidos = setInterval(flechaDerechaMiniSliderVendidos, 5000);

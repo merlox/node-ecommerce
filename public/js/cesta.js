@@ -176,9 +176,16 @@ if(q('.button-añadir-cesta')){
 		});
 	});
 }
+let cestaBloqueada = false;
 //Mostrar la cesta on hover
 q('#cesta').addEventListener('mouseenter', () => {
-	getCesta();
+	if(!cestaBloqueada){
+		cestaBloqueada = true;
+		getCesta();
+		setTimeout(() => {
+			cestaBloqueada = false;
+		}, 1e3);
+	}
 });
 //Mostrar la cesta on click
 q('#cesta').addEventListener('click', (e) => {

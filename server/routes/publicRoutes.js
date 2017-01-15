@@ -6,7 +6,8 @@ let express = require('express'),
 	functions = require('./../functions.js'),
 	path = require('path'),
 	routes = express.Router(),
-	db = {};
+	db = {},
+  render = require('./../render.js');
 
 Mongo.connect(MongoUrl, (err, database) => {
 	if(err) console.log(err);
@@ -19,7 +20,7 @@ routes.get('/p/:permalink', (req, res) => {
     if(result.publicado == 'no'){
       return res.redirect('/?message=That page is not available');
     }else if(result.publicado == 'si'){
-      functions.render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
+      render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
         if(err) return res.send(err);
         return res.send(data);
       });
@@ -31,9 +32,11 @@ routes.get('/p/:permalink', (req, res) => {
 routes.get('/search', (req, res) => {
   let loadTime = new Date().getTime();
   let limite = 30;
+  let pagina = req.query.pag;
   let error = null;
-  functions.buscarProductos(req.query.q, limite, (err, arrayProductos, cantidad) => {
+  functions.buscarProductos(req.query.q, limite, pagina, (err, arrayProductos) => {
     if(err) error = `No se han encontrado productos buscando <b>${req.query.q}</b>`;
+    //Si hay productos renderizar los productos si no, renderizar un mensaje de error.
     if(arrayProductos != null && arrayProductos != undefined){
       //Quitamos las imágenes para solo mostrar 1 imagen
       for(let i = 0; i<arrayProductos.length; i++){
@@ -41,14 +44,31 @@ routes.get('/search', (req, res) => {
         delete arrayProductos[i]['imagenes'];
       }
 
+      let resultadoUnico = false;
+      if(arrayProductos.length === 1) resultadoUnico = true;
+      
       let dataObject = {
         'busqueda': req.query.q,
-        'limite': limite,
         'productos': arrayProductos,
+        'cantidadProductos': arrayProductos.length,
+        'resultadoUnico': resultadoUnico,
+        'paginas': 0,
+        'hayPaginas': false,
         'isProductos': true
       };
-      
-      functions.render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+
+      // functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
+      //   if(err) console.log(err);
+        
+      //   dataObject['hayPaginas'] = true;
+      //   dataObject['paginas'] = cantidadPaginas;
+      //   render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+      //     console.log(`Load Time: ${new Date().getTime() - loadTime}`);
+      //     if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+      //     return res.send(data);
+      //   });
+      // });
+      render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
         console.log(`Load Time: ${new Date().getTime() - loadTime}`);
         if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
         return res.send(data);
@@ -60,7 +80,7 @@ routes.get('/search', (req, res) => {
         'errorMessage': error
       };
       let start = new Date().getTime();
-      functions.render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+      render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
         if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
         return res.send(data);
       });
@@ -120,7 +140,7 @@ routes.post('/pay-product', (req, res) => {
 });
 
 routes.get('/cesta', (req, res) => {
-  functions.render(path.join(__dirname, '../../public/views/cesta.html'), null, (err, data) => {
+  render(path.join(__dirname, '../../public/views/cesta.html'), null, (err, data) => {
     if(err){
       console.log(err);
       return res.send(err);
@@ -134,7 +154,7 @@ routes.get('/favicon.ico', (req, res) => {
 });
 
 routes.get('/', (req, res) => {
-  functions.render(path.join(__dirname, '../../public/views/index.html'), null, (err, data) => {
+  render(path.join(__dirname, '../../public/views/index.html'), null, (err, data) => {
     functions.getSlider();
     if(err) return res.send(err);
     return res.send(data);

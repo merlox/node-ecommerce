@@ -170,7 +170,7 @@ api.get('/search/:keyword?', (req, res) => {
   if(keyword != 'undefined' && keyword != 'null' && keyword != '' && !requestProcessing){
     //Comprobamos que no haya sobrecarga de request de forma que solo se inicie cuando termine la anterior
     requestProcessing = true;
-    functions.buscarProductos(keyword, limite, (err, results) => {
+    functions.buscarProductos(keyword, limite, 0, (err, results) => {
       requestProcessing = false;
       if(err){
         console.log(err);
@@ -190,12 +190,6 @@ api.get('/get-slider', (req, res) => {
 });
 api.get('/get-mas-vendidos', (req, res) => {
   functions.getMiniSlider("ventas", (err, results) => {
-    if(err) console.log(err);
-    return res.send(results);
-  });
-});
-api.get('/get-mas-populares', (req, res) => {
-  functions.getMiniSlider("visitas", (err, results) => {
     if(err) console.log(err);
     return res.send(results);
   });
@@ -243,16 +237,20 @@ api.get('/get-cesta', (req, res) => {
     });
   }else{
     //Para usuarios no registrados copiar la 1ª imagen de cada producto con copy file
-    functions.crearCesta(req.session.cesta, (err, cesta) => {
-      if(err){
-        console.log(err);
-        responseObject.error = 'Could not load your products, try again.';
-        res.send(responseObject);
-      }else{
-        responseObject.cesta = cesta;
-        res.send(responseObject);
-      }
-    });
+    if(req.session.cesta != undefined || req.session.cesta != null){
+      functions.crearCesta(req.session.cesta, (err, cesta) => {
+        if(err){
+          console.log(err);
+          responseObject.error = 'Could not load your products, try again.';
+          res.send(responseObject);
+        }else{
+          responseObject.cesta = cesta;
+          res.send(responseObject);
+        }
+      });
+    }else{
+      res.send(responseObject);
+    }
   }
 });
 api.post('/change-cantidad-cesta', (req, res) => {

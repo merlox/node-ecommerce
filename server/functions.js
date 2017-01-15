@@ -28,7 +28,7 @@ function buscarProducto(permalink, callback){
   });
 };
 //Para buscar muchos productos
-function buscarProductos(keyword, limite, cb){
+function buscarProductos(keyword, limite, pagina, cb){
   console.log('BuscarProductos, functions.js');
   if(limite == undefined || limite == null){
     limite = 0;
@@ -47,7 +47,7 @@ function buscarProductos(keyword, limite, cb){
     'precio': true,
     'titulo': true,
     'categoria': true
-  }).limit(limite).toArray((err, results) => {
+  }).limit(limite).skip(pagina*limite).toArray((err, results) => {
     if(err){
       return cb('Error, could not find those products', null);
     }else{
@@ -238,205 +238,6 @@ function borrarDirectorio(permalink){
       }
     }
   });
-};
-function render(page, dataObject, cb){
-  let renderTime = new Date().getTime();
-  console.log('Render, functions.js');
-  fs.readFile(page, 'utf-8', (err, content) => {
-    if(err) return cb(err, null);
-    startRender(content);
-  });
-
-  function startRender(resultado){
-    //Le quitamos los tabuladores
-    resultado = resultado.replace(/\t*/gm, '');
-    if(dataObject != undefined && dataObject != null){
-      for(let propiedad in dataObject){
-        let re = new RegExp("{{"+propiedad+"}}+", "gm");
-        //Loop de una key
-        let reItem = new RegExp("{{loop "+propiedad+" [^-]+}}" ,"gm");
-        //Empieza el loop por el key indicado
-        let reTotalItem = new RegExp("{{loop "+propiedad+" -.*-}}" ,"gm");
-        let reTotal = new RegExp("{{loop "+propiedad+"}}" ,"gm");
-        let reLoopKey = new RegExp("{{loopKey "+propiedad+"}}", "gm");
-        //Para hacer loop sobre un array de objetos
-        let reArray = new RegExp("{{array "+propiedad+"}}([\\s\\S]*?){{\\/array}}", "gm");
-        //El reif solo acepta un booleano
-        let reIf = new RegExp("{{if "+propiedad+"}}", "m");
-
-        //El reif va primero porque tiene que rerender hasta calcular todos los ifs elses
-        if(reIf.test(resultado)){
-          //Suponiendo que solo hay un if con el mismo nombre. Para cuando haya más con el mismo nombre 
-          //Reescribir la función con la flag "g" en el regex y hacer un while loop para sacar cada uno de ellos.
-          //1. Comprobamos que si hay if else
-          //2. Extraemos lo que hay en el if y lo que hay en el else
-          //3. Si el valor de la propiedad es true, ponemos lo del if y viceversa con el else
-          //4. Reejecutar la función para renderizar lo de dentro del if o del else
-          let reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else}}([\\s\\S]*?){{\\/if}}", "m");
-          let reIfClassic = new RegExp("({{if "+propiedad+"}}([\\s\\S]*?){{\\/if}})", "m");
-          //Sustituimos el if else y al quitarlo de enmedio no habrá problemas con el if clásico.
-
-          if(reIfElse.test(resultado)){
-            let contenidoIfElse = reIfElse.exec(resultado);
-            let valorPropiedad = dataObject[propiedad];
-            if(valorPropiedad == true){
-              resultado = resultado.replace(reIfElse, contenidoIfElse[1]);
-              //Render partial de nuevo
-              return startRender(resultado);
-            }else{
-              resultado = resultado.replace(reIfElse, contenidoIfElse[2]);
-              //Render partial de nuevo
-              return startRender(resultado);
-            }
-          }else if(reIfClassic.test(resultado)){
-            let contenidoIf = reIfClassic.exec(resultado);
-            let valorPropiedad = dataObject[propiedad];
-            if(valorPropiedad == true){
-              resultado = resultado.replace(reIfClassic, contenidoIfElse[1]);
-              //Render partial de nuevo
-              return startRender(resultado);
-            }else{
-              //Si el if no se cumple simplemente no mostrar nada ni volver a renderizar.
-              resultado = resultado.replace(reIfClassic, '');
-            }
-          }
-
-        }
-
-        if(re.test(resultado)){
-          resultado = resultado.replace(re, dataObject[propiedad]);
-        }
-
-        if(reItem.test(resultado)){
-          let loopObject = dataObject[propiedad];
-          for(let key in loopObject){
-            let reItemFind = new RegExp("{{loop "+propiedad+" [^-]?"+key+"[^-]?}}" ,"gm");
-            resultado = resultado.replace(reItemFind, loopObject[key]);  
-          }
-        }
-
-        if(reLoopKey.test(resultado)){
-          let loopObject = dataObject[propiedad];
-          let reKeyWithTagsBig = new RegExp("^(.*){{loopKey "+propiedad+"}}(.*)([\\s\\S]*){{\\/loopKey "+propiedad+"}}.*$", "gm");
-          let reArrayWithTags = new RegExp("^([\\s\\S]*)\n(.*){{loopArray "+propiedad+"}}(.*)([\\s\\S]*)$", "gm");
-          let matchKeyBig;
-          let matchArray; 
-          let textoFinal = "";
-          matchKeyBig = reKeyWithTagsBig.exec(resultado);
-          matchArray = reArrayWithTags.exec(matchKeyBig[3]);
-          for(let key in loopObject){
-            textoFinal += matchKeyBig[1]+key+matchKeyBig[2]+'\n';
-            //Lo que hay antes del <option> es matcharray[1]
-            textoFinal += matchArray[1];
-            for(let i = 0; i<loopObject[key].length; i++){
-              let itemArray = matchArray[2]+loopObject[key][i]+matchArray[3]+"\n";
-              textoFinal += itemArray;
-            }
-            //Lo que hay despues del <option> es matcharray[4]
-            textoFinal += matchArray[4];
-          }
-          resultado = resultado.replace(reKeyWithTagsBig, textoFinal);
-          textoFinal = "";
-        }
-
-        if(reTotalItem.test(resultado)){
-          let loopObject = dataObject[propiedad];
-          let reTotalWithTags = new RegExp("^(.*){{loop "+propiedad+" -(.*)-}}(.*)$" ,"gm");
-          let match = reTotalWithTags.exec(resultado);
-          let textoFinal = "";
-          let doneWaiting = false;
-          for(let key in loopObject){
-            //en match[2] se encuentra la key por la que empezar 
-            if(key == match[2] || doneWaiting){
-              doneWaiting = true;
-              if(match != null && loopObject[key] != undefined) textoFinal += match[1]+loopObject[key]+match[3]+"\n";
-            }
-          }
-          resultado = resultado.replace(reTotalWithTags, textoFinal);
-          textoFinal = "";
-        }
-
-        if(reTotal.test(resultado)){
-          let loopObject = dataObject[propiedad];
-          reTotal = new RegExp("^(.*){{loop "+propiedad+"}}(.*)$" ,"gm");
-          let match = reTotal.exec(resultado);
-          let textoFinal = "";
-          for(let key in loopObject){
-            if(match != null && loopObject[key] != undefined) textoFinal += match[1]+loopObject[key]+match[2]+"\n";
-          }
-          resultado = resultado.replace(reTotal, textoFinal);
-          textoFinal = "";
-        } 
-  
-        if(reArray.test(resultado)){
-          //Al ejecutar el .test el index se mueve al ser un buscador global /g con lo que al hacer el exec,
-          //el resultado ya se ha pasado hasta el final
-          reArray.lastIndex = 0;
-          let contenidoMatch = reArray.exec(resultado)[1];
-          let array = dataObject[propiedad];
-          let contenidoFinal = '';
-          //Para cada ocurrencia del array crear texto
-          //[{objetoProducto1},{objetoProducto2},{objetoProducto3}]
-          //1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
-          //2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html
-          //3. Guardar cada html con su valor reemplazado en una variable contenidoFinal
-          //4. Reemplazar la ocurrencia de {{array propiedad}} con el contenidoFinal
-          for(let i = 0; i < array.length; i++){
-            let objetoProducto = array[i];
-            let contenidoProducto = contenidoMatch;
-            for(let propiedadProducto in objetoProducto){
-              let newRe = new RegExp("{{"+propiedadProducto+"}}");
-              if(newRe.test(contenidoProducto)){
-                contenidoProducto = contenidoProducto.replace(newRe, objetoProducto[propiedadProducto]);
-              }
-            }
-            contenidoFinal += contenidoProducto;
-          }
-          resultado = resultado.replace(reArray, contenidoFinal);
-        }
-      }
-    }
-
-    //Renderizamos los partiales
-    let reIncludePartial = new RegExp("{{> (.*)}}", "gm");
-    if(reIncludePartial.test(resultado)){
-      //Reseteamos el last index para que nos dé todos los resultados desde el principio, porque
-      //al ejecutar el if se pasa al siguiente resultado. Cada vez que se ejecuta cualquier metodo
-      //de un objeto regex, se mueve el puntero solo si tenemos puesta la flag global "g".
-      reIncludePartial.lastIndex = 0;
-      //El include partial es un regex que busca cualquier include sin saber su valor
-      let error = null;
-      let partiales = [];
-      let partialNombre = '';
-      //Creamos un array con los nombres de los includes a poner
-      while((partialNombre = reIncludePartial.exec(resultado)) != null){
-        partiales.push(partialNombre[1]);
-      }
-      let index = 0;
-      partiales.forEach((partialName) => {
-        //El partialName[1] es el grupo regex primero entre parentesis ( ) para sacar el nombre partial
-        let partial = path.join(__dirname, '../public/views/partials/', partialName+'.html');
-        fs.readFile(partial, 'utf-8', (err, partialContent) => {
-          if(err) error = err;
-
-          let re = new RegExp("{{> "+partialName+"}}", "gm");
-          resultado = resultado.replace(re, partialContent);
-          index++;
-          if(index >= partiales.length){
-            renderTime = (new Date().getTime() - renderTime);
-            console.log('Render time: '+renderTime);
-            if(error) cb(error, null);
-            else cb(null, resultado);
-          }
-        });
-      });
-    }else{
-      renderTime = (new Date().getTime() - renderTime);
-      console.log('Render time: '+renderTime);
-      //Si no hay includes devolver la pagina con los cambios del dataObject
-      cb(null, resultado);
-    }
-  };
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
 function copyFile(origin, end, fileName, cb){
@@ -696,6 +497,21 @@ function getMiniSlider(tipo, cb){
 function getPaginacion(limite, cb){
   console.log('GetPaginacion, functions.js');
   db.collection('productos').count((err, count) => {
+    if(err){
+      console.log(err);
+      return cb('Error calculando la paginación de los productos. Intentalo de nuevo.', null);
+    }
+    //Las páginas totales incluida la última que puede ser menor del límite.
+    let paginas = Math.ceil(count/limite);
+    return cb(null, paginas);
+  });
+}; 
+//Function que me dice cuantas páginas hay en total para ese límite de productos por página y para esa keyword.
+function getPaginacionSearch(keyword, limite, cb){
+  console.log('GetPaginacion, functions.js');
+  db.collection('productos').find({
+    'titulo': keyword
+  }).count((err, count) => {
     if(err){
       console.log(err);
       return cb('Error calculando la paginación de los productos. Intentalo de nuevo.', null);
@@ -1023,7 +839,6 @@ function getLoggedState(req, cb){
 };
 
 exports.buscarProducto = buscarProducto;
-exports.render = render;
 exports.copyFile = copyFile;
 exports.copyDirectory = copyDirectory;
 exports.guardarCategorias = guardarCategorias;
@@ -1048,3 +863,4 @@ exports.crearCesta = crearCesta;
 exports.addProductoCesta = addProductoCesta;
 exports.cambiarCantidadCesta = cambiarCantidadCesta;
 exports.getLoggedState = getLoggedState;
+exports.getPaginacionSearch = getPaginacionSearch;

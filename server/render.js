@@ -1,11 +1,14 @@
 let fs = require('fs'),
     path = require('path');
 
+let renderTime = '';
+
 module.exports = render;
 
 function render(page, dataObject, cb) {
     fs.readFile(page, 'utf-8', (err, data) => {
         if (err) return cb('No se pudo leer la página a renderizar.', null);
+        renderTime = new Date().getTime();
         renderData(data, dataObject, (err, renderedPage) => {
             if (err) return cb('No se pudo leer la página a renderizar.', null);
             cb(null, renderedPage);
@@ -23,12 +26,10 @@ function render(page, dataObject, cb) {
 
 function renderData(content, dataObject, cb) {
   let tag = /{{(?!else)([^>|\/].*?)}}/,
-      selectedTag = '',
-      renderTime = new Date().getTime();
+      selectedTag = '';
 
   while ((selectedTag = tag.exec(content)) !== null) {
     selectedTag = selectedTag[1];
-
     let propiedad = selectedTag;
 
     //Extraemos la key de la tag en orden. Si no es {{propiedad}}
@@ -45,27 +46,33 @@ function renderData(content, dataObject, cb) {
       //Para hacer loop sobre un array de objetos
       reArray = new RegExp("{{array " + propiedad + "}}([\\s\\S]*?){{\\/array}}"),
       //El reif solo acepta un booleano y tiene que estar en una nueva linea
-      reIfElse = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{else "+propiedad+"}}([\\s\\S]*){{\\/if "+propiedad+"}}"),
-      reIfClassic = new RegExp("{{if " + propiedad + "}}([\\s\\S]*){{\\/if "+propiedad+"}}");;
+      reIfElse = new RegExp("{{if " + propiedad + "}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
+      reIfClassic = new RegExp("{{if " + propiedad + "}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g");
 
     if (reIfElse.test(content)) {
-      let valorPropiedad = dataObject[propiedad];
-      if (valorPropiedad === true) {
-        let contenidoIf = reIfElse.exec(content)[1];
-        content = content.replace(reIfElse, contenidoIf);
-      } else {
-        let contenidoElse = reIfElse.exec(content)[2];
-        content = content.replace(reIfElse, contenidoElse);          
+      reIfElse.lastIndex = 0;
+      //Hacemos un while para todas las instancias identicas
+      let contenidoIfElse = '',
+        valorPropiedad = dataObject[propiedad];
+
+      while((contenidoIfElse = reIfElse.exec(content)) != null){
+        if (valorPropiedad === true) {
+          content = content.replace(reIfElse, contenidoIfElse[1]);
+        } else {
+          content = content.replace(reIfElse, contenidoIfElse[2]);          
+        }
       }
       continue;
     } else if (reIfClassic.test(content)) {
-      let contenidoIf = reIfClassic.exec(content)[1],
+      let contenidoIf = '',
         valorPropiedad = dataObject[propiedad];
-      if (valorPropiedad == true) {
-        content = content.replace(reIfClassic, contenidoIf);
-      } else {
-        //Si el if no se cumple simplemente no mostrar nada ni volver a renderizar.
-        content = content.replace(reIfClassic, '');
+
+      while((contenidoIf = reIfClassic.exec(content)) != null){
+        if (valorPropiedad == true) {
+          content = content.replace(reIfClassic, contenidoIf[1]);
+        } else {
+          content = content.replace(reIfClassic, '');
+        }
       }
       continue;
     }
@@ -139,15 +146,16 @@ function renderData(content, dataObject, cb) {
           let contenidoProducto = contenidoMatch;
           for (let propiedadProducto in objetoProducto) {
               let newRe = new RegExp("{{" + propiedadProducto + "}}");
-              if (newRe.test(contenidoProducto)) {
-                  contenidoProducto = contenidoProducto.replace(newRe, objetoProducto[propiedadProducto]);
+              let match = '';
+              while((match = newRe.exec(contenidoProducto)) != null){
+                contenidoProducto = contenidoProducto.replace(newRe, objetoProducto[propiedadProducto]);
               }
           }
           contenidoFinal += contenidoProducto;
       }
       content = content.replace(reArray, contenidoFinal);
+      continue;
     }
-    continue;
   }
 
   if(selectedTag == null){
@@ -178,7 +186,7 @@ function renderData(content, dataObject, cb) {
           index++;
           if(index >= partiales.length){
             renderTime = (new Date().getTime() - renderTime);
-            console.log('Render time: '+renderTime);
+            console.log(`\nRender time: ${renderTime}\n`);
             if(error) cb(error, null);
             else cb(null, content);
           }
@@ -186,7 +194,7 @@ function renderData(content, dataObject, cb) {
       });
     }else{
       renderTime = (new Date().getTime() - renderTime);
-      console.log('Render time: '+renderTime);
+      console.log(`\nRender time: ${renderTime}\n`);
       //Si no hay includes devolver la pagina con los cambios del dataObject
       cb(null, content);
     }

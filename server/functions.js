@@ -510,7 +510,10 @@ function getPaginacion(limite, cb){
 function getPaginacionSearch(keyword, limite, cb){
   console.log('GetPaginacion, functions.js');
   db.collection('productos').find({
-    'titulo': keyword
+    'titulo': {
+      '$regex': keyword,
+      '$options': 'i'
+    }
   }).count((err, count) => {
     if(err){
       console.log(err);

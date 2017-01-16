@@ -22,16 +22,23 @@
 
 				{{if hayPaginas}}
 					<div class="paginacion">{{paginas}}</div>
+				{{else hayPaginas}}
+					<div>No hay páginas.</div>
 				{{/if hayPaginas}}
 			</div>
 	    	{{array productos}}
 			<div class="producto">
 				<a href="/p/{{permalink}}"><img class="producto-imagen" src="../public-uploads/{{imagen}}" width="300px"></a>
-				<span class="producto-precio">{{precio}}€</span>
-				<span class="producto-titulo">{{titulo}}</span>
-				<span class="producto-categoria">{{categoria}}</span>
+				<span class="precio-producto">{{precio}}€</span>
+				<a href="/p/{{permalink}}" class="titulo-producto">{{titulo}}</a>
+				<span class="categoria-producto">{{categoria}}</span>
 	    	</div>
 	    	{{/array}}    
+			{{if hayPaginas}}
+				<div class="paginacion">{{paginas}}</div>
+			{{else hayPaginas}}
+				<div>No hay páginas.</div>
+			{{/if hayPaginas}}
     	{{else isProductos}}
     		<div class="mensaje-error">
 	    		<h3>{{errorMessage}}</h3>

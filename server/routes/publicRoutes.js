@@ -30,7 +30,6 @@ routes.get('/p/:permalink', (req, res) => {
 
 //Para mostrar resultados en la página de busqueda
 routes.get('/search', (req, res) => {
-  let loadTime = new Date().getTime();
   let limite = 30;
   let pagina = req.query.pag;
   let error = null;
@@ -57,21 +56,16 @@ routes.get('/search', (req, res) => {
         'isProductos': true
       };
 
-      // functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
-      //   if(err) console.log(err);
+      functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
+        if(err) console.log(err);
         
-      //   dataObject['hayPaginas'] = true;
-      //   dataObject['paginas'] = cantidadPaginas;
-      //   render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
-      //     console.log(`Load Time: ${new Date().getTime() - loadTime}`);
-      //     if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-      //     return res.send(data);
-      //   });
-      // });
-      render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
-        console.log(`Load Time: ${new Date().getTime() - loadTime}`);
-        if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-        return res.send(data);
+        dataObject['hayPaginas'] = true;
+        dataObject['paginas'] = cantidadPaginas;
+
+        render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+          if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+          return res.send(data);
+        });
       });
     }else{
       let dataObject = {

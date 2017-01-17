@@ -19,6 +19,9 @@
 .paginacion span:hover{
 	background-color: lightgrey;
 }
+span.pagina-activa{
+	background-color: orange;
+}
 .mensaje-error{
 	margin: 0 auto;
 }
@@ -49,4 +52,18 @@
 }
 .categoria-producto:hover{
 	color: blue;
+}
+@media (max-width: 950px){
+	#contenedor-principal{
+		width: 600px;
+	}
+}
+@media (max-width: 650px){
+	#contenedor-principal{
+		width: 300px;
+	}
+	.paginacion{
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
 }

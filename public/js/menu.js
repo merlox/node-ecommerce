@@ -27,15 +27,15 @@ window.addEventListener('load', () => {
 	httpGet('/api/get-logged-state', (state) => {
 		if(state == 'logged'){
 			q('#usuario').innerHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
-			q('#menu-sesion li a').href = '/micuenta';
+			q('#menu-sesion a').href = '/micuenta';
 			q('#usuario').href = '/micuenta';
 		}else if(state == 'admin'){
 			q('#usuario').innerHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
-			q('#menu-sesion li a').href = '/admin';
+			q('#menu-sesion a').href = '/admin';
 			q('#usuario').href = '/admin';
 		}else{
 			q('#usuario').innerHTML = '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>';
-			q('#menu-sesion li a').href = '/login';
+			q('#menu-sesion a').href = '/login';
 			q('#usuario').href = '/login';
 		}
 	});

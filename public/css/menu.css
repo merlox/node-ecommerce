@@ -208,14 +208,16 @@ SESIÓN
 #menu-sesion a{
 	text-decoration: none;
 	color: black;
+	width: 100%;
+	height: 100%;
 }
-#menu-sesion li:hover{
+#menu-sesion a li:hover{
 	background-image: linear-gradient(120deg, #C1DCFF, #5DA4FF);
 }
-#menu-sesion li:nth-child(1){
+#session-first{
 	border-radius: 15px 15px 0 0;
 }
-#menu-sesion li:nth-last-child(1){
+#session-last{
 	border-radius: 0 0 15px 15px;
 }
 #triangulo-up-sesion{

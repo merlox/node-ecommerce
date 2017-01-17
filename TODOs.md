@@ -42,3 +42,11 @@ DONE - Mejorar la barra del menú principal para que tenga un diseño más bonit
 - Que al pasar el ratón por encima de la cesta solo se cargue una vez en lugar de enviar 100 peticiones en poco tiempo.
 - Crear los breadcrumbs para saber donde está el usuario en cada momento.
 - Find out why my copyfile stream is hanging randomly, undestand streams.
+
+Hacer lo siguiente:
+
+-. Pagina de categorias con paginacion.
+-. Widget de filtrar productos por precio y atributos.
+-. Pagina de usuario en la que ver los productos comprados y otra información relevante.
+-. Pagina de admin donde poder ver la información de las compras realizadas por los clientes, cuales están pagados, cuales pendientes de envio, cuales necesitan informacion y cuales están completos.
+-. Crear el widget de chat en directo para resolver consultas de la mejor forma posible.

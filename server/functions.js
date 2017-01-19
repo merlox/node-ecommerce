@@ -59,6 +59,44 @@ function buscarProductos(keyword, limite, pagina, cb){
     }
   });
 };
+//Para buscar muchos productos
+function buscarFiltrarProductos(keyword, pagina, filtros, cb){
+  console.log('BuscarFiltrarProductos, functions.js');
+  keyword = new RegExp(keyword, "g");
+  db.collection('productos').find({
+    'titulo': {
+      '$regex': keyword,
+      '$options': 'i'
+    },
+    'precio': {
+      '$gte': filtros.precioMin,
+      '$lte': filtros.precioMax
+    }
+  }, {
+    '_id': false,
+    'imagenes': true,
+    'permalink': true,
+    'precio': true,
+    'titulo': true,
+    'categoria': true
+  }).skip(pagina > 0 ? (pagina-1)*30 : 0).toArray((err, results) => {
+    if(err){
+      return cb('Error, could not find those products', null);
+    }else{
+      let cantidadPaginas = 0;
+      if(results.length > 30){
+        cantidadPaginas = results.length/30+1;
+        results = results.slice(0, 30);
+      }
+      //Copiar la primera imágen
+      copyFirstImage(results, (err) => {
+        if(err) return cb(err, null, cantidadPaginas);
+        cb(null, results, cantidadPaginas);
+      });
+    }
+  });
+};
+
 //Funcion para reemplazar o añadir un producto si no existe
 function createUpdateProduct(permalink, productData, cb){
   console.log('CreateUpdateProduct, functions,js');
@@ -867,3 +905,4 @@ exports.addProductoCesta = addProductoCesta;
 exports.cambiarCantidadCesta = cambiarCantidadCesta;
 exports.getLoggedState = getLoggedState;
 exports.getPaginacionSearch = getPaginacionSearch;
+exports.buscarFiltrarProductos = buscarFiltrarProductos;

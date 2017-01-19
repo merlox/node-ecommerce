@@ -73,6 +73,14 @@ function id(id){
 };
 //Para extraer los query values de la url
 function getParameterByName(name) {
-    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+};
+function getAllParameters(){
+	let match = '';
+	let result = {};
+	while((match = new RegExp('[?&](.*?)=([^&]*)').exec(window.location.search)) != null){
+		result[match[1]] = decodeURIComponent(match[2].replace(/\+/g, ' '));
+	}
+    return result;
 };

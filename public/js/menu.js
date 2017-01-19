@@ -70,7 +70,7 @@ function ocultarMostrarDepartamentos(){
 function buscarProducto(keyword){
 	if(keyword.length >= 3){
 		keyword = encodeURIComponent(keyword);
-		httpGet(`/api/search/${keyword}?limite=8`, (results) => {
+		httpGet(`/api/search/${keyword}`, (results) => {
 			try{
 				results = JSON.parse(results);
 			}catch(e){

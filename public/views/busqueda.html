@@ -10,14 +10,25 @@
 
 	{{> menu}}
 
+	<div id="sidebar">
+		<span class="filtro-titulo">rango de precio</span>
+		<div class="filtro-precio">
+			<div><input type="checkbox" name="precio" value="1"/><a href="javascript:void(0)"> 0€ - 10€</a></div>
+			<div><input type="checkbox" name="precio" value="2"/><a href="javascript:void(0)"> 10€ - 25€</a></div>
+			<div><input type="checkbox" name="precio" value="3"/><a href="javascript:void(0)"> 25€ - 40€</a></div>
+			<div><input type="checkbox" name="precio" value="4"/><a href="javascript:void(0)"> 40€ - 60€</a></div>
+			<div><input type="checkbox" name="precio" value="5"/><a href="javascript:void(0)"> 60€ - 90€</a></div>
+		</div>
+	</div>
+
     <div id="contenedor-principal">
 		{{if isProductos}}
 		    <div>
 		    	<h2>Resultados de buscar: <b>{{busqueda}}</b></h2>
 		    	{{if resultadoUnico}}
-					<i>Mostrando {{cantidadProductos}} resultado.</i>
+					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} resultado.</i>
 				{{else resultadoUnico}}
-					<i>Mostrando {{cantidadProductos}} resultados.</i>
+					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} resultados.</i>
 				{{/if resultadoUnico}}
 
 				{{if hayPaginas}}

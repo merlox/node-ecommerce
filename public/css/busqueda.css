@@ -1,6 +1,39 @@
+/*
+
+SIDEBAR
+
+*/
+#sidebar{
+	float: left;
+	margin-top: 40px;
+	margin-left: 10px;
+}
+.filtro-titulo{
+	font-variant: small-caps;
+	font-size: 18pt;
+}
+.filtro-precio{
+	padding-left: 10px;
+}
+.filtro-precio div{
+	padding: 5px 0;
+}
+.filtro-precio div a{
+	text-decoration: none;
+	color: #444444;
+}
+.filtro-precio div a:hover{
+	color: black;
+}
+/*
+
+PRINCIPAL
+
+*/
 #contenedor-principal{
 	width: 900px;
 	margin: 0 auto;
+	margin-top: 40px;
 }
 .producto{
 	width: 300px;
@@ -10,6 +43,7 @@
 .paginacion{
 	float: right;
 	margin-top: -10px;
+	display: none;
 }
 .paginacion span{
 	background-color: whitesmoke;

@@ -70,7 +70,7 @@ function buscarFiltrarProductos(keyword, pagina, filtros, cb){
     },
     'precio': {
       '$gte': filtros.precioMin,
-      '$lte': filtros.precioMax
+      '$lte': (filtros.precioMax > 0 ? filtros.precioMax : Infinity)
     }
   }, {
     '_id': false,
@@ -85,7 +85,7 @@ function buscarFiltrarProductos(keyword, pagina, filtros, cb){
     }else{
       let cantidadPaginas = 0;
       if(results.length > 30){
-        cantidadPaginas = results.length/30+1;
+        cantidadPaginas = Math.floor(results.length/30)+1;
         results = results.slice(0, 30);
       }
       //Copiar la primera imágen

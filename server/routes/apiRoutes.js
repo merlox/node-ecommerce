@@ -160,60 +160,6 @@ api.post('/upload-slider-server', (req, res) => {
     }
   });
 });
-//Para devolver los resultados en forma de objeto
-api.get('/search/:keyword?', (req, res) => {
-  let keyword = decodeURI(req.params.keyword);
-  let limite = 8;
-  if(keyword != 'undefined' && keyword != 'null' && keyword != '' && !requestProcessing){
-    //Comprobamos que no haya sobrecarga de request de forma que solo se inicie cuando termine la anterior
-    requestProcessing = true;
-    functions.buscarProductos(keyword, limite, 0, (err, results) => {
-      requestProcessing = false;
-      if(err){
-        console.log(err);
-        return res.send(null);
-      }
-      return res.send(results);
-    });
-  }else{
-    return res.send(null);
-  }
-});
-//Para mostrar resultados en la página de busqueda
-api.get('/filter', (req, res) => {
-  let pagina = req.query.pag;
-  let error = null;
-  let filtros = {};
-  filtros['precioMin'] = parseInt(req.query.preciomin);
-  filtros['precioMax'] = parseInt(req.query.preciomax);
-  functions.buscarFiltrarProductos(req.query.q, pagina, filtros, (err, arrayProductos, cantidadPaginas) => {
-    if(err) error = `No se han encontrado productos buscando <b>${req.query.q}</b>`;
-    if(arrayProductos != null && arrayProductos != undefined){
-      //Quitamos las imágenes para solo mostrar 1 imagen
-      for(let i = 0; i<arrayProductos.length; i++){
-        arrayProductos[i]['imagen'] = arrayProductos[i]['imagenes'][1];
-        delete arrayProductos[i]['imagenes'];
-      }
-      let dataObject = {
-        'productos': arrayProductos
-      };
-      //Calculamos cuántas páginas hay
-      if(cantidadPaginas > 0){
-        dataObject['hayPaginas'] = true;
-        dataObject['paginas'] = cantidadPaginas;
-        console.log(`Hay ${dataObject.paginas} páginas.`);
-      }
-      return res.send(dataObject);
-    }else{
-      let dataObject = {
-        'errorMessage': error
-      };
-      return res.send(dataObject);
-    }
-  });
-  //Buscar los productos que coincidan con la busqueda y renderizar la página
-});
-
 api.get('/get-slider', (req, res) => {
   functions.getSlider((err, result) => {
     if(err) console.log(err);
@@ -309,4 +255,57 @@ api.post('/pagar-compra', (req, res) => {
     }
   });
 });
+//Para devolver los resultados en forma de objeto
+api.get('/search/:keyword?', (req, res) => {
+  let keyword = decodeURI(req.params.keyword);
+  let limite = 8;
+  if(keyword != 'undefined' && keyword != 'null' && keyword != '' && !requestProcessing){
+    //Comprobamos que no haya sobrecarga de request de forma que solo se inicie cuando termine la anterior
+    requestProcessing = true;
+    functions.buscarProductos(keyword, limite, 0, (err, results) => {
+      requestProcessing = false;
+      if(err){
+        console.log(err);
+        return res.send(null);
+      }
+      return res.send(results);
+    });
+  }else{
+    return res.send(null);
+  }
+});
+//Para mostrar resultados en la página de busqueda
+api.get('/filter', (req, res) => {
+  let pagina = req.query.pag;
+  let error = null;
+  let filtros = {};
+  filtros['precioMin'] = parseInt(req.query.preciomin);
+  filtros['precioMax'] = parseInt(req.query.preciomax);
+  functions.buscarFiltrarProductos(req.query.q, pagina, filtros, (err, arrayProductos, cantidadPaginas) => {
+    if(err) error = `No se han encontrado productos buscando <b>${req.query.q}</b>`;
+    if(arrayProductos != null && arrayProductos != undefined){
+      //Quitamos las imágenes para solo mostrar 1 imagen
+      for(let i = 0; i<arrayProductos.length; i++){
+        arrayProductos[i]['imagen'] = arrayProductos[i]['imagenes'][1];
+        delete arrayProductos[i]['imagenes'];
+      }
+      let dataObject = {
+        'productos': arrayProductos
+      };
+      //Calculamos cuántas páginas hay
+      if(cantidadPaginas > 0){
+        dataObject['hayPaginas'] = true;
+        dataObject['paginas'] = cantidadPaginas;
+      }
+      return res.send(dataObject);
+    }else{
+      let dataObject = {
+        'errorMessage': error
+      };
+      return res.send(dataObject);
+    }
+  });
+  //Buscar los productos que coincidan con la busqueda y renderizar la página
+});
+
 module.exports = api;

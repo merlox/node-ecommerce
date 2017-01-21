@@ -8,6 +8,8 @@
 <!--//TODO pagina de búsqueda de productos-->
 <body>
 
+	<div class="overlay"></div>
+
 	{{> menu}}
 
 	<div id="sidebar">
@@ -24,6 +26,7 @@
     <div id="contenedor-principal">
 		{{if isProductos}}
 		    <div>
+		        <button id="responsive-filters">Filtrar resultados</button>
 		    	<h2>Resultados de buscar: <b>{{busqueda}}</b></h2>
 		    	{{if resultadoUnico}}
 					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} resultado.</i>

@@ -1,11 +1,13 @@
 'use strict';
 
+//Creamos las páginas totales
 let paginasTotales = q('.paginacion').innerHTML;
 q('.paginacion').innerHTML = '';
+crearPaginacion();
 
 //Para cargar la página clickada
 function loadPage(i){
-	window.location = `/search?q=${getParameterByName('q')}&pag=${i}`;
+	filtrarPrecio(0, 0, i, false);
 };
 //Para crear la paginación e insertarla en los contenedores de paginación
 function crearPaginacion(){
@@ -24,36 +26,35 @@ function crearPaginacion(){
 };
 let paginasTotalesFiltro = 0;
 //Para filtrar los productos dado el rango de precios
-function filtrarPrecio(min, max, page, updatePages){
-	let url = `/api/filter?q=${getParameterByName('q')}&pag=${page}&preciomin=${min}&preciomax=${max}`;
+function filtrarPrecio(min, max, pageActual, updatePages){
+	let url = `/api/filter?q=${getParameterByName('q')}&pag=${pageActual}&preciomin=${min}&preciomax=${max}`;
 	httpGet(url, (data) => {
 		try{
 			data = JSON.parse(data);
 			let products = data.productos;
 			let productsHtml = '';
 			let header = q('#contenedor-principal').children[0].outerHTML;
-			products.forEach((product, index) => {
+			for(let i = 0; i < products.length; i++){
+				let product = products[i];	
 				productsHtml += `<div class="producto">
 					<a href="/p/${product.permalink}"><img class="producto-imagen" src="../public-uploads/${product.imagen}" width="300px"></a>
 					<span class="precio-producto">${product.precio}€</span>
 					<a href="/p/${product.permalink}" class="titulo-producto">${product.titulo}</a>
 					<span class="categoria-producto">${product.categoria}</span>
 		    	</div>`;
-		    	if(index >= (products.length-1)){
-		    		productsHtml = header+productsHtml;
-		    		q('#contenedor-principal').innerHTML = productsHtml;
-		    	}
-			});
+		    }
+		    productsHtml = header+productsHtml;
+		   	q('#contenedor-principal').innerHTML = productsHtml;
 			//Cambiamos el mensaje de mostrando resultados
 			q('.mensaje-resultados').innerHTML = `Mostrando ${products.length} resultados.`;
 
+			//Creamos la paginación
 			if(updatePages) paginasTotalesFiltro = data.hayPaginas ? data.paginas : paginasTotalesFiltro;
-
 			let paginasHtml = '';
 			if(data.hayPaginas && updatePages){
 				q('.paginacion').style.display = 'block';
 				for(let i = 1; i <= paginasTotalesFiltro; i++) {
-					if(i === page) paginasHtml += `<span class="pagina-activa" onclick="filtrarPrecio(${min}, ${max}, ${i}, false)">${i}</span>`;
+					if(i === pageActual) paginasHtml += `<span class="pagina-activa" onclick="filtrarPrecio(${min}, ${max}, ${i}, false)">${i}</span>`;
 					else paginasHtml += `<span onclick="filtrarPrecio(${min}, ${max}, ${i}, false)">${i}</span>`;
 				}
 				q('.paginacion').innerHTML = paginasHtml;
@@ -62,26 +63,70 @@ function filtrarPrecio(min, max, page, updatePages){
 			}else{
 				//El paginador se mantiene igual solo que cambia la pagina activa
 				q('.paginacion .pagina-activa').className = '';
-				q('.paginacion').children[page-1].className = 'pagina-activa';
+				q('.paginacion').children[pageActual-1].className = 'pagina-activa';
 			}
 		}catch(e){
 			console.log('Error filtering products.');
 		}
 	});
-	// console.log(getAllParameters());
 };
 
-crearPaginacion();
+/*
 
+RESPONSIVE SIDEBAR FILTERS
+
+*/
+//Para ocultar y mostrar la sidebar
+function ocultarSidebar(){
+	q('.overlay').style.display = 'none';
+	q('#sidebar').className = 'sidebar-hidden';
+};
+function mostrarSidebar(){
+	q('.overlay').style.display = 'block';
+	q('#sidebar').className = 'sidebar-active';
+}
+//Para hacer el sidebar responsive al cambiar el tamaño de la pantalla
+function sidebarResponsive(){
+	if(window.innerWidth <= 850) q('#sidebar').className = 'sidebar-hidden';
+	else q('#sidebar').className = '';
+}
+q('#responsive-filters').addEventListener('click', e => {
+	mostrarSidebar();
+});
+q('.overlay').addEventListener('click', () => {
+	ocultarSidebar();
+});
+sidebarResponsive();
+window.addEventListener('resize', () => {
+	sidebarResponsive();
+});
+/*
+
+FILTRO PRECIO
+
+*/
 //Para cuando selecionas un radio de filtro de precio
+let radioActive = 0; //Ninguno seleccionado
 qAll('input[name=precio]').forEach(radio => {
 	radio.addEventListener('change', (e) => {
-		let radioSelected = parseInt(e.target.value);
-		qAll('input[name=precio]').forEach(input => {
-			input.checked = false;
-		});
-		e.target.checked = true;
-		switch(radioSelected){
+		//Si ha selecionado el mismo, deseleccionar todos
+		if(radioActive == parseInt(e.target.value)){
+			let elementos = qAll('input[name=precio]');
+			for(let i = 0; i < elementos.length; i++){
+				let input = elementos[i];
+				input.checked = false;
+			}
+			radioActive = 0;		
+		}else{
+			radioActive = parseInt(e.target.value);
+			let elementos = qAll('input[name=precio]');
+			for(let i = 0; i < elementos.length; i++){
+				let input = elementos[i];
+				input.checked = false;
+			}
+			e.target.checked = true;
+		}
+		switch(radioActive){
 			case 0:
 				filtrarPrecio(0, 0, 1, true);
 				break;

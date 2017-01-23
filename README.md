@@ -993,3 +993,17 @@ Mañana continuaré con la página de búsqueda para mostrar paginación y crear
 El recuento de días que voy mostrando cada vez no es continuo, puede que trabaje dos o 3 días seguidos y simplemente comente el progreso en un día lo cual no es problema porque igualmente os estaré informados.
 
 Aparte tengo pensado crear un sistema de bloggin propio en el cual todo el contenido que publique aquí, en este archivo README.md, se publique a mi propia página web Merunas.com. El servidor será una instancia de amazon y continuaré pensando en cómo crear este sistema.
+
+### Día 52
+
+Llevo varios días trabajando en la página de búsqueda. Ahora funciona perfectamente, muestra una bonita página de resultados con el filtro de precio y paginación ajax que te permite cargar páginas diferentes sin recargar toda la página.
+
+Este tipo de funcionalidad me ha añadido bastante tiempo al proyecto puesto que tuve que crear un sistema en el que generar los productos conforme se vayan solicitando las páginas, pero lo he conseguido y funciona.
+
+Además hay paginación propia al usar filtros y el sidebar de filtros es responsive con lo que te mostrará un agradable botón de "mostrar filtros" cuando la pantalla del dispositivo sea menor de 850px.
+
+A continuación voy a mejorar el aspecto del paginador para que tenga mejor experiencia de usuario puesto que ahora es bastante soso. Aparte sería conveniente mostrar solo 5 paginas y que se vaya desplazando para no tener problemas de espacio en caso de haber cientos de páginas, osea que el paginador se vaya desplazando.
+
+Después de esto crearé las páginas de categorías copiando practicamente todo lo que he creado de la página de búsqueda y simplemente mostrando la categoría que corresponda.
+
+Entonces, una vez terminada crearé el dashboard del administrador para controlar cuantos pedidos hay y el estado de compra de los diferentes productos y finalmente crearé el dashboard del cliente para ver información importante sobre el estado de su cuenta y de sus compras con funciones de recuperación de contraseña, seguimiento de envíos, estado de compra de los productos y ajustes de cuenta con cambio de sesión, dirección, etc.

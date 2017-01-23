@@ -73,7 +73,6 @@ routes.get('/search', (req, res) => {
         'isProductos': false,
         'errorMessage': error
       };
-      let start = new Date().getTime();
       render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
         if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
         return res.send(data);
@@ -145,6 +144,59 @@ routes.get('/cesta', (req, res) => {
 
 routes.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/images/logo.png'));
+});
+
+routes.get('/:categoria', (req, res) => {
+  let limite = 30;
+  let pagina = req.query.pag;
+  let error = null;
+  functions.buscarProductosCategoria(req.params.categoria, limite, pagina, (err, arrayProductos) => {
+    if(err) error = `No se han encontrado productos en la categoría <b>${req.params.categoria}</b>`;
+    //Si hay productos renderizar los productos si no, renderizar un mensaje de error.
+    if(arrayProductos != null && arrayProductos != undefined){
+      //Quitamos las imágenes para solo mostrar 1 imagen
+      for(let i = 0; i<arrayProductos.length; i++){
+        arrayProductos[i]['imagen'] = arrayProductos[i]['imagenes'][1];
+        delete arrayProductos[i]['imagenes'];
+      }
+
+      let resultadoUnico = false;
+      if(arrayProductos.length === 1) resultadoUnico = true;
+      
+      let dataObject = {
+        'categoria': req.params.categoria,
+        'productos': arrayProductos,
+        'cantidadProductos': arrayProductos.length,
+        'resultadoUnico': resultadoUnico,
+        'paginas': 0,
+        'hayPaginas': false,
+        'isProductos': true
+      };
+
+      functions.getPaginacionCategoria(req.params.categoria, limite, (err, cantidadPaginas) => {
+        if(err) console.log(err);
+        
+        dataObject['hayPaginas'] = true;
+        dataObject['paginas'] = cantidadPaginas;
+
+        render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
+          if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+          return res.send(data);
+        });
+      });
+    }else{
+      let dataObject = {
+        'categoria': req.params.categoria,
+        'isProductos': false,
+        'errorMessage': error
+      };
+      render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
+        if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+        return res.send(data);
+      });
+    }
+  });
+  //Buscar los productos que coincidan con la busqueda y renderizar la página
 });
 
 routes.get('/', (req, res) => {

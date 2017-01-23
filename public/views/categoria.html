@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Resultados de buscar: "{{busqueda}}"</title>
+	<title>{{categoria}}</title>
 	<link rel="stylesheet" type="text/css" href="../css/busqueda.css">
 	{{> header}}
 </head>
@@ -31,7 +31,7 @@
 	    	</div>
 		    <div id="header-productos">
 		        <button id="responsive-filters">Filtrar resultados</button>
-		    	<h2>Resultados de buscar: <b>{{busqueda}}</b></h2>
+		    	<h2><b>{{categoria}}</b></h2>
 		    	{{if resultadoUnico}}
 					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} producto.</i>
 				{{else resultadoUnico}}
@@ -65,6 +65,6 @@
 
 	{{> footer}}
 
-	<script type="text/javascript" src="../js/busqueda.js"></script>
+	<script type="text/javascript" src="../js/categoriaCliente.js"></script>
 </body>
 </html>

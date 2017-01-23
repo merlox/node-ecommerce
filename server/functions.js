@@ -62,7 +62,7 @@ function buscarProductos(keyword, limite, pagina, cb){
 //Para buscar muchos productos
 function buscarFiltrarProductos(keyword, pagina, filtros, cb){
   console.log('BuscarFiltrarProductos, functions.js');
-  keyword = new RegExp(keyword, "g");
+  keyword = new RegExp(keyword);
   db.collection('productos').find({
     'titulo': {
       '$regex': keyword,
@@ -96,7 +96,37 @@ function buscarFiltrarProductos(keyword, pagina, filtros, cb){
     }
   });
 };
-
+function buscarProductosCategoria(categoria, limite, pagina, cb){
+  console.log('BuscarProductosCategoría, functions.js');
+  if(limite == undefined || limite == null){
+    limite = 0;
+  }
+  limite = parseInt(limite);
+  categoria = new RegExp(categoria);
+  db.collection('productos').find({
+    'categoria': {
+      '$regex': categoria,
+      '$options': 'i'
+    }
+  }, {
+    '_id': false,
+    'imagenes': true,
+    'permalink': true,
+    'precio': true,
+    'titulo': true,
+    'categoria': true
+  }).limit(limite).skip(pagina*limite).toArray((err, results) => {
+    if(err){
+      return cb('Error, could not find those products', null);
+    }else{
+      //Copiar la primera imágen
+      copyFirstImage(results, (err) => {
+        if(err) return cb(err, null);
+        cb(null, results);
+      });
+    }
+  });
+};
 //Funcion para reemplazar o añadir un producto si no existe
 function createUpdateProduct(permalink, productData, cb){
   console.log('CreateUpdateProduct, functions,js');
@@ -546,10 +576,28 @@ function getPaginacion(limite, cb){
 }; 
 //Function que me dice cuantas páginas hay en total para ese límite de productos por página y para esa keyword.
 function getPaginacionSearch(keyword, limite, cb){
-  console.log('GetPaginacion, functions.js');
+  console.log('GetPaginacionSearch, functions.js');
   db.collection('productos').find({
     'titulo': {
       '$regex': keyword,
+      '$options': 'i'
+    }
+  }).count((err, count) => {
+    if(err){
+      console.log(err);
+      return cb('Error calculando la paginación de los productos. Intentalo de nuevo.', null);
+    }
+    //Las páginas totales incluida la última que puede ser menor del límite.
+    let paginas = Math.ceil(count/limite);
+    return cb(null, paginas);
+  });
+}; 
+//Function que me dice cuantas páginas hay en total para ese límite de productos por página y para esa categoría.
+function getPaginacionCategoria(categoria, limite, cb){
+  console.log('GetPaginacionCategoria, functions.js');
+  db.collection('productos').find({
+    'categoria': {
+      '$regex': categoria,
       '$options': 'i'
     }
   }).count((err, count) => {
@@ -906,3 +954,5 @@ exports.cambiarCantidadCesta = cambiarCantidadCesta;
 exports.getLoggedState = getLoggedState;
 exports.getPaginacionSearch = getPaginacionSearch;
 exports.buscarFiltrarProductos = buscarFiltrarProductos;
+exports.buscarProductosCategoria = buscarProductosCategoria;
+exports.getPaginacionCategoria = getPaginacionCategoria;

@@ -11,6 +11,18 @@ GENERALES
 	background-color: rgba(0,0,0,0.3);
 	z-index: 25;
 }
+.big-spinner{
+	display: inline-block;
+	position: relative;
+	top: 8px;
+}
+.mensaje-cargando{
+	display: none;
+}
+.mensaje-cargando-pagina{
+	display: inline-block;
+	margin-left: 10px;
+}
 /*
 
 SIDEBAR
@@ -84,19 +96,27 @@ PRINCIPAL
 }
 .paginacion{
 	float: right;
-	margin-top: -10px;
+	margin-top: -20px;
 	display: none;
 }
 .paginacion span{
-	background-color: whitesmoke;
-	padding: 10px 7px;
+	background-color: rgba(0, 0, 0, 0.08);
+	padding: 20px;
 	cursor: pointer;
+	transition: none;
 }
 .paginacion span:hover{
-	background-color: lightgrey;
+	background-color: rgba(0, 0, 0, 0.05);
+}
+.paginacion span:active{
+	background-color: rgba(0, 0, 0, 0.03);
 }
 span.pagina-activa{
 	background-color: orange;
+	color: white;
+}
+.paginacion span.pagina-activa:hover{
+	background-color: darkorange;
 }
 .mensaje-error{
 	margin: 0 auto;
@@ -139,6 +159,9 @@ span.pagina-activa{
 	#contenedor-principal{
 		width: 600px;
 	}
+	.paginacion{
+		margin: 20px 0;
+	}
 }
 @media (max-width: 850px){
 	#sidebar{
@@ -153,8 +176,7 @@ span.pagina-activa{
 	#contenedor-principal{
 		width: 300px;
 	}
-	.paginacion{
-		margin-top: 10px;
-		margin-bottom: 10px;
+	.paginacion :nth-child(1), .paginacion :nth-last-child(1){
+		display: none;
 	}
 }

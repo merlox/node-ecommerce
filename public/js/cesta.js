@@ -1,5 +1,7 @@
 'use strict';
 window.addEventListener('load', () => {
+	//Que al hacer click en el icono de la cesta te lleve a la página de pasar por caja
+	q('#cesta').href = `cesta?ref=${window.location.pathname}`;
 	if(window.location.pathname == "/cesta"){
 		httpGet('/api/get-logged-state', (state) => {
 			if(state == null) window.location.href = "/";

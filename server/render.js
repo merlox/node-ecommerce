@@ -20,7 +20,7 @@ function render(page, dataObject, cb) {
 
 1. Extraer las tags en orden {{.*}}
 2. Identificar la key dentro de la tag {{if key}} con un split para saber la key porke la tag es inusable en el regex
-3. En el {{if}} extraer recursivamente y sustituir desde fuera hasta dentro  para conseguir ordenar todo esto
+3. En el {{if}} extraer recursivamente y sustituir desde fuera hasta dentro para conseguir ordenar todo esto
 
 */
 
@@ -46,8 +46,8 @@ function renderData(content, dataObject, cb) {
       //Para hacer loop sobre un array de objetos
       reArray = new RegExp("{{array " + propiedad + "}}([\\s\\S]*?){{\\/array}}"),
       //El reif solo acepta un booleano y tiene que estar en una nueva linea
-      reIfElse = new RegExp("{{if " + propiedad + "}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
-      reIfClassic = new RegExp("{{if " + propiedad + "}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g");
+      reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
+      reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
 
     if (reIfElse.test(content)) {
       reIfElse.lastIndex = 0;
@@ -63,13 +63,17 @@ function renderData(content, dataObject, cb) {
         }
       }
       continue;
-    } else if (reIfClassic.test(content)) {
+    }
+    
+    if (reIfClassic.test(content)) {
+      reIfClassic.lastIndex = 0;
       let contenidoIf = '',
         valorPropiedad = dataObject[propiedad];
-
       while((contenidoIf = reIfClassic.exec(content)) != null){
-        if (valorPropiedad == true) {
-          content = content.replace(reIfClassic, contenidoIf[1]);
+        let contenidoHTML = '';
+        if (valorPropiedad === true) {
+          contenidoHTML = contenidoIf[1]+contenidoIf[2]+contenidoIf[3];
+          content = content.replace(reIfClassic, contenidoHTML);
         } else {
           content = content.replace(reIfClassic, '');
         }

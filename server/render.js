@@ -45,6 +45,7 @@ function renderData(content, dataObject, cb) {
       reLoopKey = new RegExp("{{loopKey " + propiedad + "}}"),
       //Para hacer loop sobre un array de objetos
       reArray = new RegExp("{{array " + propiedad + "}}([\\s\\S]*?){{\\/array}}"),
+      reSimpleArray = new RegExp("(.*){{simpleArray " + propiedad + "}}([\\s\\S]*?){{\\/array}}(.*)"),
       //El reif solo acepta un booleano y tiene que estar en una nueva linea
       reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
       reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
@@ -158,6 +159,28 @@ function renderData(content, dataObject, cb) {
           contenidoFinal += contenidoProducto;
       }
       content = content.replace(reArray, contenidoFinal);
+      continue;
+    }
+    
+    if (reSimpleArray.test(content)) {
+      //Al ejecutar el .test el index se mueve al ser un buscador global /g con lo que al hacer el exec,
+      //el content ya se ha pasado hasta el final
+      let contenidoMatch = reArray.exec(content);
+      let array = dataObject[propiedad];
+      let contenidoFinal = '';
+      //Para cada ocurrencia del array crear texto
+      //[{objetoProducto1},{objetoProducto2},{objetoProducto3}]
+      //1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
+      //2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html
+      //3. Guardar cada html con su valor reemplazado en una variable contenidoFinal
+      //4. Reemplazar la ocurrencia de {{array propiedad}} con el contenidoFinal
+      let newRe = new RegExp("(.*){{#simpleArray#}}(.*)");
+      let insideArray = newRe.exec(content);
+      for (let i = 0; i < array.length; i++) {
+        contenidoFinal += insideArray[1]+array[i]+insideArray[2];
+      }
+      contenidoFinal = contenidoMatch[1]+contenidoFinal+contenidoMatch[2];
+      content = content.replace(reSimpleArray, contenidoFinal);
       continue;
     }
   }

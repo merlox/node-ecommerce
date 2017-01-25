@@ -17,9 +17,16 @@
         <div id="contenedor-contenedor-slider">
             <img id="flecha-izquierda-slider" src="../images/back.svg">
         	<img id="flecha-derecha-slider" src="../images/next.svg">
-		    <div id="contenedor-imagenes-slider"></div>
+		    <div id="contenedor-imagenes-slider">
+				{{simpleArray sliderImages}}
+				<img class="imagen-slider" src="../public-uploads/{{#simpleArray#}}">
+				{{/simpleArray}}
+		    </div>
         </div>
-
+        {{if isError}}
+        <div>{{error}}</div>
+        {{else isError}}
+        {{/if isError}}
         <!--Minislider-->
         <div class="contenedor-minislider">
         	<h2>MÁS VENDIDOS</h2>

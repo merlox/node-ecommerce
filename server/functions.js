@@ -59,7 +59,7 @@ function buscarProductos(keyword, limite, pagina, cb){
     }
   });
 };
-//Para buscar muchos productos
+//Para buscar muchos productos en la api
 function buscarFiltrarProductos(keyword, pagina, filtros, cb){
   console.log('BuscarFiltrarProductos, functions.js');
   keyword = new RegExp(keyword);
@@ -96,6 +96,7 @@ function buscarFiltrarProductos(keyword, pagina, filtros, cb){
     }
   });
 };
+//Para buscar los productos por categoria
 function buscarProductosCategoria(categoria, limite, pagina, cb){
   console.log('BuscarProductosCategoría, functions.js');
   if(limite == undefined || limite == null){
@@ -127,6 +128,41 @@ function buscarProductosCategoria(categoria, limite, pagina, cb){
     }
   });
 };
+//Para buscar muchos productos en la api de categoria
+function buscarFiltrarProductosCategoria(categoria, pagina, filtros, cb){
+  console.log('BuscarFiltrarProductosCategoria, functions.js');
+  db.collection('productos').find({
+    'categoria': categoria,
+    'precio': {
+      '$gte': filtros.precioMin,
+      '$lte': (filtros.precioMax > 0 ? filtros.precioMax : Infinity)
+    }
+  }, {
+    '_id': false,
+    'imagenes': true,
+    'permalink': true,
+    'precio': true,
+    'titulo': true,
+    'categoria': true
+  }).skip(pagina > 0 ? (pagina-1)*30 : 0).toArray((err, results) => {
+    debugger;
+    if(err){
+      return cb('Error, could not find those products', null);
+    }else{
+      let cantidadPaginas = 0;
+      if(results.length > 30){
+        cantidadPaginas = Math.floor(results.length/30)+1;
+        results = results.slice(0, 30);
+      }
+      //Copiar la primera imágen
+      copyFirstImage(results, (err) => {
+        if(err) return cb(err, null, cantidadPaginas);
+        cb(null, results, cantidadPaginas);
+      });
+    }
+  });
+};
+
 //Funcion para reemplazar o añadir un producto si no existe
 function createUpdateProduct(permalink, productData, cb){
   console.log('CreateUpdateProduct, functions,js');
@@ -505,13 +541,12 @@ function guardarSliderImages(objectImages, cb){
 };
 //Para copiar las imagenes del slider al cliente y retornar el objeto imagenes
 //Si no le pasas callback copia las imagenes al cliente y con callback solo te da el array de nombres para el cliente
-function getSlider(cb){
+function getSlider(doCopy, cb){
   console.log('GetSlider, functions.js');
-  if(cb == undefined){
-    cb = () => {};
+  if(doCopy){
     let originDir = path.join(__dirname, '/uploads/_Slider/');
     fs.readdir(originDir, (err, files) => {
-      if(err) return cb(null);
+      if(err) return cb('Error getting slider, try again.', null);
       let images = files;
       let end = path.join(__dirname, '../public/public-uploads/');
       let counter = 0;
@@ -520,7 +555,7 @@ function getSlider(cb){
           counter++;
           if(err) return cb('Error copying the slider images to the client '+err, null);
           if(counter >= images.length){
-            return cb(null);  
+            return cb(null, files);  
           }
         });
       });
@@ -956,3 +991,4 @@ exports.getPaginacionSearch = getPaginacionSearch;
 exports.buscarFiltrarProductos = buscarFiltrarProductos;
 exports.buscarProductosCategoria = buscarProductosCategoria;
 exports.getPaginacionCategoria = getPaginacionCategoria;
+exports.buscarFiltrarProductosCategoria = buscarFiltrarProductosCategoria;

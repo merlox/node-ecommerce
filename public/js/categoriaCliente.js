@@ -41,7 +41,7 @@ function crearPaginacion(){
 };
 //Para filtrar los productos dado el rango de precios
 function filtrarPrecio(min, max, pageActual){
-	let url = `/api/filter?q=${getParameterByName('q')}&pag=${pageActual}&preciomin=${min}&preciomax=${max}`;
+	let url = `/api/filter-categoria?categoria=${window.location.pathname.substring(1)}&pag=${pageActual}&preciomin=${min}&preciomax=${max}`;
 	let mensajeCargando = q('.mensaje-cargando');
 	mensajeCargando.style.display = 'block';
 	httpGet(url, (data) => {

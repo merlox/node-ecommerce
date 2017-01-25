@@ -32,7 +32,6 @@ function borrarValorAtributo(e){
        objetoAtributos[key].splice(liItemIndex, 1);
     }
   }
-  console.log(objetoAtributos);
   //Delete the item in the dom
   e.parentNode.parentNode.removeChild(e.parentNode);
 }

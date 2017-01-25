@@ -31,7 +31,7 @@ function guardarPublicarProducto(publicar){
   categoriasReq.open('POST', '/api/guardar-categorias');
   categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
   categoriasReq.onreadystatechange = () => {
-    if(categoriasReq.readyState = XMLHttpRequest.DONE){
+    if(categoriasReq.readyState == XMLHttpRequest.DONE){
       messageStatus(request.responseText, 'info');
     }
   };

@@ -200,10 +200,22 @@ routes.get('/:categoria', (req, res) => {
 });
 
 routes.get('/', (req, res) => {
-  render(path.join(__dirname, '../../public/views/index.html'), null, (err, data) => {
-    functions.getSlider();
-    if(err) return res.send(err);
-    return res.send(data);
+  let dataObject = {
+    'isError': null,
+    'error': null,
+    'sliderImages': null
+  };
+  functions.getSlider(true, (err, images) => {
+    if(err){
+      dataObject.isError = true;
+      dataObject.error = err;
+    }
+    dataObject.sliderImages = images;
+    console.log(images);
+    render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
+      if(err) res.send(err);
+      res.send(data);
+    });
   });
 });
 

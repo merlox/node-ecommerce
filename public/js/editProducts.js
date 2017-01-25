@@ -1,5 +1,4 @@
 'use strict';
-let domainName = '192.168.1.100:8000';
 let isMenuVisible = true;
 let isMenuResponsive = false;
 let productosPorPagina = 50;
@@ -67,7 +66,6 @@ function loadFullProduct(productPermalink){
 	}
 	objetoAtributos = {};
 	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
-		console.log(fullProduct);
 		fullProduct = JSON.parse(fullProduct);
 		id('producto-title').value = fullProduct.titulo;
 		id('producto-precio').value = fullProduct.precio;
@@ -109,18 +107,17 @@ function borrarProducto(productPermalink){
 		}
 	});
 }
-//TODO Arreglar esto
 //Funcion para filtrar los objetos por categoria para ver solo los que pertenezcan a dicha categoria
 function filtrarVistaCategoria(e){
 	e = e.target;
-	let permalinks = document.getElementsByClassName('categoria-producto-unico');
+	let permalinks = qAll('.categoria-producto-unico');
 	let categoriaFiltroSeleccionada = id('contenedor-categorias').childNodes[e.selectedIndex].innerHTML;
 	for(let i = 0; i < permalinks.length; i++){
 		if(permalinks[i].innerHTML != categoriaFiltroSeleccionada &&
 		   permalinks[i].innerHTML != categoriaFiltroSeleccionada+' (Borrador)'){
-			document.getElementsByClassName('contenedor-producto')[i].style.display = 'none';
+			qAll('.contenedor-producto')[i].style.display = 'none';
 		}else{
-			document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
+			qAll('.contenedor-producto')[i].style.display = 'flex';
 		}
 	}
 }
@@ -150,7 +147,7 @@ function crearCajasProductos(page){
 	if(page == null || page == undefined){
 		page = 1;
 	}
-	document.querySelectorAll('.paginador-productos').forEach((paginad) => {
+	qAll('.paginador-productos').forEach((paginad) => {
 		for(let i = 0; i < paginad.childNodes.length; i++){
 			paginad.childNodes[i].className = '';
 		}
@@ -159,7 +156,7 @@ function crearCajasProductos(page){
 		}
 	});
 	resetAllProductData();
-	httpGet('/api/get-all-products/'+productosPorPagina+'?page='+page, (results) => {
+	httpGet(`/api/get-all-products/${productosPorPagina}?page=${page}`, (results) => {
 		results = JSON.parse(results);
 		if(results != false){
 			let arrayProductos = results;
@@ -176,23 +173,25 @@ function crearCajasProductos(page){
 				let permalinkATexto = "'"+objetoProducto.permalink+"'";
 				let htmlProducto;
 				if(objetoProducto.publicado == 'no'){
-					htmlProducto = '<div class="contenedor-producto borrador">'
-						+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'"/>'
-						+'<div class="contenedor-producto-informacion"><span title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</span>'
-						+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+' (Borrador)</p>'
-						+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
-						+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
-						+'<a href="javascript:void(0)" onclick="borrarProducto('+permalinkATexto+')"> Borrar </a>'
-						+'</div></div><input type="hidden" value="'+objetoProducto.permalink+'"/></div>';
+					htmlProducto = `<div class="contenedor-producto borrador">
+						<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
+						<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
+						${objetoProducto.titulo}</span>${addEspacioTitulo}
+						<p class="categoria-producto-unico">${objetoProducto.categoria} (Borrador)</p>
+						<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
+						<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
+						<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
+						</div></div><input type="hidden" value="${objetoProducto.permalink}"/></div>`;
 				}else{
-					htmlProducto = '<div class="contenedor-producto">'
-						+'<img class="imagen-producto" src="../public-uploads/'+objetoProducto.imagenes[1]+'"/>'
-						+'<div class="contenedor-producto-informacion"><span title="'+tituloProducto+'" style="display:inline-block;">'+objetoProducto.titulo+'</span>'
-						+addEspacioTitulo+'<p class="categoria-producto-unico">'+objetoProducto.categoria+'</p>'
-						+'<div class="contenedor-enlaces-producto"><a target="_blank" href="http://'+domainName+'/p/'+objetoProducto.permalink+'"> Ver </a>'
-						+'<a href="javascript:void(0)" onclick="loadFullProduct('+permalinkATexto+')"> Editar </a>'
-						+'<a href="javascript:void(0)" onclick="borrarProducto('+permalinkATexto+')"> Borrar </a>'
-						+'</div></div><input type="hidden" value="'+objetoProducto.permalink+'"/></div>';
+					htmlProducto = `<div class="contenedor-producto">
+						<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
+						<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
+						${objetoProducto.titulo}</span>${addEspacioTitulo}
+						<p class="categoria-producto-unico">${objetoProducto.categoria}</p>
+						<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
+						<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
+						<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
+						</div></div><input type="hidden" value="${objetoProducto.permalink}"/></div>`;
 				}
 
 				id('contenedor-productos').insertAdjacentHTML('beforeend', htmlProducto);

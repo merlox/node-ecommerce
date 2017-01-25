@@ -8,10 +8,13 @@ function getCategoriesFromServer(){
     categories = categories.arrayCategorias;
     //Para el objeto global de categorias
     arrayCategorias = categories;
+    let categoriasHTML = '';
     for(let i = 0; i < categories.length; i++){
-      id('contenedor-categorias').insertAdjacentHTML('beforeend', '<option>'+categories[i]+'</option>');
-      id('producto-categorias').insertAdjacentHTML('afterbegin', '<option>'+categories[i]+'</option>');
+      categoriasHTML += `<option>${categories[i]}</option>`;
     }
+    //Insertamos las categorías
+    id('contenedor-categorias').innerHTML = '<option>Filtrar</option>'+categoriasHTML;
+    id('producto-categorias').innerHTML = categoriasHTML;
   });
 }
 

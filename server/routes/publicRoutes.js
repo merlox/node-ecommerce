@@ -211,7 +211,6 @@ routes.get('/', (req, res) => {
       dataObject.error = err;
     }
     dataObject.sliderImages = images;
-    console.log(images);
     render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
       if(err) res.send(err);
       res.send(data);

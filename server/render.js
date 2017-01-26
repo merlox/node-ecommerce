@@ -31,157 +31,163 @@ function renderData(content, dataObject, cb) {
   while ((selectedTag = tag.exec(content)) !== null) {
     selectedTag = selectedTag[1];
     let propiedad = selectedTag;
+    let modificadorPropiedad = undefined;
+    let modificadorPropiedadAdicional = undefined;
 
-    //Extraemos la key de la tag en orden. Si no es {{propiedad}}
-    if(selectedTag.split(' ').length === 2){
-      propiedad = selectedTag.split(' ')[1];
-    }else if(selectedTag.split(' ').length === 3){
-      propiedad = selectedTag.split(' ')[1];
-    }
+    //Extraemos la key de la tag en orden. Si no es {{propiedad}}, en cuyo caso el modificador es null.
+    let splitDeTag = selectedTag.split(' ');
 
-    let re = new RegExp("{{"+propiedad+"}}", "g"),
-      reObject = new RegExp("{{object "+propiedad+" [0-9]}}"),
-      reObjectFull = new RegExp("{{object "+propiedad+"}}"),
-      reLoopKey = new RegExp("{{loopKey " + propiedad + "}}"),
-      //Para hacer loop sobre un array de objetos
-      reArray = new RegExp("{{array " + propiedad + "}}([\\s\\S]*?){{\\/array}}"),
-      reSimpleArray = new RegExp("(.*){{simpleArray " + propiedad + "}}([\\s\\S]*?){{\\/array}}(.*)"),
-      //El reif solo acepta un booleano y tiene que estar en una nueva linea
-      reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
-      reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
-
-    if (reIfElse.test(content)) {
-      reIfElse.lastIndex = 0;
-      //Hacemos un while para todas las instancias identicas
-      let contenidoIfElse = '',
-        valorPropiedad = dataObject[propiedad];
-
-      while((contenidoIfElse = reIfElse.exec(content)) != null){
-        if (valorPropiedad === true) {
-          content = content.replace(reIfElse, contenidoIfElse[1]);
-        } else {
-          content = content.replace(reIfElse, contenidoIfElse[2]);          
-        }
-      }
-      continue;
+    if(splitDeTag.length === 2){
+      modificadorPropiedad = splitDeTag[0];
+      propiedad = splitDeTag[1];
+    }else if(splitDeTag.length === 3){
+      modificadorPropiedad = splitDeTag[0];
+      propiedad = splitDeTag[1];
+      modificadorPropiedadAdicional = splitDeTag[2];
     }
     
-    if (reIfClassic.test(content)) {
-      reIfClassic.lastIndex = 0;
-      let contenidoIf = '',
-        valorPropiedad = dataObject[propiedad];
-      while((contenidoIf = reIfClassic.exec(content)) != null){
-        let contenidoHTML = '';
-        if (valorPropiedad === true) {
-          contenidoHTML = contenidoIf[1]+contenidoIf[2]+contenidoIf[3];
-          content = content.replace(reIfClassic, contenidoHTML);
-        } else {
-          content = content.replace(reIfClassic, '');
+    //Ejecutamos el replace que corresponda a esa tag.
+    switch(modificadorPropiedad){
+      case undefined: //{{propiedad}}
+        let re = new RegExp("{{"+propiedad+"}}", "g");
+        let match = '';
+        while((match = re.exec(content)) != null){
+          content = content.replace(re, dataObject[propiedad]);
         }
-      }
-      continue;
-    }
+      break;
 
-    if (re.test(content)) {
-      //Regex.test mueve el lastIndex.
-      re.lastIndex = 0;
-      let match = '';
-      while((match = re.exec(content)) != null){
-        content = content.replace(re, dataObject[propiedad]);
-      }
-      continue;
-    }
+      case 'each':
+        /*
+        Para: array simple.
+        Prohibiciones: 
+        - No se puede poner más de 1 vez la {{propiedad}} dentro del each.
+        - No se puede meter el mismo each dentro del each porque la etiqueta de cierre daría errores.
+        Se puede:?
+        - Poner el mismo each no nested en diferentes lugares varias veces.
+        Funcionamiento:
+          1. Extraer todo
+          2. Repetir lo que hay dentro del each por cada elemento del array 
+          3. Juntar lo que hay antes y después del each en la linea y meter dentro el array final
+        */
+        let each = new RegExp("(.*){{each "+propiedad+"}}([\\s\\S]*?){{\\/each "+propiedad+"}}(.*)");
+        let array = dataObject[propiedad],
+          regexInterno = new RegExp("(.*){{"+propiedad+"}}(.*)"),
+          execEach = '';
 
-    if (reObjectFull.test(content)) {
-      reObjectFull = new RegExp("(.*){{object "+propiedad+"}}(.*)");
-      let loopObject = dataObject[propiedad],
-        textoFinal = "",
-        match = reObjectFull.exec(content);
-
-      for (let key in loopObject) {
-        if (match != null && loopObject[key] != undefined) textoFinal += match[1] + loopObject[key] + match[2] + "\n";
-      }
-      content = content.replace(reObjectFull, textoFinal);
-      continue;
-    }else if (reObject.test(content)) {
-      let key = selectedTag.split(' ')[2];
-      content = content.replace(reObject, dataObject[propiedad][key]);
-      continue;
-    }
-
-    if (reLoopKey.test(content)) {
-      let loopObject = dataObject[propiedad];
-      let reKeyWithTagsBig = new RegExp("^(.*){{loopKey " + propiedad + "}}(.*)([\\s\\S]*){{\\/loopKey " + propiedad + "}}.*$", "gm");
-      let reArrayWithTags = new RegExp("^([\\s\\S]*)[\n|\r](.*){{loopArray " + propiedad + "}}(.*)([\\s\\S]*)$", "gm");
-      let matchKeyBig;
-      let matchArray;
-      let textoFinal = "";
-      matchKeyBig = reKeyWithTagsBig.exec(content);
-      matchArray = reArrayWithTags.exec(matchKeyBig[3]);
-      for (let key in loopObject) {
-          textoFinal += matchKeyBig[1] + key + matchKeyBig[2] + '\n';
-          //Lo que hay antes del <option> es matcharray[1]
-          textoFinal += matchArray[1];
-          for (let i = 0; i < loopObject[key].length; i++) {
-              let itemArray = matchArray[2] + loopObject[key][i] + matchArray[3] + "\n";
-              textoFinal += itemArray;
+        while((execEach = each.exec(content)) != null){
+          let contenidoFinal = '',
+            execInterno = regexInterno.exec(execEach[2]);
+          for (let i = 0; i < array.length; i++) {
+            contenidoFinal += execInterno[1]+array[i]+execInterno[2]+'\n';
           }
-          //Lo que hay despues del <option> es matcharray[4]
-          textoFinal += matchArray[4];
-      }
-      content = content.replace(reKeyWithTagsBig, textoFinal);
-      textoFinal = "";
-      continue;
-    }
+          contenidoFinal = execEach[1]+contenidoFinal+execEach[3];
+          content = content.replace(each, contenidoFinal);
+        }
+      break;
 
-    if (reArray.test(content)) {
-      //Al ejecutar el .test el index se mueve al ser un buscador global /g con lo que al hacer el exec,
-      //el content ya se ha pasado hasta el final
-      let contenidoMatch = reArray.exec(content)[1];
-      let array = dataObject[propiedad];
-      let contenidoFinal = '';
-      //Para cada ocurrencia del array crear texto
-      //[{objetoProducto1},{objetoProducto2},{objetoProducto3}]
-      //1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
-      //2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html
-      //3. Guardar cada html con su valor reemplazado en una variable contenidoFinal
-      //4. Reemplazar la ocurrencia de {{array propiedad}} con el contenidoFinal
-      for (let i = 0; i < array.length; i++) {
-          let objetoProducto = array[i];
-          let contenidoProducto = contenidoMatch;
-          for (let propiedadProducto in objetoProducto) {
-              let newRe = new RegExp("{{" + propiedadProducto + "}}");
-              let match = '';
-              while((match = newRe.exec(contenidoProducto)) != null){
-                contenidoProducto = contenidoProducto.replace(newRe, objetoProducto[propiedadProducto]);
-              }
+      case 'array':
+        /*
+        Para: array de objetos con muchas keys [{data: data}, {data: data}].
+        Funcionamiento:
+          1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
+          2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html
+          3. Guardar cada html con su valor reemplazado en una variable contenidoFinal
+          4. Reemplazar la ocurrencia de {{array propiedad}} con el contenidoFinal        
+        */
+        let reArray = new RegExp("{{array "+propiedad+"}}([\\s\\S]*?){{\\/array}}"),
+          contenidoMatch = reArray.exec(content)[1],
+          arrayObjetos = dataObject[propiedad],
+          contenidoFinal = '';
+        for (let i = 0; i < arrayObjetos.length; i++) {
+            let objetoProducto = arrayObjetos[i],
+              contenidoProducto = contenidoMatch;
+            for (let propiedadProducto in objetoProducto) {
+                let newRe = new RegExp("{{"+propiedadProducto+"}}"),
+                  match = '';
+                while((match = newRe.exec(contenidoProducto)) != null){
+                  contenidoProducto = contenidoProducto.replace(newRe, objetoProducto[propiedadProducto]);
+                }
+            }
+            contenidoFinal += contenidoProducto;
+        }
+        content = content.replace(reArray, contenidoFinal);
+      break;
+
+      case 'loopKey':
+        let loopObject = dataObject[propiedad];
+        let reKeyWithTagsBig = new RegExp("^(.*){{loopKey " + propiedad + "}}(.*)([\\s\\S]*){{\\/loopKey " + propiedad + "}}.*$", "gm");
+        let reArrayWithTags = new RegExp("^([\\s\\S]*)[\\n|\\r](.*){{loopArray " + propiedad + "}}(.*)([\\s\\S]*)$", "gm");
+        let matchKeyBig;
+        let matchArray;
+        let textoFinal = "";
+        matchKeyBig = reKeyWithTagsBig.exec(content);
+        matchArray = reArrayWithTags.exec(matchKeyBig[3]);
+        for (let key in loopObject) {
+            textoFinal += matchKeyBig[1] + key + matchKeyBig[2] + '\n';
+            //Lo que hay antes del <option> es matcharray[1]
+            textoFinal += matchArray[1];
+            for (let i = 0; i < loopObject[key].length; i++) {
+                let itemArray = matchArray[2] + loopObject[key][i] + matchArray[3] + "\n";
+                textoFinal += itemArray;
+            }
+            //Lo que hay despues del <option> es matcharray[4]
+            textoFinal += matchArray[4];
+        }
+        content = content.replace(reKeyWithTagsBig, textoFinal);
+        textoFinal = "";
+      break;
+
+      case 'object':
+        let reObject = new RegExp("{{object "+propiedad+" [0-9]}}");
+
+        if(modificadorPropiedadAdicional === undefined){
+          let reObjectFull = new RegExp("(.*){{object "+propiedad+"}}(.*)");
+          let loopObject = dataObject[propiedad],
+            textoFinal = "",
+            match = reObjectFull.exec(content);
+
+          for (let key in loopObject) {
+            if (match != null && loopObject[key] != undefined) textoFinal += match[1] + loopObject[key] + match[2] + "\n";
           }
-          contenidoFinal += contenidoProducto;
-      }
-      content = content.replace(reArray, contenidoFinal);
-      continue;
-    }
-    
-    if (reSimpleArray.test(content)) {
-      //Al ejecutar el .test el index se mueve al ser un buscador global /g con lo que al hacer el exec,
-      //el content ya se ha pasado hasta el final
-      let contenidoMatch = reArray.exec(content);
-      let array = dataObject[propiedad];
-      let contenidoFinal = '';
-      //Para cada ocurrencia del array crear texto
-      //[{objetoProducto1},{objetoProducto2},{objetoProducto3}]
-      //1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
-      //2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html
-      //3. Guardar cada html con su valor reemplazado en una variable contenidoFinal
-      //4. Reemplazar la ocurrencia de {{array propiedad}} con el contenidoFinal
-      let newRe = new RegExp("(.*){{#simpleArray#}}(.*)");
-      let insideArray = newRe.exec(content);
-      for (let i = 0; i < array.length; i++) {
-        contenidoFinal += insideArray[1]+array[i]+insideArray[2];
-      }
-      contenidoFinal = contenidoMatch[1]+contenidoFinal+contenidoMatch[2];
-      content = content.replace(reSimpleArray, contenidoFinal);
-      continue;
+          content = content.replace(reObjectFull, textoFinal);
+        }else{
+          let key = modificadorPropiedadAdicional;
+          content = content.replace(reObject, dataObject[propiedad][key]);
+        }
+      break;
+
+      case 'if':
+        //El reif solo acepta un booleano y tiene que estar en una nueva linea
+        let reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
+          reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
+        if (reIfElse.test(content)) {
+          reIfElse.lastIndex = 0;
+          //Hacemos un while para todas las instancias identicas
+          let contenidoIfElse = '',
+            valorPropiedad = dataObject[propiedad];
+
+          while((contenidoIfElse = reIfElse.exec(content)) != null){
+            if (valorPropiedad === true) {
+              content = content.replace(reIfElse, contenidoIfElse[1]);
+            } else {
+              content = content.replace(reIfElse, contenidoIfElse[2]);          
+            }
+          }
+        }else if (reIfClassic.test(content)) {
+          reIfClassic.lastIndex = 0;
+          let contenidoIf = '',
+            valorPropiedad = dataObject[propiedad];
+          while((contenidoIf = reIfClassic.exec(content)) != null){
+            let contenidoHTML = '';
+            if (valorPropiedad === true) {
+              contenidoHTML = contenidoIf[1]+contenidoIf[2]+contenidoIf[3];
+              content = content.replace(reIfClassic, contenidoHTML);
+            } else {
+              content = content.replace(reIfClassic, '');
+            }
+          }
+        }
+      break;
     }
   }
 

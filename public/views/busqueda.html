@@ -24,7 +24,7 @@
 	</div>
 
     <div id="contenedor-principal">
-		{{if isProductos}}
+		{{#if isProductos 1}}
 	    	<div class="mensaje-cargando">
 	    		<div class="big-spinner"></div>
 	    		<h3 class="mensaje-cargando-pagina">Cargando productos...</h3>
@@ -32,16 +32,15 @@
 		    <div id="header-productos">
 		        <button id="responsive-filters">Filtrar resultados</button>
 		    	<h2>Resultados de buscar: <b>{{busqueda}}</b></h2>
-		    	{{if resultadoUnico}}
+		    	{{#if resultadoUnico 1}}
 					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} producto.</i>
-				{{else resultadoUnico}}
+				{{else resultadoUnico 1}}
 					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} productos.</i>
-				{{/if resultadoUnico}}
+				{{/if resultadoUnico 1}}
 
-				{{if hayPaginas}}
+				{{#if hayPaginas 1}}
 					<div class="paginacion">{{paginas}}</div>
-				{{else hayPaginas}}
-				{{/if hayPaginas}}
+				{{/if hayPaginas 1}}
 			</div>
 	    	{{array productos}}
 			<div class="producto">
@@ -51,16 +50,15 @@
 				<a href="{{categoria}}" class="categoria-producto">{{categoria}}</a>
 	    	</div>
 	    	{{/array}}    
-			{{if hayPaginas}}
+			{{#if hayPaginas 2}}
 				<div class="paginacion">{{paginas}}</div>
-			{{else hayPaginas}}
-			{{/if hayPaginas}}
-    	{{else isProductos}}
+			{{/if hayPaginas 2}}
+    	{{else isProductos 1}}
     		<div class="mensaje-error">
 	    		<h3>{{errorMessage}}</h3>
 	    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
 	    	</div>
-    	{{/if isProductos}}
+    	{{/if isProductos 1}}
 	</div>
 
 	{{> footer}}

@@ -28,7 +28,8 @@ function renderData(content, dataObject, cb) {
   let tag = /{{(?!else)([^>|\/].*?)}}/,
       selectedTag = '';
 
-  while ((selectedTag = tag.exec(content)) !== null) {
+  while (selectedTag = tag.exec(content)) {
+    console.log(selectedTag[1])
     selectedTag = selectedTag[1];
     let propiedad = selectedTag;
     let modificadorPropiedad = undefined;
@@ -156,37 +157,105 @@ function renderData(content, dataObject, cb) {
         }
       break;
 
-      case 'if':
-        //El reif solo acepta un booleano y tiene que estar en una nueva linea
-        let reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
-          reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
-        if (reIfElse.test(content)) {
-          reIfElse.lastIndex = 0;
-          //Hacemos un while para todas las instancias identicas
-          let contenidoIfElse = '',
-            valorPropiedad = dataObject[propiedad];
+      // case 'if':
+      //   //El reif solo acepta un booleano y tiene que estar en una nueva linea
+      //   let reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
+      //     reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
+      //   if (reIfElse.test(content)) {
+      //     reIfElse.lastIndex = 0;
+      //     //Hacemos un while para todas las instancias identicas
+      //     let contenidoIfElse = '',
+      //       valorPropiedad = dataObject[propiedad];
 
-          while((contenidoIfElse = reIfElse.exec(content)) != null){
-            if (valorPropiedad === true) {
-              content = content.replace(reIfElse, contenidoIfElse[1]);
-            } else {
-              content = content.replace(reIfElse, contenidoIfElse[2]);          
-            }
+      //     while(contenidoIfElse = reIfElse.exec(content)){
+      //       if (valorPropiedad === true) {
+      //         content = content.replace(reIfElse, contenidoIfElse[1]);
+      //       } else {
+      //         content = content.replace(reIfElse, contenidoIfElse[2]);          
+      //       }
+      //     }
+      //   }else if (reIfClassic.test(content)) {
+      //     reIfClassic.lastIndex = 0;
+      //     let contenidoIf = '',
+      //       valorPropiedad = dataObject[propiedad];
+      //     while(contenidoIf = reIfClassic.exec(content)){
+      //       let contenidoHTML = '';
+      //       if (valorPropiedad === true) {
+      //         contenidoHTML = contenidoIf[1]+contenidoIf[2]+contenidoIf[3];
+      //         content = content.replace(reIfClassic, contenidoHTML);
+      //       } else {
+      //         content = content.replace(reIfClassic, '');
+      //       }
+      //     }
+      //   }
+      // break;
+
+      case 'if':
+        /*
+          If inline
+          Pasos:
+           1. Extraemos la línea del if y comprobamos si es if else o un if normal.
+           2. Sustituimos el contenido usando el if correspondiente. Si no se cumple y es if solo, entonces solo eliminar.
+        */
+        let linea = new RegExp("(.*){{if "+propiedad+"}}(.*)"),
+          inlineIf = new RegExp("(.*){{if "+propiedad+"}}(.*){{\\/if "+propiedad+"}}(.*)"),
+          inlineIfElse = new RegExp("(.*){{if "+propiedad+"}}(.*){{else "+propiedad+"}}(.*){{\\/if "+propiedad+"}}(.*)"),
+          contenidoLinea = '';
+
+        contenidoLinea = linea.exec(content)[0];
+        //1
+        if(inlineIfElse.test(contenidoLinea)){
+          let contenidoLineaIfElse = inlineIfElse.exec(contenidoLinea),
+            resultHTML = '';
+            
+          if(dataObject[propiedad] === true){
+            resultHTML = contenidoLineaIfElse[1]+contenidoLineaIfElse[2]+contenidoLineaIfElse[4];
+            content = content.replace(inlineIfElse, resultHTML);
+          }else{
+            resultHTML = contenidoLineaIfElse[1]+contenidoLineaIfElse[3]+contenidoLineaIfElse[4];
+            content = content.replace(inlineIfElse, resultHTML);
           }
-        }else if (reIfClassic.test(content)) {
-          reIfClassic.lastIndex = 0;
-          let contenidoIf = '',
-            valorPropiedad = dataObject[propiedad];
-          while((contenidoIf = reIfClassic.exec(content)) != null){
-            let contenidoHTML = '';
-            if (valorPropiedad === true) {
-              contenidoHTML = contenidoIf[1]+contenidoIf[2]+contenidoIf[3];
-              content = content.replace(reIfClassic, contenidoHTML);
-            } else {
-              content = content.replace(reIfClassic, '');
-            }
+        }else{
+          let contenidoLineaIf = inlineIf.exec(contenidoLinea),
+            resultHTML = '';
+
+          if(dataObject[propiedad] === true){
+            resultHTML = contenidoLineaIf[1]+contenidoLineaIf[2]+contenidoLineaIf[3];
+            content = content.replace(inlineIf, resultHTML);
+          }else{
+            content = content.replace(inlineIf, '');
           }
         }
+      break;
+
+      case '#if':
+        /*
+          If de bloque para casos de gran contenido.
+          Condiciones:
+          - Debe tener el mismo nombre de propiedad en el if propiedad, else propiedad y en /if propiedad.
+          - El modificadorPropiedadAdicional debe ser único y obligatorio.
+          Pasos:
+          - Renderizar los ifs según su nombre extra.
+        */
+        let regexIf = new RegExp(`{{#if ${propiedad} ${modificadorPropiedadAdicional}}}([\\s\\S]*){{\\/if ${propiedad} ${modificadorPropiedadAdicional}}}`),
+          regexIfElse = new RegExp(`{{#if ${propiedad} ${modificadorPropiedadAdicional}}}([\\s\\S]*?){{else ${propiedad} ${modificadorPropiedadAdicional}}}([\\s\\S]*?){{\\/if ${propiedad} ${modificadorPropiedadAdicional}}}`);
+
+        if(regexIfElse.test(content)){
+          let regexInterior = regexIfElse.exec(content);
+          if(dataObject[propiedad] === true){
+            content = content.replace(regexIfElse, regexInterior[1]);
+          }else{
+            content = content.replace(regexIfElse, regexInterior[2]);
+          }
+        }else{
+          let regexInterior = regexIf.exec(content);
+          if(dataObject[propiedad] === true){
+            content = content.replace(regexIf, regexInterior[1]);
+          }else{
+            content = content.replace(regexIf, '');
+          }
+        }
+
       break;
     }
   }
@@ -204,7 +273,7 @@ function renderData(content, dataObject, cb) {
       let partiales = [];
       let partialNombre = '';
       //Creamos un array con los nombres de los includes a poner
-      while((partialNombre = reIncludePartial.exec(content)) != null){
+      while(partialNombre = reIncludePartial.exec(content)){
         partiales.push(partialNombre[1]);
       }
       let index = 0;

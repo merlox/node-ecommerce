@@ -29,7 +29,6 @@ function renderData(content, dataObject, cb) {
       selectedTag = '';
 
   while (selectedTag = tag.exec(content)) {
-    console.log(selectedTag[1])
     selectedTag = selectedTag[1];
     let propiedad = selectedTag;
     let modificadorPropiedad = undefined;
@@ -157,39 +156,6 @@ function renderData(content, dataObject, cb) {
         }
       break;
 
-      // case 'if':
-      //   //El reif solo acepta un booleano y tiene que estar en una nueva linea
-      //   let reIfElse = new RegExp("{{if "+propiedad+"}}([\\s\\S]*?){{else "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}", "g"),
-      //     reIfClassic = new RegExp("(.*){{if "+propiedad+"}}([\\s\\S]*?){{\\/if "+propiedad+"}}(.*)", "g");
-      //   if (reIfElse.test(content)) {
-      //     reIfElse.lastIndex = 0;
-      //     //Hacemos un while para todas las instancias identicas
-      //     let contenidoIfElse = '',
-      //       valorPropiedad = dataObject[propiedad];
-
-      //     while(contenidoIfElse = reIfElse.exec(content)){
-      //       if (valorPropiedad === true) {
-      //         content = content.replace(reIfElse, contenidoIfElse[1]);
-      //       } else {
-      //         content = content.replace(reIfElse, contenidoIfElse[2]);          
-      //       }
-      //     }
-      //   }else if (reIfClassic.test(content)) {
-      //     reIfClassic.lastIndex = 0;
-      //     let contenidoIf = '',
-      //       valorPropiedad = dataObject[propiedad];
-      //     while(contenidoIf = reIfClassic.exec(content)){
-      //       let contenidoHTML = '';
-      //       if (valorPropiedad === true) {
-      //         contenidoHTML = contenidoIf[1]+contenidoIf[2]+contenidoIf[3];
-      //         content = content.replace(reIfClassic, contenidoHTML);
-      //       } else {
-      //         content = content.replace(reIfClassic, '');
-      //       }
-      //     }
-      //   }
-      // break;
-
       case 'if':
         /*
           If inline
@@ -207,7 +173,7 @@ function renderData(content, dataObject, cb) {
         if(inlineIfElse.test(contenidoLinea)){
           let contenidoLineaIfElse = inlineIfElse.exec(contenidoLinea),
             resultHTML = '';
-            
+
           if(dataObject[propiedad] === true){
             resultHTML = contenidoLineaIfElse[1]+contenidoLineaIfElse[2]+contenidoLineaIfElse[4];
             content = content.replace(inlineIfElse, resultHTML);

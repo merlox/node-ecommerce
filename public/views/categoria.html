@@ -5,7 +5,6 @@
 	<link rel="stylesheet" type="text/css" href="../css/busqueda.css">
 	{{> header}}
 </head>
-<!--//TODO pagina de búsqueda de productos-->
 <body>
 
 	<div class="overlay"></div>
@@ -24,7 +23,7 @@
 	</div>
 
     <div id="contenedor-principal">
-		{{if isProductos}}
+		{{#if isProductos 1}}
 	    	<div class="mensaje-cargando">
 	    		<div class="big-spinner"></div>
 	    		<h3 class="mensaje-cargando-pagina">Cargando productos...</h3>
@@ -32,16 +31,13 @@
 		    <div id="header-productos">
 		        <button id="responsive-filters">Filtrar resultados</button>
 		    	<h2><b>{{categoria}}</b></h2>
-		    	{{if resultadoUnico}}
+		    	{{#if resultadoUnico 1}}
 					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} producto.</i>
-				{{else resultadoUnico}}
+				{{else resultadoUnico 1}}
 					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} productos.</i>
-				{{/if resultadoUnico}}
+				{{/if resultadoUnico 1}}
 
-				{{if hayPaginas}}
-					<div class="paginacion">{{paginas}}</div>
-				{{else hayPaginas}}
-				{{/if hayPaginas}}
+				{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
 			</div>
 	    	{{array productos}}
 			<div class="producto">
@@ -51,16 +47,13 @@
 				<a href="{{categoria}}" class="categoria-producto">{{categoria}}</a>
 	    	</div>
 	    	{{/array}}    
-			{{if hayPaginas}}
-				<div class="paginacion">{{paginas}}</div>
-			{{else hayPaginas}}
-			{{/if hayPaginas}}
-    	{{else isProductos}}
+			{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
+    	{{else isProductos 1}}
     		<div class="mensaje-error">
 	    		<h3>{{errorMessage}}</h3>
 	    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
 	    	</div>
-    	{{/if isProductos}}
+    	{{/if isProductos 1}}
 	</div>
 
 	{{> footer}}

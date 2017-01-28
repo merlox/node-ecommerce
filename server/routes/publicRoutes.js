@@ -203,7 +203,9 @@ routes.get('/', (req, res) => {
   let dataObject = {
     'isError': null,
     'error': null,
-    'sliderImages': null
+    'sliderImages': null,
+    'loggedState': '/login',
+    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
   };
   functions.getSlider(true, (err, images) => {
     if(err){
@@ -211,9 +213,21 @@ routes.get('/', (req, res) => {
       dataObject.error = err;
     }
     dataObject.sliderImages = images;
-    render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
-      if(err) res.send(err);
-      res.send(data);
+
+    functions.getLoggedState(req, state => {
+
+      if(state === 'logged'){
+        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+        dataObject.loggedState = '/micuenta';
+      }else if(state === 'admin'){
+        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+        dataObject.loggedState = '/admin';
+      }
+
+      render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
+        if(err) res.send(err);
+        res.send(data);
+      });
     });
   });
 });

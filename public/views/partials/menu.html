@@ -22,12 +22,10 @@
 	</a>
 	<table id="productos-cesta"></table>
 	<div id="contenedor-login-dropdown">
-		<a id="usuario" href="/login">
-			iniciar sesión
-		</a>
+		<a id="usuario" href="{{loggedState}}">{{loggedStateHTML}}</a>
 		<span id="triangulo-up-sesion"></span>
 		<ul id="menu-sesion">
-			<a href="/mi-cuenta"><li id="session-first" onmouseenter="cambiarColorFlechaDepartamentos()" onmouseleave="cambiarColorFlechaDepartamentos()">
+			<a href="{{loggedState}}"><li id="session-first" onmouseenter="cambiarColorFlechaDepartamentos()" onmouseleave="cambiarColorFlechaDepartamentos()">
 				mi cuenta
 			</li></a>
 			<a href="/close-session"><li id="session-last">cerrar sesión</li></a>

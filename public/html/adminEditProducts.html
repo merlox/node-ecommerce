@@ -1,28 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>Admin edit products</title>
+  <meta charset="utf-8">
+  <title>Admin edit products</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../css/status.css" media="screen" title="no title" charset="utf-8">
-  <link rel="stylesheet" href="../css/adminMenu.css" media="screen" title="no title">
-  <link rel="stylesheet" href="../css/adminEdit.css">
-  <link rel="stylesheet" href="../css/adminDashboard.css" media="screen" title="no title">
+  <link rel="stylesheet" href="../css/status.css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="../css/admin/adminMenu.css" media="screen" title="no title">
+  <link rel="stylesheet" href="../css/admin/adminEdit.css">
+  <link rel="stylesheet" href="../css/admin/adminDashboard.css" media="screen" title="no title">
 </head>
 <body>
 
-  <div id="overlay-black"></div>
-	<h5 id="status"></h5>
-
-    <div class="main-menu">
-      <button id="contenedor-burger" class="main-menu-item">
-        <img id="icono-menu" src="../images/menu.png">
-      </button>
-      <a id="dashboard-button" href="/admin/dashboard">Dashboard</a>
-      <a id="see-products-button" href="/admin/edit-products">Edit Products</a>
-      <a id="edit-index" href="/admin/edit-index">Edit index</a>
-      <a id="close-session" href="/close-session">Exit admin</a>
-    </div>
+  {{> adminMenu}}
 
     <div id="contenedor-total">
 	    
@@ -106,12 +95,11 @@
 
     <script src="../js/functions.js" charset="utf-8"></script>
     <script src="../js/status.js" charset="utf-8"></script>
-    <script src="../js/upload.js" charset="utf-8"></script>
-    <script src="../js/atributo.js" charset="utf-8"></script>
-    <script src="../js/categoria.js" charset="utf-8"></script>
-    <script src="../js/permalink.js" charset="utf-8"></script>
-    <script src="../js/adminDashboard.js" charset="utf-8"></script>
-    <script src="../js/editProducts.js"></script>
+    <script src="../js/admin/upload.js" charset="utf-8"></script>
+    <script src="../js/admin/atributo.js" charset="utf-8"></script>
+    <script src="../js/admin/categoria.js" charset="utf-8"></script>
+    <script src="../js/admin/permalink.js" charset="utf-8"></script>
+    <script src="../js/admin/adminEditProducts.js"></script>
 
 </body>
 </html>

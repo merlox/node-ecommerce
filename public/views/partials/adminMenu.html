@@ -1,0 +1,27 @@
+<div id="overlay-black"></div>
+<h5 id="status"></h5>
+
+<div class="main-menu">
+	<button id="contenedor-burger" class="main-menu-item">
+		<img id="icono-menu" src="../images/menu.png">
+	</button>
+	<a id="dashboard-button" href="/admin/dashboard">Dashboard</a>
+	<a id="see-products-button" href="/admin/edit-products">Edit Products</a>
+	<a id="edit-index" href="/admin/edit-index">Edit index</a>
+	<a id="close-session" href="/close-session">Exit admin</a>
+</div>
+
+<script type="text/javascript">
+	if(window.location.pathname == '/admin/dashboard'){
+		document.getElementById('dashboard-button').className = "active-menu";
+		document.getElementById('contenedor-burger').style.display = "none";
+	}
+
+	if(window.location.pathname == '/admin/edit-products')
+		document.getElementById('see-products-button').className = "active-menu";
+
+	if(window.location.pathname == '/admin/edit-index'){
+		document.getElementById('edit-index').className = "active-menu";
+		document.getElementById('contenedor-burger').style.display = "none";
+	}
+</script>

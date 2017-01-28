@@ -9,7 +9,6 @@ SLIDER
 	position: relative;
 }
 #contenedor-imagenes-slider{
-	display: none;
 	position: relative;
 }
 #flecha-izquierda-slider{
@@ -45,6 +44,11 @@ SLIDER
 	background-color: rgba(0, 0, 0, 0.1);
 }
 .imagen-slider{
+	position: relative;
+	float: left;
+}
+.imagen-slider:not(:first-child){
+	display: none;
 	position: relative;
 	float: left;
 }

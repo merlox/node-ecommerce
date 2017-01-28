@@ -16,10 +16,9 @@ let intervaloMiniSliderVendidos,
 	tamañoWidgets = 1;
 
 window.addEventListener('load', () => {
-	httpGet('/api/get-slider', (result) => {
-		colocarImagenesSlider(result);
-		intervaloCambiarImagenes();
-	});
+
+	centrarImagenesSlider();
+
 	httpGet('/api/get-mas-vendidos', (results) => {
 		let resultados = JSON.parse(results);
 		colocarMasVendidos(resultados);
@@ -44,23 +43,18 @@ MAIN SLIDER
 
 */
 //Para colocar las imagenes pasandole el nombre en json
-function colocarImagenesSlider(jsonData){
-	arrayImagenes = JSON.parse(jsonData);
-	let contenedorImagenes = q('#contenedor-imagenes-slider');
+function centrarImagenesSlider(){
+	let contenedorImagenes = q('#contenedor-imagenes-slider'),
+		image = q('.imagen-slider');
 	indexImagenActiva = 0;
-	let htmlImages = '';
-	for(let i = 0; i < arrayImagenes.length; i++){
-		htmlImages += `<img class="imagen-slider" src="../public-uploads/${arrayImagenes[i]}">`;
-	}
-	//Cargamos una imagen para calcular el alineador y colocar la imagen en el centro de la pantalla
-	loadImage(`../public-uploads/${arrayImagenes[0]}`).then((image) => {
-		contenedorImagenes.style.width = (image.naturalWidth * arrayImagenes.length + 'px');
-		alineador = (image.naturalWidth - window.outerWidth) / 2;
-		contenedorImagenes.style.transform = `translateX(-${alineador}px)`;
-		contenedorImagenes.innerHTML = htmlImages;
-		contenedorImagenes.style.display = 'block';
-	}).catch((image) => {
-		console.log('Error loading image: '+image.src);
+	arrayImagenes = qAll('.imagen-slider');
+	//Colocar la imagen en el centro de la pantalla
+	contenedorImagenes.style.width = (image.naturalWidth * arrayImagenes.length + 'px');
+	alineador = (image.naturalWidth - window.outerWidth) / 2;
+	contenedorImagenes.style.transform = `translateX(-${alineador}px)`;
+	intervaloCambiarImagenes();
+	arrayImagenes.forEach(img => {
+		img.style.display = 'block';
 	});
 };
 //Para poner la siguiete imagen a la derecha

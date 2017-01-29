@@ -11,29 +11,77 @@ GENERALES
     color: grey;
 }
 .contenedor-mensaje-carga{
-    display: flex;
+    display: none;
     padding: 30px;
 }
 .contenedor-mensaje-carga h3{
     margin-left: 20px;
 }
+.contenedor-mensaje-error{
+    display: none;
+}
+.error{
+    text-align: center;
+    color: tomato;
+}
 /*
 
-TABLA FACTURAS
+WIDGET FACTURAS
 
 */
+#filtros-facturas{
+    display: none;
+    margin: 0 10px;
+    border: 1px solid lightgrey;
+    width: 100%;
+    padding: 10px;
+    padding-bottom: 0;
+    /*Para juntar los bordes de ambos componentes*/
+    position: relative;
+    top: 1px;
+}
+#contenedor-facturas{
+    max-width: 1400px
+}
 #tabla-facturas{
-    margin: 10px;
+    display: none;
+    margin: 0 10px;
     border-collapse: separate;
     border-spacing: 0px;
-    border: 1px solid whitesmoke;
-    border-radius: 10px;
+    border: 1px solid lightgrey;
+    width: 100%;
 }
-th, td{
+th{
+    padding: 5px;    
+}
+td{
     border: 1px solid rgba(0,0,0,0.1);
-    padding: 10px;
+    padding: 5px;
     max-width: 300px;
+}
+tr:nth-child(even){
+    background-color: whitesmoke;
 }
 .lista-productos-comprados{
     list-style-type: upper-roman;
+}
+#paginacion-footer-facturas{
+    display: none;
+    margin: 0 10px;
+    border: 1px solid lightgrey;
+    width: 100%;
+    padding: 10px;
+    padding-top: 0;
+    /*Para juntar los bordes de ambos componentes*/
+    position: relative;
+    bottom: 1px;
+}
+.button-pagina{
+    background-color: lightgrey;
+    padding: 20px;
+    display: inline-block;
+}
+.pagina-activa{
+    background-color: #020045;
+    color: white;
 }

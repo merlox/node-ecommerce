@@ -780,11 +780,12 @@ function payProduct(req, cb){
             'nombreApellidos': direccion.nombreApellidos,
             'cantidad': charge.amount,
             'estaProcesado': charge.captured,
+            'estaPagado': charge.paid,
+            'estaEnviado': false,
             'fecha': charge.created,
             'moneda': charge.currency,
             'customer': charge.customer,
             'productos': metadataObject,
-            'estaPagado': charge.paid,
             'telefono': charge.receipt_number,
             'direccion': direccion,
             'terminacionTarjeta': charge.source.last4,
@@ -903,7 +904,7 @@ function addProductoCesta(req, cb){
   }
   //Si no existe ese producto en la cesta, ponerlo como cantidad 1
   if(!(productoCesta in req.session.cesta)){
-    req.session.cesta[productoCesta] = cantidadProductoCesta;
+    req.session.cesta[productoCesta] = parseInt(cantidadProductoCesta);
   }else{
     //Si existe subirle la cantidad
     req.session.cesta[productoCesta] = parseInt(req.session.cesta[productoCesta]) + parseInt(cantidadProductoCesta);
@@ -919,16 +920,18 @@ function addProductoCesta(req, cb){
 };
 function cambiarCantidadCesta(req, cb){
   console.log('CambiarCantidadCesta, functions.js');
-  let producto = req.body.data.producto;
-  let cantidad = req.body.data.cantidad;
+  let producto = req.body.data.producto,
+    cantidad = req.body.data.cantidad;
   for(let productoCesta in req.session.cesta){
-    if(productoCesta == producto){
+    if(productoCesta === producto){
       if(cantidad <= 0)
         delete req.session.cesta[productoCesta];  
       else
         req.session.cesta[productoCesta] = cantidad;
     }
   }
+  //Al ser una POST hay que guardar la session
+  req.session.save();
   if(req.session.isLogged){
     saveCestaUser(req.session.cesta, req.session.username, (err) => {
       if(err) return cb(err);
@@ -965,11 +968,20 @@ function getLoggedState(req, cb){
   }
 };
 //Conseguir las facturas de las compras realizadas por los clientes
-function getFacturas(cb){
+function getFacturas(ppp, pagina, cb){
   console.log('Facturas, functions.js');
-  db.collection('facturas').find({}).toArray((err, facturas) => {
+  db.collection('facturas').find({}).limit(ppp).skip((pagina-1)*ppp).toArray((err, facturas) => {
     if(err) return cb('Error cargando las facturas.', null);
     cb(null, facturas);
+  });
+};
+//Conseguir el número de páginas totales para las facturas
+function getPaginacionFacturas(ppp, cb){
+  console.log('GetPaginacionFacturas, functions.js');
+  db.collection('facturas').count((err, count) => {
+    if(err) return cb('Error, no se pudo conseguir las páginas totales.', null);
+    //Cada página son 20 productos por defecto ppp es productosPorPagina
+    cb(null, Math.ceil(count/ppp));
   });
 };
 
@@ -1004,3 +1016,4 @@ exports.buscarProductosCategoria = buscarProductosCategoria;
 exports.getPaginacionCategoria = getPaginacionCategoria;
 exports.buscarFiltrarProductosCategoria = buscarFiltrarProductosCategoria;
 exports.getFacturas = getFacturas;
+exports.getPaginacionFacturas = getPaginacionFacturas;

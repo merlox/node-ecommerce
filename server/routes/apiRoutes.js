@@ -206,7 +206,7 @@ api.get('/get-cesta', (req, res) => {
     functions.getCesta(req.session.username, (err, cesta) => {
       if(err){
         console.log(err);
-        responseObject.error = 'Could not load your products, try again.';
+        responseObject.error = err;
         res.send(responseObject);
       }else{
         responseObject.cesta = cesta;
@@ -219,7 +219,7 @@ api.get('/get-cesta', (req, res) => {
       functions.crearCesta(req.session.cesta, (err, cesta) => {
         if(err){
           console.log(err);
-          responseObject.error = 'Could not load your products, try again.';
+          responseObject.error = err;
           res.send(responseObject);
         }else{
           responseObject.cesta = cesta;
@@ -233,7 +233,7 @@ api.get('/get-cesta', (req, res) => {
 });
 api.post('/change-cantidad-cesta', (req, res) => {
   functions.cambiarCantidadCesta(req, (err) => {
-    if(err) return res.send('Error updating cart');
+    if(err) return res.send('Error actualizando la cesta.');
     res.send(null);
   });
 });
@@ -346,9 +346,24 @@ api.get('/facturas', (req, res) => {
     'error': null,
     'facturas': null
   };
-  functions.getFacturas((err, arrayFacturas) => {
+  let productosPorPagina = req.query.ppp ? parseInt(req.query.ppp) : 20,
+    pagina = req.query.pag ? parseInt(req.query.pag) : 1;
+  functions.getFacturas(productosPorPagina, pagina, (err, arrayFacturas) => {
     if(err) dataObject.error = err;
     dataObject.facturas = arrayFacturas;
+    res.send(dataObject);
+  });
+});
+
+api.get('/get-paginacion-facturas', (req, res) => {
+  let dataObject = {
+    'error': null,
+    'paginasTotales': null
+  }
+  let productosPorPagina = req.query.ppp ? parseInt(req.query.ppp) : 20;
+  functions.getPaginacionFacturas(productosPorPagina, (err, paginasTotales) => {
+    if(err) dataObject.error = err;
+    dataObject.paginasTotales = paginasTotales;
     res.send(dataObject);
   });
 });

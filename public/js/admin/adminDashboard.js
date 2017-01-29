@@ -1,6 +1,47 @@
+let paginaFacturas = 1,
+	productosPorPagina = 20;
+
+mostrarMensajeRandomCarga();
+//TODO verificar que el usuario pone todos los datos de la dirección y que son correctos
+/*
+1.paginacion
+2.filtrar
+3.verificar en cesta.html que pone los datos de la direccion y son correctos
+4.mostrar mensajes de error en la página de compra cesta.html
+5.crear acciones posibles en este widget
+6.crear widget de chat para comunicarme con cada comprador
+*/
 window.addEventListener('load', () => {
+	generarFacturas();
+});
+
+//Muestra un mensaje random de carga
+function mostrarMensajeRandomCarga(){
+	let arrayMensajesDeCarga = [
+		'Cargando datos de compra...',
+		'Procesando información de productos...',
+		'Cargando datos de clientes...',
+		'Cargando facturas recientes...',
+		'Generando información de facturas...',
+		'Solicitando información al servidor sobre las facturas...',
+		'Descargando datos de pedidos...',
+		'Realizando una consulta al servidor sobre las facturas...',
+		'Cargando datos de compras recientes...',
+		'Cargando facturas de compradores...'
+	];
+	let indexRandom = Math.abs(Math.ceil((Math.random()*10)-1));
+	q('.contenedor-mensaje-carga h3').innerHTML = arrayMensajesDeCarga[indexRandom];
+	q('.contenedor-mensaje-carga').style.display = 'flex';
+};
+
+//Crea la tabla del widget de facturas para ver quién ha comprado qué y el estado de su pedido
+function generarFacturas(){
+	crearPaginacionFacturas();
 	//Solicitar el estado de las compras de los productos, con paginación.
-	httpGet('/api/facturas', dataObject => {
+	httpGet(`/api/facturas?pag=${paginaFacturas}&ppp=${productosPorPagina}`, dataObject => {
+
+		q('#tabla-facturas').style.display = 'block';
+
 		dataObject = JSON.parse(dataObject);
 		if(dataObject.error) return q('#tabla-facturas').innerHTML = dataObject.error;
 
@@ -8,9 +49,9 @@ window.addEventListener('load', () => {
 				<th>ID</th>
 				<th>Comprador</th>
 				<th>Productos</th>
-				<th>Precio total</th>
-				<th>Fecha de compra</th>
-				<th>Forma de pago</th>
+				<th>Total</th>
+				<th>Fecha</th>
+				<th>Pago</th>
 				<th>Dirección</th>
 				<th>Estado</th>
 				<th>Acciones</th>
@@ -45,9 +86,9 @@ window.addEventListener('load', () => {
         	let fecha = new Date(objectoFactura.fecha*1000).toISOString(),
         		fechaHorario = fecha.split('T')[0].split('-'),
         		diaDeLaSemana = new Date(objectoFactura.fecha*1000).toString().substring(0, 4),
-        		fechaAño = fechaHorario[2],
+        		fechaAño = fechaHorario[0],
         		fechaMes = fechaHorario[1],
-        		fechaDia = fechaHorario[0],
+        		fechaDia = fechaHorario[2],
         		fechaHoras = fecha.split('T')[1].substring(0, 8);
         	tablaHTML += `<td> ${diaDeLaSemana}
         		<br/>${fechaDia}/${fechaMes}/${fechaAño} 
@@ -66,7 +107,10 @@ window.addEventListener('load', () => {
         		<br/><span class="secundario">Teléfono:</span> ${objectoFactura.direccion.telefono ? objectoFactura.direccion.telefono : '-'}</td>`;
         	//Estado
         	tablaHTML += `<td><span class="secundario">Pagado:</span> ${objectoFactura.estaPagado ? 'Si' : 'No'}
-        		<br/><span class="secundario">Procesado:</span> ${objectoFactura.estaProcesado ? 'Si' : 'No'}</td>`;
+        		<br/><span class="secundario">Procesado:</span> ${objectoFactura.estaProcesado ? 'Si' : 'No'}
+        		<br/><span class="secundario">Enviado:</span> ${objectoFactura.estaEnviado ? 'Si' : 'No'}</td>`;
+        	//Acciones
+        	tablaHTML += `<td>work in progress</td>`;
         	tablaHTML += `</tr>`;
         	//Index empieza a contar en 0, length empieza a contar en 1
         	if(index >= dataObject.facturas.length - 1){
@@ -75,4 +119,36 @@ window.addEventListener('load', () => {
         	}
         });
 	});
-});
+};
+
+//Te genera el widget de la paginación para las facturas
+function crearPaginacionFacturas(){
+	httpGet(`/api/get-paginacion-facturas?ppp=${productosPorPagina}`, dataObject => {
+
+		q('#filtros-facturas, #paginacion-footer-facturas').style.display = 'block';
+
+		if(dataObject) dataObject = JSON.parse(dataObject);
+		//If no dataobject or dataobject error
+		if(dataObject ? dataObject.error : true){
+			qAll('.paginacion-facturas').forEach(paginador => {
+				paginador.style.display = 'block';
+				paginador.innerHTML = `<div class="error">Error creando la paginación. 
+				<button class="recargar-paginacion" onclick="crearPaginacionFacturas()">Recargar</button></div>`;
+			});
+		}else{
+			qAll('.paginacion-facturas').forEach(paginador => {
+				paginador.style.display = 'block';
+				if(dataObject.paginasTotales <= 1){
+					paginador.innerHTML = 'No hay más páginas.';
+				}else{
+					let paginadorHTML = '';
+					for (var i = 1; i <= dataObject.paginasTotales; i++) {
+						if(i === paginaFacturas) paginadorHTML += `<span class="button-pagina pagina-activa">${i}</span>`;
+						else paginadorHTML += `<span class="button-pagina">${i}</span>`;
+					}
+					paginador.innerHTML = paginadorHTML;
+				}
+			});
+		}
+	});
+};

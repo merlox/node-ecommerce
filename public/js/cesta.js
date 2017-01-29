@@ -24,8 +24,14 @@ function getCesta(){
 	q('#cesta').insertAdjacentHTML('afterbegin', '<div class="spinner spinner-cesta"></div>');
 	httpGet('/api/get-cesta', (response) => {
 		response = JSON.parse(response);
-		if(response.error) q('#productos-cesta').innerHTML = response.error;
-		else if(response.cesta != null){
+			console.log(response)
+		if(response.error){
+			q('.spinner').remove();
+			q('#productos-cesta').style.display = 'block';
+			q('.triangulo-up').style.display = 'block';
+			q('#productos-cesta').style.padding = '10px';
+			q('#productos-cesta').innerHTML = response.error;
+		}else if(response.cesta != null){
 			let cestaHtml = '';
 			let precioTotal = 0;
 			//Loop para cada producto de la cesta
@@ -108,12 +114,20 @@ function renderCesta(){
 	if(q('#contenedor-total-pagina').style.display == 'block'){
 		q('#contenedor-total-pagina').style.display = 'none';
 	}
+	console.log('called')
 
 	q('body').insertAdjacentHTML('afterbegin', '<div class="thin-spinner"></div>');
 
 	httpGet('/api/get-cesta', (response) => {
+		console.log(response)
 		response = JSON.parse(response);
-		if(response.error) q('#contenedor-cesta-pagina').innerHTML = response.error;
+		if(response.error){
+			q('.thin-spinner').remove();
+			//Mostrar contenido de la página
+			q('#mensaje-error').style.display = 'block';
+			q('#mensaje-error').innerHTML = `<h3>Error, ${response.error}</h3>
+				<button onclick="window.location='/'">Volver al inicio</button>`;
+		}
 		else if(response.cesta != null){
 			let cestaHtml = '';
 			let precioTotal = 0;
@@ -189,11 +203,6 @@ q('#cesta').addEventListener('mouseenter', () => {
 			cestaBloqueada = false;
 		}, 1e3);
 	}
-});
-//Mostrar la cesta on click
-q('#cesta').addEventListener('click', (e) => {
-	getCesta();
-	e.stopPropagation();
 });
 //No ocultar si se hace click sobre el contenido cesta
 q('#productos-cesta').addEventListener('click', (e) => {

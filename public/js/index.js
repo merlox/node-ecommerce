@@ -117,7 +117,7 @@ function colocarMasVendidos(data){
 					<img class="imagen-minislider" src="../public-uploads/${producto.imagen}" width="300px" height="300px">
 				</a>
 				<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
-				<span class="precio-minislider">${producto.precio}€</span>
+				<span class="precio-minislider">${parseFloat(producto.precio).toFixed(2)}€</span>
 				<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>
 			</div>`;
 	}

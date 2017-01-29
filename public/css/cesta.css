@@ -3,6 +3,10 @@
 PÁGINA CESTA
 
 */
+#mensaje-error{
+    display: none;
+    text-align: center;
+}
 #contenedor-cesta-pagina{
     max-width: 900px;
     margin: 0 auto;

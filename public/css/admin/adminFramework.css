@@ -53,28 +53,10 @@ hr{
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-/*button, input[type=submit]{
-    background-color: orange;
-    background-image: linear-gradient(to bottom, #f5c60c, #f59f0a);
-    border-radius: 5px;
-    font-weight: bold;
-    color: black;
-    font-size: 13px;
-    border: none;
-    padding: 10px 20px 10px 20px;
-    cursor: pointer;
-    font-family: 'Open Sans', sans-serif;
+button{
+    transition: none;
 }
-button[disabled], button[disabled]:hover{
-    background-image: linear-gradient(to bottom, lightgrey, lightgrey);
-    cursor: not-allowed;
-    font-family: 'Open Sans', sans-serif;
+button.disabled{
+    background-color: grey;
+    color: whitesmoke;
 }
-button:hover, input[type=submit]:hover{
-    background-image: linear-gradient(to bottom, #f59f0a, #f59f0a);
-    font-family: 'Open Sans', sans-serif;
-}
-button:focus, input[type=submit]:focus{
-    background-image: linear-gradient(to bottom, #FFBE4E, #FFBE4E);
-    font-family: 'Open Sans', sans-serif;
-}*/

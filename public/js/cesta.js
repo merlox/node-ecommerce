@@ -9,6 +9,7 @@ window.addEventListener('load', () => {
 		});
 	}
 });
+//Añadir productos a la cesta
 function addCesta(cantidad){
 	let permalinkProducto = window.location.pathname.substring(3);
 	let dataObject = {};
@@ -33,7 +34,7 @@ function getCesta(){
 				cestaHtml += 
 				`<tr>
 					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
-					<td class="cesta-precio">${productoCesta.precio}€</td>
+					<td class="cesta-precio">${parseFloat(productoCesta.precio).toFixed(2)}€</td>
 					<td class="titulo-producto"><a href="/p/${productoCesta.permalink}">
 						${productoCesta.titulo}</a></td>
 					<td><input type="number" min="1" onfocusout="editarCantidadCesta('${productoCesta.permalink}', event, true)"
@@ -108,7 +109,7 @@ function renderCesta(){
 		q('#contenedor-total-pagina').style.display = 'none';
 	}
 
-	q('body').insertAdjacentHTML('afterbegin', '<div class="spinner spinner-central"></div>');
+	q('body').insertAdjacentHTML('afterbegin', '<div class="thin-spinner"></div>');
 
 	httpGet('/api/get-cesta', (response) => {
 		response = JSON.parse(response);
@@ -123,7 +124,7 @@ function renderCesta(){
 				cestaHtml += 
 				`<tr>
 					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
-					<td class="cesta-precio">${productoCesta.precio}€</td>
+					<td class="cesta-precio">${parseFloat(productoCesta.precio).toFixed(2)}€</td>
 					<td class="titulo-producto">
 					<a class="permalink-producto" href="/p/${productoCesta.permalink}">${productoCesta.titulo}</a></td>
 					<td><input type="number" min="1" class="producto-cesta-cantidad"
@@ -145,7 +146,7 @@ function renderCesta(){
 				}
 			});
 			//Quitar spinner
-			q('.spinner-central').remove();
+			q('.thin-spinner').remove();
 			//Mostrar contenido de la página
 			q('#contenedor-total-pagina').style.display = 'block';
 			//Quitar el precio total al lado de la tarjeta
@@ -156,7 +157,7 @@ function renderCesta(){
 			//Poner el contenido de la cesta en la página
 			q('#contenedor-cesta-pagina').innerHTML = cestaHtml;
 		}else{
-			q('.spinner-central').remove();
+			q('.thin-spinner').remove();
 			q('#contenedor-total-pagina').style.display = 'block';
 			//La cesta está vacía
 			q('#contenedor-total-pagina').innerHTML = 

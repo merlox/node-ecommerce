@@ -23,12 +23,6 @@ h3{
 hr{
     border: 1px solid lightgrey;
 }
-input{
-    border-radius: 5px;
-    border: 1px solid lightgrey;
-    padding: 5px;
-    font-family: 'Open Sans', sans-serif;
-}
 .spinner{
     border: 2px solid whitesmoke;
     border-top: 2px solid black;
@@ -59,7 +53,7 @@ input{
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-button, input[type=submit]{
+/*button, input[type=submit]{
     background-color: orange;
     background-image: linear-gradient(to bottom, #f5c60c, #f59f0a);
     border-radius: 5px;
@@ -83,4 +77,4 @@ button:hover, input[type=submit]:hover{
 button:focus, input[type=submit]:focus{
     background-image: linear-gradient(to bottom, #FFBE4E, #FFBE4E);
     font-family: 'Open Sans', sans-serif;
-}
+}*/

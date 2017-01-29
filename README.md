@@ -1007,3 +1007,26 @@ A continuación voy a mejorar el aspecto del paginador para que tenga mejor expe
 Después de esto crearé las páginas de categorías copiando practicamente todo lo que he creado de la página de búsqueda y simplemente mostrando la categoría que corresponda.
 
 Entonces, una vez terminada crearé el dashboard del administrador para controlar cuantos pedidos hay y el estado de compra de los diferentes productos y finalmente crearé el dashboard del cliente para ver información importante sobre el estado de su cuenta y de sus compras con funciones de recuperación de contraseña, seguimiento de envíos, estado de compra de los productos y ajustes de cuenta con cambio de sesión, dirección, etc.
+
+### Día 53
+
+He hecho bastantes progresos. Ya funciona la página de busqueda, la página de categorías y la página principal.
+
+He mejorado lo siguiente:
+
+- Ahora las la función if del template engine es inline osea que tiene que usarse así:
+{{if a}}...{{else a}}...{{/if a}}
+- Hay una nueva función #if de bloque que se usa asi:
+{{#if a 1}}...
+...{{else a 1}}...
+{{/if a 1}}
+Para condiciones grandes.
+- La página de busqueda y de categorías, al usar el filtro de precio, los productos se cargan en ajax en lugar de recargar la página entera.
+
+Lo que voy a hacer a continuación es crear el panel de administración del administrador de la web, valga la redundancia, para ver información de los pedidos y otras funciones interesantes. Para tener un registro de lo que quiero que sea esta página, a continuación voy a enumerar las funciones necesarias:
+- Mostrar una tabla con lo que compra cada cliente, los productos comprados, el precio de los productos, si está pagado o no, una serie de opciones para marcarlo como enviado y notificar al cliente que está en envío su pedido y una función para comunicarme en modo chat con el cliente.
+- Lo ideal sería poder tener un chat en directo en caso de que el cliente estuviese conectado e informarle del estado de su pedido. Aparte de enviarle notificaciones a su correo.
+- También me gustaría informar a los clientes diariamente sobre la actualización del estado de su envio y que los clientes pudiesen hacer preguntar en tiempo real al vendedor sobre los productos para ayudarle todo lo posible.
+- Ver que páginas están viendo los clientes en ese momento, los clientes conectados y otro tipo de información relevante en tiempo real. Esto será un sección llamada "En tiempo real".
+- Ver las búsquedas que realizan los clientes. 
+P.D. En el widget de búsqueda quiero mostrar un historial de búsquedas a los clientes que ya hayan buscado antes, además de crear una función única para ir mostrando cada 2 segundos búsquedas realizadas por otros usuarios con objeto de sugerir a los usuarios posibles compras.

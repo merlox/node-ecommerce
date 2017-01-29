@@ -15,6 +15,7 @@ MAIN MENU
   position: fixed;
   z-index: 3;
   text-align: center;
+  top: 0;
 }
 .main-menu a{
   text-decoration: none;

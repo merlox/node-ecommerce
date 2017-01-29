@@ -173,7 +173,7 @@ function createUpdateProduct(permalink, productData, cb){
     'titulo': productData.titulo,
     'imagenes': productData.imagenes,
     'permalink': productData.permalink.toLowerCase(),
-    'precio': productData.precio,
+    'precio': parseInt(productData.precio),
     'descripcion': productData.descripcion,
     'categoria': productData.categoria,
     'atributos': productData.atributos,
@@ -191,7 +191,7 @@ function createUpdateProduct(permalink, productData, cb){
     }
   });
 };
-//Funcion para subir las imagenes publicas al servidor en uploads
+//Funcion para subir las imagenes publicas al servidor en /uploads
 function uploadPublicImages(objectImages, permalinkName, cb){
   console.log('UploadPublicImages, functions.js');
   let publicUploads = path.join(__dirname, '../public/public-uploads/');
@@ -253,6 +253,7 @@ function getAllProducts(imageLimit, page, callback){
     }
   });
 };
+//Copiar la primera imagen de los productos pasados por parámetro.
 function copyFirstImage(results, cb){
   console.log('Interna - CopyFirstImage, functions.js');
   let error = null;
@@ -447,6 +448,7 @@ function copyDirectory(origin, end, callback){
     }
   }
 };
+//Guardar en la base de datos las búsquedas realizadas por los clientes.
 function guardarBusqueda(busqueda, cb){
   console.log('GuardarBusqueda, functions.js');
   if(busqueda){
@@ -695,6 +697,7 @@ function payProduct(req, cb){
       }).then((customer) => {
         //En el customer.id se guarda el id que se usa para crear charges en stripe
         req.session['customerId'] = customer.id;
+        //Hay que guardar la sesión para actualizar el objeto de sesión puesto que en las POST request no se salva automaticamente.
         req.session.save();
         //Guardamos el customer id en la base de datos del usuario
         db.collection('users').update({
@@ -739,26 +742,26 @@ function payProduct(req, cb){
         let precioCentimos = (producto.precio*100).toFixed(0);
         let cantidad = null;
         metadataObject['producto-'+index] = {};
-        metadataObject['producto-'+index]['precioCentimos'] = precioCentimos;
+        metadataObject['producto-'+index]['precioCentimos'] = parseInt(precioCentimos);
         metadataObject['producto-'+index]['titulo'] = producto.titulo;
 
         //Conseguimos la cantidad comprada de ese producto
         for(let f = 0; f < arrayProductos.length; f++){
           if(arrayProductos[f].nombre == producto.titulo){
             cantidad = arrayProductos[f].cantidad;
-            metadataObject['producto-'+index]['cantidad'] = cantidad;
+            metadataObject['producto-'+index]['cantidad'] = parseInt(cantidad);
             precioCentimos *= cantidad;
           }
         }
         precioTotalCentimos += precioCentimos;
         if(index + 1 >= results.length){
-          metadataObject['precioTotal'] = precioTotalCentimos.toFixed(0);
+          metadataObject['precioTotal'] = parseInt(precioTotalCentimos.toFixed(0));
         }
       };
 
       //Luego pagamos el total  y luego guardamos la factura en la base de datos
       let charge = stripe.charges.create({
-        "amount": precioTotalCentimos, //Cantidad en centimos
+        "amount": parseInt(precioTotalCentimos), //Cantidad en centimos
         "currency": 'eur',
         "customer": req.session.customerId,
         "description": arrayTitulos[0],
@@ -773,6 +776,7 @@ function payProduct(req, cb){
           db.collection('facturas').insert({
             'idPago': idPago,
             'idCharge': charge.id,
+            'emailUsuarioConectado': req.session.username,
             'nombreApellidos': direccion.nombreApellidos,
             'cantidad': charge.amount,
             'estaProcesado': charge.captured,
@@ -781,7 +785,6 @@ function payProduct(req, cb){
             'customer': charge.customer,
             'productos': metadataObject,
             'estaPagado': charge.paid,
-            'email': charge.receipt_email,
             'telefono': charge.receipt_number,
             'direccion': direccion,
             'terminacionTarjeta': charge.source.last4,
@@ -961,6 +964,14 @@ function getLoggedState(req, cb){
     cb(null);
   }
 };
+//Conseguir las facturas de las compras realizadas por los clientes
+function getFacturas(cb){
+  console.log('Facturas, functions.js');
+  db.collection('facturas').find({}).toArray((err, facturas) => {
+    if(err) return cb('Error cargando las facturas.', null);
+    cb(null, facturas);
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.copyFile = copyFile;
@@ -992,3 +1003,4 @@ exports.buscarFiltrarProductos = buscarFiltrarProductos;
 exports.buscarProductosCategoria = buscarProductosCategoria;
 exports.getPaginacionCategoria = getPaginacionCategoria;
 exports.buscarFiltrarProductosCategoria = buscarFiltrarProductosCategoria;
+exports.getFacturas = getFacturas;

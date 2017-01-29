@@ -340,5 +340,17 @@ api.get('/filter-categoria', (req, res) => {
   });
   //Buscar los productos que coincidan con la busqueda y renderizar la página
 });
+//Enviar las facturas.
+api.get('/facturas', (req, res) => {
+  let dataObject = {
+    'error': null,
+    'facturas': null
+  };
+  functions.getFacturas((err, arrayFacturas) => {
+    if(err) dataObject.error = err;
+    dataObject.facturas = arrayFacturas;
+    res.send(dataObject);
+  });
+});
 
 module.exports = api;

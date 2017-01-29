@@ -20,9 +20,22 @@ routes.get('/p/:permalink', (req, res) => {
     if(result.publicado == 'no'){
       return res.redirect('/?message=That page is not available');
     }else if(result.publicado == 'si'){
-      render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
-        if(err) return res.send(err);
-        return res.send(data);
+
+      result['loggedStateHTML'] = '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>';
+      result['loggedState'] = '/login';
+
+      functions.getLoggedState(req, state => {
+        if(state === 'logged'){
+          result.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          result.loggedState = '/micuenta';
+        }else if(state === 'admin'){
+          result.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          result.loggedState = '/admin';
+        }
+        render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
+          if(err) return res.send(err);
+          return res.send(data);
+        });
       });
     }
   });
@@ -53,29 +66,50 @@ routes.get('/search', (req, res) => {
         'resultadoUnico': resultadoUnico,
         'paginas': 0,
         'hayPaginas': false,
-        'isProductos': true
+        'isProductos': true,
+        'loggedState': '/login',
+        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
       };
+      functions.getLoggedState(req, state => {
+        if(state === 'logged'){
+          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          dataObject.loggedState = '/micuenta';
+        }else if(state === 'admin'){
+          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          dataObject.loggedState = '/admin';
+        }
+        functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
+          if(err) console.log(err);
+          
+          dataObject['hayPaginas'] = true;
+          dataObject['paginas'] = cantidadPaginas;
 
-      functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
-        if(err) console.log(err);
-        
-        dataObject['hayPaginas'] = true;
-        dataObject['paginas'] = cantidadPaginas;
-
-        render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
-          if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-          return res.send(data);
+          render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+            if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+            return res.send(data);
+          });
         });
       });
     }else{
       let dataObject = {
         'busqueda': req.query.q,
         'isProductos': false,
-        'errorMessage': error
+        'errorMessage': error,
+        'loggedState': '/login',
+        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
       };
-      render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
-        if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-        return res.send(data);
+      functions.getLoggedState(req, state => {
+        if(state === 'logged'){
+          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          dataObject.loggedState = '/micuenta';
+        }else if(state === 'admin'){
+          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          dataObject.loggedState = '/admin';
+        }
+        render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
+          if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+          return res.send(data);
+        });
       });
     }
   });
@@ -133,12 +167,48 @@ routes.post('/pay-product', (req, res) => {
 });
 
 routes.get('/cesta', (req, res) => {
-  render(path.join(__dirname, '../../public/views/cesta.html'), null, (err, data) => {
-    if(err){
-      console.log(err);
-      return res.send(err);
+  let dataObject = {
+    'loggedState': '/login',
+    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+  };
+  functions.getLoggedState(req, state => {
+    if(state === 'logged'){
+      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+      dataObject.loggedState = '/micuenta';
+    }else if(state === 'admin'){
+      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+      dataObject.loggedState = '/admin';
     }
-    return res.send(data);
+    render(path.join(__dirname, '../../public/views/cesta.html'), dataObject, (err, data) => {
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }
+      return res.send(data);
+    });
+  });
+});
+
+routes.get('/pago-completado', (req, res) => {
+  let dataObject = {
+    'loggedState': '/login',
+    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+  };
+  functions.getLoggedState(req, state => {
+    if(state === 'logged'){
+      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+      dataObject.loggedState = '/micuenta';
+    }else if(state === 'admin'){
+      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+      dataObject.loggedState = '/admin';
+    }
+    render(path.join(__dirname, '../../public/views/pagoCompletado.html'), dataObject, (err, data) => {
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }
+      return res.send(data);
+    });
   });
 });
 
@@ -170,7 +240,9 @@ routes.get('/:categoria', (req, res) => {
         'resultadoUnico': resultadoUnico,
         'paginas': 0,
         'hayPaginas': false,
-        'isProductos': true
+        'isProductos': true,
+        'loggedState': '/login',
+        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
       };
 
       functions.getPaginacionCategoria(req.params.categoria, limite, (err, cantidadPaginas) => {
@@ -179,20 +251,40 @@ routes.get('/:categoria', (req, res) => {
         dataObject['hayPaginas'] = true;
         dataObject['paginas'] = cantidadPaginas;
 
-        render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
-          if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-          return res.send(data);
+        functions.getLoggedState(req, state => {
+          if(state === 'logged'){
+            dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+            dataObject.loggedState = '/micuenta';
+          }else if(state === 'admin'){
+            dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+            dataObject.loggedState = '/admin';
+          }
+          render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
+            if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+            return res.send(data);
+          });
         });
       });
     }else{
       let dataObject = {
         'categoria': req.params.categoria,
         'isProductos': false,
-        'errorMessage': error
+        'errorMessage': error,
+        'loggedState': '/login',
+        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
       };
-      render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
-        if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
-        return res.send(data);
+      functions.getLoggedState(req, state => {
+        if(state === 'logged'){
+          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          dataObject.loggedState = '/micuenta';
+        }else if(state === 'admin'){
+          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          dataObject.loggedState = '/admin';
+        }
+        render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
+          if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+          return res.send(data);
+        });
       });
     }
   });
@@ -215,7 +307,6 @@ routes.get('/', (req, res) => {
     dataObject.sliderImages = images;
 
     functions.getLoggedState(req, state => {
-
       if(state === 'logged'){
         dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
         dataObject.loggedState = '/micuenta';

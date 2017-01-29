@@ -23,15 +23,12 @@ PÁGINA CESTA
 #contenedor-cesta-pagina{
     border-spacing: 0;
 }
-.spinner-central{
-    margin-top: 20px;
-    width: 100px;
+.thin-spinner{
     position: absolute;
     left: 0;
     right: 0;
     top: 100px;
     margin: auto;
-    height: 100px;
 }
 /*
 

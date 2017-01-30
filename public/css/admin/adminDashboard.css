@@ -40,6 +40,17 @@ WIDGET FACTURAS
     position: relative;
     top: 1px;
 }
+#paginacion-footer-facturas{
+    display: none;
+    margin: 0 10px;
+    border: 1px solid lightgrey;
+    width: 100%;
+    padding: 10px;
+    padding-top: 0;
+    /*Para juntar los bordes de ambos componentes*/
+    position: relative;
+    bottom: 1px;
+}
 #contenedor-facturas{
     max-width: 1400px
 }
@@ -65,21 +76,15 @@ tr:nth-child(even){
 .lista-productos-comprados{
     list-style-type: upper-roman;
 }
-#paginacion-footer-facturas{
-    display: none;
-    margin: 0 10px;
-    border: 1px solid lightgrey;
-    width: 100%;
-    padding: 10px;
-    padding-top: 0;
-    /*Para juntar los bordes de ambos componentes*/
-    position: relative;
-    bottom: 1px;
-}
 .button-pagina{
     background-color: lightgrey;
     padding: 20px;
     display: inline-block;
+    cursor: pointer;
+    transition: none;
+}
+.button-pagina:hover{
+    opacity: 0.7;
 }
 .pagina-activa{
     background-color: #020045;

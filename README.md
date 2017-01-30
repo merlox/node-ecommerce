@@ -1030,3 +1030,13 @@ Lo que voy a hacer a continuación es crear el panel de administración del admi
 - Ver que páginas están viendo los clientes en ese momento, los clientes conectados y otro tipo de información relevante en tiempo real. Esto será un sección llamada "En tiempo real".
 - Ver las búsquedas que realizan los clientes. 
 P.D. En el widget de búsqueda quiero mostrar un historial de búsquedas a los clientes que ya hayan buscado antes, además de crear una función única para ir mostrando cada 2 segundos búsquedas realizadas por otros usuarios con objeto de sugerir a los usuarios posibles compras.
+
+### Día 54
+
+Estoy trabajando en la parte del panel principal del administrador y de momento llevo creado el widget de facturas. Es una tabla con toda la información necesaria sobre los pedidos y las compras que realizan los usuarios. Ahora estoy creando la paginación para poder ir de página en página correctamente.
+
+Más adelante trabajaré en crear filtros para ordenar los resultados de forma que tenga varias checkboxes en las que marcar cosas como "Mostrar solo productos pendientes de envio", "Mostrar solo productos no procesados", "Mostrar solo los productos que han solicitado reembolso".
+
+Mis planes después de eso es crear un sistema de acciones para notificar a los clientes sobre el estado de su pedido y que le llege un mensaje a su correo y a su página de usuario de la web.
+
+Luego crearé un widget de chat con el que comunicarme en tiempo real con los clientes además de guardar las conversaciones para revisarlas más adelante. Tengo pensado añadir la función de "Descargar conversación" al igual que hacen en ticketbis, una de las mayores páginas de compra de tickets. El usuario se comunicará en un estilo tipo whatsapp y verá notificaciones. Si ambos vendedor y cliente están conectados, podrán hablar en tiempo real. Todo esto desde el panel de administración y en el caso del cliente será un widget de chat que se mantendrá en la parte inferior de la página web.

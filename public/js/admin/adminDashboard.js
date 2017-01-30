@@ -1,6 +1,3 @@
-let paginaFacturas = 1,
-	productosPorPagina = 20;
-
 mostrarMensajeRandomCarga();
 //TODO verificar que el usuario pone todos los datos de la dirección y que son correctos
 /*
@@ -12,7 +9,7 @@ mostrarMensajeRandomCarga();
 6.crear widget de chat para comunicarme con cada comprador
 */
 window.addEventListener('load', () => {
-	generarFacturas();
+	generarFacturas(1);
 });
 
 //Muestra un mensaje random de carga
@@ -34,11 +31,16 @@ function mostrarMensajeRandomCarga(){
 	q('.contenedor-mensaje-carga').style.display = 'flex';
 };
 
+let pageActual = 1,
+	productosPorPagina = 20;
 //Crea la tabla del widget de facturas para ver quién ha comprado qué y el estado de su pedido
-function generarFacturas(){
+function generarFacturas(pag){
+
+	pageActual = pag;
+
 	crearPaginacionFacturas();
 	//Solicitar el estado de las compras de los productos, con paginación.
-	httpGet(`/api/facturas?pag=${paginaFacturas}&ppp=${productosPorPagina}`, dataObject => {
+	httpGet(`/api/facturas?pag=${pageActual}&ppp=${productosPorPagina}`, dataObject => {
 
 		q('#tabla-facturas').style.display = 'block';
 
@@ -125,29 +127,67 @@ function generarFacturas(){
 function crearPaginacionFacturas(){
 	httpGet(`/api/get-paginacion-facturas?ppp=${productosPorPagina}`, dataObject => {
 
-		q('#filtros-facturas, #paginacion-footer-facturas').style.display = 'block';
-
 		if(dataObject) dataObject = JSON.parse(dataObject);
 		//If no dataobject or dataobject error
-		if(dataObject ? dataObject.error : true){
+		if(dataObject ? dataObject.error : !dataObject){
+			q('#filtros-facturas, #paginacion-footer-facturas').style.display = 'block';
 			qAll('.paginacion-facturas').forEach(paginador => {
 				paginador.style.display = 'block';
 				paginador.innerHTML = `<div class="error">Error creando la paginación. 
 				<button class="recargar-paginacion" onclick="crearPaginacionFacturas()">Recargar</button></div>`;
 			});
-		}else{
+		}else if(dataObject.paginasTotales <= 1){
+			q('#filtros-facturas, #paginacion-footer-facturas').style.display = 'block';
 			qAll('.paginacion-facturas').forEach(paginador => {
-				paginador.style.display = 'block';
-				if(dataObject.paginasTotales <= 1){
-					paginador.innerHTML = 'No hay más páginas.';
-				}else{
-					let paginadorHTML = '';
-					for (var i = 1; i <= dataObject.paginasTotales; i++) {
-						if(i === paginaFacturas) paginadorHTML += `<span class="button-pagina pagina-activa">${i}</span>`;
-						else paginadorHTML += `<span class="button-pagina">${i}</span>`;
-					}
-					paginador.innerHTML = paginadorHTML;
-				}
+				paginador.innerHTML = 'No hay más páginas.';
+			});
+		}else{
+			let paginadorHTML = '',
+				pt = dataObject.paginasTotales,
+				maxPaginasAMostrar = pt,
+				paginaInicialAMostrar = 1;
+			// for (var i = 1; i <= dataObject.paginasTotales; i++) {
+			// 	if(i === pageActual) paginadorHTML += `<span class="button-pagina pagina-activa">${i}</span>`;
+			// 	else paginadorHTML += `<span class="button-pagina">${i}</span>`;
+			// }
+
+			//Quitamos la página activa
+			if(q('.pagina-activa')) q('.pagina-activa').className = '';
+			//Calculamos cuántas páginas mostrar en esa vista
+			if(pt > 3 && pageActual === 1)
+				maxPaginasAMostrar = 3;
+			else if(pt > 3 && pageActual > 1 && pageActual !== pt)
+				maxPaginasAMostrar = (pageActual+1);
+			else if(pt > 3 && pageActual === pt)
+				maxPaginasAMostrar = pageActual;
+			//Calculamos la página inicial a mostrar en la izquierda
+			if(pageActual > 1 && pageActual === pt && pt >= 3)
+				paginaInicialAMostrar = pageActual-2;
+			else if(pageActual > 1)
+				paginaInicialAMostrar = pageActual-1;
+			//Creamos el botón de anterior
+			if(pageActual > 1)
+				paginadorHTML += `<span class="button-pagina" onclick="generarFacturas(${pageActual-1})">Anterior</span> `;
+			else
+				paginadorHTML += `<span class="button-pagina">Anterior</span> `;
+			//Creamos los 3 botones numéricos con las páginas a mostrar
+			for(let i = paginaInicialAMostrar; i <= maxPaginasAMostrar; i++) {
+				if(i === pageActual) paginadorHTML += `<span class="button-pagina pagina-activa" onclick="generarFacturas(${i})">${i}</span>`;
+				else paginadorHTML += `<span class="button-pagina" onclick="generarFacturas(${i})">${i}</span>`;
+			}
+			//Crear el botón de página final si hay más de 3 páginas y no se muestra ya la página final en el loop de antes
+			if(pt > 3 && pageActual < (pt-1))
+				paginadorHTML += `<span class="button-pagina" onclick="generarFacturas(${pt})">${pt}</span>`;
+			//Crear el botón de siguiente
+			if(pageActual === pt)
+				paginadorHTML += ` <span class="button-pagina">Siguiente</span>`;
+			else
+				paginadorHTML += ` <span class="button-pagina" onclick="generarFacturas(${pageActual+1})">Siguiente</span>`;
+			//Mostramos los contenedores de los paginadores
+			q('#filtros-facturas, #paginacion-footer-facturas').style.display = 'block';
+			//Insertamos el paginador creado en cada contenedor
+			qAll('.paginacion-facturas').forEach(paginador => {
+				paginador.innerHTML = paginadorHTML;
 			});
 		}
 	});

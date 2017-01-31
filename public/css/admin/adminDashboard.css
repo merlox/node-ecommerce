@@ -51,6 +51,19 @@ WIDGET FACTURAS
     position: relative;
     bottom: 1px;
 }
+#filtros-facturas-estado{
+    display: inline;
+}
+.paginacion-facturas{
+    display: inline;
+}
+.contenedor-filtros-estado{
+    width: 250px;
+    float: right;
+}
+.nombre-filtro{
+    cursor: pointer;
+}
 #contenedor-facturas{
     max-width: 1400px
 }

@@ -341,7 +341,8 @@ api.get('/filter-categoria', (req, res) => {
   //Buscar los productos que coincidan con la busqueda y renderizar la página
 });
 //Enviar las facturas.
-api.get('/facturas', (req, res) => {
+api.post('/facturas', (req, res) => {
+  console.log(req.body)
   let dataObject = {
     'error': null,
     'facturas': null

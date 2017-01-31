@@ -22,6 +22,31 @@
 
       <div id="filtros-facturas">  
         <div class="paginacion-facturas"></div>
+        <div id="filtros-facturas-estado">
+          <div class="contenedor-filtros-estado">
+            <input type="radio" name="pagado" value="pagados true">
+              <span class="nombre-filtro" onclick="qAll('input[name=pagado]')[0].click()">Mostrar pagados</span>
+            <br>
+            <input type="radio" name="pagado" value="pagados false">
+              <span class="nombre-filtro" onclick="qAll('input[name=pagado]')[1].click()">Mostrar no pagados</span>
+          </div>
+
+          <div class="contenedor-filtros-estado">
+          <input type="radio" name="procesado" value="procesados true">
+            <span class="nombre-filtro" onclick="qAll('input[name=procesado]')[0].click()">Mostrar procesados</span>
+            <br>
+          <input type="radio" name="procesado" value="procesados false">
+            <span class="nombre-filtro" onclick="qAll('input[name=procesado]')[1].click()">Mostrar no procesados</span>
+          </div>
+
+          <div class="contenedor-filtros-estado">
+          <input type="radio" name="enviado" value="enviados true">
+            <span class="nombre-filtro" onclick="qAll('input[name=enviado]')[0].click()">Mostrar enviados</span>
+            <br>
+          <input type="radio" name="enviado" value="enviados false">
+            <span class="nombre-filtro" onclick="qAll('input[name=enviado]')[1].click()">Mostrar no enviados</span>
+          </div>
+        </div>
       </div>
 
       <table id="tabla-facturas">

@@ -32,7 +32,7 @@ function guardarPublicarProducto(publicar){
   categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
   categoriasReq.onreadystatechange = () => {
     if(categoriasReq.readyState == XMLHttpRequest.DONE){
-      messageStatus(request.responseText, 'info');
+      console.log(request.responseText, 'info');
     }
   };
   categoriasReq.send(JSON.stringify(arrayCategorias));
@@ -42,12 +42,12 @@ function guardarPublicarProducto(publicar){
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.onreadystatechange = () => {
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-      messageStatus(request.responseText, 'info');
+      console.log(request.responseText, 'info');
       resetAllProductData();
       //Funcion del editProducts.js para generar las cajas de productos
       crearCajasProductos();
     }else{
-      messageStatus('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
+      console.log('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
       resetAllProductData();
     }
   };
@@ -129,10 +129,10 @@ function saveClientImages(){
       request.open('POST', '/api/upload-image-product', true);
       request.send(formData);
     }else{
-      messageStatus('Error, maximum 10 images', 'error');
+      console.log('Error, maximum 10 images', 'error');
     }
   }else{
-    messageStatus('Error, files not recognized.', 'error');
+    console.log('Error, files not recognized.', 'error');
   }
 }
 //Para mostrar las imágenes en el DOM

@@ -35,36 +35,14 @@ a.main-menu{
 a.main-menu:hover{
   color: blue;
 }
-button{
-  background-color: rgb(0, 154, 196);
-  color: white;
-  border: 1px solid rgb(0, 154, 196);
-  padding: 5px;
-  font-size: 13pt;
-}
-button:hover{
-  cursor: pointer;
-  background-color: rgb(0, 154, 196);
-  border: 1px solid black;
-}
 .disabled, .disabled:hover{
   background-color: grey;
   color: rgb(170, 170, 170);
   border: 1px solid grey;
   cursor: not-allowed;
 }
-.button-no-style{
-  background-color: transparent;
-  border: 1px solid rgb(0, 175, 223);
-  color: rgb(0, 154, 196);
-}
 .button-big-padding{
   padding: 5%;
-}
-.button-no-style:hover{
-  background-color: transparent;
-  border: 1px solid rgb(0, 175, 223);
-  color: rgb(0, 175, 223);
 }
 #contenedor-guardar-producto{
   display: flex;
@@ -97,7 +75,7 @@ SECCION IMAGENES
   width: 100%;
   background-color: rgba(0, 0, 0, 0.05);
   cursor: pointer;
-  background-image: url('../images/plus.png');
+  background-image: url('../../images/plus.png');
   background-repeat: no-repeat;
   background-size: 20%;
   background-position: center;
@@ -105,7 +83,6 @@ SECCION IMAGENES
 }
 #imagen-principal:hover{
   background-color: rgba(0, 194, 255, 0.6);
-  border: 2px solid black;
 }
 #imagen-principal-uploaded{
   position: relative;
@@ -167,7 +144,7 @@ SECCION IMAGENES
   height: 40px;
 }
 #imagen-secundaria-activa-hover-flecha-down{
-  background-image: url('../images/down-arrow.png');
+  background-image: url('../../images/down-arrow.png');
   width: 20px;
   height: 40px;
   background-size: contain;
@@ -175,7 +152,7 @@ SECCION IMAGENES
   background-position: center;
 }
 #imagen-secundaria-activa-hover-flecha-up{
-  background-image: url('../images/up-arrow.png');
+  background-image: url('../../images/up-arrow.png');
   width: 20px;
   height: 40px;
   background-size: contain;
@@ -216,7 +193,13 @@ PRODUCTOS
 	border-bottom:  1px solid lightgrey;
 	display: flex;
 	align-items: flex-start;
-	height: 80px;
+	height: 100px;
+}
+.contenedor-producto:nth-child(even){
+  background-color: whitesmoke;
+}
+.contenedor-producto:hover{
+  background-color: lightgrey;
 }
 .contenedor-producto:first-child{
 	border-top: 1px solid lightgrey;
@@ -243,15 +226,16 @@ PRODUCTOS
 	color: grey;
 	margin: 2px 0;
 }
-.contenedor-enlaces-producto{
-	display: flex;
-	justify-content: space-between;
+.contenedor-enlaces-producto a:not(:nth-child(1)){
+  padding-left: 10px;
 }
 #precio-permalink-no-border input{
-	border-bottom: none;
-	border-top: none;
 	border-left: 1px solid grey;
 	border-right: 1px solid grey;
+  position: relative;
+  /*Para subir y bajar el borde de forma que se fusione con el de arriba*/
+  top: 1px;
+  margin-top: -2px;
 }
 #precio-permalink-no-border input:hover{
 	border: 1px solid blue;
@@ -294,17 +278,16 @@ PRODUCTOS
 	overflow-x: auto;
 }
 .paginador-productos li{
-	border: 1px solid grey;
-	padding: 4px;
-	margin-left: 3px;
-	cursor: pointer;
+  padding: 7px;
+  background-color: whitesmoke;
+  cursor: pointer;
 }
 .paginador-productos li:hover{
-	background-color: lightblue;
+	background-color: lightgrey;
 }
 .paginador-productos li.active{
-	background-color: grey;
-	color: white;
+  background-color: #03006a;
+  color: white;
 }
 #limitar-productos{
 	float: right;
@@ -332,7 +315,8 @@ INFORMACION PRODUCTO
 }
 #permalink{
   font-weight: bold;
-  width: calc(100% - 309px);
+  width: calc(100% - 150px);
+  left: -1px;
   display: inline-block;
 }
 #producto-title{
@@ -356,7 +340,6 @@ INFORMACION PRODUCTO
   border: 1px solid lightgrey;
   display: inline-block;
   padding: 5px;
-  border-right: none;
   width: 50%;
 }
 #contenedor-categoria-add{
@@ -392,8 +375,18 @@ INFORMACION PRODUCTO
   padding: 5px;
   width: 50%;
 }
+#atributo-valores{
+  position: relative;
+  bottom: 1px;
+}
 #button-atributo-add{
-  float: right;
+  position: relative;
+  bottom: 1px;
+}
+.mensaje-error{
+  color: red;
+  font-weight: bold;
+  text-align: center;
 }
 .lista-atributos-estilo{
   margin-bottom: 5px;
@@ -401,13 +394,9 @@ INFORMACION PRODUCTO
 .lista-atributos-estilo:last-child{
   margin-bottom: 0;
 }
-#atributo-nuevo-nombre{
-  padding: 8px;
-}
 .contenedor-magico{
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 }
 #lista-atributos{
   display: none;
@@ -421,6 +410,11 @@ INFORMACION PRODUCTO
 .contenedor-valor-atributo{
   display: flex;
   justify-content: space-between;
+}
+.precio-producto{
+  font-family: 'open sans condensed';
+  color: tomato;
+  font-size: 14pt;
 }
 #button-categoria-borrar{
   float: right;
@@ -471,11 +465,7 @@ RESPONSIVE CSS
 }
 @media (max-width: 700px){
   button {
-    background-color: rgb(0, 154, 196);
-    color: white;
-    border: 1px solid rgb(0, 154, 196);
-    padding: 5px;
-    font-size: 11pt;
+    font-size: 10pt;
   }
   #imagen-principal-uploaded{
     width: 100%;

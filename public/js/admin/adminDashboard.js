@@ -8,11 +8,11 @@ mostrarMensajeRandomCarga();
 
 //TODO verificar que el usuario pone todos los datos de la dirección y que son correctos
 /*
-1.paginacion
-2.filtrar
+DONE 1.paginacion
+DONE 2.filtrar
 3.verificar en cesta.html que pone los datos de la direccion y son correctos
 4.mostrar mensajes de error en la página de compra cesta.html
-5.crear acciones posibles en este widget
+5.crear acciones de estado posibles en este widget
 6.crear widget de chat para comunicarme con cada comprador
 */
 window.addEventListener('load', () => {

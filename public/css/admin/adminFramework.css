@@ -23,6 +23,33 @@ h3{
 hr{
     border: 1px solid lightgrey;
 }
+button{
+  background-color: rgb(3, 0, 107);
+  color: white;
+  border: none;
+  padding: 5px;
+  flex-grow: 1;
+  font-size: 10pt;
+  font-family: 'open sans';
+}
+button:hover{
+  cursor: pointer;
+  background-color: rgb(5, 0, 167);
+}
+input{
+  padding: 10px;
+  border: 1px solid lightgrey;
+}
+input:hover{
+  border: 1px solid blue;
+  box-sizing: border-box;
+}
+textarea{
+  padding: 10px;
+}
+textarea:hover{
+ border: 1px solid blue; 
+}
 .spinner{
     border: 2px solid whitesmoke;
     border-top: 2px solid black;

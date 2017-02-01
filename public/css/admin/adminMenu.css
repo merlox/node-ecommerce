@@ -68,29 +68,3 @@ html{
 *, *:before, *:after {
   box-sizing: inherit;
 }
-button{
-  background-color: rgb(0, 154, 196);
-  color: white;
-  border: 1px solid rgb(0, 154, 196);
-  padding: 5px;
-  flex-grow: 1;
-  font-size: 13pt;
-}
-button:hover{
-  cursor: pointer;
-  background-color: rgb(0, 175, 223);
-}
-input{
-  padding: 10px;
-  border: 1px solid lightgrey;
-}
-input:hover{
-  border: 1px solid blue;
-  box-sizing: border-box;
-}
-textarea{
-  padding: 10px;
-}
-textarea:hover{
- border: 1px solid blue; 
-}

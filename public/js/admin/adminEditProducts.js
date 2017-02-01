@@ -164,8 +164,8 @@ function crearCajasProductos(page){
 				let objetoProducto = arrayProductos[i];
 				let tituloProducto = objetoProducto.titulo;
 				let addEspacioTitulo = '';
-				if(objetoProducto.titulo.length >= 50){
-					objetoProducto.titulo = objetoProducto.titulo.substring(0, 55);
+				if(objetoProducto.titulo.length >= 40){
+					objetoProducto.titulo = objetoProducto.titulo.substring(0, 45);
 					objetoProducto.titulo += "...";
 				}else{
 					addEspacioTitulo = '<br />';
@@ -177,7 +177,8 @@ function crearCajasProductos(page){
 						<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
 						<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
 						${objetoProducto.titulo}</span>${addEspacioTitulo}
-						<p class="categoria-producto-unico">${objetoProducto.categoria} (Borrador)</p>
+						<span class="precio-producto">${objetoProducto.precio}€ </span>
+						<span class="categoria-producto-unico">${objetoProducto.categoria} (Borrador)</span>
 						<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
 						<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
 						<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
@@ -187,7 +188,8 @@ function crearCajasProductos(page){
 						<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
 						<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
 						${objetoProducto.titulo}</span>${addEspacioTitulo}
-						<p class="categoria-producto-unico">${objetoProducto.categoria}</p>
+						<span class="precio-producto">${objetoProducto.precio}€ </span>
+						<span class="categoria-producto-unico">${objetoProducto.categoria}</span>
 						<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
 						<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
 						<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>

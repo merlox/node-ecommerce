@@ -342,27 +342,30 @@ api.get('/filter-categoria', (req, res) => {
 });
 //Enviar las facturas.
 api.post('/facturas', (req, res) => {
-  console.log(req.body)
-  let dataObject = {
-    'error': null,
-    'facturas': null
-  };
-  let productosPorPagina = req.query.ppp ? parseInt(req.query.ppp) : 20,
-    pagina = req.query.pag ? parseInt(req.query.pag) : 1;
-  functions.getFacturas(productosPorPagina, pagina, (err, arrayFacturas) => {
+  let filtros = req.body.data.filtros,
+    dataObject = {
+      'error': null,
+      'facturas': null
+    },
+    productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
+    pageActual = req.body.data.pageActual ? parseInt(req.body.data.pageActual) : 1;
+  functions.getFacturas(productosPorPagina, pageActual, filtros, (err, arrayFacturas) => {
     if(err) dataObject.error = err;
     dataObject.facturas = arrayFacturas;
     res.send(dataObject);
   });
 });
 
-api.get('/get-paginacion-facturas', (req, res) => {
-  let dataObject = {
-    'error': null,
-    'paginasTotales': null
-  }
-  let productosPorPagina = req.query.ppp ? parseInt(req.query.ppp) : 20;
-  functions.getPaginacionFacturas(productosPorPagina, (err, paginasTotales) => {
+api.post('/get-paginacion-facturas', (req, res) => {
+  let filtros = req.body.data.filtros,
+    dataObject = {
+      'error': null,
+      'paginasTotales': null
+    }, 
+    productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
+    pageActual = req.body.data.pageActual;
+
+  functions.getPaginacionFacturas(productosPorPagina, pageActual, filtros, (err, paginasTotales) => {
     if(err) dataObject.error = err;
     dataObject.paginasTotales = paginasTotales;
     res.send(dataObject);

@@ -968,17 +968,27 @@ function getLoggedState(req, cb){
   }
 };
 //Conseguir las facturas de las compras realizadas por los clientes
-function getFacturas(ppp, pagina, cb){
+function getFacturas(ppp, pagina, filtros, cb){
   console.log('Facturas, functions.js');
-  db.collection('facturas').find({}).limit(ppp).skip((pagina-1)*ppp).toArray((err, facturas) => {
+  if(!filtros) filtros = {};
+  else{
+    //Convertimos los 'false' strings a boolean
+    for(let key in filtros) filtros[key] = (filtros[key] == 'true');
+  }
+  db.collection('facturas').find(filtros).limit(ppp).skip((pagina-1)*ppp).toArray((err, facturas) => {
     if(err) return cb('Error cargando las facturas.', null);
     cb(null, facturas);
   });
 };
 //Conseguir el número de páginas totales para las facturas
-function getPaginacionFacturas(ppp, cb){
+function getPaginacionFacturas(ppp, pageActual, filtros, cb){
   console.log('GetPaginacionFacturas, functions.js');
-  db.collection('facturas').count((err, count) => {
+  if(!filtros) filtros = {};
+  else{
+    //Convertimos los 'false' strings a boolean
+    for(let key in filtros) filtros[key] = (filtros[key] == 'true');
+  }
+  db.collection('facturas').find(filtros).skip((pageActual-1)*ppp).count((err, count) => {
     if(err) return cb('Error, no se pudo conseguir las páginas totales.', null);
     //Cada página son 20 productos por defecto ppp es productosPorPagina
     cb(null, Math.ceil(count/ppp));

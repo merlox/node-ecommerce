@@ -34,6 +34,7 @@ WIDGET FACTURAS
     margin: 0 10px;
     border: 1px solid lightgrey;
     width: 100%;
+    min-height: 74px;
     padding: 10px;
     padding-bottom: 0;
     /*Para juntar los bordes de ambos componentes*/
@@ -54,16 +55,6 @@ WIDGET FACTURAS
 #filtros-facturas-estado{
     display: inline;
 }
-.paginacion-facturas{
-    display: inline;
-}
-.contenedor-filtros-estado{
-    width: 250px;
-    float: right;
-}
-.nombre-filtro{
-    cursor: pointer;
-}
 #contenedor-facturas{
     max-width: 1400px
 }
@@ -74,6 +65,20 @@ WIDGET FACTURAS
     border-spacing: 0px;
     border: 1px solid lightgrey;
     width: 100%;
+}
+.mensaje-nohayfacturas{
+    text-align: center;
+    padding: 20px;
+}
+.paginacion-facturas{
+    display: inline;
+}
+.contenedor-filtros-estado{
+    width: 250px;
+    float: right;
+}
+.nombre-filtro{
+    cursor: pointer;
 }
 th{
     padding: 5px;    

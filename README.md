@@ -1040,3 +1040,15 @@ Más adelante trabajaré en crear filtros para ordenar los resultados de forma q
 Mis planes después de eso es crear un sistema de acciones para notificar a los clientes sobre el estado de su pedido y que le llege un mensaje a su correo y a su página de usuario de la web.
 
 Luego crearé un widget de chat con el que comunicarme en tiempo real con los clientes además de guardar las conversaciones para revisarlas más adelante. Tengo pensado añadir la función de "Descargar conversación" al igual que hacen en ticketbis, una de las mayores páginas de compra de tickets. El usuario se comunicará en un estilo tipo whatsapp y verá notificaciones. Si ambos vendedor y cliente están conectados, podrán hablar en tiempo real. Todo esto desde el panel de administración y en el caso del cliente será un widget de chat que se mantendrá en la parte inferior de la página web.
+
+### Día 55
+
+Hoy he reparado numerosos bugs. Al crear el panel de administración o "dashboard del admin" he producido varios bugs puesto que estaba hecho un desorden el código con más de 10 archivos diferentes en la carpeta "js", lo cual estaba produciendo bastante caos.
+
+Tras ordenarlo, he creado bugs en todo el sistema de administración y acabo de solucionar gran parte de ellos aparte de que he hecho que el paginador de la página de edición de productos pueda filtrar productos correctamente. El problema estaba en que cuando filtraba los productos por la categoria "cuadros" solo me mostraba aquellos que tengan esa categoria dentro de los productos cargados actualmente. Ahora he hecho que se haga una http get request con todos los productos que coincidan y con la paginación correctamente funcionando.
+
+También he creado el widget de facturas del panel de administración, está en progreso de desarrollo pero funciona bastante bien de momento. Te muestra qué cliente a comprado qué y los productos junto a otra información interesante. Ahora me falta crear las acciones posibles tipo "marcar como enviado, pendiente de pago" y similares además de crear un chat con el comunicarme con los clientes a través de la web en tiempo real si estuviesen conectados o por email de lo contrario.
+
+Aparte tengo que reparar la pagina de subida de productos para que no te deje subir productos sin la información necesaria y lo mismo en la página de pago.
+
+Mañana trabajaré en ello.

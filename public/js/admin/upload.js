@@ -54,13 +54,12 @@ function guardarPublicarProducto(publicar){
   request.send(JSON.stringify(informacionProducto));
 }
 function resetAllProductData(){
+  //Resetamos las variables globales de cada producto informacionProducto, imagenesProducto, objetoAtributos
   informacionProducto = {};
   imagenesProducto = {};
-  //Objeto del atributo.js
-  objetoAtributos = {};
+  objetoAtributos = {}; //Objeto del atributo.js
   id('seccion-preview').className = '';
   id('contenedor-productos').innerHTML = '';
-  id('contenedor-categorias').innerHTML = '<option>Todas</option>';
   id('lista-atributos').innerHTML = '';
   id('producto-title').value = '';
   id('permalink').value = '';
@@ -75,6 +74,7 @@ function resetAllProductData(){
   //Ocultar los atributos
   id('lista-atributos').innerHTML = '';
   id('lista-atributos').style.display = 'none';
+  //Función de categoria.js
   getCategoriesFromServer();
 }
 //Funcion para activar el overlay negro "cambiar imagenes"

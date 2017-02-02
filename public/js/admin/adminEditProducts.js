@@ -1,7 +1,8 @@
 'use strict';
-let isMenuVisible = true;
-let isMenuResponsive = false;
-let productosPorPagina = 50;
+let isMenuVisible = true,
+	isMenuResponsive = false,
+	productosPorPagina = 50,
+	filtroCategoria = null;
 //Para no mostrar el preview productos al hacer resize de la pantalla onload
 let esperarInteraccionMenu = true;
 
@@ -107,27 +108,27 @@ function borrarProducto(productPermalink){
 		}
 	});
 }
-//Funcion para filtrar los objetos por categoria para ver solo los que pertenezcan a dicha categoria
-function filtrarVistaCategoria(e){
-	e = e.target;
-	let permalinks = qAll('.categoria-producto-unico');
-	let categoriaFiltroSeleccionada = id('contenedor-categorias').childNodes[e.selectedIndex].innerHTML;
-	for(let i = 0; i < permalinks.length; i++){
-		if(permalinks[i].innerHTML != categoriaFiltroSeleccionada &&
-		   permalinks[i].innerHTML != categoriaFiltroSeleccionada+' (Borrador)'){
-			qAll('.contenedor-producto')[i].style.display = 'none';
-		}else{
-			qAll('.contenedor-producto')[i].style.display = 'flex';
-		}
-	}
-}
+// //Funcion para filtrar los objetos por categoria para ver solo los que pertenezcan a dicha categoria
+// function filtrarVistaCategoria(e){
+// 	e = e.target;
+// 	let permalinks = qAll('.categoria-producto-unico');
+// 	let categoriaFiltroSeleccionada = id('contenedor-categorias').childNodes[e.selectedIndex].innerHTML;
+// 	for(let i = 0; i < permalinks.length; i++){
+// 		if(permalinks[i].innerHTML != categoriaFiltroSeleccionada &&
+// 		   permalinks[i].innerHTML != categoriaFiltroSeleccionada+' (Borrador)'){
+// 			qAll('.contenedor-producto')[i].style.display = 'none';
+// 		}else{
+// 			qAll('.contenedor-producto')[i].style.display = 'flex';
+// 		}
+// 	}
+// }
 //Función para quitar los filtros de vista por categoria y ver todos los productos en orden
-function quitarFiltroVistaCategoria(){
-	let cajasProductos = document.getElementsByClassName('contenedor-producto');
-	for(let i = 0; i < cajasProductos.length; i++){
-		document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
-	}
-}
+// function quitarFiltroVistaCategoria(){
+// 	let cajasProductos = document.getElementsByClassName('contenedor-producto');
+// 	for(let i = 0; i < cajasProductos.length; i++){
+// 		document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
+// 	}
+// }
 //Funcion para crear el dom del widget atributos pasandole el objeto.
 function mostrarObjetoAtributos(objetoAtributos){
 	let indexAtributo = 0;
@@ -144,7 +145,7 @@ function mostrarObjetoAtributos(objetoAtributos){
 }
 //Para generar las cajas de productos
 function crearCajasProductos(page){
-	if(page == null || page == undefined){
+	if(!page){
 		page = 1;
 	}
 	qAll('.paginador-productos').forEach((paginad) => {
@@ -155,8 +156,14 @@ function crearCajasProductos(page){
 			paginad.childNodes[page-1].className = 'active';
 		}
 	});
-	resetAllProductData();
-	httpGet(`/api/get-all-products/${productosPorPagina}?page=${page}`, (results) => {
+	let url = '';
+	if(filtroCategoria){
+		url = `/api/get-all-products/${productosPorPagina}?page=${page}&filtroCategoria=${filtroCategoria}`;
+	}else{
+		url = `/api/get-all-products/${productosPorPagina}?page=${page}`;
+	}
+	resetAllProductData(); // Función de upload.js
+	httpGet(url, (results) => {
 		results = JSON.parse(results);
 		if(results != false){
 			let arrayProductos = results;
@@ -171,31 +178,17 @@ function crearCajasProductos(page){
 					addEspacioTitulo = '<br />';
 				}
 				let permalinkATexto = "'"+objetoProducto.permalink+"'";
-				let htmlProducto;
-				if(objetoProducto.publicado == 'no'){
-					htmlProducto = `<div class="contenedor-producto borrador">
-						<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
-						<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
-						${objetoProducto.titulo}</span>${addEspacioTitulo}
-						<span class="precio-producto">${objetoProducto.precio}€ </span>
-						<span class="categoria-producto-unico">${objetoProducto.categoria} (Borrador)</span>
-						<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
-						<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
-						<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
-						</div></div><input type="hidden" value="${objetoProducto.permalink}"/></div>`;
-				}else{
-					htmlProducto = `<div class="contenedor-producto">
-						<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
-						<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
-						${objetoProducto.titulo}</span>${addEspacioTitulo}
-						<span class="precio-producto">${objetoProducto.precio}€ </span>
-						<span class="categoria-producto-unico">${objetoProducto.categoria}</span>
-						<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
-						<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
-						<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
-						</div></div><input type="hidden" value="${objetoProducto.permalink}"/></div>`;
-				}
-
+				let htmlProducto = `<div class="contenedor-producto borrador">
+					<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
+					<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
+					${objetoProducto.titulo}</span>${addEspacioTitulo}
+					<span class="precio-producto">${objetoProducto.precio}€ </span>
+					<span class="categoria-producto-unico">
+					${objetoProducto.publicado==='si' ? objetoProducto.categoria : (objetoProducto.categoria+' (Borrador)')}</span>
+					<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
+					<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
+					<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
+					</div></div><input type="hidden" value="${objetoProducto.permalink}"/></div>`;
 				id('contenedor-productos').insertAdjacentHTML('beforeend', htmlProducto);
 			}
 		}else{
@@ -205,8 +198,15 @@ function crearCajasProductos(page){
 	});
 };
 function crearPaginacion(){
-	let paginador = document.querySelectorAll('.paginador-productos');
-	httpGet('/api/get-paginacion-admin-productos/'+productosPorPagina, (paginas) => {
+	let paginador = document.querySelectorAll('.paginador-productos'),
+		url = '';
+
+	if(filtroCategoria)
+		url = `/api/get-paginacion-admin-productos/${productosPorPagina}?filtroCategoria=${filtroCategoria}`;
+	else
+		url = `/api/get-paginacion-admin-productos/${productosPorPagina}`;
+
+	httpGet(url, (paginas) => {
 		paginas = JSON.parse(paginas).paginas;
 		if(paginas != null){
 			if(paginas > 1){
@@ -251,13 +251,15 @@ id('button-nuevo-producto').addEventListener('click', () => {
 		id('seccion-preview').className = 'animar-menu-visible';
 	}
 });
-//Para filtrar las imágenes por categorías
-id('contenedor-categorias').addEventListener('change', (e) => {
-	if(e.target.selectedIndex == 0){
-		quitarFiltroVistaCategoria();
-	}else{
-		filtrarVistaCategoria(e);
-	}
+//Para filtrar los productos por categorías
+id('contenedor-categorias').addEventListener('change', () => {
+	//El innerHTML del <option> seleccionado. Ej: "cuadros" or "camisetas"
+	if(id('contenedor-categorias').selectedIndex === 0)
+		filtroCategoria = null;
+	else
+		filtroCategoria = qAll('#contenedor-categorias option')[id('contenedor-categorias').selectedIndex].innerHTML;
+	crearCajasProductos();
+	crearPaginacion();
 });
 id('contenedor-burger').addEventListener('click', () => {
 	toggleMenu();

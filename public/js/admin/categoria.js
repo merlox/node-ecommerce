@@ -12,9 +12,11 @@ function getCategoriesFromServer(){
     for(let i = 0; i < categories.length; i++){
       categoriasHTML += `<option>${categories[i]}</option>`;
     }
+    let indexCategoriaSeleccionadaAhora = id('contenedor-categorias').selectedIndex;
     //Insertamos las categorías
     id('contenedor-categorias').innerHTML = '<option>Filtrar</option>'+categoriasHTML;
     id('producto-categorias').innerHTML = categoriasHTML;
+    id('contenedor-categorias').selectedIndex = indexCategoriaSeleccionadaAhora;
   });
 }
 

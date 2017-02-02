@@ -47,11 +47,14 @@ api.get('/get-categories', (req, res) => {
 	});
 });
 api.get('/get-all-products/:imagenesLimit?', (req, res) => {
-  let imagesLimit = 400;
-  let page = 1;
+  let imagesLimit = 400,
+    page = 1,
+    filtroCategoria = ''
   if(req.params.imagenesLimit) imagesLimit = parseInt(req.params.imagenesLimit);
   if(req.query.page) page = parseInt(req.query.page);
-	functions.getAllProducts(imagesLimit, page, (err, results) => {
+  if(req.query.filtroCategoria) filtroCategoria = req.query.filtroCategoria;
+	
+  functions.getAllProducts(imagesLimit, page, filtroCategoria, (err, results) => {
 		if(err){
 			console.log(err);
 			return res.send(err);
@@ -59,6 +62,23 @@ api.get('/get-all-products/:imagenesLimit?', (req, res) => {
 			return res.send(results);
 		}
 	});
+});
+api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
+  let limite = 100,
+    filtroCategoria = '';
+  if(req.params.productLimit) limite = parseInt(req.params.productLimit);
+  if(req.query.filtroCategoria) filtroCategoria = req.query.filtroCategoria;
+
+  functions.getPaginacion(limite, filtroCategoria, (err, paginas) => {
+    if(err){
+      console.log(err);
+      return res.send(null);
+    }else{
+      let objetoPaginas = {paginas: paginas};
+      objetoPaginas = JSON.stringify(objetoPaginas);
+      return res.send(objetoPaginas);
+    }
+  });
 });
 api.get('/get-single-product/:permalink', (req, res) => {
   functions.buscarProducto(req.params.permalink, (err, result) => {
@@ -170,20 +190,6 @@ api.get('/get-mas-vendidos', (req, res) => {
   functions.getMiniSlider("ventas", (err, results) => {
     if(err) console.log(err);
     return res.send(results);
-  });
-});
-api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
-  let limite = 100;
-  if(req.params.productLimit) limite = parseInt(req.params.productLimit);
-  functions.getPaginacion(limite, (err, paginas) => {
-    if(err){
-      console.log(err);
-      return res.send(null);
-    }else{
-      let objetoPaginas = {paginas: paginas};
-      objetoPaginas = JSON.stringify(objetoPaginas);
-      return res.send(objetoPaginas);
-    }
   });
 });
 api.get('/get-logged-state', (req, res) => {

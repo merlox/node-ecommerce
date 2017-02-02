@@ -232,13 +232,15 @@ function uploadPublicImages(objectImages, permalinkName, cb){
   });
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
-function getAllProducts(imageLimit, page, callback){
+function getAllProducts(imageLimit, page, filtroCategoria, callback){
   console.log('GetAllProducts, functions.js');
   let skipProducts = 0;
   if(page > 1){
     skipProducts = (page-1)*imageLimit;
   } 
-  db.collection('productos').find({}).limit(imageLimit).skip(skipProducts).toArray((err, results) => {
+  let query = {};
+  if(filtroCategoria) query['categoria'] = filtroCategoria;
+  db.collection('productos').find(query).limit(imageLimit).skip(skipProducts).toArray((err, results) => {
     if(err){
       return callback('Err, error searching products: '+err, false);
     }
@@ -346,7 +348,7 @@ function borrarDirectorio(permalink){
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
 function copyFile(origin, end, fileName, cb){
-  console.log('CopyFile, functions.js');
+  console.log('CopyFile, functions.js');  
   let finalName = path.join(end, fileName);
   let readStream = fs.createReadStream(origin);
   let writeStream = fs.createWriteStream(finalName);
@@ -360,7 +362,6 @@ function copyFile(origin, end, fileName, cb){
     error = err;
   });
   writeStream.on('finish', (ex) => {
-    console.log('Done copying image');
     if(error) return cb(error);
     return cb(null);
   });
@@ -599,9 +600,11 @@ function getMiniSlider(tipo, cb){
   });
 };
 //Function que me dice cuantas páginas hay en total para ese límite de productos por página.
-function getPaginacion(limite, cb){
+function getPaginacion(limite, filtroCategoria, cb){
   console.log('GetPaginacion, functions.js');
-  db.collection('productos').count((err, count) => {
+  let query = {};
+  if(filtroCategoria) query['categoria'] = filtroCategoria;
+  db.collection('productos').find(query).count((err, count) => {
     if(err){
       console.log(err);
       return cb('Error calculando la paginación de los productos. Intentalo de nuevo.', null);

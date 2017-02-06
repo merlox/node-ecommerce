@@ -3,37 +3,92 @@
   <head>
     <meta charset="utf-8">
     <title>Dashboard</title>
+    <script src="../js/functions.js" type="text/javascript"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script type="text/javascript">
+      'use strict';
       let socket = io();
     </script>
+    <style type="text/css">
+      *{
+        font-family: sans-serif;
+        box-sizing: border-box;
+      }
+      .contenedor-chat{
+        box-shadow: 0 1.5px 3px grey;
+        display: inline-block;
+        word-wrap: break-word;
+        width: 250px;
+        height: 400px;
+      }
+      .titulo-habitacion{
+        margin: 0;
+        background-color: #00C06C;
+        color: white;
+        padding: 10px; 
+      }
+      .mensajes-chat{
+        background-color: whitesmoke;
+        height: 290px;
+        padding: 15px;
+        overflow: auto;
+      }
+      .mensaje-propio{
+        float: right;
+        background-color: rgba(0, 0, 255, 0.1);
+        padding: 10px;
+        border-radius: 5px;
+        display: inline-block;
+      }
+      .escribir-texto{
+        width: calc(100% - 50px);
+        height: 25px;
+        border: none;
+      }
+      .boton-enviar-chat{
+        width: 50px;
+        height: 25px;
+        border: none;
+      }
+    </style>
   </head>
   <body>
-    <h1>Dashboard</h1>
-    <div id="mensajesChat"></div>
-    <form>
-      <input id="textoChat" type="text" placeholder="Say something...">
-      <input id="formulario" type="button" value="Enviar mensaje">
-    </form>
-    <div id="usersConnected"></div>
+    <div class="contenedor-chat">
+      <h3 class="titulo-habitacion">Habitación #5124</h3>
+      <div class="mensajes-chat"></div>
+      <div class="contenedor-inferior">
+        <!-- Importante mantenerlos en la misma línea para que no haya espacios en blanco ya que son elementos inline-block -->
+        <input class="escribir-texto" type="text" placeholder="Say something..."><input class="boton-enviar-chat" type="button" value=">>">
+        <div id="usersConnected"></div>
+      </div>
+    </div>
 
     <script type="text/javascript">
-      document.getElementById('formulario').addEventListener('click', function(e){
+      q('.boton-enviar-chat').addEventListener('click', function(e){
         e.preventDefault();
-        socket.emit('mensaje chat', document.getElementById('textoChat').value);
-        document.getElementById('textoChat').value = '';
+        socket.emit('mensaje chat', q('.escribir-texto').value);
+        q('.escribir-texto').value = '';
       });
 
-      document.getElementById('textoChat').addEventListener('keypress', function(e){
+      q('.escribir-texto').addEventListener('keypress', function(e){
         if(e.keyCode == 13){
           e.preventDefault();
-          socket.emit('mensaje chat', document.getElementById('textoChat').value);
-          document.getElementById('textoChat').value = '';
+          socket.emit('mensaje chat', q('.escribir-texto').value);
+          q('.escribir-texto').value = '';
         }
       });
-
       socket.on('mensaje chat', function(mensaje){
-        document.getElementById('mensajesChat').insertAdjacentHTML('beforeend', mensaje+'<br/>');
+        let mensajeHTML = `<div class="mensaje-propio">${mensaje}</div>`,
+          ultimoMensajeNodo = q('.mensajes-chat').lastChild;
+
+        //Si el último mensaje es tuyo, expande el contenedor
+        if(ultimoMensajeNodo && ultimoMensajeNodo.className === 'mensaje-propio'){
+          ultimoMensajeNodo.innerHTML += `<br/>${mensaje}`;
+        }else{
+          q('.mensajes-chat').insertAdjacentHTML('beforeend', mensajeHTML);
+        }
+        //Scroll hacia abajo del todo
+        q('.mensajes-chat').scrollTop = q('.mensajes-chat').scrollHeight;
       });
       socket.on('user connected', function(arrayOfUsersConnected){
         document.getElementById('usersConnected').innerHTML = '';

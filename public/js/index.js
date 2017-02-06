@@ -46,12 +46,13 @@ MAIN SLIDER
 function centrarImagenesSlider(){
 	let contenedorImagenes = q('#contenedor-imagenes-slider'),
 		image = q('.imagen-slider');
+
 	indexImagenActiva = 0;
 	arrayImagenes = qAll('.imagen-slider');
 	//Colocar la imagen en el centro de la pantalla
-	contenedorImagenes.style.width = (image.naturalWidth * arrayImagenes.length + 'px');
-	alineador = (image.naturalWidth - window.outerWidth) / 2;
-	contenedorImagenes.style.transform = `translateX(-${alineador}px)`;
+	contenedorImagenes.style.width = (image.naturalWidth*arrayImagenes.length)+'px';
+	arrayImagenes[0].style.transform = 'none';
+	arrayImagenes[0].style.left = 'auto';
 	intervaloCambiarImagenes();
 	arrayImagenes.forEach(img => {
 		img.style.display = 'block';
@@ -62,12 +63,11 @@ function cambiarImagenDerecha(){
 	if(indexImagenActiva == (arrayImagenes.length-1)){
 		indexImagenActiva = 0;
 	}else{
-		indexImagenActiva = ++indexImagenActiva;
+		indexImagenActiva++;
 	}
 	let tamañoImagen = q('.imagen-slider').naturalWidth;
 	alineador = (tamañoImagen - window.outerWidth) / 2;
 	q('#contenedor-imagenes-slider').style.transform = `translateX(${-((indexImagenActiva*tamañoImagen)+alineador)}px)`;
-	//Reseteamos el intervalo si el usuario hace click
 	clearInterval(intervaloSlider);
 	intervaloCambiarImagenes();
 };
@@ -76,7 +76,7 @@ function cambiarImagenIzquierda(){
 	if(indexImagenActiva == 0){
 		indexImagenActiva = (arrayImagenes.length-1);
 	}else{
-		indexImagenActiva = --indexImagenActiva;
+		indexImagenActiva--;
 	}
 	let tamañoImagen = q('.imagen-slider').naturalWidth;
 	alineador = (tamañoImagen - window.outerWidth) / 2;

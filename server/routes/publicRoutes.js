@@ -120,7 +120,7 @@ routes.get('/chat', function(req, res){
 	if(typeof req.session.isLogged == 'undefined' || !req.session.isLogged){
 	  return res.redirect('/?status=Error&message=You are not logged');
 	}else if(req.session.isLogged){
-	  return res.sendFile(path.join(__dirname, '../../public/html/chat.html'));
+	  return res.sendFile(path.join(__dirname, '../../public/views/chat.html'));
 	}
 });
 

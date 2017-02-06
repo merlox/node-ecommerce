@@ -20,6 +20,15 @@ h2{
 h3{
     font-size: 26pt;
 }
+h4{
+    font-size: 22pt;   
+}
+h5{
+    font-size: 18pt;
+}
+h6{
+    font-size: 15pt;
+}
 hr{
     border: 1px solid lightgrey;
 }

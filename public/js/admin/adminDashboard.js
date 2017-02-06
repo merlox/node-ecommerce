@@ -6,13 +6,13 @@ let filtrosEstado = {},
 
 mostrarMensajeRandomCarga();
 
-//TODO verificar que el usuario pone todos los datos de la dirección y que son correctos
+//Done TODO verificar que el usuario pone todos los datos de la dirección y que son correctos
 /*
 DONE 1.paginacion
 DONE 2.filtrar
-3.verificar en cesta.html que pone los datos de la direccion y son correctos
-4.mostrar mensajes de error en la página de compra cesta.html
-5.crear acciones de estado posibles en este widget
+DONE 3.verificar en cesta.html que pone los datos de la direccion y son correctos
+DONE 4.mostrar mensajes de error en la página de compra cesta.html
+DONE 5.crear acciones de estado posibles en este widget
 6.crear widget de chat para comunicarme con cada comprador
 */
 window.addEventListener('load', () => {
@@ -200,66 +200,135 @@ function generarTablaFacturasHTML(dataObject, done){
 		q('.contenedor-mensaje-carga').style.display = 'none';
 		q('#tabla-facturas').innerHTML = tablaHTML;
    		return done(tablaHTML);
-   	}
-    dataObject.facturas.forEach((objectoFactura, index) => {
-    	tablaHTML += `<tr>`;
-    	//ID
-    	tablaHTML += `<td>${objectoFactura.idPago}</td>`;
-    	//Comprador
-    	tablaHTML += `<td><i>${objectoFactura.nombreApellidos}</i>
-    		<br/>${objectoFactura.emailUsuarioConectado}
-    		<br/><span class="secundario">${objectoFactura.customer}</span></td>`;
-    	//Productos
-    	tablaHTML += `<td>`;
-    	let i = 0,
-    		tamañoProductos = Object.keys(objectoFactura.productos).length;
-    	tablaHTML += `<ul>`;
-    	for(let key in objectoFactura.productos){
-    		i++;
-    		let producto = objectoFactura.productos[key];
-    		if(i > 1 && i < tamañoProductos){
-    			tablaHTML += `<li class="lista-productos-comprados"> ${producto.titulo} 
-    			<br/><b>${producto.cantidad}</b> x ${(producto.precioCentimos*0.01).toFixed(2)}€ 
-    			= ${(producto.cantidad*producto.precioCentimos*0.01).toFixed(2)}€`;
-    		}
-    	};
-    	tablaHTML += `</ul>`;
-    	tablaHTML += `</td>`;
-    	//Precio total
-    	tablaHTML += `<td>${(objectoFactura.productos.precioTotal*0.01).toFixed(2)}€</td>`;
-    	//Fecha de compra, la convertimos a ms y luego a date y luego a string para eliminar lo que no interesa
-    	let fecha = new Date(objectoFactura.fecha*1000).toISOString(),
-    		fechaHorario = fecha.split('T')[0].split('-'),
-    		diaDeLaSemana = new Date(objectoFactura.fecha*1000).toString().substring(0, 4),
-    		fechaAño = fechaHorario[0],
-    		fechaMes = fechaHorario[1],
-    		fechaDia = fechaHorario[2],
-    		fechaHoras = fecha.split('T')[1].substring(0, 8);
-    	tablaHTML += `<td> ${diaDeLaSemana}
-    		<br/>${fechaDia}/${fechaMes}/${fechaAño} 
-    		<br/> <span class="secundario">${fechaHoras}</span></td>`;
-    	//Forma de pago
-    	tablaHTML += `<td>Tarjeta ${objectoFactura.chargeObject.source.brand}
-    		<br/>${objectoFactura.chargeObject.source.country}
-    		<br/>${objectoFactura.terminacionTarjeta}</td>`;
-    	//Dirección
-    	tablaHTML += `<td><span class="secundario">Cod. postal:</span> ${objectoFactura.direccion.codPostal ? objectoFactura.direccion.codPostal : '-'}
-    		<br/><span class="secundario">Email:</span> ${objectoFactura.direccion.email ? objectoFactura.direccion.email : '-'}
-    		<br/><span class="secundario">Linea 1:</span> ${objectoFactura.direccion.linea1 ? objectoFactura.direccion.linea1: '-'}
-    		<br/><span class="secundario">Linea 2:</span> ${objectoFactura.direccion.linea2 ? objectoFactura.direccion.linea2 : '-'}
-    		<br/><span class="secundario">Nombre apellidos:</span> ${objectoFactura.direccion.nombreApellidos ? objectoFactura.direccion.nombreApellidos : '-'}
-    		<br/><span class="secundario">País:</span> ${objectoFactura.direccion.pais ? objectoFactura.direccion.pais : '-'}
-    		<br/><span class="secundario">Teléfono:</span> ${objectoFactura.direccion.telefono ? objectoFactura.direccion.telefono : '-'}</td>`;
-    	//Estado
-    	tablaHTML += `<td><span class="secundario">Pagado:</span> ${objectoFactura.estaPagado ? 'Si' : 'No'}
-    		<br/><span class="secundario">Procesado:</span> ${objectoFactura.estaProcesado ? 'Si' : 'No'}
-    		<br/><span class="secundario">Enviado:</span> ${objectoFactura.estaEnviado ? 'Si' : 'No'}</td>`;
-    	//Acciones
-    	tablaHTML += `<td>work in progress</td>`;
-    	tablaHTML += `</tr>`;
-    	//Index empieza a contar en 0, length empieza a contar en 1
-    	if(index >= dataObject.facturas.length - 1){
-    		return done(tablaHTML);
-    	}
-    });
+   	}else{
+	    dataObject.facturas.forEach((objectoFactura, index) => {
+	    	tablaHTML += `<tr>`;
+	    	//ID
+	    	tablaHTML += `<td>${objectoFactura.idPago}</td>`;
+	    	//Comprador
+	    	tablaHTML += `<td><i>${objectoFactura.nombreApellidos}</i>
+	    		<br/>${objectoFactura.emailUsuarioConectado}
+	    		<br/><span class="secundario">${objectoFactura.customer}</span></td>`;
+	    	//Productos
+	    	tablaHTML += `<td>`;
+	    	let i = 0,
+	    		tamañoProductos = Object.keys(objectoFactura.productos).length;
+	    	tablaHTML += `<ul>`;
+	    	for(let key in objectoFactura.productos){
+	    		i++;
+	    		let producto = objectoFactura.productos[key];
+	    		if(i > 1 && i < tamañoProductos){
+	    			tablaHTML += `<li class="lista-productos-comprados"> ${producto.titulo} 
+	    			<br/><b>${producto.cantidad}</b> x ${(producto.precioCentimos*0.01).toFixed(2)}€ 
+	    			= ${(producto.cantidad*producto.precioCentimos*0.01).toFixed(2)}€`;
+	    		}
+	    	};
+	    	tablaHTML += `</ul>`;
+	    	tablaHTML += `</td>`;
+	    	//Precio total
+	    	tablaHTML += `<td>${(objectoFactura.productos.precioTotal*0.01).toFixed(2)}€</td>`;
+	    	//Fecha de compra, la convertimos a ms y luego a date y luego a string para eliminar lo que no interesa
+	    	let fecha = new Date(objectoFactura.fecha*1000).toISOString(),
+	    		fechaHorario = fecha.split('T')[0].split('-'),
+	    		diaDeLaSemana = new Date(objectoFactura.fecha*1000).toString().substring(0, 4),
+	    		fechaAño = fechaHorario[0],
+	    		fechaMes = fechaHorario[1],
+	    		fechaDia = fechaHorario[2],
+	    		fechaHoras = fecha.split('T')[1].substring(0, 8);
+	    	tablaHTML += `<td> ${diaDeLaSemana}
+	    		<br/>${fechaDia}/${fechaMes}/${fechaAño} 
+	    		<br/> <span class="secundario">${fechaHoras}</span></td>`;
+	    	//Forma de pago
+	    	tablaHTML += `<td>Tarjeta ${objectoFactura.chargeObject.source.brand}
+	    		<br/>${objectoFactura.chargeObject.source.country}
+	    		<br/>${objectoFactura.terminacionTarjeta}</td>`;
+	    	//Dirección
+	    	tablaHTML += `<td><span class="secundario">Cod. postal:</span> ${objectoFactura.direccion.codPostal ? objectoFactura.direccion.codPostal : '-'}
+	    		<br/><span class="secundario">Email:</span> ${objectoFactura.direccion.email ? objectoFactura.direccion.email : '-'}
+	    		<br/><span class="secundario">Linea 1:</span> ${objectoFactura.direccion.linea1 ? objectoFactura.direccion.linea1: '-'}
+	    		<br/><span class="secundario">Linea 2:</span> ${objectoFactura.direccion.linea2 ? objectoFactura.direccion.linea2 : '-'}
+	    		<br/><span class="secundario">Nombre apellidos:</span> ${objectoFactura.direccion.nombreApellidos ? objectoFactura.direccion.nombreApellidos : '-'}
+	    		<br/><span class="secundario">País:</span> ${objectoFactura.direccion.pais ? objectoFactura.direccion.pais : '-'}
+	    		<br/><span class="secundario">Teléfono:</span> ${objectoFactura.direccion.telefono ? objectoFactura.direccion.telefono : '-'}</td>`;
+	    	//Estado
+	    	tablaHTML += `<td><span class="secundario">Pagado:</span> <span class="secundario-pagado">${objectoFactura.estaPagado ? 'Si' : 'No'}</span>
+	    		<br/><span class="secundario">Procesado:</span> <span class="secundario-procesado">${objectoFactura.estaProcesado ? 'Si' : 'No'}</span>
+	    		<br/><span class="secundario">Enviado:</span> <span class="secundario-enviado">${objectoFactura.estaEnviado ? 'Si' : 'No'}</span></td>`;
+	    	//Acciones
+	    	let botonEnviado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaEnviado', true, this)">
+	    			Marcar enviado</button>`,
+	    		botonNoEnviado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaEnviado', false, this)">
+	    			Marcar no enviado</button>`,
+	    		botonProcesado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaProcesado', true, this)">
+	    			Marcar proces.</button>`,
+	    		botonNoProcesado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaProcesado', false, this)">
+	    			Marcar no proces.</button>`,
+	    		botonPagado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaPagado', true, this)">
+	    			Marcar pagado</button>`,
+	    		botonNoPagado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaPagado', false, this)">
+	    			Marcar no pagado</button>`;
+	    	tablaHTML += `<td>${objectoFactura.estaPagado ? botonNoPagado : botonPagado}
+	    		${objectoFactura.estaProcesado ? botonNoProcesado : botonProcesado}
+	    		${objectoFactura.estaEnviado ? botonNoEnviado : botonEnviado}</td>`;
+	    	tablaHTML += `</tr>`;
+	    	//Index empieza a contar en 0, length empieza a contar en 1
+	    	if(index >= dataObject.facturas.length - 1){
+	    		return done(tablaHTML);
+	    	}
+	    });
+	}
 };
+//Para marcar los pedidos como enviados
+function actualizarEstado(idFactura, estadoNuevo, boolean, element){
+	let dataObject = {
+		'id': idFactura,
+		'estado': estadoNuevo,
+		//Le indicamos true o false para ese estado nuevo.
+		'estadoBoolean': boolean
+	};
+	//Definimos las variables a usar
+	let botonNodo = element,
+		nuevoNodo = document.createElement('b'),
+		//Extraemos la id pago
+		idPago = parseInt(botonNodo.getAttribute('onclick').split(',')[0].substring(botonNodo.getAttribute('onclick').split(',')[0].length-1));
+	//Los botones a usar
+	let botonEnviado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaEnviado', true, this)">
+			Marcar enviado</button>`,
+		botonNoEnviado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaEnviado', false, this)">
+			Marcar no enviado</button>`,
+		botonProcesado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaProcesado', true, this)">
+			Marcar proces.</button>`,
+		botonNoProcesado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaProcesado', false, this)">
+			Marcar no proces.</button>`,
+		botonPagado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaPagado', true, this)">
+			Marcar pagado</button>`,
+		botonNoPagado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaPagado', false, this)">
+			Marcar no pagado</button>`;
+
+	//Reemplazamos el botón con un mensaje de cargando
+	nuevoNodo.innerHTML = '<div class="mensaje-carga-boton-estado">cargando... <span class="spinner spinner-inline"></span></div>';
+	botonNodo.parentNode.replaceChild(nuevoNodo, botonNodo);
+
+	httpPost('/api/actualizar-estado-factura', dataObject, err => {
+		if(err) q('.contenedor-mensaje-error').innerHTML = `<h3>${err}</h3>`;
+
+		//Actualizamos el estado según corresponda y cambiamos el botón.
+		if(estadoNuevo === 'estaPagado'){
+			nuevoNodo.parentNode.parentNode.children[7].querySelector('.secundario-pagado').innerHTML = (boolean ? 'Si' : 'No');
+			nuevoNodo.outerHTML = (boolean ? botonNoPagado : botonPagado);
+		}
+		if(estadoNuevo === 'estaProcesado'){
+			nuevoNodo.parentNode.parentNode.children[7].querySelector('.secundario-procesado').innerHTML = (boolean ? 'Si' : 'No');
+			nuevoNodo.outerHTML = (boolean ? botonNoProcesado : botonProcesado);
+		}
+		if(estadoNuevo === 'estaEnviado'){
+			nuevoNodo.parentNode.parentNode.children[7].querySelector('.secundario-enviado').innerHTML = (boolean ? 'Si' : 'No');
+			nuevoNodo.outerHTML = (boolean ? botonNoEnviado : botonEnviado);
+		}
+	});
+};
+
+
+
+
+

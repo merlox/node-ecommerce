@@ -989,12 +989,26 @@ function getPaginacionFacturas(ppp, pageActual, filtros, cb){
   if(!filtros) filtros = {};
   else{
     //Convertimos los 'false' strings a boolean
-    for(let key in filtros) filtros[key] = (filtros[key] == 'true');
+    for(let key in filtros) filtros[key] = (filtros[key] === 'true');
   }
   db.collection('facturas').find(filtros).skip((pageActual-1)*ppp).count((err, count) => {
     if(err) return cb('Error, no se pudo conseguir las páginas totales.', null);
     //Cada página son 20 productos por defecto ppp es productosPorPagina
     cb(null, Math.ceil(count/ppp));
+  });
+};
+//Actualizar los estados. Ej: marcar que un producto está enviado o pagado o procesado
+function actualizarEstadoFactura(id, estado, estadoBoolean, cb){
+  console.log('ActualizarEstadoFactura, functions.js');
+  let estadoNuevo = {};
+  estadoNuevo[estado] = estadoBoolean;
+  db.collection('facturas').update({
+    'idPago': id
+  }, {
+    '$set': estadoNuevo
+  }, (err, results) => {
+    if(err) return cb(`Error, no se pudo actualizar el estado de la factura con el idPago = ${idPago}`);
+    cb(null);
   });
 };
 
@@ -1030,3 +1044,4 @@ exports.getPaginacionCategoria = getPaginacionCategoria;
 exports.buscarFiltrarProductosCategoria = buscarFiltrarProductosCategoria;
 exports.getFacturas = getFacturas;
 exports.getPaginacionFacturas = getPaginacionFacturas;
+exports.actualizarEstadoFactura = actualizarEstadoFactura;

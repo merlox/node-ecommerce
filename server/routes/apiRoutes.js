@@ -141,6 +141,15 @@ api.post('/upload-image-product', (req, res) => {
 });
 //1. Create a folder for each product images and then copy the folder to uploads in the server
 api.post('/upload-product', (req, res) => {
+  let b = req.body,
+    responseObject = {
+      'error': null,
+      'success': null
+    };
+  if(!b.titulo || !b.imagenes || !b.permalink || !b.precio || !b.descripcion || !b.categoria || !b.atributos || !b.publicado){
+    responseObject.error = 'Error, algún dato del producto no se ha recibido correctamente, comprueba la información del producto.';
+    return res.send(responseObject);
+  };
   //Guardamos el producto en la base de datos
   let informacionProducto = {
     'titulo': req.body.titulo,
@@ -156,11 +165,19 @@ api.post('/upload-product', (req, res) => {
     'vendidos': 0
   };
   functions.uploadPublicImages(req.body.imagenes, req.body.permalink.toLowerCase(), (err) => {
-    if(err) console.log(err);
+    if(err){
+      responseObject.error = 'Error, las imágenes no se han subido subido correctamente, inténtalo de nuevo.';
+      return res.send(responseObject);  
+    }
   });
   functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, (err) => {
-    if(err) return res.send(err);
-    else return res.send('Producto guardado satisfactoriamente');
+    if(err){
+      responseObject.error = 'Error, no se pudo guardar el producto en la base de datos, inténtalo de nuevo.';
+      return res.send(responseObject);
+    }else{
+      responseObject.success = 'Producto guardado satisfactoriamente';
+      return res.send(responseObject);
+    }
   });
 });
 api.post('/guardar-busqueda', (req, res) => {
@@ -375,6 +392,14 @@ api.post('/get-paginacion-facturas', (req, res) => {
     if(err) dataObject.error = err;
     dataObject.paginasTotales = paginasTotales;
     res.send(dataObject);
+  });
+});
+
+api.post('/actualizar-estado-factura', (req, res) => {
+  let factura = req.body.data;
+  functions.actualizarEstadoFactura(factura.id, factura.estado, factura.estadoBoolean, err => {
+    if(err) return res.send(err);
+    res.send(null);
   });
 });
 

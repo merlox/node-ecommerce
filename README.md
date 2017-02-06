@@ -1052,3 +1052,26 @@ También he creado el widget de facturas del panel de administración, está en 
 Aparte tengo que reparar la pagina de subida de productos para que no te deje subir productos sin la información necesaria y lo mismo en la página de pago.
 
 Mañana trabajaré en ello.
+
+### Día 56
+
+Entre ayer y hoy completé lo que viene a ser el widget del administrador. Este widget de facturas en el que ver las compras realizadas por qué usuarios y su estado.
+
+Ahora puedo cambiar el estado de manera muy agradable ya que cuando le das a "marcar como enviado" se actualiza inmediatamente en la base de datos y la información queda guardada rápido.
+
+Por otro lado, en este momento estoy trabajando en crear el pequeño -pero no tan pequeño- widget de chat que se usará a lo largo de toda la web y sobre todo en el panel de administración en el que poder comunicarme con los clientes para resolver sus dudas y comunicar actualizaciones conforme haga falta. Así conseguiré informar al cliente en tiempo real que su pedido acaba de ser enviado.
+
+Estos son los requisitos funcionales de este widget:
+- Conectarme con el cliente seleccionado en el momento deseado para iniciar una comunicación en tiempo real.
+- Enviar y guardar mensajes de conversaciones para revisar más adelante.
+- Que el cliente pueda "Solicitar chat" para hablar con los encargados.
+- Que el administrador pueda "Aceptar comunicación" e iniciar el chat.
+- Que ambos puedan enviar mensajes en cualquier momento.
+- Que aparezca un mensaje de "usuario x está escribiendo...".
+- Que cuando cambie el estado de una factura, se le mande un mensaje genérico al usuario tipo "Tu pedido acaba de ser enviado.", "El pago de tu compra acaba de ser recibido correctamente".
+- Que ninguno sea capaz de borrar mensajes.
+
+Todo esto lo verá el usuario en un pequeño widget de chat en la esquina inferior derecha o tal vez superior para ver novedades.
+Luego, después de crear este gran widget, procederé a incorporarlo a la web y crearé el panel de administración de cada usuario.
+
+Post Data: Acabo de descubrir que cuando usas la propiedad "Box-sizing: border-box" el espacio queda reducido excepto el margin. Además, si los elementos son "display: inline-block o inline", la separación o el salto de línea en el HTML dejará un espacio bastante molesto. Solución: juntar los elementos en la misma linea de html sin espacios.

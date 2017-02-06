@@ -2,7 +2,8 @@
 const express = require('express'),
     app = express(),
     fs = require('fs'),
-    http = require('http').Server(app),
+    socketServer = require('http').Server(app),
+    io = require('socket.io')(socketServer),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     MongoStore = require('connect-mongo')(session),
@@ -10,8 +11,11 @@ const express = require('express'),
     MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
     apiRoutes = require('./server/routes/apiRoutes.js'),
     adminRoutes = require('./server/routes/adminRoutes.js'),
-    publicRoutes = require('./server/routes/publicRoutes.js');
-  
+    publicRoutes = require('./server/routes/publicRoutes.js'),
+    socketRoutes = require('./server/routes/socketRoutes.js');
+
+let username = null;
+
 //Inicializamos configuracion de express y sessión
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
@@ -35,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Logger middleware
 app.use('*', (req, res, next) => {
   console.log('\nRequesting: '+req.originalUrl+' '+req.ip);
+  if(req.session.username) username = req.session.username;
   next();
 });
 
@@ -44,6 +49,11 @@ app.use('/admin', adminRoutes);
 app.use('/', publicRoutes);
 
 //Ejecutamos el servidor en la ip local
-http.listen(8000, '0.0.0.0', function(){
+socketServer.listen(8000, '0.0.0.0', function(){
   console.log("Server started at localhost:8000");
+});
+
+//Ejecutamos el servidor socket.io para el chat en realtiime
+io.on('connection', function(socket){
+  socketRoutes(socket, io, username);
 });

@@ -6,7 +6,6 @@ let io = require('socket.io')(http),
 module.exports = (function(){
 
 	let usernameLogged = null;
-	let usuariosConnectados = [];
 
 	app.use('*', function(req, res, next){
 	  console.log("Requesting: "+req.url);

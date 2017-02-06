@@ -33,21 +33,41 @@ function checkNumberFormat(e){
 		}
 	}
 };
+//Comprueba que los datos de dirección, productos y tarjeta se envíen completos
+function comprobarInputsCompletos(){
+	let resultado = false,
+		ok = true,
+		inputsPago = qAll(`#nombreApellidos, #direccion1, #direccion2, #codPostal, #pais, #email, 
+			#num-tarjeta, #expira-completo, #cvc, #contenedor-cesta-pagina`);
+	for(let i = 0; i < inputsPago.length; i++){
+		if(inputsPago[i].value === '') ok = false;
+	}
+	if(ok) resultado = true;
+	return resultado;
+};
 //Para comprobar la tarjeta pasando por los servidores de stripe y realizar el pago seguro.
 function submitPagoStripe(e){
-	q('#submit-pago').setAttribute('disabled', 'disabled');
-	Stripe.card.createToken(q('#payment-form'), (status, response) => {
-		//Verificamos que se haya recibido la información de la tarjeta exitosamente
-		if(response.error){
-			//Si error volver a reiniciar el submit
-			q('.payment-errors').style.display = 'inline';
-			q('.payment-errors').innerHTML = response.error.message;
-			q('#submit-pago').removeAttribute('disabled');
-		}else{
-			let token = response.id;
-			completarPago(token);
-		}
-	});
+	if(comprobarInputsCompletos()){
+		q('#mensaje-error').innerHTML = '';
+		q('#submit-pago').setAttribute('disabled', 'disabled');
+		q('.spinner-final').style.display = 'block';
+		Stripe.card.createToken(q('#payment-form'), (status, response) => {
+			//Verificamos que se haya recibido la información de la tarjeta exitosamente
+			if(response.error){
+				//Si error volver a reiniciar el submit
+				q('.payment-errors').style.display = 'inline';
+				q('.payment-errors').innerHTML = response.error.message;
+				q('#submit-pago').removeAttribute('disabled');
+				q('.spinner-final').style.display = 'none';
+			}else{
+				let token = response.id;
+				completarPago(token);
+			}
+		});
+	}else{
+		window.scrollTo(0, 0);
+		q('#mensaje-error').innerHTML = '<h4><b>Error, faltan datos de dirección o tarjeta de crédito.</b></h4>';
+	}
 	//Para evitar que se envie la información al servidor antes de comprobar la info en stripe
 	return false;
 };

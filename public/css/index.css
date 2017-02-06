@@ -43,9 +43,11 @@ SLIDER
 	height: 70px;
 	background-color: rgba(0, 0, 0, 0.1);
 }
-.imagen-slider{
+.imagen-slider:first-child{
 	position: relative;
-	float: left;
+    float: left;
+    transform: translateX(-50%);
+    left: 50%;
 }
 .imagen-slider:not(:first-child){
 	display: none;

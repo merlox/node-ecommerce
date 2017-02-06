@@ -9,6 +9,13 @@ GENERALES
 #contenedor-total-pagina{
 	display: none;
 }
+.spinner-final{
+	display: none;
+	position: relative;
+    float: right;
+    margin-left: 10px;
+    top: 1.5px;
+}
 /*
 
 CESTA PÁGINA
@@ -88,6 +95,10 @@ FORMULARIO DE PAGO CON TARJETA
 }
 #submit-pago{
 	margin-top: 15px;
+}
+#mensaje-error{
+	color: red;
+	text-align: center;
 }
 .form-row{
 	padding: 5px;

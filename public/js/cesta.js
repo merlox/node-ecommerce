@@ -24,7 +24,6 @@ function getCesta(){
 	q('#cesta').insertAdjacentHTML('afterbegin', '<div class="spinner spinner-cesta"></div>');
 	httpGet('/api/get-cesta', (response) => {
 		response = JSON.parse(response);
-			console.log(response)
 		if(response.error){
 			q('.spinner').remove();
 			q('#productos-cesta').style.display = 'block';
@@ -114,12 +113,10 @@ function renderCesta(){
 	if(q('#contenedor-total-pagina').style.display == 'block'){
 		q('#contenedor-total-pagina').style.display = 'none';
 	}
-	console.log('called')
 
 	q('body').insertAdjacentHTML('afterbegin', '<div class="thin-spinner"></div>');
 
 	httpGet('/api/get-cesta', (response) => {
-		console.log(response)
 		response = JSON.parse(response);
 		if(response.error){
 			q('.thin-spinner').remove();

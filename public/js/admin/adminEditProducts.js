@@ -107,28 +107,7 @@ function borrarProducto(productPermalink){
 			crearCajasProductos();
 		}
 	});
-}
-// //Funcion para filtrar los objetos por categoria para ver solo los que pertenezcan a dicha categoria
-// function filtrarVistaCategoria(e){
-// 	e = e.target;
-// 	let permalinks = qAll('.categoria-producto-unico');
-// 	let categoriaFiltroSeleccionada = id('contenedor-categorias').childNodes[e.selectedIndex].innerHTML;
-// 	for(let i = 0; i < permalinks.length; i++){
-// 		if(permalinks[i].innerHTML != categoriaFiltroSeleccionada &&
-// 		   permalinks[i].innerHTML != categoriaFiltroSeleccionada+' (Borrador)'){
-// 			qAll('.contenedor-producto')[i].style.display = 'none';
-// 		}else{
-// 			qAll('.contenedor-producto')[i].style.display = 'flex';
-// 		}
-// 	}
-// }
-//Función para quitar los filtros de vista por categoria y ver todos los productos en orden
-// function quitarFiltroVistaCategoria(){
-// 	let cajasProductos = document.getElementsByClassName('contenedor-producto');
-// 	for(let i = 0; i < cajasProductos.length; i++){
-// 		document.getElementsByClassName('contenedor-producto')[i].style.display = 'flex';
-// 	}
-// }
+};
 //Funcion para crear el dom del widget atributos pasandole el objeto.
 function mostrarObjetoAtributos(objetoAtributos){
 	let indexAtributo = 0;
@@ -184,7 +163,7 @@ function crearCajasProductos(page){
 					${objetoProducto.titulo}</span>${addEspacioTitulo}
 					<span class="precio-producto">${objetoProducto.precio}€ </span>
 					<span class="categoria-producto-unico">
-					${objetoProducto.publicado==='si' ? objetoProducto.categoria : (objetoProducto.categoria+' (Borrador)')}</span>
+					${objetoProducto.publicado ? objetoProducto.categoria : (objetoProducto.categoria+' (Borrador)')}</span>
 					<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
 					<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
 					<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>

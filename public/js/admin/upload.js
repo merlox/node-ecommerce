@@ -12,6 +12,17 @@ let contenidosMainMenu = "";
 //El 1 representa la ubicación, siendo 1 la imágen más grande y el resto miniaturas.
 
 function guardarPublicarProducto(publicar){
+  if(!comprobarDatosSubidaProducto()){
+    let mensajeErrorHTML = `Error subiendo el producto, los campos no pueden estar vacíos<br/>
+      <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+    q('.mensaje-error-subida').style.display = 'block';
+    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+    return;
+  }else{
+    q('.mensaje-error-subida').style.display = 'none';
+    q('.mensaje-error-subida').innerHTML = '';
+  }
+
   informacionProducto.titulo = id('producto-title').value;
   informacionProducto.permalink = id('permalink').value;
   informacionProducto.precio = id('producto-precio').value;
@@ -21,18 +32,16 @@ function guardarPublicarProducto(publicar){
   informacionProducto.categoria = productoCategorias.childNodes[productoCategorias.selectedIndex].innerHTML;
   informacionProducto.atributos = objetoAtributos;
   informacionProducto.imagenes = imagenesProducto;
-  informacionProducto.publicado = "no";
+  informacionProducto.publicado = false;
 
-  if(publicar){
-    informacionProducto.publicado = "si";  
-  }
+  if(publicar) informacionProducto.publicado = true;  
 
   let categoriasReq = new XMLHttpRequest();
   categoriasReq.open('POST', '/api/guardar-categorias');
   categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
   categoriasReq.onreadystatechange = () => {
     if(categoriasReq.readyState == XMLHttpRequest.DONE){
-      console.log(request.responseText, 'info');
+      console.log('Categorias guardadas.');
     }
   };
   categoriasReq.send(JSON.stringify(arrayCategorias));
@@ -42,17 +51,44 @@ function guardarPublicarProducto(publicar){
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.onreadystatechange = () => {
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-      console.log(request.responseText, 'info');
+      let responseObject = JSON.parse(request.responseText);
+      if(responseObject.error){
+        let mensajeErrorHTML = `${responseObject.error}<br/>
+          <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+        q('.mensaje-error-subida').style.display = 'block';
+        q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+        return;
+      }
       resetAllProductData();
       //Funcion del editProducts.js para generar las cajas de productos
       crearCajasProductos();
-    }else{
-      console.log('Error, ha habido un error subiendo el archivo '+request.responseText, 'error');
+    }else if(request.readyState == XMLHttpRequest.DONE){
+      let responseObject = JSON.parse(request.responseText);
+      if(responseObject.error){
+        let mensajeErrorHTML = `${responseObject.error}<br/>
+          <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+        q('.mensaje-error-subida').style.display = 'block';
+        q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+        return;
+      }
       resetAllProductData();
     }
   };
   request.send(JSON.stringify(informacionProducto));
-}
+};
+//Función para comprobar que no haya campos vacíos al subir un producto
+function comprobarDatosSubidaProducto(){
+  let resultado = false,
+    ok = true,
+    inputsProducto = qAll('#producto-title, #permalink, #producto-precio, #producto-descripcion');
+  for(let i = 0; i < inputsProducto.length; i++){
+    let input = inputsProducto[i];
+    //If la input is empty
+    if(input.value === '') ok = false;
+  }
+  if(ok) resultado = true;
+  return resultado;
+};
 function resetAllProductData(){
   //Resetamos las variables globales de cada producto informacionProducto, imagenesProducto, objetoAtributos
   informacionProducto = {};
@@ -76,7 +112,7 @@ function resetAllProductData(){
   id('lista-atributos').style.display = 'none';
   //Función de categoria.js
   getCategoriesFromServer();
-}
+};
 //Funcion para activar el overlay negro "cambiar imagenes"
 function showChangeImage(e){
   if(id('imagen-principal-uploaded-active') == null){
@@ -85,7 +121,7 @@ function showChangeImage(e){
       id('image-upload-input').click();
     });
   }
-}
+};
 //Funcion para guardar las imagenes en la carpeta de public-uploads
 function saveClientImages(){
   let files = id('image-upload-input').files;

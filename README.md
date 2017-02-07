@@ -1075,3 +1075,19 @@ Todo esto lo verá el usuario en un pequeño widget de chat en la esquina inferi
 Luego, después de crear este gran widget, procederé a incorporarlo a la web y crearé el panel de administración de cada usuario.
 
 Post Data: Acabo de descubrir que cuando usas la propiedad "Box-sizing: border-box" el espacio queda reducido excepto el margin. Además, si los elementos son "display: inline-block o inline", la separación o el salto de línea en el HTML dejará un espacio bastante molesto. Solución: juntar los elementos en la misma linea de html sin espacios.
+
+### Día 57
+
+Hoy he estado creando el widget del chat. Le he puesto un diseño mucho más agradable, muy parecido al de whatsapp con los mensajes de diferentes colores y la barra de enviar.
+
+El problema es que no puedo testear su funcionamiento porque cada vez que conecto 2 dispositivos en localhost, nodejs los reconoce como uno solo lo cual es un problema porque solo puedo hablar con una persona.
+
+Sin embargo he visto que socket io tiene un funcionamiento bastante sencillo y podré implementar el chat sin demasiadas dificultades.
+
+Como ahora no puedo testearlo, voy a crear un sistema de comunicación mediante email usando alguna librería de nodejs para enviar mensajes a los usuarios. El objetivo es poder notificar a los clientes de los cambios en sus pedidos además de comunicarme con ellos de la mejor manera posible. Por ello voy a pausar el desarrollo del widget de chat para crear el widget automático de email.
+
+Estos son los requisitos funcionales:
+
+- Enviar mensajes automáticos para informar a los clientes con las facturas de compra y el estado de enviado de su pedido.
+- Poder revisar los mensajes en el panel de administración del cliente para revisar información como backup.
+- Crear un pequeño widget de contacto para que los clientes puedan mandar mensajes directamente desde la aplicación sin tener que salir de la web.

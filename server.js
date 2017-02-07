@@ -54,6 +54,4 @@ socketServer.listen(8000, '0.0.0.0', function(){
 });
 
 //Ejecutamos el servidor socket.io para el chat en realtiime
-io.on('connection', function(socket){
-  socketRoutes(socket, io, username);
-});
+socketRoutes(io, username);

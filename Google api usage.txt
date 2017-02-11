@@ -1,0 +1,11 @@
+1. Solicitas acceso a la api haciendo click en tu cuenta de gmail -> permitir acceso
+2. Te devuelve un código de acceso.
+3. Intercambias ese código de acceso por un token para acceder a los recursos OAuth.
+4. Recibes el token en formato objeto:
+{
+  "access_token": "ya29.GlvtA26fCkbdzCoohpSccpa4fsY0d9M0iMCci7VKpecaXEcb-CZWj7v8jYCMR7A_vw8UfgLnurJrkjCf4IO73Gw3_3SV-bwSrZIZICmBn2DZ_8hh5kG36525gaIV", 
+  "token_type": "Bearer", 
+  "expires_in": 3600, 
+  "refresh_token": "1/DxwVc2_3bVxhOBJcv67Zwqr2ZtQKBcEQmQYqR2j3ezw"
+}
+5. Realiza http request a la api para conseguir información e interactuar con las aplicaciones de google como gmail o adsense. Necesitas indicar la URL, el método (Get, post, delete...), los headers, el content-type (application-json) y el request body.

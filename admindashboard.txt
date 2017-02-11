@@ -1,0 +1,6 @@
+Dashboard de administrador:
+Funciones:
+DONE - Lista de los productos pagados y los productos pendientes de envío, fecha de compra, nombre del consumidor, dirección de envío, precio pagado, forma de pago.
+- Poder enviar notificaciones que llegarán al correo del usuario y en su panel de usuario de la web.
+- Ver qué usuarios están conectados y qué paginas están mirando en tiempo real.
+- Páginas más vistas en tiempo real.

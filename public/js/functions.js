@@ -26,7 +26,7 @@ function httpPost(url, data, cb){
 	request.open('POST', url);
 	request.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
 	request.onreadystatechange = () => {
-      if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
+      if(request.readyState == XMLHttpRequest.DONE && request.status < 400){
 		return cb(request.responseText);      
       }else if(request.readyState == XMLHttpRequest.DONE){
       	return cb(null);

@@ -2,7 +2,6 @@
 let express = require('express'),
 	Mongo = require('mongodb').MongoClient,
 	MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
-	app = express(),
 	functions = require('./../functions.js'),
 	path = require('path'),
 	routes = express.Router(),
@@ -210,6 +209,11 @@ routes.get('/pago-completado', (req, res) => {
       return res.send(data);
     });
   });
+});
+
+routes.get('/email', (req, res) => {
+  console.log('enviando email...')
+  require('./../email.js')();
 });
 
 routes.get('/favicon.ico', (req, res) => {

@@ -4,6 +4,15 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Email design</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<style type="text/css">
+		#tabla-interior{
+			padding: 10px; 
+			border: 1px solid lightgrey;
+		}
+		#tabla-interior td{
+			border: none;
+		}
+	</style>
 </head>
 <body style="margin: 0; padding: 0; font-family: sans-serif;">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -12,19 +21,36 @@
 				<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; border: 5px solid #F1F1F1;">
 					<tr>
 						<td align="center">
-							<img src="cid:imagenEmail" alt="email magic" width="500" height="100" style="display: block; padding-top: 20px;">
+							<img src="cid:imagenEmail" alt="factura" width="500" height="100" style="display: block; padding-top: 20px;">
 						</td>
 					</tr>
 					<tr>
 						<td style="padding: 30px 45px 30px 45px">
-						<b>Buenas tardes Pepe!</b>
-						<br>
-						Como va eso colega?
-						</td>
-					</tr>
-					<tr bgcolor="#F1F1F1">
-						<td style="padding: 10px 45px 10px 45px">
-						Fila3
+						<b>Gracias por comprar con nosotros. <br>
+						Aqui tienes la factura de tu compra:</b>
+						<hr/>
+						<table border="1" cellpadding="0" cellspacing="0" width="500" id="tabla-interior">
+							<tr align="center">
+								<td><i>Producto</i></td>
+								<td><i>Cantidad</i></td>
+								<td><i>Precio individual</i></td>
+								<td><i>Precio total</i></td>
+							</tr>
+							{{array arrayProductos}}
+							<tr align="center">
+								<td>{{nombre}}</td>
+								<td>{{cantidad}}</td>
+								<td>{{precioUno}}€</td>
+								<td>{{precioTotal}}€</td>
+							</tr>
+							{{/array}}
+							<tr align="center">
+								<td><b>Total Final Pagado:</b></td>
+								<td></td>
+								<td></td>
+								<td><b>{{precioFinal}}€</b></td>
+							</tr>
+						</table>
 						</td>
 					</tr>
 				</table>

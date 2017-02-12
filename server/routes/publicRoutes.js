@@ -6,7 +6,8 @@ let express = require('express'),
 	path = require('path'),
 	routes = express.Router(),
 	db = {},
-  render = require('./../render.js');
+  render = require('./../render.js'),
+  enviarEmail = require('./../email.js');
 
 Mongo.connect(MongoUrl, (err, database) => {
 	if(err) console.log(err);
@@ -211,9 +212,37 @@ routes.get('/pago-completado', (req, res) => {
   });
 });
 
-routes.get('/email', (req, res) => {
-  console.log('enviando email...')
-  require('./../email.js')();
+routes.get('/email-factura', (req, res) => {
+  //Render email html
+  //Enviar mensaje al destinatario
+  let renderObject = {
+    arrayProductos: [{
+      nombre: 'camiseta verde',
+      cantidad: 2,
+      precioUno: 25.59,
+      precioTotal: 2*25.59
+    }, {
+      nombre: 'camiseta roja',
+      cantidad: 5,
+      precioUno: 15.99,
+      precioTotal: 5*15.99
+    }],
+    precioFinal: (5*15.99)+(2*25.59)
+  },
+  emailObject = {
+    from: 'merunasgrincalaitis@gmail.com',
+    to: 'merunasgrincalaitis@gmail.com',
+    subject: 'Hola merunasgrincalaitis@gmail.com aqui tienes tu factura!',
+    imagenNombre: 'imagenFactura.jpg'
+  };
+  render(path.join(__dirname, '../emails', 'factura.html'), renderObject, (err, renderHTML) => {
+    if(err) return console.log(err);
+    enviarEmail(emailObject.from, emailObject.to, emailObject.subject, renderHTML, emailObject.imagenNombre, (err, success) => {
+      if(err) return console.log(err);
+      console.log(success);
+      process.exit(0)
+    });
+  });
 });
 
 routes.get('/favicon.ico', (req, res) => {

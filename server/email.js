@@ -13,26 +13,23 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-let emailFacturaHTML = fs.readFileSync(path.join(__dirname, 'emails', 'factura.html'), 'utf-8');
-let mailOptions = {
-    from: '"Que tal quieres que hablemos? 👻" <merunasgrincalaitis@gmail.com>', // sender address
-    to: 'merunasgrincalaitis@gmail.com', // list of receivers
-    subject: 'Hello ✔', // Subject line
-    html: emailFacturaHTML, // html body
-    attachments: [{
-        filename: '1920x360.jpg',
-        path: path.join(__dirname, 'uploads/_Slider/1920x360.jpg'),
-        cid: 'imagenEmail'
-    }]
-};
-
-function sendEmail(){
+function sendEmail(from, to, subject, html, imagenNombre, cb){
+    console.log('enviando email...');
+    let mailOptions = {
+        from: from, // sender address
+        to: to, // list of receivers
+        subject: subject, // Subject line
+        html: html, // html body
+        attachments: [{
+            filename: imagenNombre,
+            path: path.join(__dirname, 'emails/imgs/', imagenNombre),
+            cid: 'imagenEmail'
+        }]
+    };
     // send mail with defined transport object
     transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message %s sent: %s', info.messageId, info.response);
+        if (error) return cb(error, null);
+        cb(null, `Message ${info.messageId} sent: ${info.response}`);
     });
 };
 

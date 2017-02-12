@@ -1,6 +1,6 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
-  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
+  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',  
   fs = require('fs'),
   path = require('path'),
   //Ponemos la secret key de stripe para realizar pagos

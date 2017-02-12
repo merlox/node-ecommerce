@@ -53,7 +53,10 @@ function renderData(content, dataObject, cb) {
         if(index >= partiales.length)
           renderTags();
       });
-    };
+    }
+  }else{
+    //If no includes just render tags
+    renderTags();
   }
 
   function renderTags(){
@@ -116,7 +119,7 @@ function renderData(content, dataObject, cb) {
 
         case 'array':
           /*
-          Para: array de objetos con muchas keys [{data: data}, {data: data}].
+          Para: array de objetos con muchas keys [{data: data}, {data1: data1, data2: data2}].
           Funcionamiento:
             1. Loop al array, cada ocurrencia es 1 objeto con las propiedades del producto
             2. Loop al objeto con forin para reemplazar cada propiedad con su valor en el html

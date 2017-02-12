@@ -65,8 +65,7 @@ function submitPagoStripe(e){
 			}
 		});
 	}else{
-		window.scrollTo(0, 0);
-		q('#mensaje-error').innerHTML = '<h4><b>Error, faltan datos de dirección o tarjeta de crédito.</b></h4>';
+		mostrarError('Error, faltan datos de dirección o tarjeta de crédito.');
 	}
 	//Para evitar que se envie la información al servidor antes de comprobar la info en stripe
 	return false;
@@ -81,9 +80,11 @@ function completarPago(token){
 			//Permalink-producto innerHTML es el titulo del producto sacado tal cual de la base de datos
 			let producto = fila.querySelector('.permalink-producto').innerHTML;
 			let cantidad = fila.querySelector('.producto-cesta-cantidad').value;
+			let permalink = fila.querySelector('.permalink-producto').href.split('/p/')[1];
 			let objetoProducto = {};
 			objetoProducto["nombre"] = producto;
 			objetoProducto["cantidad"] = cantidad;
+			objetoProducto["permalink"] = permalink;
 			arrayProductos.push(objetoProducto);
 		}
 	}
@@ -107,9 +108,16 @@ function completarPago(token){
 		if(response.success){
 			window.location.href = "/pago-completado";
 		}else{
-
+			mostrarError(response.error);
 		}
 	});
+};
+
+function mostrarError(err){
+	window.scrollTo(0, 0);
+	q('#submit-pago').removeAttribute('disabled');
+	q('.spinner-final').style.display = 'none';
+	q('#mensaje-error').innerHTML = `<h4><b>${err}</b></h4>`;
 };
 
 //Comprobamos el formato de la expiración de la tarjeta

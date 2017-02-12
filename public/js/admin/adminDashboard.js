@@ -13,6 +13,8 @@ DONE 2.filtrar
 DONE 3.verificar en cesta.html que pone los datos de la direccion y son correctos
 DONE 4.mostrar mensajes de error en la página de compra cesta.html
 DONE 5.crear acciones de estado posibles en este widget
+DONE 7. Al completar una compra exitósamente, enviar email de factura al cliente.
+8. Enviar email al marcar como enviado
 6.crear widget de chat para comunicarme con cada comprador
 */
 window.addEventListener('load', () => {
@@ -210,7 +212,7 @@ function generarTablaFacturasHTML(dataObject, done){
 	    		<br/>${objectoFactura.emailUsuarioConectado}
 	    		<br/><span class="secundario">${objectoFactura.customer}</span></td>`;
 	    	//Productos
-	    	tablaHTML += `<td>`;
+	    	tablaHTML += `<td><div class="td-limitar-altura">`;
 	    	let i = 0,
 	    		tamañoProductos = Object.keys(objectoFactura.productos).length;
 	    	tablaHTML += `<ul>`;
@@ -224,7 +226,7 @@ function generarTablaFacturasHTML(dataObject, done){
 	    		}
 	    	};
 	    	tablaHTML += `</ul>`;
-	    	tablaHTML += `</td>`;
+	    	tablaHTML += `</div></td>`;
 	    	//Precio total
 	    	tablaHTML += `<td>${(objectoFactura.productos.precioTotal*0.01).toFixed(2)}€</td>`;
 	    	//Fecha de compra, la convertimos a ms y luego a date y luego a string para eliminar lo que no interesa
@@ -243,13 +245,15 @@ function generarTablaFacturasHTML(dataObject, done){
 	    		<br/>${objectoFactura.chargeObject.source.country}
 	    		<br/>${objectoFactura.terminacionTarjeta}</td>`;
 	    	//Dirección
-	    	tablaHTML += `<td><span class="secundario">Cod. postal:</span> ${objectoFactura.direccion.codPostal ? objectoFactura.direccion.codPostal : '-'}
-	    		<br/><span class="secundario">Email:</span> ${objectoFactura.direccion.email ? objectoFactura.direccion.email : '-'}
-	    		<br/><span class="secundario">Linea 1:</span> ${objectoFactura.direccion.linea1 ? objectoFactura.direccion.linea1: '-'}
-	    		<br/><span class="secundario">Linea 2:</span> ${objectoFactura.direccion.linea2 ? objectoFactura.direccion.linea2 : '-'}
-	    		<br/><span class="secundario">Nombre apellidos:</span> ${objectoFactura.direccion.nombreApellidos ? objectoFactura.direccion.nombreApellidos : '-'}
-	    		<br/><span class="secundario">País:</span> ${objectoFactura.direccion.pais ? objectoFactura.direccion.pais : '-'}
-	    		<br/><span class="secundario">Teléfono:</span> ${objectoFactura.direccion.telefono ? objectoFactura.direccion.telefono : '-'}</td>`;
+	    	tablaHTML += `<td><div class="td-limitar-altura">
+		    		<span class="secundario">Cod. postal:</span> ${objectoFactura.direccion.codPostal ? objectoFactura.direccion.codPostal : '-'}
+		    		<br/><span class="secundario">Email:</span> ${objectoFactura.direccion.email ? objectoFactura.direccion.email : '-'}
+		    		<br/><span class="secundario">Linea 1:</span> ${objectoFactura.direccion.linea1 ? objectoFactura.direccion.linea1: '-'}
+		    		<br/><span class="secundario">Linea 2:</span> ${objectoFactura.direccion.linea2 ? objectoFactura.direccion.linea2 : '-'}
+		    		<br/><span class="secundario">Nombre apellidos:</span> ${objectoFactura.direccion.nombreApellidos ? objectoFactura.direccion.nombreApellidos : '-'}
+		    		<br/><span class="secundario">País:</span> ${objectoFactura.direccion.pais ? objectoFactura.direccion.pais : '-'}
+		    		<br/><span class="secundario">Teléfono:</span> ${objectoFactura.direccion.telefono ? objectoFactura.direccion.telefono : '-'}
+	    		</div></td>`;
 	    	//Estado
 	    	tablaHTML += `<td><span class="secundario">Pagado:</span> <span class="secundario-pagado">${objectoFactura.estaPagado ? 'Si' : 'No'}</span>
 	    		<br/><span class="secundario">Procesado:</span> <span class="secundario-procesado">${objectoFactura.estaProcesado ? 'Si' : 'No'}</span>
@@ -327,8 +331,8 @@ function actualizarEstado(idFactura, estadoNuevo, boolean, element){
 		}
 	});
 };
+//TODO THIS, que tenga una columna adicional la tabla para poder marcar cada producto como enviado y que le llege un correo al cliente
+//Enviar un email al cliente informándole que su(s) producto(s) han sido enviados
+function enviarEmailProductos(idFactura, arrayProductos){
 
-
-
-
-
+};

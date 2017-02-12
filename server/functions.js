@@ -5,7 +5,9 @@ let Mongo = require('mongodb').MongoClient,
   path = require('path'),
   //Ponemos la secret key de stripe para realizar pagos
   stripe = require('stripe')('sk_test_F2AInFtMIJJpjEQYGvlgdIJ6'),
-  db = {};
+  db = {},
+  sendEmail = require('./email.js'),
+  render = require('./render.js');
 
 Mongo.connect(MongoUrl, (err, database) => {
   if(err) console.log(err);
@@ -661,9 +663,13 @@ function payProduct(req, cb){
   let customerId = null;
   let error = null;
 
+  if(!/.+@.+\./.test(direccion.email)){
+    return cb('Error: el email es incorrecto, inténtelo de nuevo.');
+  }
+
   //Comprobamos que la cantidad sea correcta, que existan los productos puestos y que se cree un nuevo id de compra
   db.collection('facturas').count((err, count) => {
-    if(err) return cb('There was an error processing your card, please try again.');
+    if(err) return cb('Error procesando el pago, inténtelo de nuevo.');
     let index = 0;
     idPago = count+1
     //Comprobamos que los productos que ha puesto existan
@@ -692,7 +698,7 @@ function payProduct(req, cb){
   function crearCustomer(){
     console.log('CrearCustomer, functions.js');
     //Creamos un customer y pagamos por cada producto por separado
-    if(req.session.customerId == null || req.session.customerId == undefined){
+    if(!req.session.customerId){
       stripe.customers.create({
         "source": token,
         "description": req.session.username,
@@ -723,22 +729,31 @@ function payProduct(req, cb){
     console.log('RealizarPago, functions.js');
     //Buscamos cada producto para saber su precio real y lo pagamos
     //Creamos un array con cada titulo para buscarlo en la bd
-    let arrayTitulos = [];
+    let arrayPermalinks = [];
+
     for(let i = 0; i < arrayProductos.length; i++){
-      let titulo = arrayProductos[i].nombre;
-      arrayTitulos.push(titulo);
+      let permalink = arrayProductos[i].permalink;
+      arrayPermalinks.push(permalink);
     }
     //Conseguimos el precio de cada producto
     db.collection('productos').find({
-      'titulo': {$in: arrayTitulos}
+      'permalink': {$in: arrayPermalinks}
     }, {
       '_id': false,
       'precio': true,
-      'titulo': true
+      'titulo': true,
+      'permalink': true
     }).toArray((err, results) => {
       if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
+      if(results.length <= 0) return cb('No se han encontrado esos productos en la base de datos, por favor inténtelo de nuevo.');
+
       let precioTotalCentimos = null;
       let metadataObject = {};
+      /*
+      metadataObject = {
+        precioCentimos, titulo, permalink, cantidad, estaEnviado
+      }
+       */
       metadataObject['idPago'] = idPago;
       for(let index = 0; index < results.length; index++){
         let producto = results[index];
@@ -747,6 +762,13 @@ function payProduct(req, cb){
         metadataObject['producto-'+index] = {};
         metadataObject['producto-'+index]['precioCentimos'] = parseInt(precioCentimos);
         metadataObject['producto-'+index]['titulo'] = producto.titulo;
+        metadataObject['producto-'+index]['permalink'] = producto.permalink;
+        metadataObject['producto-'+index]['estaEnviado'] = false;
+
+        //Le calculamos el precio individual para meterlo en el email factura
+        arrayProductos[index]['precioUno'] = (parseInt(precioCentimos)/100);
+        //Le calculamos el precio individual x cantidad para la factura
+        arrayProductos[index]['precioTotal'] = ((parseInt(precioCentimos)/100)*parseInt(arrayProductos[index].cantidad));
 
         //Conseguimos la cantidad comprada de ese producto
         for(let f = 0; f < arrayProductos.length; f++){
@@ -767,7 +789,7 @@ function payProduct(req, cb){
         "amount": parseInt(precioTotalCentimos), //Cantidad en centimos
         "currency": 'eur',
         "customer": req.session.customerId,
-        "description": arrayTitulos[0],
+        "description": 'Hola',
         "metadata": {
           'idPago': idPago
         }
@@ -795,7 +817,32 @@ function payProduct(req, cb){
             'chargeObject': charge
           }, (err, result) => {
             if(err) return cb('Error procesando el pago, por favor inténtalo de nuevo.');
-            cb(null);
+            /*
+            1. Renderizar el email
+            2. Enviar la factura por email
+            */
+            let emailObject = {
+              from: 'merunasgrincalaitis@gmail.com',
+              to: direccion.email,
+              subject: 'Aqui tienes tu factura. Gracias por comprar.',
+              html: null,
+              imagenNombre: 'imagenFactura.jpg'
+            };
+            let renderEmailObject = {
+              arrayProductos: arrayProductos,
+              precioFinal: (precioTotalCentimos/100)
+            };
+            //TODO Error handling, ¿Que hacer cuando no se renderiza bien el email? ¿Que hacer cuando no se envía bien?
+            render(path.join(__dirname, 'emails', 'factura.html'), renderEmailObject, (err, emailHTML) => {
+              if(err) console.log(err);
+              emailObject.html = emailHTML;
+
+              sendEmail(emailObject.from, emailObject.to, emailObject.subject, emailObject.html, emailObject.imagenNombre, (err, success) => {
+                if(err) console.log(err);
+                console.log(success);
+              });
+              cb(null);
+            });
           });
         }
       });

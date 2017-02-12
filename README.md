@@ -1091,3 +1091,37 @@ Estos son los requisitos funcionales:
 - Enviar mensajes automáticos para informar a los clientes con las facturas de compra y el estado de enviado de su pedido.
 - Poder revisar los mensajes en el panel de administración del cliente para revisar información como backup.
 - Crear un pequeño widget de contacto para que los clientes puedan mandar mensajes directamente desde la aplicación sin tener que salir de la web.
+
+### Día 58
+
+Llevo varios días investigando las distintas opciones de email que ofrece nodejs para sus aplicaciones.
+
+Primero he usado nodemailer con gmail como transporte. Me ha ido bien aunque los emails hacia cuentas que no eran a mí mismo acababan en spam.
+El problema es que gmail no es un medio eficiente para enviar mensajes y que lleguen con ciertas garantías, así que me planteé crear mi propio servidor de email en nodejs o smtp server.
+
+Ví que hay 2 opciones principales: 
+- Simple-smtp-server: para configurar un servidor de emails de forma sencilla.
+- Haraka: un grandioso programa para crear servidores Smtp en node que utilizan empresas tan famosas como craiglist.
+
+Me decidí por haraka, pero tras investigar un poco su documentación, vi que es considerablemente complicado y que me tomaría demasiado tiempo aprender a configurarlo, aunque lo tengo guardado en mi lista para aprender a usarlo.
+
+Entonces es cuando ví un video de las diferentes opciones que hay y descubrí que es mejor dejar a una empresa profesional que se encargue de los servidores de email porque la reputación del que envía es algo muy complicado de establecer en un servidor cualquiera.
+
+Las opciones actualmente son las siguientes:
+- Amazon SES: la mejor opción aunque requiere que tengas hosteado tu web app en amazon ec2. Lo tendré muy en cuenta en cuanto lanze la web app a internet. Parece complejo en un primer momento. Permite 62.000 mensaje gratuitos cada mes si hosteas tu web en ec2.
+- Sendgrid. No lo conozco mucho.
+- Mailgun: Es la opción que elegí porque permite 10.000 mensajes gratis al mes y porque tienen una apariencia muy agradable y profesional.
+
+Entonces fuí, me hice una cuenta con ellos y establecí uno de mis dominios como mensajero para que use mailgun.
+
+De momento estoy muy contento con los resultados. Los emails llegan muy rápido y no acaban nunca en spam de momento. Además tiene opciones muy interesantes como link tracking, open tracking y unsuscribe buttón.
+
+Ahora lo he implantado en mi aplicación de forma que cuando un cliente termine de pagar con éxito su compra, le llegue un email factura con la información de lo que ha comprado. Y de momento me queda crear una opción para avisar a los clientes de que su producto o productos han sido enviados.
+
+Para ello tengo pensado añadir una columna extra al widget de las facturas para poder seleccionar que productos marcar como enviados y que le llegue un correo al usuario.
+
+Después de eso, trabajaré en reparar bugs, limpiar el código, organizar cosas y en reparar el slider principal porque no funciona bien ni en pantallas grandes ni al cargar que se mueve cuando no debería. En ese caso usaré object oriented programming que estuve aprendiendo de javascript. Es tan sencillo como crear un objeto que lleve todas las variables privadas y métodos privados para que pueda generar sliders con facilidad.
+
+En esta semana, en mi tiempo libre, he aprendido lo de object oriented programming para js, a usar cordova para publicar web apps en android, a usar la api de gmail con auth2.0 además de trabajar para un cliente de fiverr que necesitaba una aplicación para buscar en su gmail.
+
+Ha sido una semana excelente y planeo continuar creciendo todo lo que pueda. Siempre con la calidad por delante sin tener prisa por hacerlo mal y trabajando día a día.

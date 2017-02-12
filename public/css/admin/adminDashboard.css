@@ -46,6 +46,10 @@ td:nth-child(8){
 tr:nth-child(even){
     background-color: whitesmoke;
 }
+.td-limitar-altura{
+    max-height: 200px;
+    overflow: auto;
+}
 #filtros-facturas{
     display: none;
     margin: 0 10px;

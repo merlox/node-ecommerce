@@ -14,35 +14,38 @@ DONE 3.verificar en cesta.html que pone los datos de la direccion y son correcto
 DONE 4.mostrar mensajes de error en la página de compra cesta.html
 DONE 5.crear acciones de estado posibles en este widget
 DONE 7. Al completar una compra exitósamente, enviar email de factura al cliente.
-8. Enviar email al marcar como enviado
+DONE 8. Enviar email al marcar como enviado
 6.crear widget de chat para comunicarme con cada comprador
 */
 window.addEventListener('load', () => {
 	generarFacturas(1, null);
+	eventosFiltrosEstado();
 });
 
 //Creamos los filtros de estado con sus listeners y efectos
-qAll('input[type=radio').forEach(radio => {
-	radio.addEventListener('click', () => {
-		let estado = radio.value.split(' ')[0],
-			estadoValor = radio.value.split(' ')[1];
+function eventosFiltrosEstado(){
+	qAll('input[type=radio').forEach(radio => {
+		radio.addEventListener('click', () => {
+			let estado = radio.value.split(' ')[0],
+				estadoValor = radio.value.split(' ')[1];
 
-		rehacerPaginador = true;
+			rehacerPaginador = true;
 
-		//Si ya estaba activado el mismo de antes, desactivalo
-		if(filtrosEstado[estado] == estadoValor){
-			radio.checked = false;
-			delete filtrosEstado[estado];
-			generarFacturas(pageActual);
-		}else{
-			filtrosEstado[estado] = estadoValor;
-		}
-		if(Object.keys(filtrosEstado).length != 0){
-			generarFacturas(pageActual);
-		}
+			//Si ya estaba activado el mismo de antes, desactivalo
+			if(filtrosEstado[estado] == estadoValor){
+				radio.checked = false;
+				delete filtrosEstado[estado];
+				pageActual = 1;
+				generarFacturas(pageActual);
+			}else{
+				filtrosEstado[estado] = estadoValor;
+			}
+			if(Object.keys(filtrosEstado).length != 0){
+				generarFacturas(pageActual);
+			}
+		});
 	});
-});
-
+};
 //Muestra un mensaje random de carga
 function mostrarMensajeRandomCarga(){
 	let arrayMensajesDeCarga = [
@@ -195,6 +198,7 @@ function generarTablaFacturasHTML(dataObject, done){
 		<th>Dirección</th>
 		<th>Estado</th>
 		<th>Acciones</th>
+		<th>Emails</th>
 	</tr>`;
 	//Si no hay facturas
    	if(dataObject.facturas.length <= 0){
@@ -211,24 +215,17 @@ function generarTablaFacturasHTML(dataObject, done){
 	    	tablaHTML += `<td><i>${objectoFactura.nombreApellidos}</i>
 	    		<br/>${objectoFactura.emailUsuarioConectado}
 	    		<br/><span class="secundario">${objectoFactura.customer}</span></td>`;
-	    	//Productos
-	    	tablaHTML += `<td><div class="td-limitar-altura">`;
-	    	let i = 0,
-	    		tamañoProductos = Object.keys(objectoFactura.productos).length;
-	    	tablaHTML += `<ul>`;
-	    	for(let key in objectoFactura.productos){
-	    		i++;
-	    		let producto = objectoFactura.productos[key];
-	    		if(i > 1 && i < tamañoProductos){
-	    			tablaHTML += `<li class="lista-productos-comprados"> ${producto.titulo} 
+	    	//Productos, el div es para ajustar la altura de la td, cada producto es un ul -> li
+	    	tablaHTML += `<td><div class="td-limitar-altura"><ul>`;
+	    	for (let i = 0; i < objectoFactura.productos.length; i++) {
+	    		let producto = objectoFactura.productos[i];
+	    		tablaHTML += `<li class="lista-productos-comprados"><a href="/p/${producto.permalink}">${producto.titulo}</a>
 	    			<br/><b>${producto.cantidad}</b> x ${(producto.precioCentimos*0.01).toFixed(2)}€ 
-	    			= ${(producto.cantidad*producto.precioCentimos*0.01).toFixed(2)}€`;
-	    		}
-	    	};
-	    	tablaHTML += `</ul>`;
-	    	tablaHTML += `</div></td>`;
+	    			= ${(producto.cantidad*producto.precioCentimos*0.01).toFixed(2)}€</li>`;
+	    	}
+	    	tablaHTML += `</ul></div></td>`;
 	    	//Precio total
-	    	tablaHTML += `<td>${(objectoFactura.productos.precioTotal*0.01).toFixed(2)}€</td>`;
+	    	tablaHTML += `<td>${(objectoFactura.precioTotalCentimos*0.01).toFixed(2)}€</td>`;
 	    	//Fecha de compra, la convertimos a ms y luego a date y luego a string para eliminar lo que no interesa
 	    	let fecha = new Date(objectoFactura.fecha*1000).toISOString(),
 	    		fechaHorario = fecha.split('T')[0].split('-'),
@@ -274,6 +271,55 @@ function generarTablaFacturasHTML(dataObject, done){
 	    	tablaHTML += `<td>${objectoFactura.estaPagado ? botonNoPagado : botonPagado}
 	    		${objectoFactura.estaProcesado ? botonNoProcesado : botonProcesado}
 	    		${objectoFactura.estaEnviado ? botonNoEnviado : botonEnviado}</td>`;
+	    	//Enviar email productos
+	    	let contadorDesactivados = 0;
+	    	for(let i = 0; i < objectoFactura.productos.length; i++) {
+	    		if(objectoFactura.productos[i].estaEnviado) contadorDesactivados++;
+	    	}
+	    	//Si están todos desactivados
+	    	if(contadorDesactivados >= objectoFactura.productos.length){
+	    		tablaHTML += `<td><div class="td-limitar-altura">
+		    		<b class="error"></b>
+		    		<b class="mensaje-enviado"></b>
+		    		<button class="boton-estado" disabled="disabled">
+		    			Email productos enviados
+		    			<span class="spinner spinner-enviar-email"></span>
+		    		</button>
+		    		<input type="checkbox" name="seleccionar-todos-${objectoFactura.idPago}" disabled/>
+		    		<span class="nombre-filtro-disabled">Seleccionar todos</span>
+		    		<ul>`;
+	    	}else{
+		    	tablaHTML += `<td><div class="td-limitar-altura">
+		    		<b class="error"></b>
+		    		<b class="mensaje-enviado"></b>
+		    		<button class="boton-estado" onclick="enviarEmailProductos(${objectoFactura.idPago}, this)">
+		    			Email productos enviados
+		    			<span class="spinner spinner-enviar-email"></span>
+		    		</button>
+		    		<input type="checkbox" onclick="toggleCheckboxSeleccionarTodos(this)" name="seleccionar-todos-${objectoFactura.idPago}"/>
+		    		<span class="nombre-filtro" onclick="q('input[name=seleccionar-todos-${objectoFactura.idPago}]').click()">Seleccionar todos</span>
+		    		<ul>`;
+	    	}
+	    	for (let i = 0; i < objectoFactura.productos.length; i++) {
+	    		let producto = objectoFactura.productos[i];
+	    		if(producto.estaEnviado){
+	    			contadorDesactivados++;
+		    		tablaHTML += `<li class="lista-productos-comprados">
+		    			<input type="checkbox" disabled="disabled" />
+		    			<span class="nombre-filtro-disabled">${producto.titulo.substring(0, 13)}...</span>
+		    			</li>`;
+		    	}else{
+		    		tablaHTML += `<li class="lista-productos-comprados">
+		    			<input type="checkbox" onclick="desactivarSeleccionarTodos(this, 'seleccionar-todos-${objectoFactura.idPago}')" 
+		    				name="seleccionar-${objectoFactura.idPago}-${i}"/>
+		    			<span class="nombre-filtro" onclick="q('input[name=seleccionar-${objectoFactura.idPago}-${i}]').click()">
+			    			${producto.titulo.substring(0, 13)}...</span>
+			    		<input type="hidden" class="permalink-hidden" value="${producto.permalink}"/>
+		    			</li>`;
+		    	}
+	    	}
+	    	tablaHTML += `</ul></div></td>`;
+	    	//Cerramos la fila
 	    	tablaHTML += `</tr>`;
 	    	//Index empieza a contar en 0, length empieza a contar en 1
 	    	if(index >= dataObject.facturas.length - 1){
@@ -281,6 +327,20 @@ function generarTablaFacturasHTML(dataObject, done){
 	    	}
 	    });
 	}
+};
+/*
+Para deseleccionar los input checkbox de la columna de enviar emails
+Si el seleccionar todos se acaba de desactivar, desactivar cada uno de sus input checked hijos
+ */
+function toggleCheckboxSeleccionarTodos(element){
+	element.parentNode.querySelectorAll('li').forEach(li => {
+		if(!li.querySelector('input').disabled)
+			li.querySelector('input').checked = element.checked ? true : false;
+	});
+};
+//Para desmarcar el "Seleccionar todos" al pulsar seleccionar todos y luego desmarcar uno solo
+function desactivarSeleccionarTodos(element, nameSeleccionarTodos){
+	if(!element.checked) q(`input[name=${nameSeleccionarTodos}]`).checked = false;
 };
 //Para marcar los pedidos como enviados
 function actualizarEstado(idFactura, estadoNuevo, boolean, element){
@@ -331,8 +391,63 @@ function actualizarEstado(idFactura, estadoNuevo, boolean, element){
 		}
 	});
 };
-//TODO THIS, que tenga una columna adicional la tabla para poder marcar cada producto como enviado y que le llege un correo al cliente
 //Enviar un email al cliente informándole que su(s) producto(s) han sido enviados
-function enviarEmailProductos(idFactura, arrayProductos){
+function enviarEmailProductos(idPago, element){
+	let productosSeleccionados = [];
+	//Mostramos el spinner disable button
+	element.querySelector('.spinner').style.display = 'inline';
+	element.setAttribute('disabled', 'disabled');
+	//Creamos el array de los productos seleccionados que entrarán en el email de notificación
+	for(let i = 0; i < element.parentNode.querySelectorAll('li').length; i++){
+		let li = element.parentNode.querySelectorAll('li')[i];
+		if(li.querySelector('input[type=checkbox]').checked){
+			productosSeleccionados.push(li.querySelector('input.permalink-hidden').value);
+		}
+	};
+	//Si no ha seleccionado ningún producto, retornar
+	if(productosSeleccionados.length <= 0) return;
+	let requestObject = {
+		productos: productosSeleccionados,
+		idPago: idPago
+	};
 
+	httpPost('/api/email-productos-enviados', requestObject, err => {
+		element.querySelector('.spinner').style.display = 'none';
+		element.removeAttribute('disabled');
+		if(err){
+			element.parentNode.querySelector('.error').innerHTML = err;
+		}else{
+			element.parentNode.querySelector('.mensaje-enviado').innerHTML = 'Mensaje enviado';
+			setTimeout(() => {
+				element.parentNode.querySelector('.mensaje-enviado').innerHTML = '';
+			}, 5e3);
+			//Si no hay error desactivar los checkboxes						
+			// 1. Buscar los inputs type checkbox checked true
+			// 2. Desactivarlo y quitarle el onclick
+			// 3. Buscar el span que pertenezca a ese input, desactivarlo y quitarle el onclick
+			let inputsCheckbox = element.parentNode.querySelectorAll('input[type=checkbox]'),
+				cantidadInputsChecked = 0;
+			for (let i = 0; i < inputsCheckbox.length; i++) {
+				if(inputsCheckbox[i].checked){
+					cantidadInputsChecked++;
+					inputsCheckbox[i].disabled = true;
+					inputsCheckbox[i].checked = false;
+					inputsCheckbox[i].removeAttribute('onclick');
+					inputsCheckbox[i].parentNode.querySelector('span').className = 'nombre-filtro-disabled';			
+					inputsCheckbox[i].parentNode.querySelector('span').removeAttribute('onclick');
+				}else if(inputsCheckbox[i].disabled){
+					cantidadInputsChecked++;
+				}
+			}
+			//Si están todos desactivados, desctivar el botón y el seleccionar todos
+			if(cantidadInputsChecked >= inputsCheckbox.length){
+				let checkboxSeleccionarTodos = element.parentNode.querySelector('input[type=checkbox]');
+				checkboxSeleccionarTodos.disabled = true;
+				checkboxSeleccionarTodos.removeAttribute('onclick');
+				element.setAttribute('disabled', 'disabled');
+				element.parentNode.querySelector('span.nombre-filtro').className = "nombre-filtro-disabled";
+				element.parentNode.querySelector('span.nombre-filtro').removeAttribute('onclick');
+			}
+		}
+	});
 };

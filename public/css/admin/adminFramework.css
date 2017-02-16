@@ -36,6 +36,10 @@ button:hover{
   cursor: pointer;
   background-color: rgb(5, 0, 167);
 }
+button:disabled{
+  background-color: lightgrey;
+  color: grey;
+}
 input{
   padding: 10px;
   border: 1px solid lightgrey;

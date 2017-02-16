@@ -10,6 +10,7 @@ Mongo.connect(MongoUrl, (err, database) => {
 	if(err) console.log('Could not connect to the db');
 	db = database;
 
+let arrayTitulos = [];
 function insertarUnProducto(imagenes, insideDir, cb){
 	console.log('InsertarProducto, development');
 	let titulo = lorem({count: 10, units: 'words', format: 'plain'});
@@ -17,6 +18,18 @@ function insertarUnProducto(imagenes, insideDir, cb){
 	let permalink = encodeURI(titulo);
 	let precioRandom = Math.floor(Math.random() * (100 - 5 + 1)) + 5;
 	precioRandom += 0.99;
+
+	arrayTitulos.push(titulo);
+	let tituloExistente = true;
+	while(tituloExistente){
+		titulo = lorem({count: 10, units: 'words', format: 'plain'});
+		let repetido = false;
+		for (var i = 0; i < arrayTitulos.length; i++) {
+			let singleTitulo = arrayTitulos[i];
+			if(singleTitulo === titulo) repetido = true;
+		}
+		if(!repetido) tituloExistente = false;
+	}
 
 	console.log('Insertando: '+titulo);
 
@@ -44,7 +57,7 @@ function insertarUnProducto(imagenes, insideDir, cb){
 		'imagenes': imagenes,
 		'precio': precioRandom,
 		'descripcion': descripcion,
-		'publicado': 'si',
+		'publicado': true,
 		'fecha': new Date(),
 		'visitas': Math.floor(Math.random()*1000),
 		'vendidos': Math.floor(Math.random()*100),

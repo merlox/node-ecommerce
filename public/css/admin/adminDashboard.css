@@ -27,6 +27,11 @@ GENERALES
     border-top: 2px solid black;
     margin-top: 2px;
 }
+.spinner-enviar-email{
+    display: none;
+    margin-left: 3px;
+    margin-top: 2px;
+}
 /*
 
 WIDGET FACTURAS
@@ -46,9 +51,24 @@ td:nth-child(8){
 tr:nth-child(even){
     background-color: whitesmoke;
 }
+tr:hover{
+    background-color: rgba(0, 0, 0, 0.08);
+}
 .td-limitar-altura{
     max-height: 200px;
+    min-width: 200px;
     overflow: auto;
+}
+#contenedor-facturas{
+    max-width: 98.5%;
+}
+#tabla-facturas{
+    display: none;
+    margin: 0 10px;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 1px solid lightgrey;
+    width: 100%;
 }
 #filtros-facturas{
     display: none;
@@ -76,17 +96,6 @@ tr:nth-child(even){
 #filtros-facturas-estado{
     display: inline;
 }
-#contenedor-facturas{
-    max-width: 1400px
-}
-#tabla-facturas{
-    display: none;
-    margin: 0 10px;
-    border-collapse: separate;
-    border-spacing: 0px;
-    border: 1px solid lightgrey;
-    width: 100%;
-}
 .mensaje-nohayfacturas{
     text-align: center;
     padding: 20px;
@@ -100,6 +109,9 @@ tr:nth-child(even){
 }
 .nombre-filtro{
     cursor: pointer;
+}
+.nombre-filtro-disabled{
+    color: lightgrey;
 }
 .lista-productos-comprados{
     list-style-type: upper-roman;

@@ -1,10 +1,8 @@
 'use strict';
 //Variables Slider
 let arrayImagenes = [],
-	indexImagenActiva = '',
-	intervaloSlider,
-	alineador = 0;
-
+	indexImagenActiva = 1,
+	intervaloSlider;
 //Variables minislider
 let intervaloMiniSliderVendidos,
 	maxMinislider = 0,
@@ -16,15 +14,12 @@ let intervaloMiniSliderVendidos,
 	tamañoWidgets = 1;
 
 window.addEventListener('load', () => {
-
-	centrarImagenesSlider();
-
+	colocarImagenes();
 	httpGet('/api/get-mas-vendidos', (results) => {
 		let resultados = JSON.parse(results);
 		colocarMasVendidos(resultados);
 		iniciarIntervaloMiniSliderVendidos();
 	});
-
 	calcularTamañoMinisliderResponsive();
 });
 window.addEventListener('resize', () => {
@@ -39,56 +34,67 @@ window.addEventListener('resize', () => {
 });
 /*
 
-MAIN SLIDER
+SLIDER
 
 */
-//Para colocar las imagenes pasandole el nombre en json
-function centrarImagenesSlider(){
-	let contenedorImagenes = q('#contenedor-imagenes-slider'),
-		image = q('.imagen-slider');
-
-	indexImagenActiva = 0;
-	arrayImagenes = qAll('.imagen-slider');
-	//Colocar la imagen en el centro de la pantalla
-	contenedorImagenes.style.width = (image.naturalWidth*arrayImagenes.length)+'px';
-	arrayImagenes[0].style.transform = 'none';
-	arrayImagenes[0].style.left = 'auto';
-	intervaloCambiarImagenes();
-	arrayImagenes.forEach(img => {
-		img.style.display = 'block';
+function colocarImagenes(){
+	qAll('.imagen-slider').forEach((e, index) => {
+		arrayImagenes.push(e.src);
+		if(index != 0) e.remove();
 	});
-};
-//Para poner la siguiete imagen a la derecha
-function cambiarImagenDerecha(){
-	if(indexImagenActiva == (arrayImagenes.length-1)){
+	let imagenSRC = arrayImagenes[1],
+		nodoHTML = `<img id="imagen-derecha" src="${imagenSRC}"/>`
+	q('#contenedor-imagenes-slider').insertAdjacentHTML('beforeend', nodoHTML);
+	let imagenSRCFinal = arrayImagenes[arrayImagenes.length-1],
+		nodoFinalHTML = `<img id="imagen-izquierda" src="${imagenSRCFinal}"/>`
+	q('#contenedor-imagenes-slider').insertAdjacentHTML('beforeend', nodoFinalHTML);
+	intervaloCambiarImagenes();
+}
+function desplazarDerecha(){
+	if(indexImagenActiva === (arrayImagenes.length-1)){
 		indexImagenActiva = 0;
 	}else{
 		indexImagenActiva++;
 	}
-	let tamañoImagen = q('.imagen-slider').naturalWidth;
-	alineador = (tamañoImagen - window.outerWidth) / 2;
-	q('#contenedor-imagenes-slider').style.transform = `translateX(${-((indexImagenActiva*tamañoImagen)+alineador)}px)`;
+	//movemos las imagenes
+	q('#imagen-central').style.transform = 'translateX(-150%)';
+	q('#imagen-derecha').style.transform = 'translateX(-50%)';
+	//eliminamos la izquierda
+	q('#imagen-izquierda').remove();
+	//cambiamos las ids
+	q('#imagen-central').id = 'imagen-izquierda';
+	q('#imagen-derecha').id = 'imagen-central';
+	//metemos la nueva derecha
+	let imagenSRC = arrayImagenes[indexImagenActiva],
+	nodoHTML = `<img id="imagen-derecha" src="${imagenSRC}"/>`;
+	q('#contenedor-imagenes-slider').insertAdjacentHTML('beforeend', nodoHTML);
 	clearInterval(intervaloSlider);
 	intervaloCambiarImagenes();
-};
-//Para poner la siguiente a la izquierda
-function cambiarImagenIzquierda(){
+}
+function desplazarIzquierda(){
 	if(indexImagenActiva == 0){
 		indexImagenActiva = (arrayImagenes.length-1);
 	}else{
 		indexImagenActiva--;
 	}
-	let tamañoImagen = q('.imagen-slider').naturalWidth;
-	alineador = (tamañoImagen - window.outerWidth) / 2;
-	q('#contenedor-imagenes-slider').style.transform = `translateX(${-((indexImagenActiva*tamañoImagen)+alineador)}px)`;
-	//Reseteamos el intervalo si el usuario hace click
+	//movemos las imagenes
+	q('#imagen-central').style.transform = 'translateX(50%)';
+	q('#imagen-izquierda').style.transform = 'translateX(-50%)';
+	//eliminamos la derecha
+	q('#imagen-derecha').remove();
+	//cambiamos las ids
+	q('#imagen-central').id = 'imagen-derecha';
+	q('#imagen-izquierda').id = 'imagen-central';
+	//metemos la nueva derecha
+	let imagenSRC = arrayImagenes[indexImagenActiva],
+	nodoHTML = `<img id="imagen-izquierda" src="${imagenSRC}"/>`;
+	q('#contenedor-imagenes-slider').insertAdjacentHTML('beforeend', nodoHTML);
 	clearInterval(intervaloSlider);
 	intervaloCambiarImagenes();
 };
-//Para cambiar las imágenes a la derecha cada 5 segundos
 function intervaloCambiarImagenes(){
-	intervaloSlider = setInterval(cambiarImagenDerecha, 5000);
-};
+	intervaloSlider = setInterval(desplazarDerecha, 4000);
+}
 /*
 
 MINISLIDERS
@@ -183,8 +189,8 @@ q('#contenedor-contenedor-slider').addEventListener('mouseleave', () => {
 });
 
 //Cambiar imagenes al click en las flechas del slider
-q('#flecha-izquierda-slider').addEventListener('click', cambiarImagenIzquierda);
-q('#flecha-derecha-slider').addEventListener('click', cambiarImagenDerecha);
+q('#flecha-derecha-slider').addEventListener('click', desplazarDerecha);
+q('#flecha-izquierda-slider').addEventListener('click', desplazarIzquierda);
 /*Fin slider principal*/
 
 /*Inicio minislider*/

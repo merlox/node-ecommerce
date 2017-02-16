@@ -17,9 +17,10 @@ Mongo.connect(MongoUrl, (err, database) => {
 routes.get('/p/:permalink', (req, res) => { 
   functions.buscarProducto(req.params.permalink, (err, result) => {
     if(err) console.log(err);
-    if(result.publicado == 'no'){
+    if(!result) return res.redirect('/');
+    if(!result.publicado){
       return res.redirect('/?message=That page is not available');
-    }else if(result.publicado == 'si'){
+    }else if(result.publicado){
 
       result['loggedStateHTML'] = '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>';
       result['loggedState'] = '/login';

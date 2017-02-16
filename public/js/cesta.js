@@ -1,7 +1,7 @@
 'use strict';
 window.addEventListener('load', () => {
 	//Que al hacer click en el icono de la cesta te lleve a la página de pasar por caja
-	q('#cesta').href = `cesta?ref=${window.location.pathname}`;
+	q('#cesta').href = `/cesta?ref=${window.location.pathname}`;
 	if(window.location.pathname == "/cesta"){
 		httpGet('/api/get-logged-state', (state) => {
 			if(state == null) window.location.href = "/";
@@ -25,11 +25,10 @@ function getCesta(){
 	httpGet('/api/get-cesta', (response) => {
 		response = JSON.parse(response);
 		if(response.error){
-			q('.spinner').remove();
 			q('#productos-cesta').style.display = 'block';
 			q('.triangulo-up').style.display = 'block';
-			q('#productos-cesta').style.padding = '10px';
-			q('#productos-cesta').innerHTML = response.error;
+			q('#productos-cesta').innerHTML = '<div id="mensaje-cesta-vacia">No hay productos en tu cesta.</div>';
+			q('.spinner').remove();
 		}else if(response.cesta != null){
 			let cestaHtml = '';
 			let precioTotal = 0;

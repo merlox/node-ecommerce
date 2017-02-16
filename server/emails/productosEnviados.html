@@ -26,31 +26,27 @@
 					</tr>
 					<tr>
 						<td style="padding: 30px 45px 30px 45px">
-						<b>Gracias por comprar con nosotros. <br>
-						Aqui tienes la factura de tu compra:</b>
+						<b>Los siguientes productos que compraste el {{fecha}} acaban de ser enviados:</b>
 						<hr/>
-						<table border="1" cellpadding="0" cellspacing="0" width="500" id="tabla-interior">
-							<tr align="center">
-								<td><i>Producto</i></td>
-								<td><i>Cantidad</i></td>
-								<td><i>Precio individual</i></td>
-								<td><i>Precio total</i></td>
-							</tr>
-							{{array arrayProductos}}
-							<tr align="center">
-								<td>{{nombre}}</td>
-								<td>{{cantidad}}</td>
-								<td>{{precioUno}}€</td>
-								<td>{{precioTotal}}€</td>
-							</tr>
+						<ul align="center" style="list-style-type: decimal;">
+							{{array productos}}
+								<li>{{cantidad}} x <a href="{{dominioPermalink}}">{{titulo}}</a></li>
 							{{/array}}
-							<tr align="center">
-								<td><b>Total Final Pagado:</b></td>
-								<td></td>
-								<td></td>
-								<td><b>{{precioFinal}}€</b></td>
-							</tr>
-						</table>
+						</ul>
+						<hr/>
+						<p>Se han enviado a la dirección que pusiste al pagar:</p>
+
+						<p style="padding-left: 15px;">
+						{{nombreApellidos}}<br/>
+						{{linea1}}<br/>
+						{{linea2}}<br/>
+						{{codPostal}}<br/>
+						{{pais}}<br/>
+						{{email}}<br/>
+						{{telefono}}<br/>
+						</p>
+
+						<p><b>Si tienes cualquier duda puedes responder a este email y te ayudaremos donde haga falta.</b></p>
 						</td>
 					</tr>
 				</table>

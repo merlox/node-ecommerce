@@ -230,11 +230,8 @@ api.get('/get-cesta', (req, res) => {
       if(err){
         console.log(err);
         responseObject.error = err;
-        res.send(responseObject);
-      }else{
-        responseObject.cesta = cesta;
-        res.send(responseObject);
-      }
+      }else responseObject.cesta = cesta;
+      res.send(responseObject);
     });
   }else{
     //Para usuarios no registrados copiar la 1ª imagen de cada producto con copy file
@@ -243,11 +240,8 @@ api.get('/get-cesta', (req, res) => {
         if(err){
           console.log(err);
           responseObject.error = err;
-          res.send(responseObject);
-        }else{
-          responseObject.cesta = cesta;
-          res.send(responseObject);
-        }
+        }else responseObject.cesta = cesta;
+        res.send(responseObject);
       });
     }else{
       res.send(responseObject);
@@ -398,6 +392,17 @@ api.post('/get-paginacion-facturas', (req, res) => {
 api.post('/actualizar-estado-factura', (req, res) => {
   let factura = req.body.data;
   functions.actualizarEstadoFactura(factura.id, factura.estado, factura.estadoBoolean, err => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+
+api.post('/email-productos-enviados', (req, res) => {
+  let productos = req.body.data.productos,
+    idPago = req.body.data.idPago;
+  //Le pasamos el dominio para crear un permalink por si quiere volver a la website a revisar los productos que ha comprado
+  let dominio = 'http://'+req.get('host');
+  functions.enviarEmailProductosEnviados(productos, idPago, dominio, err => {
     if(err) return res.send(err);
     res.send(null);
   });

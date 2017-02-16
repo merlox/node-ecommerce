@@ -5,11 +5,33 @@ SLIDER
 */
 /*Para contener el slider y que solo se vea la imagen destacada*/
 #contenedor-contenedor-slider{
-	overflow: hidden; 
+	overflow: hidden;
 	position: relative;
+	width: 100%;
+	max-width: 1920px;
+	height: 360px;
+	margin: 0 auto;
 }
 #contenedor-imagenes-slider{
 	position: relative;
+}
+#imagen-central{
+	position: absolute;
+	top: 0;
+    transform: translateX(-50%);
+    left: 50%;
+}
+#imagen-derecha{
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(50%);
+}
+#imagen-izquierda{
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-150%);	
 }
 #flecha-izquierda-slider{
 	position: absolute;
@@ -42,17 +64,6 @@ SLIDER
 #flecha-derecha-slider:hover{
 	height: 70px;
 	background-color: rgba(0, 0, 0, 0.1);
-}
-.imagen-slider:first-child{
-	position: relative;
-    float: left;
-    transform: translateX(-50%);
-    left: 50%;
-}
-.imagen-slider:not(:first-child){
-	display: none;
-	position: relative;
-	float: left;
 }
 /*
 

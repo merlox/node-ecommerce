@@ -747,40 +747,49 @@ function payProduct(req, cb){
       if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
       if(results.length <= 0) return cb('No se han encontrado esos productos en la base de datos, por favor inténtelo de nuevo.');
 
-      let precioTotalCentimos = null;
-      let metadataObject = {};
+      let precioTotalCentimos = null,
+        arrayProductosInterno = [];
       /*
-      metadataObject = {
-        precioCentimos, titulo, permalink, cantidad, estaEnviado
-      }
+      - precio total se sale fuera ·
+      - id pago se elimina (ya estaba fuera)
+      - productos ahora es arrayProductos
+      arrayProductos = [{precioCentimos, titulo, cantidad, estaEnviado},
+        {precioCentimos, titulo, cantidad, estaEnviado}]
        */
-      metadataObject['idPago'] = idPago;
       for(let index = 0; index < results.length; index++){
-        let producto = results[index];
-        let precioCentimos = (producto.precio*100).toFixed(0);
-        let cantidad = null;
-        metadataObject['producto-'+index] = {};
-        metadataObject['producto-'+index]['precioCentimos'] = parseInt(precioCentimos);
-        metadataObject['producto-'+index]['titulo'] = producto.titulo;
-        metadataObject['producto-'+index]['permalink'] = producto.permalink;
-        metadataObject['producto-'+index]['estaEnviado'] = false;
-
-        //Le calculamos el precio individual para meterlo en el email factura
+        let producto = results[index],
+          precioCentimos = (producto.precio*100).toFixed(0),
+          cantidad = null;
+        //Creamos el array de productos interno para meterlo en la base de datos
+        let objetoArrayProducto = {
+          'precioCentimos': parseInt(precioCentimos),
+          'titulo': producto.titulo,
+          'permalink': producto.permalink,
+          'cantidad': null,
+          'estaEnviado': false
+        };
+        /* 
+          arrayProductos[index] No tiene nada que ver con el arrayProductosInterno, 
+          arrayProductos es el precio para el email y la factura.
+          Le calculamos el precio individual para meterlo en el email factura.
+        */
         arrayProductos[index]['precioUno'] = (parseInt(precioCentimos)/100);
         //Le calculamos el precio individual x cantidad para la factura
         arrayProductos[index]['precioTotal'] = ((parseInt(precioCentimos)/100)*parseInt(arrayProductos[index].cantidad));
-
         //Conseguimos la cantidad comprada de ese producto
         for(let f = 0; f < arrayProductos.length; f++){
           if(arrayProductos[f].nombre == producto.titulo){
             cantidad = arrayProductos[f].cantidad;
-            metadataObject['producto-'+index]['cantidad'] = parseInt(cantidad);
+            objetoArrayProducto.cantidad = parseInt(cantidad);
             precioCentimos *= cantidad;
           }
         }
+        //Introducimos el objeto producto en el array interno de productos
+        arrayProductosInterno.push(objetoArrayProducto);
+        //Aumentamos el precio total
         precioTotalCentimos += precioCentimos;
         if(index + 1 >= results.length){
-          metadataObject['precioTotal'] = parseInt(precioTotalCentimos.toFixed(0));
+          precioTotalCentimos = parseInt(precioTotalCentimos.toFixed(0));
         }
       };
 
@@ -810,7 +819,8 @@ function payProduct(req, cb){
             'fecha': charge.created,
             'moneda': charge.currency,
             'customer': charge.customer,
-            'productos': metadataObject,
+            'productos': arrayProductosInterno,
+            'precioTotalCentimos': precioTotalCentimos,
             'telefono': charge.receipt_number,
             'direccion': direccion,
             'terminacionTarjeta': charge.source.last4,
@@ -832,6 +842,10 @@ function payProduct(req, cb){
               arrayProductos: arrayProductos,
               precioFinal: (precioTotalCentimos/100)
             };
+            //Borramos la cesta al terminar de pagar
+            delete req.session.cesta;
+            req.session.save();
+
             //TODO Error handling, ¿Que hacer cuando no se renderiza bien el email? ¿Que hacer cuando no se envía bien?
             render(path.join(__dirname, 'emails', 'factura.html'), renderEmailObject, (err, emailHTML) => {
               if(err) console.log(err);
@@ -918,7 +932,7 @@ function crearCesta(cesta, cb){
     'precio': true,
     '_id': false
   }).toArray((err, results) => {
-    if(err) return cb('No se han encontrado productos para esa cesta.', null);
+    if(err || results.length <= 0) return cb('No hay productos en la cesta.', null);
     //Le ponemos la cantidad a cada objeto producto de la cesta
     //Y solo seleccionamos la primera imagen
     let error = null;
@@ -932,9 +946,10 @@ function crearCesta(cesta, cb){
       //Le pasamos la imágen del producto al cliente
       let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
       let end = path.join(__dirname, '../public/public-uploads/');
-      copyFile(origen, end, nombreImagen, (err) => {
-        counter++;
+      copyFile(origen, end, nombreImagen, (err) => {    
         if(err) error = 'No se pudo copiar la imagen de ese producto de la cesta.';
+
+        counter++;
         if(counter >= results.length){
           if(error) return cb(error, null);
           cb(null, results);
@@ -1058,6 +1073,100 @@ function actualizarEstadoFactura(id, estado, estadoBoolean, cb){
     cb(null);
   });
 };
+//Envia un email al cliente notificandole de que sus productos acaban de ser enviado
+function enviarEmailProductosEnviados(arrayPermalinks, idPago, dominio, cb){
+  db.collection('facturas').findOne({
+    'idPago': idPago
+  }, {
+    '_id': false,
+    'fecha': true,
+    'direccion': true,
+    'productos': true
+  }, (err, factura) => {
+    if(err) return cb('Error, no se ha encontrado esa factura.');
+    
+    let todosEnviados = true,
+      marcarFacturaTodosEnviados = false;
+    for(let i = 0; i < factura.productos.length; i++){
+      //Si están todos enviados retornamos al final del for
+      if(!factura.productos[i].estaEnviado){
+        todosEnviados = false;
+        break;
+      }
+    }
+    if(todosEnviados) return cb('Error, todos los productos están enviados.');
+
+    //Si son iguales los arrays, es que van a estar todos enviados, entonces al final guardamos en la bd factura -> estaEnviado true
+    if(factura.productos.length === arrayPermalinks.length) marcarFacturaTodosEnviados = true;
+
+    let fecha = new Date(factura.fecha*1000).toISOString(),
+      fechaHorario = fecha.split('T')[0].split('-'),
+      fechaAño = fechaHorario[0],
+      fechaMes = fechaHorario[1],
+      fechaDia = fechaHorario[2];
+
+    let renderObject = {
+      fecha: `${fechaDia} del ${fechaMes} del año ${fechaAño}`,
+      productos: [],
+      nombreApellidos: factura.direccion.nombreApellidos,
+      linea1: factura.direccion.linea1,
+      linea2: factura.direccion.linea2,
+      codPostal: factura.direccion.codPostal,
+      pais: factura.direccion.pais,
+      email: factura.direccion.email,
+      telefono: factura.direccion.telefono
+    };
+
+    let arrayFinalProductos = []; //Array de objetos con cada producto a renderizar
+
+    for (var i = 0; i < factura.productos.length; i++) {
+      let productoObject = {
+        'dominioPermalink': `${dominio}/p/${factura.productos[i].permalink}`,
+        'titulo': factura.productos[i].titulo,
+        'cantidad': factura.productos[i].cantidad
+      };
+      arrayFinalProductos.push(productoObject);
+    }
+    renderObject.productos = arrayFinalProductos;
+    //Renderizamos el email
+    render(path.join(__dirname, 'emails', 'productosEnviados.html'), renderObject, (err, renderedHTML) => {
+      if(err) return cb('Error enviando el email de notificación, inténtelo de nuevo.');
+
+      let emailObject = {
+        from: 'merunasgrincalaitis@gmail.com',
+        to: factura.direccion.email,
+        subject: 'Tus productos acaban de ser enviados.',
+        html: renderedHTML,
+        imagenNombre: 'imagenFactura.jpg'
+      };
+      //Enviamos el email
+      sendEmail(emailObject.from, emailObject.to, emailObject.subject, emailObject.html, emailObject.imagenNombre, (err, success) => {
+        if(err) return cb('Error enviando el email: '+err);
+        if(success) console.log(success);
+        //Hacemos que el estaEnviado de cada producto sea true
+        for (let i = 0; i < factura.productos.length; i++) {
+          for (let j = 0; j < arrayPermalinks.length; j++) {
+            if(arrayPermalinks[j] === factura.productos[i].permalink){
+              factura.productos[i].estaEnviado = true;
+            }
+          }
+        }
+        //Actualizamos el valor estaEnviado de cada producto
+        db.collection('facturas').update({
+          'idPago': idPago
+        }, {
+          '$set': {
+            'productos': factura.productos,
+            'estaEnviado': marcarFacturaTodosEnviados
+          }
+        }, (err, success) => {
+          if(err) console.log(err);
+        });
+        cb(null);
+      });
+    });
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.copyFile = copyFile;
@@ -1092,3 +1201,4 @@ exports.buscarFiltrarProductosCategoria = buscarFiltrarProductosCategoria;
 exports.getFacturas = getFacturas;
 exports.getPaginacionFacturas = getPaginacionFacturas;
 exports.actualizarEstadoFactura = actualizarEstadoFactura;
+exports.enviarEmailProductosEnviados = enviarEmailProductosEnviados;

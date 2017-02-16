@@ -5,3 +5,5 @@ Estos son los bugs actualmente:
 - En el edit index no se muestra la imagen de + y falta poner el permalink a donde te lleva cada imagen.
 - Cuando se complete el pago, la cesta debería vaciarse.
 DONE- En el minislider de vendidos de la página inicial, el precio se muestra sin decimales.
+
+Los productos que estaban en la cesta ahora no están disponibles.

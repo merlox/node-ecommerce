@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cambiar contraseña</title>
+	{{> header}}
+	<link rel="stylesheet" type="text/css" href="../css/cambiarContrasena.css">
+</head>
+<body>
+
+	<div class="overlay"></div>
+
+	{{> menu}}
+
+    <div id="contenedor-principal">
+    	<form id="formulario-contrasena">
+    		<b class="success"></b>
+    		<b class="error"></b>
+    		<h3>Cambiar contraseña</h3>
+    		<input type="email" name="username" placeholder="tu email de usuario actual"/>
+    		<input type="password" minlength="8" name="contrasena" placeholder="tu nueva contraseña"/>
+    		<input type="password" minlength="8" name="repetir-contrasena" placeholder="repite la nueva contraseña"/>
+    		<input type="submit" name="enviar-datos"/>
+    	</form>
+	</div>
+
+	{{> footer}}
+	<script src="../js/cambiarContrasena.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,17 +1,21 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
-  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',  
+  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
   fs = require('fs'),
   path = require('path'),
   //Ponemos la secret key de stripe para realizar pagos
   stripe = require('stripe')('sk_test_F2AInFtMIJJpjEQYGvlgdIJ6'),
   db = {},
   sendEmail = require('./email.js'),
-  render = require('./render.js');
+  render = require('./render.js'),
+  crypto = require('crypto'),
+  algorithm = 'aes-256-ctr',
+  encryptPass = 'fasdFXs1231.23,-';
 
 Mongo.connect(MongoUrl, (err, database) => {
   if(err) console.log(err);
   db = database;
+  createExpirePasswordTokenIndex();
 });
 
 function buscarProducto(permalink, callback){
@@ -742,7 +746,8 @@ function payProduct(req, cb){
       '_id': false,
       'precio': true,
       'titulo': true,
-      'permalink': true
+      'permalink': true,
+      'imagenes': true
     }).toArray((err, results) => {
       if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
       if(results.length <= 0) return cb('No se han encontrado esos productos en la base de datos, por favor inténtelo de nuevo.');
@@ -766,7 +771,8 @@ function payProduct(req, cb){
           'titulo': producto.titulo,
           'permalink': producto.permalink,
           'cantidad': null,
-          'estaEnviado': false
+          'estaEnviado': false,
+          'imagen': producto.imagenes[1] //Las imagenes están dentro de un objeto "1": "asfasf.jpg"
         };
         /* 
           arrayProductos[index] No tiene nada que ver con el arrayProductosInterno, 
@@ -851,7 +857,7 @@ function payProduct(req, cb){
               if(err) console.log(err);
               emailObject.html = emailHTML;
 
-              sendEmail(emailObject.from, emailObject.to, emailObject.subject, emailObject.html, emailObject.imagenNombre, (err, success) => {
+              sendEmail(emailObject, (err, success) => {
                 if(err) console.log(err);
                 console.log(success);
               });
@@ -864,36 +870,93 @@ function payProduct(req, cb){
   }
 };
 //Para registrar un usuario
-function registerUsuario(email, password, cb){
+function registerUsuario(username, password, domain, cb){
   console.log('RegisterUsuario, functions.js');
-  db.collection('users').findOne({
-    'email': email
-  }, function(err, result){
-    if(err) return cb('Error creating the user. Try again.')
-    if(result != 'undefined' && result != null){
-      return cb('User already exists');
-    }else{
-      db.collection('users').insert({
-        'username': email,
-        'password': password
-      }, function(err, result){
-        if(err) return cb('Could not create the user. Try again.');
-        else return cb(null);
+  checkNewUser(username, err => {
+    if(err) return cb(err);
+    //Encrypt password
+    password = encryptPassword(password);
+    db.collection('users').insert({
+      'username': username,
+      'password': password,
+      'emailConfirmado': false
+    }, err => {
+      if(err) return cb('Error registrando el usuario, inténtelo de nuevo.');
+      //Enviamos el email de bienvenida
+      crypto.randomBytes(48, function(err, buffer) {
+        let token = buffer.toString('hex');
+        db.collection('tokens').update({
+          'username': username
+        }, {
+          '$set': {
+            'confirmEmailToken': token,
+            'createdAt': new Date()
+          }
+        }, {
+          'upsert': true
+        }, err => {
+          let renderObject = {
+            confirmUrl: `http://${domain}/confirmar-email/${token}`,
+            email: username
+          };
+          let emailObject = {
+            from: 'merunasgrincalaitis@gmail.com',
+            to: username,
+            subject: `${username} bienvenido a la tienda. Confirma tu email.`,
+            html: null,
+            imagenNombre: 'imagenFactura.jpg'
+          };
+          render(path.join(__dirname, 'emails', 'bienvenida.html'), renderObject, (err, HTML) => {
+            if(err) console.log('Error enviando el email de bienvenida.');
+            emailObject.html = HTML;
+            //Enviamos el email
+            sendEmail(emailObject);
+          });
+        });
       });
+      //Se ejecuta el callback pero sigue ejecutandose el envio de email
+      cb(null);
+    });
+  });
+};
+//Verifica que el nuevo usuario haya confirmado su email
+//Si está confirmado, se guarda en la db como "emailConfirmado: true"
+function verificarEmail(username, token, cb){
+  console.log('VerificarEmail, functions.js');
+  db.collection('tokens').findOne({
+    'username': username
+  }, (err, result) => {
+    console.log(result)
+    if(err) return cb('Error, no se pudo comprobar el email, inténtalo de nuevo.');
+    if(!result) return cb('Error, el token para confirmar el email ha expirado. Solicita un nuevo email de confirmación.');
+    if(result.confirmEmailToken === token){
+      db.collection('users').update({
+        'username': username
+      }, {
+        '$set': {
+          'emailConfirmado': true
+        }
+      }, err => {
+        if(err) return cb('No se pudo confirmar el email, intentalo de nuevo y solicita un nuevo email de confirmación.');
+        cb(null);
+      });
+    }else{
+      cb('Error, el token de confirmación no coincide con el token generado, solicita un nuevo email de confirmación.');
     }
   });
 };
 function loginUsuario(email, password, cb){
   console.log('LoginUsuario, functions.js');
+  password = encryptPassword(password);
   db.collection('users').findOne({
     'username': email,
     'password': password
   }, function(err, result){
-    if(err) cb('Error processing your request, try again.');
+    if(err) cb('Error iniciando sesión, inténtelo de nuevo.');
     if(result != 'undefined' && result != null){
       return cb(null);
     }else{
-      return cb('Error, could not find that user. Try again.');
+      return cb('Error, no se encontró al usuario especificado, inténtelo de nuevo.');
     }
   });
 };
@@ -907,7 +970,7 @@ function getCesta(username, cb){
   }, (err, result) => {
     if(err) return cb(err, null);
     //Comprobamos que la cesta no esté vacía
-    if(result.cesta != null && result.cesta != undefined && Object.keys(result.cesta).length != 0){
+    if(result && result.cesta != null && result.cesta != undefined && Object.keys(result.cesta).length != 0){
       crearCesta(result.cesta, (err, productosCesta) => {
         if(err) return cb(err, null);
         cb(null, productosCesta);
@@ -1140,7 +1203,7 @@ function enviarEmailProductosEnviados(arrayPermalinks, idPago, dominio, cb){
         imagenNombre: 'imagenFactura.jpg'
       };
       //Enviamos el email
-      sendEmail(emailObject.from, emailObject.to, emailObject.subject, emailObject.html, emailObject.imagenNombre, (err, success) => {
+      sendEmail(emailObject, (err, success) => {
         if(err) return cb('Error enviando el email: '+err);
         if(success) console.log(success);
         //Hacemos que el estaEnviado de cada producto sea true
@@ -1166,6 +1229,155 @@ function enviarEmailProductosEnviados(arrayPermalinks, idPago, dominio, cb){
       });
     });
   });
+};
+//Para mostrar los productos que ha comprado el cliente
+function conseguirFacturasCliente(req, cb){
+  console.log('ConseguirFacturasCliente, functions.js');
+  let pagina = req.params.pagina;
+  db.collection('facturas').find({
+    'emailUsuarioConectado': req.session.username
+  }, {
+    '_id': false,
+    'productos': true,
+    'fecha': true,
+    'estaEnviado': true,
+    'direccion': true,
+    'terminacionTarjeta': true
+  }).limit(pagina*5).skip((pagina-1)*5).sort({fecha: 1}).toArray((err, facturas) => {
+    if(err) return cb('Error buscando los productos', null);
+    if(!facturas || facturas.length === 0) return cb('No hay productos que mostrar.', null);
+    //Se copian las imágenes mientras se carga la página con los datos
+    facturas.forEach(factura => {
+      factura.productos.forEach(producto => {
+        copyFile(path.join(__dirname, 'uploads/', producto.permalink, producto.imagen), path.join(__dirname, '../public/public-uploads'), producto.imagen, err => {
+          if(err) console.log(err);
+        });
+      });
+    });
+    cb(null, facturas);
+  });
+};
+//Devuelve cuántas facturas tiene el cliente para hacer el paginador
+function contarFacturasCliente(username, cb){
+  console.log('ContarFacturasCliente, functions.js');
+  db.collection('facturas').find({
+    'emailUsuarioConectado': username
+  }).count((err, cantidadFacturas) => {
+    if(err) return cb('No se ha podido generar el paginador.', null);
+    cb(null, cantidadFacturas);
+  });
+};
+//Mandar un mensaje para cambiar la contraseña del usuario y guarda el token en la base de datos "Tokens"
+function cambiarContrasena(username, dominio, cb){
+  db.collection('users').findOne({
+    'username': username
+  }, (err, result) => {
+    if(err) return cb('Error comprobando el nombre de usuario, inténtalo de nuevo.');
+    if(!result) return cb('Error, ese nombre de usuario no existe.');
+    let renderObject = {
+      'enlace': null
+    };
+    let emailObject = {
+      from: 'merunasgrincalaitis@gmail.com',
+      to: username,
+      subject: 'Solicitud de cambio de contraseña.',
+      html: null,
+      imagenNombre: 'imagenFactura.jpg'
+    };
+    crypto.randomBytes(48, function(err, buffer) {
+      let token = buffer.toString('hex');
+      renderObject.enlace = token;
+      db.collection('tokens').update({
+        'username': username
+      }, {
+        '$set': {
+          'resetPasswordToken': token,
+          'createdAt': new Date()
+        }
+      }, {
+        'upsert': true
+      }, (err, results) => {
+        if(err) return cb('Error creando el email, inténtelo de nuevo.');
+        renderObject.enlace = `${dominio}/cambiar-contrasena/${token}`;
+        render(path.join(__dirname, 'emails', 'cambiarContrasena.html'), renderObject, (err, emailHTML) => {
+          if(err) return cb('Error generando el email, inténtelo de nuevo.');
+          emailObject.html = emailHTML;
+          sendEmail(emailObject, (err, success) => {
+            if(err) return cb('Error enviando el email, inténtelo de nuevo.');
+            cb(null);
+          });
+        });
+      });
+    });
+  });
+};
+//Comprueba que el token usado para restablecer la contraseña del usuario sea correcto
+function comprobarTokenCambiarContrasena(username, token, cb){
+  console.log('ComprobarTokenCambiarContrasena, functions.js');
+  db.collection('tokens').findOne({
+    'username': username
+  }, (err, result) => {
+    if(err) return cb('Error comprobando el cambio de contraseña, inténtalo de nuevo.');
+    if(!result) return cb('Error, ese usuario no existe.');
+    if(result.resetPasswordToken != token){
+      cb('Error, el código generado no coincide con el token de solicitud de cambio de contraseña, solicita un nuevo cambio de contraseña.');
+    }else if(result.resetPasswordToken === token){
+      cb(null);
+    }else{
+      cb('Error comprobando el cambio de contraseña, inténtalo de nuevo.');
+    }
+  });
+};
+//Cambiar la contraseña y guardar la nueva en la base de datos
+function confirmarCambiarContrasena(username, password, cb){
+  console.log('ConfirmarCambiarContrasena, functions.js');
+  db.collection('users').findOne({
+    'username': username
+  }, {
+    'password': true
+  }, (err, result) => {
+    if(err) return cb('Error, ese usuario no existe en la base de datos.');
+    db.collection('users').update({
+      'username': username
+    }, {
+      '$set': {
+        'password': password
+      }
+    }, (err) => {
+      if(err) return cb('Error actualizando la contraseña, inténtalo de nuevo.');
+      console.log(`Contraseña cambiada de ${result.password} a ${password}`);
+      cb(null);
+    });
+  });
+};
+//Crea el index que expira tras 12 horas para los token de restablecer contraseña para que se eliminen automáticamente
+function createExpirePasswordTokenIndex(){
+  db.collection('tokens').createIndex({
+    'createdAt': 1
+  }, {
+    expireAfterSeconds: 3600 * 1 //1 hora
+  }, (err) => {
+    if(err) return console.log(err)
+    console.log('Se ha creado el TTL index correctamente de 1 hora para la collection Tokens.');
+  })
+};
+//Comprueba que el nuevo nombre de usuario esté disponible para registrar
+function checkNewUser(username, cb){
+  console.log('ChecNewUser, functions.js');
+  db.collection('users').findOne({
+    'username': username
+  }, (err, result) => {
+    if(err) return cb('Error comprobando disponibilidad de nuevo usuario.');
+    if(result && result != '') return cb('Ese usuario ya existe.');
+    cb(null);
+  });
+};
+//Cifrar la clave para guardarla de modo seguro en la bd
+function encryptPassword(password){
+  let cipher = crypto.createCipher(algorithm, encryptPass);
+  let update = cipher.update(password, 'utf-8', 'hex');
+  update += cipher.final('hex');
+  return update;
 };
 
 exports.buscarProducto = buscarProducto;
@@ -1202,3 +1414,11 @@ exports.getFacturas = getFacturas;
 exports.getPaginacionFacturas = getPaginacionFacturas;
 exports.actualizarEstadoFactura = actualizarEstadoFactura;
 exports.enviarEmailProductosEnviados = enviarEmailProductosEnviados;
+exports.conseguirFacturasCliente = conseguirFacturasCliente;
+exports.contarFacturasCliente = contarFacturasCliente;
+exports.cambiarContrasena = cambiarContrasena;
+exports.comprobarTokenCambiarContrasena = comprobarTokenCambiarContrasena;
+exports.confirmarCambiarContrasena = confirmarCambiarContrasena;
+exports.createExpirePasswordTokenIndex = createExpirePasswordTokenIndex;
+exports.checkNewUser = checkNewUser;
+exports.verificarEmail = verificarEmail;

@@ -408,4 +408,69 @@ api.post('/email-productos-enviados', (req, res) => {
   });
 });
 
+api.get('/facturas-cliente/:pagina', (req, res) => {
+  let dataObject = {
+    'error': null,
+    'facturas': null
+  };
+  functions.conseguirFacturasCliente(req, (err, facturas) => {
+    if(err){
+      dataObject.error = err;
+      return res.send(dataObject);
+    }
+    dataObject.facturas = facturas;
+    res.send(dataObject);
+  });
+});
+
+api.get('/contar-facturas-cliente', (req, res) => {
+  let dataObject = {
+    'error': null,
+    'cantidadFacturas': 0
+  };
+  functions.contarFacturasCliente(req.session.username, (err, cantidad) => {
+    if(err) dataObject.error = err;
+    dataObject.cantidadFacturas = cantidad;
+    res.send(dataObject);
+  });
+});
+
+//Inicia el email de restablecer contraseña con /api/cambiar-contraseña, no confundir con /cambiar-contrasena del public routes
+//que es el que usa el token para confirmar el cambio.
+api.get('/cambiar-contrasena/:username?', (req, res) => {
+  let dominio = `http://${req.get('host')}`;
+  let username = req.session.username ? req.session.username : req.params.username;
+  if(!username) return res.send('No se encontró ese usuario.');
+  req.session.username = username;
+  req.session.save();
+  functions.cambiarContrasena(req.session.username, dominio, err => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+
+api.post('/confirmar-cambiar-contrasena/:token', (req, res) => {
+  let username = req.body.data.username,
+    contrasena = req.body.data.contrasena;
+  if(!username) return res.send('Error, no se ha recibido el nombre de usuario, inténtalo de nuevo.');
+  if(!contrasena) return res.send('Error, no se ha recibido la contraseña, inténtalo de nuevo.');
+  if(username != req.session.username) return res.send('Error, el email de usuario conectado no coincide con el que has puesto.');
+  if(contrasena.length < 7) return res.send('Error, la contraseña debe ser de 8 caracteres mínimo.');
+
+  functions.comprobarTokenCambiarContrasena(username, req.params.token, (err) => {
+    if(err) return res.send(err);
+    functions.confirmarCambiarContrasena(username, contrasena, (err) => {
+      if(err) return res.send(err);
+      res.send(null);
+    });
+  });
+});
+
+api.post('/check-new-user', (req, res) => {
+  functions.checkNewUser(req.body.data.username, err => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+
 module.exports = api;

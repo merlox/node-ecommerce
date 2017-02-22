@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mi cuenta</title>
+	<link rel="stylesheet" type="text/css" href="../css/micuenta.css">
+	{{> header}}
+</head>
+<body>
+
+	<div class="overlay"></div>
+
+	{{> menu}}
+	<!-- Compras recientes,
+		 Estados de los pedidos,
+		 Notificaciones,
+		 Devolver o reemplazar pedidos,
+		 Cambio de contraseña o email,
+		 Contactar para soporte: formulario web -->
+    <div id="contenedor-principal">
+    	<div class="contenedor-spin-titulo">
+    		<div class="big-spinner"></div><h3 class="titulo-tabla">Compras recientes</h3>
+    		<div class="paginacion"></div>
+    	</div>
+    	<table id="compras-recientes">
+    	</table>
+    	<h3>Cambiar contraseña</h3>
+    	Si quieres cambiar la contraseña, pulsa el botón inferior y te mandaremos un correo para reestablecer la contraseña.
+    	<div id="cambiar-contrasena-response"></div>
+    	<br/>
+    	<button onclick="cambiarContrasena(this)">Cambiar contraseña</button>
+	</div>
+
+	<br/><br/><br/><br/><br/><br/>
+
+	{{> footer}}
+	<script src="../js/micuenta.js" type="text/javascript"></script>
+
+</body>
+</html>

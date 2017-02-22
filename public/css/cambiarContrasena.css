@@ -1,0 +1,19 @@
+#formulario-contrasena{
+	width: 400px;
+	margin: 30px auto;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+#formulario-contrasena input{
+	margin: 5px; 
+	padding: 10px;
+}
+.error{
+	color: tomato;
+	text-align: center;
+}
+.success{
+	color: lime;
+	text-align: center;	
+}

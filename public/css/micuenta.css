@@ -1,0 +1,76 @@
+#contenedor-principal{
+	margin: 0 auto;
+	width: 1000px;
+}
+#compras-recientes{
+	border: 1px solid lightgrey;
+	border-collapse: collapse;
+}
+#compras-recientes td{
+	border: 1px solid lightgrey;
+	text-align: center;
+	padding: 10px;
+}
+#compras-recientes tr:first-child:hover{
+	background-color: initial;
+}
+#compras-recientes tr:nth-child(even){
+	background-color: whitesmoke;
+}
+#compras-recientes tr:hover{
+	background-color: rgba(0, 0, 0, 0.09);
+}
+.imagen-compras-recientes{
+	vertical-align: middle;
+}
+.contenedor-spin-titulo{
+	display: flex;
+	align-items: baseline;
+}
+.titulo-tabla{
+	display: inline-block;
+}
+div.big-spinner{
+	display: none;
+	position: relative;
+	top: 7px;
+}
+.si-enviado{
+	color: green;
+	text-shadow: 1px 1px 1px lightgrey;
+}
+.error{
+	text-align: center;
+	color: grey;
+	padding: 20px;
+}
+/*
+
+PAGINADOR
+
+*/
+.paginacion{
+	display: none;
+    text-align: right;
+    margin: 10px 0;
+    height: 32px;
+}
+.paginacion span{
+	background-color: rgba(0, 0, 0, 0.08);
+	padding: 20px;
+	cursor: pointer;
+	transition: none;
+}
+.paginacion span:hover{
+	background-color: rgba(0, 0, 0, 0.05);
+}
+.paginacion span:active{
+	background-color: rgba(0, 0, 0, 0.03);
+}
+span.pagina-activa{
+	background-color: orange;
+	color: white;
+}
+.paginacion span.pagina-activa:hover{
+	background-color: darkorange;
+}

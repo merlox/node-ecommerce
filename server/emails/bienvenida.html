@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Productos enviados</title>
+	<title>Bienvenido {{email}}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<style type="text/css">
 		#tabla-interior{
@@ -26,27 +26,10 @@
 					</tr>
 					<tr>
 						<td style="padding: 30px 45px 30px 45px">
-						<b>Los siguientes productos que compraste el {{fecha}} acaban de ser enviados:</b>
+						<p>Bienvenido {{email}} a la tienda! Esperamos que encuentres lo que necesites y que te diviertas comprando para tí y para los demás. <b>Confirma tu email pulsando o copiando el enlace de abajo:</b></p>
 						<hr/>
-						<ul align="center" style="list-style-type: decimal;">
-							{{array productos}}
-								<li>{{cantidad}} x <a href="{{dominioPermalink}}">{{titulo}}</a></li>
-							{{/array}}
-						</ul>
+						<a href="{{confirmUrl}}">{{confirmUrl}}</a>
 						<hr/>
-						<p>Se han enviado a la dirección que pusiste al pagar:</p>
-
-						<p style="padding-left: 15px;">
-						{{nombreApellidos}}<br/>
-						{{linea1}}<br/>
-						{{linea2}}<br/>
-						{{codPostal}}<br/>
-						{{pais}}<br/>
-						{{email}}<br/>
-						{{telefono}}<br/>
-						</p>
-
-						<p><b>Si tienes cualquier duda puedes responder a este email y te ayudaremos donde haga falta.</b></p>
 						</td>
 					</tr>
 				</table>

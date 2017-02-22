@@ -5,6 +5,7 @@
 }
 body{
     margin: 0;
+    color: #444444;
 }
 h1, h2, h3, h4, h5, h6, button{
 	font-family: helvetica;
@@ -80,7 +81,7 @@ button, input[type=submit]{
     cursor: pointer;
     font-family: 'Open Sans', sans-serif;
 }
-button[disabled], button[disabled]:hover{
+button[disabled], button[disabled]:hover, input[disabled], button[disabled]:hover{
     background-image: linear-gradient(to bottom, lightgrey, lightgrey);
     cursor: not-allowed;
     font-family: 'Open Sans', sans-serif;

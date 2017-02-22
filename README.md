@@ -7,28 +7,28 @@ Cada día trabajo 1 hora en conseguir avanzar los pasos necesarios para completa
 
 1. Crear la interfaz gráfica
 
-- Página de login para acceder como administrador de la tienda o comprador. No habrá múltiples colaboradores, solo 1 usuario administrador.
-- Página para añadir productos.
-  - Crear widget imagenes.
-  - Crear widget permalink.
-  - Crear widget categorías.
-  - Crear widget atributos.
-- Página inicial donde ver los productos como visitante.
-- Página de cliente para ver sus pedidos, notas y productos comprados.
-- Página para ver información sobre las ventas. Dashboard.
-- Página de detalle de cada producto.
-- Página de compra del producto donde poder pagar con paypal.
-- Widget de añadir al carrito ajax.
-- Widget de chat.
+DONE - Página de login para acceder como administrador de la tienda o comprador. No habrá múltiples colaboradores, solo 1 usuario administrador.
+DONE - Página para añadir productos.
+  DONE - Crear widget imagenes.
+  DONE - Crear widget permalink.
+  DONE - Crear widget categorías.
+  DONE - Crear widget atributos.
+ - Página inicial donde ver los productos como visitante.
+ - Página de cliente para ver sus pedidos, notas y productos comprados.
+ - Página para ver información sobre las ventas. Dashboard.
+ - Página de detalle de cada producto.
+DONE - Página de compra del producto donde poder pagar con paypal.
+DONE - Widget de añadir al carrito ajax.
+ - Widget de chat.
 
 2. Añadir la funcionalidad.
 
-- Crear funcionalidad de login y registro.
-- Crear funcionalidad de añadir productos con upload de imágenes y categorias
-- Crear funcionalidad de ver los productos actualmente disponibles, la página inicial y página de detalles de productos.
-- Crear funcionalidad de dashboard, estadísticas de visitas diarias con google analytics, páginas visitadas, productos que neceistan ser enviados y productos comprados.
-- Crear funcionalidad de pago. Pagar con paypal y con tarjeta authorize.net o stripe.
-- Crear widget del carrito.
+DONE - Crear funcionalidad de login y registro.
+DONE - Crear funcionalidad de añadir productos con upload de imágenes y categorias
+DONE - Crear funcionalidad de ver los productos actualmente disponibles, la página inicial y página de detalles de productos.
+- Crear funcionalidad de dashboard, estadísticas de visitas diarias con google analytics, páginas visitadas, productos que necesitan ser enviados y productos comprados.
+DONE - Crear funcionalidad de pago. Pagar con paypal y con tarjeta authorize.net o stripe.
+DONE - Crear widget del carrito.
 - Crear widget del chat para consultas en directo.
 
 3. Completar el proyecto.
@@ -1125,3 +1125,26 @@ Después de eso, trabajaré en reparar bugs, limpiar el código, organizar cosas
 En esta semana, en mi tiempo libre, he aprendido lo de object oriented programming para js, a usar cordova para publicar web apps en android, a usar la api de gmail con auth2.0 además de trabajar para un cliente de fiverr que necesitaba una aplicación para buscar en su gmail.
 
 Ha sido una semana excelente y planeo continuar creciendo todo lo que pueda. Siempre con la calidad por delante sin tener prisa por hacerlo mal y trabajando día a día.
+
+### Día 59
+
+He creado notificaciones desde el panel de administracion del jefe de la página en el que poder notificar por email a los clientes con un email automático que los productos han sido enviados.
+Luego he creado el panel de administración de usuarios donde el usuario de momento puede ver productos comprados ordenados por fecha con paginación y tiene la opción de cambiar su contraseña pulsando un botón con el cual recibirá un email y se generará un token autodestructivo en 1 hora que verificará que es el usuario correcto para entonces cambiar su contraseña con una longitud mínima de 8 caracteres.
+
+He aprendido que puedo hacer que los documentos de una determinada coleción de mongodb se eliminen pasado un tiempo, es lo que se conoce como TTL (Time to live), lo he usado para eliminar los tokens de cambio de contraseña en 1 hora.
+
+Cosas que hacer de momento:
+DONE - Codificar las contraseñas y descodificarlas cuando sea necesario.
+DONE - Enviar email de bienvenida a nuevos usuarios.
+- Crear opcion para recuperar la contraseña en el inicio de sesión.
+- Hacer la página de usuario responsive.
+- Hacer el admin dashboard responsive.
+- Crear formulario de contacto en el panel de usuario.
+- Limitar la cantidad de intentos que pueden hacer los usuarios al servidor para registrar, login y cambiar contraseña.
+- Bloquear ips que spameen las requests.
+- Mejorar la página inicial para que el miniwidget sea más agradable con carga ajax.
+- Crear widget de sugeridos que cargue con ajax.
+- Arreglar e investigar el bug de cambio de categoria de productos que no se muestra en el widget lateral.
+- Crear opción de ver cuanto stock hay disponible.
+- Hacer páginas de producto más detalladas.
+- Arreglar el main slider.

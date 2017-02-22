@@ -6,8 +6,7 @@ let express = require('express'),
 	path = require('path'),
 	routes = express.Router(),
 	db = {},
-  render = require('./../render.js'),
-  enviarEmail = require('./../email.js');
+  render = require('./../render.js');
 
 Mongo.connect(MongoUrl, (err, database) => {
 	if(err) console.log(err);
@@ -130,12 +129,17 @@ routes.get('/login', (req, res) =>{
 });
 
 routes.post('/register', function(req, res){
-  functions.registerUsuario(req.body.nombreUsuario, req.body.passUsuario, (err) => {
+  let nombre = req.body.nombreUsuarioNuevo,
+    pass = req.body.passUsuarioNuevo,
+    domain = req.get('host');
+
+  functions.registerUsuario(nombre, pass, domain, (err) => {
     if(err){
       res.send(err);
     }else{
-      req.session.username = req.body.nombreUsuario;
+      req.session.username = nombre;
       req.session.isLogged = true;
+      req.session.save();
       res.redirect('/');
     }
   });
@@ -215,6 +219,58 @@ routes.get('/pago-completado', (req, res) => {
 
 routes.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/images/logo.png'));
+});
+
+routes.get('/micuenta', (req, res) => {
+  let dataObject = {
+    'loggedState': '/login',
+    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>',
+  };
+  functions.getLoggedState(req, state => {
+    if(state === 'logged'){
+      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+      dataObject.loggedState = '/micuenta';
+    }else if(state === 'admin'){
+      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+      dataObject.loggedState = '/admin';
+    }
+    render(path.join(__dirname, '../../public/views/micuenta.html'), dataObject, (err, data) => {
+      if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
+      return res.send(data);
+    });
+  });
+});
+
+routes.get('/cambiar-contrasena/:token', (req, res) => {
+  let username = req.session.username;
+  if(!username) return res.send('Error, ese usuario no se ha encontrado. Solicita un nuevo token de recuperación de contraseña.');
+  functions.comprobarTokenCambiarContrasena(username, req.params.token, (err) => {
+    if(err) return res.send('Error, no se puede restablecer la contraseña, es posible que tu código haya expirado. Inténtalo de nuevo.');
+    let dataObject = {
+      'loggedState': '/login',
+      'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>',
+    };
+    functions.getLoggedState(req, state => {
+      if(state === 'logged'){
+        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+        dataObject.loggedState = '/micuenta';
+      }else if(state === 'admin'){
+        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+        dataObject.loggedState = '/admin';
+      }
+      render(path.join(__dirname, '../../public/views', 'cambiarContrasena.html'), dataObject, (err, HTML) => {
+        if(err) return res.send(err);
+        res.send(HTML);
+      });
+    });
+  });
+});
+
+routes.get('/confirmar-email/:token', (req, res) => {
+  functions.verificarEmail(req.session.username, req.params.token, err => {
+    if(err) return res.send(err);
+    res.sendFile(path.join(__dirname, '../../public/views', 'emailConfirmado.html'));
+  });
 });
 
 routes.get('/:categoria', (req, res) => {

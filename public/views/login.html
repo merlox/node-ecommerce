@@ -3,36 +3,66 @@
   <head>
     <title>Login authentication</title>
     <link rel="stylesheet" type="text/css" href="../css/framework.css">
-    <link rel="stylesheet" href="../css/status.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../css/login.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
 
-    <h5 id="status"></h5>
-
-    <div id="mainContent">
-    <h2>Bienvenido</h2>
-    <p>
-      En esta web podrás autenticarte con tu usario y contraseña.
-      <br>
-      Primero crea tu registro a continuación y si el formulario no tiene errores,
-      podrás acceder con tu nuevo usuario.
-    </p>
-    <h2>Crear usuario</h2>
-    <form action="/register" method="post">
-      Email <input type="email" name="nombreUsuario">
-      Contraseña <input type="password" name="passUsuario">
-      <input type="submit" value="Enviar datos">
-    </form>
-
-    <h2>Entrar en tu cuenta</h2>
+  <div id="mainContent">
+    <h3>Entra en tu cuenta</h3>
     <form action="/login" method="post">
       Email <input type="email" name="nombreUsuario">
       Contraseña <input type="password" name="passUsuario">
+      <a onclick="cambiarContrasena()" href="#">Olvidé mi contraseña</a>
       <input type="submit" value="Enviar datos">
     </form>
-
-  <script src="../js/status.js" charset="utf-8"></script>
+    <h3>Crea un nuevo usuario</h3>
+    <div class="error"></div>
+    <form onsubmit="event.preventDefault(); crearUsuario(this);" action="/register" method="post">
+      Email <input type="email" name="nombreUsuarioNuevo">
+      Contraseña <input minlength="8" type="password" name="passUsuarioNuevo">
+      Repetir contraseña <input  minlength="8" type="password" name="passUsuarioNuevo2">
+      <input type="submit" value="Enviar datos">
+    </form>
   </div>
   </body>
+  <script type="text/javascript" src="../js/functions.js"></script>
+  <script type="text/javascript">
+    function crearUsuario(e){
+      q('.error').innerHTML = '';
+
+      if(q('input[name=passUsuarioNuevo]').value != '' && q('input[name=passUsuarioNuevo2]').value != '' && q('input[name=passUsuarioNuevo]').value === q('input[name=passUsuarioNuevo2]').value){
+        let data = {
+          'username': q('input[name=nombreUsuarioNuevo]').value
+        };
+        httpPost('/api/check-new-user', data, err => {
+          if(err && err != '') return q('.error').innerHTML = err;
+          e.submit();
+        });
+      }else{
+        q('.error').innerHTML = 'Las contraseñas no coinciden.';
+      }
+    };
+    function cambiarContrasena(){
+      q('#mainContent').innerHTML = `
+        <div class="recover-password">
+          <p>Introduce tu email de usuario para recibir un mensaje de cambio de contraseña.</p>
+          <div class="error"></div>
+          <div id="cambiar-contrasena-response"></div>
+          <input id="nombreUsuarioCambioContrasena" type="email" placeholder="Tu email de usuario"></input>
+          <button onclick="emailCambioContrasena(this)">Enviar email cambio contraseña</button>
+        </div>`;
+    };
+    function emailCambioContrasena(e){
+      let username = q('#nombreUsuarioCambioContrasena').value;
+      if(!username) return q('.error').innerHTML = 'El nombre de usuario no debe puede vacío.';
+
+      e.setAttribute('disabled', 'disabled');
+      httpGet(`/api/cambiar-contrasena/${username}`, err => {
+        e.removeAttribute('disabled');
+        if(err) q('#cambiar-contrasena-response').innerHTML = `<b class="error">${err}</b>`;
+        else q('#cambiar-contrasena-response').innerHTML = `<b>Se ha enviado el mensaje correctamente.</b>`;
+      });
+    }
+  </script>
 </html>

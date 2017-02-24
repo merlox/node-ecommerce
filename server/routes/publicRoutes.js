@@ -146,6 +146,8 @@ routes.post('/register', function(req, res){
 });
 
 routes.post('/login', function(req, res){
+  console.log(req.body.nombreUsuario)
+  console.log(req.body.passUsuario)
   functions.loginUsuario(req.body.nombreUsuario, req.body.passUsuario, (err) => {
     if(err){
       res.send(err);

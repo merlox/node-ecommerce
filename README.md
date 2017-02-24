@@ -1136,10 +1136,10 @@ He aprendido que puedo hacer que los documentos de una determinada coleción de 
 Cosas que hacer de momento:
 DONE - Codificar las contraseñas y descodificarlas cuando sea necesario.
 DONE - Enviar email de bienvenida a nuevos usuarios.
-- Crear opcion para recuperar la contraseña en el inicio de sesión.
-- Hacer la página de usuario responsive.
-- Hacer el admin dashboard responsive.
-- Crear formulario de contacto en el panel de usuario.
+DONE - Crear opcion para recuperar la contraseña en el inicio de sesión.
+DONE - Hacer la página de usuario responsive.
+DONE - Hacer el admin dashboard responsive.
+DONE - Crear formulario de contacto en el panel de usuario.
 - Limitar la cantidad de intentos que pueden hacer los usuarios al servidor para registrar, login y cambiar contraseña.
 - Bloquear ips que spameen las requests.
 - Mejorar la página inicial para que el miniwidget sea más agradable con carga ajax.

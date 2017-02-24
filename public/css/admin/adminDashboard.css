@@ -137,3 +137,8 @@ tr:hover{
     text-align: center;
     width: 100%;
 }
+@media (max-width: 1000px){
+    #filtros-facturas{
+        height: 180px;
+    }
+}

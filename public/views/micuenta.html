@@ -21,13 +21,23 @@
     		<div class="big-spinner"></div><h3 class="titulo-tabla">Compras recientes</h3>
     		<div class="paginacion"></div>
     	</div>
-    	<table id="compras-recientes">
-    	</table>
+    	<div class="contenedor-responsive-tabla">
+	    	<table id="compras-recientes">
+	    	</table>
+	    </div>
     	<h3>Cambiar contraseña</h3>
-    	Si quieres cambiar la contraseña, pulsa el botón inferior y te mandaremos un correo para reestablecer la contraseña.
+    	<p>Si quieres cambiar la contraseña, pulsa el botón inferior y te mandaremos un correo para reestablecer la contraseña.</p>
     	<div id="cambiar-contrasena-response"></div>
-    	<br/>
     	<button onclick="cambiarContrasena(this)">Cambiar contraseña</button>
+    	<h3>Contacto</h3>
+    	<p>Si tienes cualquier problema y necesitas contactar con el equipo de soporte, a continuación tienes un formulario para enviar un email y que podamos resolver tus incidencias lo más rápido posible. Normalmente tardamos menos de 24 horas en responder.</p>
+    	<div id="error-enviar-mensaje"></div>
+    	<div id="success-enviar-mensaje"></div>
+    	<form onsubmit="event.preventDefault(); mandarMensaje(this);" id="formulario-contacto">
+    		<input type="text" name="subject" placeholder="Titulo del mensaje">
+    		<textarea placeholder="Contenido del mensaje"></textarea>
+    		<input type="submit" name="submit">
+    	</form>
 	</div>
 
 	<br/><br/><br/><br/><br/><br/>

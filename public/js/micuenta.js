@@ -84,3 +84,30 @@ function cambiarContrasena(e){
 		else q('#cambiar-contrasena-response').innerHTML = `<b>Se ha enviado el mensaje correctamente.</b>`;
 	});
 };
+
+function mandarMensaje(e){
+	let titulo = e.querySelector('input[name=subject]').value;
+	let mensaje = e.querySelector('textarea').value;
+
+	q('#error-enviar-mensaje').innerHTML = '';
+	q('#success-enviar-mensaje').innerHTML = '';
+	if(!titulo || titulo === '') 
+		return q('#error-enviar-mensaje').innerHTML = 'El título del mensaje no puede estar vacío';
+	if(!mensaje || mensaje === '')
+		return q('#error-enviar-mensaje').innerHTML = 'El contenido del mensaje no puede estar vacío';
+
+	let formulario = {
+		'titulo': titulo,
+		'mensaje': mensaje
+	};
+	httpPost('/api/enviar-mensaje', formulario, err => {
+		if(err) return q('#error-enviar-mensaje').innerHTML = err;
+		q('#success-enviar-mensaje').innerHTML = 'Mensaje enviado correctamente';
+	});
+};
+
+//Expandir el textarea al escribir
+q("textarea").addEventListener("keyup", function(){
+    this.style.height = "1px";
+    this.style.height = (this.scrollHeight) + "px"; 
+});

@@ -6,7 +6,8 @@ let Mongo = require('mongodb').MongoClient,
   //Ponemos la secret key de stripe para realizar pagos
   stripe = require('stripe')('sk_test_F2AInFtMIJJpjEQYGvlgdIJ6'),
   db = {},
-  sendEmail = require('./email.js'),
+  sendEmail = require('./email.js').sendEmail,
+  sendEmailPlain = require('./email.js').sendEmailPlain,
   render = require('./render.js'),
   crypto = require('crypto'),
   algorithm = 'aes-256-ctr',
@@ -1337,6 +1338,7 @@ function confirmarCambiarContrasena(username, password, cb){
     'password': true
   }, (err, result) => {
     if(err) return cb('Error, ese usuario no existe en la base de datos.');
+    password = encryptPassword(password);
     db.collection('users').update({
       'username': username
     }, {
@@ -1378,6 +1380,20 @@ function encryptPassword(password){
   let update = cipher.update(password, 'utf-8', 'hex');
   update += cipher.final('hex');
   return update;
+};
+
+function enviarMensajeContacto(username, titulo, mensaje, cb){
+  if(!username) return cb('Error, no se ha detectado usuario.');
+  let emailObject = {
+    from: username,
+    to: 'merunasgrincalaitis@gmail.com',
+    subject: titulo,
+    text: mensaje
+  };
+  sendEmailPlain(emailObject, (err, success) => {
+    if(err) return cb('Error enviando el email, inténtalo de nuevo.');
+    cb(null);
+  });
 };
 
 exports.buscarProducto = buscarProducto;
@@ -1422,3 +1438,4 @@ exports.confirmarCambiarContrasena = confirmarCambiarContrasena;
 exports.createExpirePasswordTokenIndex = createExpirePasswordTokenIndex;
 exports.checkNewUser = checkNewUser;
 exports.verificarEmail = verificarEmail;
+exports.enviarMensajeContacto = enviarMensajeContacto;

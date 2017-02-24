@@ -473,4 +473,16 @@ api.post('/check-new-user', (req, res) => {
   });
 });
 
+api.post('/enviar-mensaje', (req, res) => {
+  let titulo = req.body.data.titulo;
+  let mensaje = req.body.data.mensaje;
+  if(!titulo) return res.send('Error, el título del mensaje no puede estar vacío');
+  if(!mensaje) return res.send('Error, el contenido del mensaje no puede estar vacío');
+  
+  functions.enviarMensajeContacto(req.session.username, titulo, mensaje, err => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+
 module.exports = api;

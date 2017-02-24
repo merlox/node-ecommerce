@@ -33,7 +33,7 @@ h6{
 hr{
     border: 1px solid lightgrey;
 }
-input{
+input, textarea{
     border-radius: 5px;
     border: 1px solid lightgrey;
     padding: 5px;
@@ -68,6 +68,9 @@ input{
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+.contenedor-responsive-tabla{
+    overflow: auto;
 }
 button, input[type=submit]{
     background-color: orange;

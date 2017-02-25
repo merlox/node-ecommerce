@@ -20,10 +20,14 @@ routes.get('/p/:permalink', (req, res) => {
     if(!result.publicado){
       return res.redirect('/?message=That page is not available');
     }else if(result.publicado){
-
+      //Guardamos en la db que el usuario ha visitado ese producto
+      if(req.session.username){
+        functions.guardarVisitadoUsuario(req.session.username, result._id, err => {
+          if(err) console.log(err);
+        });
+      }
       result['loggedStateHTML'] = '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>';
       result['loggedState'] = '/login';
-
       functions.getLoggedState(req, state => {
         if(state === 'logged'){
           result.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
@@ -34,7 +38,7 @@ routes.get('/p/:permalink', (req, res) => {
         }
         render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
           if(err) return res.send(err);
-          return res.send(data);
+          res.send(data);
         });
       });
     }

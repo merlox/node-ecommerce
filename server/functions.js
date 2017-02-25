@@ -24,8 +24,6 @@ function buscarProducto(permalink, callback){
   permalink = encodeURIComponent(permalink);
   db.collection('productos').findOne({
     'permalink': permalink
-  }, {
-    '_id': false
   }, (err, result) => {
     if(err){
       return callback('Error, could not find that product', null);
@@ -578,47 +576,111 @@ function getSlider(doCopy, cb){
     });
   }
 };
-//Para conseguir los 5 productos más vendidos para el minislider //Recomedados //Vendidos //Compras relacionadas
-let paginasTotales = null,
-  hasCalculadoPaginasTotales = false;
-function getMiniSlider(tipo, pagina, cb){
+/*
+Para conseguir los 5 productos más vendidos para el minislider
+Tipos posibles: vendidos, vistosAnteriormente, compradosJuntos, recientes, random
+Comprados-juntos son productos conjuntos que han comprado otros clientes
+Random son productos random de esa categoría
+ */
+function getMiniSlider(username, tipo, pagina, cb){
   console.log('GetMiniSlider, functions.js');
-  let orden = {},
-    error = null,
-    paginaSiguiente = (!paginasTotales || paginasTotales < pagina) ? pagina*5 : paginasTotales;
-  orden[tipo] = -1;
-  db.collection('productos').find({}, {
-    "_id": false,
-    "titulo": true,
-    "permalink": true,
-    "precio": true,
-    "imagenes.1": true,
-    "categoria": true
-  }).sort(orden).skip(pagina*5).limit(5).toArray((err, results) => {
-    if(err) error = 'Error buscando los productos';
-    let origin = path.join(__dirname, '/uploads/');
-    let end = path.join(__dirname, '../public/public-uploads');
-    for(let i = 0; i < results.length; i++){
-      results[i]['imagen'] = results[i].imagenes[1];
-      delete results[i].imagenes;
-      copyFile(path.join(origin, results[i].permalink, results[i].imagen), end, results[i].imagen, (err) => {
-        if(err) error = `Err, no se pudo copiar la imagen ${results[i].imagen}`;
+  let error = null;
+
+  switch(tipo){
+    case 'vendidos':
+      db.collection('productos').count((err, count) => {
+        if(err) return cb('Error contando los productos', null, null);
+        let paginasTotales = count/5;
+        let paginaSiguiente = (!paginasTotales || paginasTotales < pagina) ? pagina*5 : paginasTotales;
+        db.collection('productos').find({}, {
+          "_id": false,
+          "titulo": true,
+          "permalink": true,
+          "precio": true,
+          "imagenes.1": true,
+          "categoria": true
+        }).sort({'vendidos': -1}).skip(pagina*5).limit(5).toArray((err, results) => {
+          if(err) return cb('Error buscando los productos mas vendidos.', null);
+          copiarImagenesProductos(results, err => {
+            if(err) return cb(err, null, null);
+            return cb(null, results, paginasTotales);
+          });
+        });
       });
-      if(i >= results.length-1){
-        if(err) return cb(error, null);
-        return cb(null, results);
-      }
-    }
-  });
-};
-function getMinisliderPaginasTotales(tipo, cb){
-  console.log('GetMiniSliderPaginasTotales, functions.js');
-  db.collection('productos').count((err, count) => {
-    if(err) return cb('Error contando los productos', null);
-    paginasTotales = count/5;
-    hasCalculadoPaginasTotales = true;
-    cb(null, paginasTotales);
-  });
+    break;
+
+    case 'vistosAnteriormente':
+      if(!username) return cb('Error no hay usuario conectado.', null, null);
+      db.collection('usersData').findOne({
+        'username': username
+      }, {
+        '_id': false,
+        'productosVistos': true
+      }, (err, userData) => {
+        if(err) 
+          return cb('Error buscando los productos vistos.', null, null);
+        if(!userData.productosVistos) 
+          return cb('Error, no hay productos vistos recientemente', null, null);
+        if(userData.productosVistos.length < 5) 
+          return cb('Error, hay menos de 5 productos vistos.', null, null);
+
+        let paginasTotales = userData.productosVistos/5;
+        let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
+        //userData.productosVistos son IDs de productos, hay que buscar los productos
+        db.collection('productos').find({
+          '_id': {
+            '$in': userData.productosVistos
+          }
+        }, {
+          "_id": false,
+          "titulo": true,
+          "permalink": true,
+          "precio": true,
+          "imagenes.1": true,
+          "categoria": true
+        }).skip(pagina*5).limit(5).toArray((err, results) => {
+          if(err) return cb('Error buscando los productos vistos.', null, null);
+          copiarImagenesProductos(results, err => {
+            if(err) return cb(err, null, null);
+            return cb(null, results, paginasTotales);
+          });
+        });
+      });
+    break;
+
+    case 'compradosJuntos':
+      if(!username) return cb('Error no hay un usuario conectado.', null, null);
+      db.collection('usersData').findOne({
+        'username': username
+      }, {
+        '_id': false,
+        'compradosJuntos': true
+      }).skip(pagina*5).limit(5).toArray((err, results) => {
+        if(err) 
+          return cb('Error buscando los productos comprados juntos.', null, null);
+        if(results.compradosJuntos.length < 5) 
+          return cb('Error, hay menos de 5 productos relacionados.', null, null);
+        let origin = path.join(__dirname, '/uploads/');
+        let end = path.join(__dirname, '../public/public-uploads');
+        for(let i = 0; i < results.length; i++){
+          results[i]['imagen'] = results[i].imagenes[1];
+          delete results[i].imagenes;
+          copyFile(path.join(origin, results[i].permalink, results[i].imagen), end, results[i].imagen, (err) => {
+            if(err) error = `Err, no se pudo copiar la imagen ${results[i].imagen}`;
+          });
+          if(i >= results.length-1){
+            if(err) return cb(error, null, null);
+            return cb(null, results, paginasTotales);
+          }
+        }
+      });
+    break;
+
+    case 'recientes':
+    break;
+    case 'random':
+    break;
+  }
 };
 //Function que me dice cuantas páginas hay en total para ese límite de productos por página.
 function getPaginacion(limite, filtroCategoria, cb){
@@ -685,6 +747,18 @@ function payProduct(req, cb){
   if(!/.+@.+\./.test(direccion.email)){
     return cb('Error: el email es incorrecto, inténtelo de nuevo.');
   }
+  if(!req.session.username) return cb('Error, tienes que iniciar sesión para comprar.');
+
+  //Guardamos en la base de datos de usersData los productos comprados conjuntamente
+  db.collection('usersData').update({
+    'username': req.session.username
+  }, {
+    '$set': {
+      'compradosJuntos': arrayProductos
+    }
+  }, (err) => {
+    if(err) console.log(`Error guardando los compradosJuntos al pagar la cesta del usuario ${req.session.username}`);
+  });
 
   //Comprobamos que la cantidad sea correcta, que existan los productos puestos y que se cree un nuevo id de compra
   db.collection('facturas').count((err, count) => {
@@ -696,7 +770,7 @@ function payProduct(req, cb){
       let productoNombre = arrayProductos[i].nombre;
       let productoCantidad = arrayProductos[i].cantidad;
       if(arrayProductos[i].cantidad <= 0){
-        error = 'Error, la cantidad del producto: '+arrayProductos[i]+' no puede ser menor o igual a 0';
+        error = 'Error, la cantidad del producto: '+arrayProductos[i].nombre+' no puede ser menor o igual a 0';
       }
       db.collection('productos').findOne({
         'titulo': productoNombre
@@ -897,35 +971,44 @@ function registerUsuario(username, password, domain, cb){
       'emailConfirmado': false
     }, err => {
       if(err) return cb('Error registrando el usuario, inténtelo de nuevo.');
-      //Enviamos el email de bienvenida
-      crypto.randomBytes(48, function(err, buffer) {
-        let token = buffer.toString('hex');
-        db.collection('tokens').update({
-          'username': username
-        }, {
-          '$set': {
-            'confirmEmailToken': token,
-            'createdAt': new Date()
-          }
-        }, {
-          'upsert': true
-        }, err => {
-          let renderObject = {
-            confirmUrl: `http://${domain}/confirmar-email/${token}`,
-            email: username
-          };
-          let emailObject = {
-            from: 'merunasgrincalaitis@gmail.com',
-            to: username,
-            subject: `${username} bienvenido a la tienda. Confirma tu email.`,
-            html: null,
-            imagenNombre: 'imagenFactura.jpg'
-          };
-          render(path.join(__dirname, 'emails', 'bienvenida.html'), renderObject, (err, HTML) => {
-            if(err) console.log('Error enviando el email de bienvenida.');
-            emailObject.html = HTML;
-            //Enviamos el email
-            sendEmail(emailObject);
+      db.collection('usersData').insert({
+        'username': username
+      }, (err) => {
+        if(err){
+          console.log(`Error creando el usersData en la db para ${username}.`);
+          return cb('Error registrando el usuario, inténtelo de nuevo.');
+        }
+        //Enviamos el email de bienvenida
+        crypto.randomBytes(48, function(err, buffer) {
+          let token = buffer.toString('hex');
+          db.collection('tokens').update({
+            'username': username
+          }, {
+            '$set': {
+              'confirmEmailToken': token,
+              'createdAt': new Date()
+            }
+          }, {
+            'upsert': true
+          }, err => {
+            if(err) console.log(`Error guardando el email token en la base de datos del nuevo usuario ${username}`);
+            let renderObject = {
+              confirmUrl: `http://${domain}/confirmar-email/${token}`,
+              email: username
+            };
+            let emailObject = {
+              from: 'merunasgrincalaitis@gmail.com',
+              to: username,
+              subject: `${username} bienvenido a la tienda. Confirma tu email.`,
+              html: null,
+              imagenNombre: 'imagenFactura.jpg'
+            };
+            render(path.join(__dirname, 'emails', 'bienvenida.html'), renderObject, (err, HTML) => {
+              if(err) console.log('Error enviando el email de bienvenida.');
+              emailObject.html = HTML;
+              //Enviamos el email
+              sendEmail(emailObject);
+            });
           });
         });
       });
@@ -1395,7 +1478,7 @@ function encryptPassword(password){
   update += cipher.final('hex');
   return update;
 };
-
+//Para enviar un mensaje desde el formulario de contacto
 function enviarMensajeContacto(username, titulo, mensaje, cb){
   if(!username) return cb('Error, no se ha detectado usuario.');
   let emailObject = {
@@ -1407,6 +1490,59 @@ function enviarMensajeContacto(username, titulo, mensaje, cb){
   sendEmailPlain(emailObject, (err, success) => {
     if(err) return cb('Error enviando el email, inténtalo de nuevo.');
     cb(null);
+  });
+};
+//Guarda en la bd que el usuario a visitado un producto para hacer el minislider de "has visto anteriormente"
+function guardarVisitadoUsuario(username, idProducto, cb){
+  console.log('GuardarVisitadoUsuario, functions.js');
+  if(!username) return cb('Error no hay usuario conectado para registrar la visita.');
+  db.collection('usersData').findOne({
+    'username': username
+  }, (err, userObject) => {
+    if(err) return cb('No se ha podido guardar la visita.');
+    //Reseteamos el array de paginas vistas a los 200
+    if(!userObject.productosVistos || userObject.productosVistos.length >= 200) userObject.paginasVistas = [];
+    if(!userObject.productosVistos ||
+    //Convertimos cada valor a string y comprobamos con el indexof que no exista
+    userObject.productosVistos.map((e) => {return e.toString();}).indexOf(idProducto.toString()) === -1){
+      db.collection('usersData').update({
+        'username': username
+      }, {
+        '$push': {
+          'productosVistos': idProducto
+        }
+      }, err => {
+        if(err) return cb('Error guardando producto como visitado en la bd.');
+        cb(null);
+      });
+    }else{
+      cb(null);
+    }
+  });
+};
+//Copia las imagenes al cliente dado un array de productos
+function copiarImagenesProductos(arrayProductos, cb){
+  let counter = 0,
+    end = path.join(__dirname, '../public/public-uploads'),
+    error = null,
+    imagenesTotales = 0;
+  for (var i = 0; i < arrayProductos.length; i++) {
+    imagenesTotales += Object.keys(arrayProductos[i].imagenes).length;
+  }
+  if(imagenesTotales <= 0) return cb('Error no hay imágenes a copiar');
+  arrayProductos.forEach(producto => {
+    for(let key in producto.imagenes){
+      let imagen = producto.imagenes[key];
+      let origin = path.join(__dirname, 'uploads/', producto.permalink, imagen);
+      copyFile(origin, end, imagen, err => {
+        counter++;
+        if(err) error = `Error copiando la imagen ${imagen} del producto ${producto.titulo}`;
+        if(counter >= imagenesTotales){
+          if(error) return cb(err);
+          return cb(null);
+        }
+      });
+    }
   });
 };
 
@@ -1453,4 +1589,5 @@ exports.createExpirePasswordTokenIndex = createExpirePasswordTokenIndex;
 exports.checkNewUser = checkNewUser;
 exports.verificarEmail = verificarEmail;
 exports.enviarMensajeContacto = enviarMensajeContacto;
-exports.getMinisliderPaginasTotales = getMinisliderPaginasTotales;
+exports.guardarVisitadoUsuario = guardarVisitadoUsuario;
+exports.copiarImagenesProductos = copiarImagenesProductos;

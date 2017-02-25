@@ -4,13 +4,10 @@ let arrayImagenes = [],
 	indexImagenActiva = 1,
 	intervaloSlider;
 
-let minislider;
-
 window.addEventListener('load', () => {
 	colocarImagenes();
-	minislider = new Minislider('Más Vendidos', 'vendidos', '#minislider1');
-	// iniciarIntervaloMiniSliderVendidos();
-	// calcularTamañoMinisliderResponsive();
+	new Minislider('Más vendidos', 'vendidos', '#minislider1');
+	new Minislider('Vistos anteriormente', 'vistosAnteriormente', '#minislider2');
 });
 /*
 

@@ -9,30 +9,27 @@ function Minislider(nombre, tipo, id){
 	this.tamano = 5;
 	this.pagina = 0;
 	this.paginasTotales;
-	this.insertadoContenedor = false;
 	let that = this;
 
 	calcularTamano();
-	getPaginasTotales();
-	colocarMinislider(done => {
-		addListeners();
-	});
+	colocarMinislider();
 	window.addEventListener('resize', calcularTamano);
+
 	//Genera el html de todo el minislider, luego lo inserta en la ID de este objeto
-	function colocarMinislider(cb){
-		if(!cb) cb = () => {}; //Si no hay callback crea una funcion vacia
-		if(!that.insertadoContenedor){
+	function colocarMinislider(){
+		httpGet(`/api/get-minislider/${tipo}?pag=${that.pagina}`, (response) => {
+			response = JSON.parse(response);
+			if(response.error){
+				return console.log(response.error); //Si hay un error, no mostrar el minislider directamente
+			}
+			let productos = response.productos;
+			that.paginasTotales = (parseInt(response.paginasTotales)-1); 
+			//Le quitamos uno para que el último no se muestre porque pueden ser 1 o 2 productos y no queda completo
 			let sliderHTML = `<div class="contenedor-minislider">
 				<h3 class="titulo-contenedor-minislider">${nombre}</h3>
 				<img class="flecha-izquierda-minislider flecha-minislider" src="../images/back.svg">
 				<img class="flecha-derecha-minislider flecha-minislider" src="../images/next.svg">
-				<div class="minislider"></div></div>`;
-			q(id).innerHTML = sliderHTML;
-			that.insertadoContenedor = true;
-		}
-		httpGet(`/api/get-minislider/${tipo}?pag=${that.pagina}`, (productos) => {
-			productos = JSON.parse(productos);
-			let productosHTML = ''; //El </div></div>`; despues del for
+				<div class="minislider">`;
 			for(let i = 0; i < productos.length; i++){
 				let producto = productos[i],
 					tituloOriginal = producto.titulo,
@@ -41,18 +38,20 @@ function Minislider(nombre, tipo, id){
 					tituloCorto = producto.titulo.substring(0, 70);
 					tituloCorto += '...';
 				}else tituloCorto = producto.titulo;
-				productosHTML += 
+				//producto.imagenes es 1 sola imagen que se ha seleccionado de la bd
+				sliderHTML += 
 					`<div class="contenedor-producto-minislider">
 						<a href="/p/${producto.permalink}" title="${tituloOriginal}">
-							<img class="imagen-minislider" src="../public-uploads/${producto.imagen}" width="100%">
+							<img class="imagen-minislider" src="../public-uploads/${producto.imagenes[1]}" width="100%">
 						</a>
 						<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
 						<span class="precio-minislider">${parseFloat(producto.precio).toFixed(2)}€</span>
 						<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>
 					</div>`;
 			}
-			q(`${id} .minislider`).innerHTML = productosHTML;
-			cb(null);
+			sliderHTML += '</div></div>';
+			q(id).innerHTML = sliderHTML;
+			addListeners();
 		});
 	};
 	function flechaDerechaMinislider(){
@@ -94,11 +93,5 @@ function Minislider(nombre, tipo, id){
 		}else{
 			that.tamano = 5;
 		}
-	};
-	function getPaginasTotales(){
-		httpGet(`/api/get-minislider-paginas-totales/${that.tipo}`, (paginasTotales) => {
-			that.paginasTotales = (parseInt(paginasTotales)-1); 
-			//Le quitamos uno para que el último no se muestre porque pueden ser 1 o 2 productos y no queda completo
-		});
 	};
 };

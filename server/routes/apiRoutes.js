@@ -204,14 +204,16 @@ api.get('/get-slider', (req, res) => {
   });
 });
 api.get('/get-minislider/:tipo', (req, res) => {
-  functions.getMiniSlider(req.params.tipo, req.query.pag, (err, results) => {
-    if(err) console.log(err);
-    return res.send(results);
-  });
-});
-api.get('/get-minislider-paginas-totales/:tipo', (req, res) => {
-  functions.getMinisliderPaginasTotales(req.params.tipo, (err, paginasTotales) => {
-    res.send(paginasTotales.toString());
+  let response = {
+    'error': null,
+    'productos': null,
+    'paginasTotales': null
+  }
+  functions.getMiniSlider(req.session.username, req.params.tipo, req.query.pag, (err, results, paginasTotales) => {
+    if(err) response.error = err;
+    response.productos = results;
+    response.paginasTotales = paginasTotales;
+    return res.send(response);
   });
 });
 api.get('/get-logged-state', (req, res) => {

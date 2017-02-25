@@ -203,10 +203,15 @@ api.get('/get-slider', (req, res) => {
     return res.send(result);
   });
 });
-api.get('/get-mas-vendidos', (req, res) => {
-  functions.getMiniSlider("ventas", (err, results) => {
+api.get('/get-minislider/:tipo', (req, res) => {
+  functions.getMiniSlider(req.params.tipo, req.query.pag, (err, results) => {
     if(err) console.log(err);
     return res.send(results);
+  });
+});
+api.get('/get-minislider-paginas-totales/:tipo', (req, res) => {
+  functions.getMinisliderPaginasTotales(req.params.tipo, (err, paginasTotales) => {
+    res.send(paginasTotales.toString());
   });
 });
 api.get('/get-logged-state', (req, res) => {

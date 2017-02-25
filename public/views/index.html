@@ -6,6 +6,7 @@
 	{{> header}}
 
 	<link rel="stylesheet" type="text/css" href="../css/index.css">
+	<link rel="stylesheet" type="text/css" href="../css/classMinislider.css">
 </head>
 <body>
 
@@ -25,18 +26,14 @@
         </div>
         {{if isError}}<div>{{error}}</div>{{/if isError}}
         <!--Minislider-->
-        <div class="contenedor-minislider">
-        	<h2>MÁS VENDIDOS</h2>
-        	<img class="flecha-izquierda-minislider flecha-minislider" src="../images/back.svg">
-	        <img class="flecha-derecha-minislider flecha-minislider" src="../images/next.svg">
-	        <div class="minislider"></div>
-	    </div>
+        <div id="minislider1"></div>
 	</div>
 	<br><br><br><br><br>
 
 	{{> footer}}
 	
 	<script type="text/javascript" src="../js/index.js"></script>
+	<script type="text/javascript" src="../js/classMinislider.js"></script>
 
 </body>
 </html>

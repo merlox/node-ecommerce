@@ -1140,11 +1140,14 @@ DONE - Crear opcion para recuperar la contraseña en el inicio de sesión.
 DONE - Hacer la página de usuario responsive.
 DONE - Hacer el admin dashboard responsive.
 DONE - Crear formulario de contacto en el panel de usuario.
-- Limitar la cantidad de intentos que pueden hacer los usuarios al servidor para registrar, login y cambiar contraseña.
-- Bloquear ips que spameen las requests.
+DONE - Limitar la cantidad de intentos que pueden hacer los usuarios al servidor para registrar, login y cambiar contraseña.
+DONE - Bloquear ips que spameen las requests.
 - Mejorar la página inicial para que el miniwidget sea más agradable con carga ajax.
 - Crear widget de sugeridos que cargue con ajax.
 - Arreglar e investigar el bug de cambio de categoria de productos que no se muestra en el widget lateral.
 - Crear opción de ver cuanto stock hay disponible.
 - Hacer páginas de producto más detalladas.
 - Arreglar el main slider.
+- Lanzar el sitio
+- Configurar nginx con nodejs
+- Configurar certificado ssl

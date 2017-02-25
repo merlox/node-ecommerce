@@ -578,10 +578,14 @@ function getSlider(doCopy, cb){
     });
   }
 };
-//Para conseguir los 5 productos más vendidos para el minislider //Visitas //Vendidos
-function getMiniSlider(tipo, cb){
+//Para conseguir los 5 productos más vendidos para el minislider //Recomedados //Vendidos //Compras relacionadas
+let paginasTotales = null,
+  hasCalculadoPaginasTotales = false;
+function getMiniSlider(tipo, pagina, cb){
   console.log('GetMiniSlider, functions.js');
-  let orden = {};
+  let orden = {},
+    error = null,
+    paginaSiguiente = (!paginasTotales || paginasTotales < pagina) ? pagina*5 : paginasTotales;
   orden[tipo] = -1;
   db.collection('productos').find({}, {
     "_id": false,
@@ -590,20 +594,30 @@ function getMiniSlider(tipo, cb){
     "precio": true,
     "imagenes.1": true,
     "categoria": true
-  }).sort(orden).limit(5).toArray((err, results) => {
-    if(err) return cb('Error searching products, '+err, null);
+  }).sort(orden).skip(pagina*5).limit(5).toArray((err, results) => {
+    if(err) error = 'Error buscando los productos';
     let origin = path.join(__dirname, '/uploads/');
     let end = path.join(__dirname, '../public/public-uploads');
     for(let i = 0; i < results.length; i++){
       results[i]['imagen'] = results[i].imagenes[1];
       delete results[i].imagenes;
       copyFile(path.join(origin, results[i].permalink, results[i].imagen), end, results[i].imagen, (err) => {
-        if(err) return cb('Err, could not copy the image '+results[i].imagen+' to the client, '+err, null);
+        if(err) error = `Err, no se pudo copiar la imagen ${results[i].imagen}`;
       });
       if(i >= results.length-1){
+        if(err) return cb(error, null);
         return cb(null, results);
       }
     }
+  });
+};
+function getMinisliderPaginasTotales(tipo, cb){
+  console.log('GetMiniSliderPaginasTotales, functions.js');
+  db.collection('productos').count((err, count) => {
+    if(err) return cb('Error contando los productos', null);
+    paginasTotales = count/5;
+    hasCalculadoPaginasTotales = true;
+    cb(null, paginasTotales);
   });
 };
 //Function que me dice cuantas páginas hay en total para ese límite de productos por página.
@@ -1439,3 +1453,4 @@ exports.createExpirePasswordTokenIndex = createExpirePasswordTokenIndex;
 exports.checkNewUser = checkNewUser;
 exports.verificarEmail = verificarEmail;
 exports.enviarMensajeContacto = enviarMensajeContacto;
+exports.getMinisliderPaginasTotales = getMinisliderPaginasTotales;

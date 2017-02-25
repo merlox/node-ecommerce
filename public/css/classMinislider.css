@@ -1,0 +1,112 @@
+/*
+
+MINISLIDER
+
+*/
+.contenedor-minislider{
+	/*El width 15px del margin-right 300px por cada producto que quires que se muestre*/
+	width: 100%;
+	height: 100%;
+	padding: 5px 10px;
+	position: relative;
+	overflow: hidden;
+	display: block;
+	margin: 0 auto;
+}
+.contenedor-minislider h2{
+	color: #444444;
+	margin: 0;
+}
+.titulo-contenedor-minislider{
+	margin-bottom: 5px;
+}
+.titulo-minislider{
+	text-decoration: none;
+	color: black;
+	/*Para que se baje de línea y se vea correctamente*/
+	display: block;
+	height: 60px;
+}
+.titulo-minislider:hover{
+	color: blue;
+}
+.precio-minislider{
+	font-family: 'open sans condensed';
+	color: red;
+	font-size: 17pt;
+	display: block;
+}
+.categoria-minislider{
+	color: lightgrey;
+	text-decoration: none;
+}
+.categoria-minislider:hover{
+	color: blue;
+}
+.contenedor-producto-minislider{
+	width: 19.75%;
+    display: inline-block;
+    margin-right: 0.25%;
+}
+.flecha-minislider{
+	height: 60px;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	padding: 10px;
+	opacity: 0.5;
+	cursor: pointer;
+	transition: none;
+	z-index: 10;
+}
+.flecha-minislider:hover{
+	height: 65px;
+	opacity: 1;
+	background-color: rgba(0, 0, 0, 0.3);
+}
+.flecha-izquierda-minislider{
+	left: 20px;
+}
+.flecha-derecha-minislider{
+	right: 20px;
+}
+/*Reducir el tamaño del minislider*/
+@media (max-width: 1050px){
+	.contenedor-producto-minislider:last-child{
+		display: none;
+	}
+	.contenedor-producto-minislider{
+		width: 24.75%;
+	    display: inline-block;
+	    margin-right: 0.25%;
+	}
+	.titulo-minislider{
+		height: 80px;
+	}
+}
+@media (max-width: 750px){
+	.contenedor-producto-minislider:nth-last-child(2){
+		display: none;
+	}
+	.contenedor-producto-minislider{
+		width: 32.75%;
+	    display: inline-block;
+	    margin-right: 0.25%;
+	}
+	.titulo-minislider{
+		height: 80px;
+	}
+}
+@media (max-width: 550px){
+	.contenedor-producto-minislider:nth-last-child(3){
+		display: none;
+	}
+	.contenedor-producto-minislider{
+		width: 49.75%;
+	    display: inline-block;
+	    margin-right: 0.25%;
+	}
+	.titulo-minislider{
+		height: 80px;
+	}
+}

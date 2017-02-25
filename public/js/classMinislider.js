@@ -5,35 +5,43 @@ Puede ser más vendidos, productos recomendados, otros han comprado, productos d
 function Minislider(nombre, tipo, id){
 	this.nombre = nombre;
 	this.tipo = tipo;
-	this.data;
 	this.id = id; //ID es donde se introducirá el slider
 	this.tamano = 5;
 	this.pagina = 0;
 	this.paginasTotales;
+	this.insertadoContenedor = false;
 	let that = this;
 
 	calcularTamano();
 	getPaginasTotales();
-	colocarMinislider();
+	colocarMinislider(done => {
+		addListeners();
+	});
 	window.addEventListener('resize', calcularTamano);
 	//Genera el html de todo el minislider, luego lo inserta en la ID de este objeto
-	function colocarMinislider(){
-		httpGet(`/api/get-minislider/${tipo}?pag=${that.pagina}`, (results) => {
-			that.data = JSON.parse(results);
+	function colocarMinislider(cb){
+		if(!cb) cb = () => {}; //Si no hay callback crea una funcion vacia
+		if(!that.insertadoContenedor){
 			let sliderHTML = `<div class="contenedor-minislider">
-					<h3 class="titulo-contenedor-minislider">${nombre}</h3>
-					<img class="flecha-izquierda-minislider flecha-minislider" src="../images/back.svg">
-					<img class="flecha-derecha-minislider flecha-minislider" src="../images/next.svg">
-					<div class="minislider">`; //El </div></div>`; despues del for
-			for(let i = 0; i < that.data.length; i++){
-				let producto = that.data[i],
+				<h3 class="titulo-contenedor-minislider">${nombre}</h3>
+				<img class="flecha-izquierda-minislider flecha-minislider" src="../images/back.svg">
+				<img class="flecha-derecha-minislider flecha-minislider" src="../images/next.svg">
+				<div class="minislider"></div></div>`;
+			q(id).innerHTML = sliderHTML;
+			that.insertadoContenedor = true;
+		}
+		httpGet(`/api/get-minislider/${tipo}?pag=${that.pagina}`, (productos) => {
+			productos = JSON.parse(productos);
+			let productosHTML = ''; //El </div></div>`; despues del for
+			for(let i = 0; i < productos.length; i++){
+				let producto = productos[i],
 					tituloOriginal = producto.titulo,
 					tituloCorto = ''; //Acortamos el título si fuese demasiado largo para que encaje en la caja	
 				if(producto.titulo.length > 70){
 					tituloCorto = producto.titulo.substring(0, 70);
 					tituloCorto += '...';
 				}else tituloCorto = producto.titulo;
-				sliderHTML += 
+				productosHTML += 
 					`<div class="contenedor-producto-minislider">
 						<a href="/p/${producto.permalink}" title="${tituloOriginal}">
 							<img class="imagen-minislider" src="../public-uploads/${producto.imagen}" width="100%">
@@ -43,9 +51,8 @@ function Minislider(nombre, tipo, id){
 						<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>
 					</div>`;
 			}
-			sliderHTML += `</div></div>`; //Cerramos el .minislider y .contenedor-minislider
-			q(id).innerHTML = sliderHTML;
-			addListeners();
+			q(`${id} .minislider`).innerHTML = productosHTML;
+			cb(null);
 		});
 	};
 	function flechaDerechaMinislider(){

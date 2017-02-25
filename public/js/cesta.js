@@ -185,6 +185,7 @@ function renderCesta(){
 if(q('.button-añadir-cesta')){
 	qAll('.button-añadir-cesta').forEach(button => {
 		button.addEventListener('click', () => {
+			window.scrollTo(0, 0);
 			addCesta(q('#input-cantidad').value);
 		});
 	});

@@ -10,7 +10,9 @@ GENERALES
 	margin-top: 10px;
 	justify-content: center;
 }
-
+.contenedor-minislideres{
+	margin: 0 80px;
+}
 /*
 
 IMAGES
@@ -112,6 +114,9 @@ RESPONSIVE CSS
 	#contenedor-principal{
 		margin: 0 10px;
 		margin-top: 20px;
+	}
+	.contenedor-minislideres{
+		margin: 0;
 	}
 }
 

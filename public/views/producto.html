@@ -3,6 +3,7 @@
 <head>
 	<title>{{titulo}}</title>
 	{{> header}}
+	<link rel="stylesheet" type="text/css" href="../css/classMinislider.css">
 	<link rel="stylesheet" type="text/css" href="../css/producto.css">
 </head>
 <body>
@@ -45,9 +46,16 @@
 			<button class="button-añadir-cesta">Añadir a la cesta</button>
 		</div>
 	</div>
+	<div class="contenedor-minislideres">
+		<div id="minislider-vistos-anteriormente"></div>
+		<div id="minislider-comprados-juntos"></div>
+		<div id="minislider-random"></div>
+		<div id="minislider-recientes"></div>
+	</div>
 
 	{{> footer}}
 
+	<script type="text/javascript" src="../js/classMinislider.js"></script>
 	<script type="text/javascript" src="../js/producto.js"></script>
 </body>
 </html>

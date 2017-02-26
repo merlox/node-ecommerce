@@ -1143,7 +1143,7 @@ DONE - Crear formulario de contacto en el panel de usuario.
 DONE - Limitar la cantidad de intentos que pueden hacer los usuarios al servidor para registrar, login y cambiar contraseña.
 DONE - Bloquear ips que spameen las requests.
 DONE - Mejorar la página inicial para que el miniwidget sea más agradable con carga ajax.
-- Crear widget de sugeridos que cargue con ajax.
+DONE - Crear widget de sugeridos que cargue con ajax.
 - Arreglar e investigar el bug del admin edit-productos de cambio de categoria de productos que no se muestra en el widget lateral.
 - Crear opción de ver cuanto stock hay disponible.
 - Hacer páginas de producto más detalladas.

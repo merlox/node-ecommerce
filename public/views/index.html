@@ -15,19 +15,24 @@
     <div id="contenedor-principal">
         <!--El contenedor contenedor hace que solo se vea la imagen destacada y que se oculte el overflow
         ya que el contenedor interior tiene un tamaño demasiado grande-->
-        <div id="minislider2"></div>
         <div id="contenedor-contenedor-slider">
             <img id="flecha-izquierda-slider" src="../images/back.svg">
         	<img id="flecha-derecha-slider" src="../images/next.svg">
 		    <div id="contenedor-imagenes-slider">
 				{{each sliderImages}}
-				<img class="imagen-slider" id="imagen-central" src="../public-uploads/{{sliderImages}}">
+				<img class="imagen-slider imagen-inicial" id="imagen-central" src="../public-uploads/{{sliderImages}}">
 				{{/each sliderImages}}
 		    </div>
         </div>
         {{if isError}}<div>{{error}}</div>{{/if isError}}
         <!--Minislider-->
-        <div id="minislider1"></div>
+        <div class="contenedor-minislideres">
+	        <div id="minislider1"></div>
+	        <div id="minislider2"></div>
+	        <div id="minislider3"></div>
+	        <div id="minislider4"></div>        
+	        <div id="minislider5"></div>
+	    </div>
 	</div>
 	<br><br><br><br><br>
 

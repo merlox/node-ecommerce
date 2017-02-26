@@ -65,3 +65,13 @@ SLIDER
 	height: 70px;
 	background-color: rgba(0, 0, 0, 0.1);
 }
+.imagen-inicial:not(:first-child){
+	display: none;
+}
+.contenedor-minislideres{
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	max-width: 1920px;
+	margin: 0 auto;
+}

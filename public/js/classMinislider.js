@@ -34,8 +34,8 @@ function Minislider(nombre, tipo, id){
 				let producto = productos[i],
 					tituloOriginal = producto.titulo,
 					tituloCorto = ''; //Acortamos el título si fuese demasiado largo para que encaje en la caja	
-				if(producto.titulo.length > 70){
-					tituloCorto = producto.titulo.substring(0, 70);
+				if(producto.titulo.length > 60){
+					tituloCorto = producto.titulo.substring(0, 60);
 					tituloCorto += '...';
 				}else tituloCorto = producto.titulo;
 				//producto.imagenes es 1 sola imagen que se ha seleccionado de la bd

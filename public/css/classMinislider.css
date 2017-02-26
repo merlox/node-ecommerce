@@ -18,14 +18,13 @@ MINISLIDER
 	margin: 0;
 }
 .titulo-contenedor-minislider{
-	margin-bottom: 5px;
+	margin: 5px 0;
 }
 .titulo-minislider{
 	text-decoration: none;
 	color: black;
 	/*Para que se baje de línea y se vea correctamente*/
 	display: block;
-	height: 60px;
 }
 .titulo-minislider:hover{
 	color: blue;

@@ -1,6 +1,20 @@
 'use strict';
+
+let menuMovilHidden = false;
 //Onload get categories
 window.addEventListener('load', () => {
+	if(window.innerWidth <= 650){
+		menuMovilHidden = true;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			e.style.display = 'none';
+		});
+	}else{
+		menuMovilHidden = false;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			if(e.id === 'productos-cesta') e.style.display = 'none';
+			else e.style.display = 'flex';
+		});
+	}
 	httpGet('/api/get-categories', (categories) => {
 		if(categories && categories != '' && categories != undefined){
 			categories = JSON.parse(categories);
@@ -30,9 +44,21 @@ window.addEventListener('load', () => {
 });
 
 window.addEventListener('resize', () => {
-	if(q('.texto-item-busqueda') && (window.outerWidth-16) <= 800 && (window.outerWidth-16) >= 650){
+	if(q('.texto-item-busqueda') && window.innerWidth <= 800 && window.innerWidth >= 650){
 		qAll('.texto-item-busqueda').forEach((e) => {
 			e.innerHTML = e.innerHTML.substring(0, 30) + '...';
+		});
+	}
+	if(window.innerWidth <= 650){
+		menuMovilHidden = true;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			e.style.display = 'none';
+		});
+	}else{
+		menuMovilHidden = false;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			if(e.id === 'productos-cesta') e.style.display = 'none';
+			else e.style.display = 'flex';
 		});
 	}
 });
@@ -123,7 +149,21 @@ function ocultarCestaBuscadorHoverDropdown(ocultarCesta){
 		q('#buscador-sugerencias').style.display = 'none';
 	}
 }
-
+//Ocultar o mostrar el menú en teléfonos de menos de 650px
+function toggleMenuMovil(){
+	if(!menuMovilHidden){
+		menuMovilHidden = true;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			e.style.display = 'none';
+		});
+	}else{
+		menuMovilHidden = false;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			if(e.id === 'productos-cesta') e.style.display = 'none';
+			else e.style.display = 'flex';
+		});
+	}
+};
 /*
 
 CESTA (LO IMPORTANTE ESTÁ EN CESTA.JS)

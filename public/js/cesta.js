@@ -1,4 +1,7 @@
 'use strict';
+
+let comprarAhora = false;
+
 window.addEventListener('load', () => {
 	//Que al hacer click en el icono de la cesta te lleve a la página de pasar por caja
 	q('#cesta').href = `/cesta?ref=${window.location.pathname}`;
@@ -14,8 +17,11 @@ function addCesta(cantidad){
 	let permalinkProducto = window.location.pathname.substring(3);
 	let dataObject = {};
 	dataObject[permalinkProducto] = cantidad;
+	menuMovilHidden = true;
+	toggleMenuMovil(); //Para mostrar el menú movil si estuviese oculto y cargar la cesta
 	httpPost('/api/add-cesta/', dataObject, (err) => {
 		getCesta();
+		if(comprarAhora) window.location = `/cesta?ref=${window.location.pathname}`;
 	});
 };
 //Para crear la cesta widget del menú principal
@@ -190,6 +196,16 @@ if(q('.button-añadir-cesta')){
 		});
 	});
 }
+if(q('.button-comprar-ahora')){
+	qAll('.button-comprar-ahora').forEach(button => {
+		button.addEventListener('click', () => {
+			comprarAhora = true;
+			window.scrollTo(0, 0);
+			addCesta(q('#input-cantidad').value);
+		});
+	});
+}
+
 let cestaBloqueada = false;
 //Mostrar la cesta on hover
 q('#cesta').addEventListener('mouseenter', () => {

@@ -32,7 +32,10 @@
 		    	{{/loopKey atributos}}
 		    </div>
 		    <br/>
-		    <div id="producto-descripcion">{{descripcion}}<span id="producto-descripcion-fadeout"></span></div>
+		    <div id="producto-descripcion">
+		    <div id="producto-descripcion-fade"></div>
+		    	<p>{{descripcion}}</p>
+		    </div>
 		    <div id="contenedor-button-expandir-texto">
 		    	<a id="button-expandir-texto" href="javascript:void(0)">Expandir texto</a>
 		    </div>
@@ -44,13 +47,14 @@
 		<div id="contenedor-comprar-producto">
 			<div id="contenedor-input-cantidad">Cantidad: <input id="input-cantidad" type="number" max="9" value="1"></div>
 			<button class="button-añadir-cesta">Añadir a la cesta</button>
+			<button class="button-comprar-ahora">Comprar ahora</button>
 		</div>
 	</div>
 	<div class="contenedor-minislideres">
 		<div id="minislider-vistos-anteriormente"></div>
 		<div id="minislider-comprados-juntos"></div>
-		<div id="minislider-random"></div>
 		<div id="minislider-recientes"></div>
+		<div id="minislider-random"></div>
 	</div>
 
 	{{> footer}}

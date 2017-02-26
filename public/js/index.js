@@ -100,7 +100,6 @@ function intervaloCambiarImagenes(){
 	intervaloSlider = setInterval(desplazarDerecha, 4000);
 }
 
-/*Inicio slider principal*/
 //Opacidad de las flechas al hover slider
 q('#contenedor-contenedor-slider').addEventListener('mouseenter', () => {
 	q('#flecha-izquierda-slider').style.opacity = 1;
@@ -118,4 +117,3 @@ q('#flecha-derecha-slider').addEventListener('click', () => {
 q('#flecha-izquierda-slider').addEventListener('click', () => {
 	if(!bloquearFlechas) desplazarIzquierda();
 });
-/*Fin slider principal*/

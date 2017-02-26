@@ -591,7 +591,7 @@ function getMiniSlider(username, tipo, pagina, cb){
       db.collection('productos').count((err, count) => {
         if(err) return cb('Error contando los productos', null, null);
         let paginasTotales = count/5;
-        let paginaSiguiente = (!paginasTotales || paginasTotales < pagina) ? pagina*5 : paginasTotales;
+        let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
         db.collection('productos').find({}, {
           "_id": false,
           "titulo": true,
@@ -599,7 +599,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "precio": true,
           "imagenes.1": true,
           "categoria": true
-        }).sort({'vendidos': -1}).skip(pagina*5).limit(5).toArray((err, results) => {
+        }).sort({'vendidos': -1}).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos mas vendidos.', null);
           copiarImagenesProductos(results, err => {
             if(err) return cb(err, null, null);
@@ -637,7 +637,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "precio": true,
           "imagenes.1": true,
           "categoria": true
-        }).skip(pagina*5).limit(5).toArray((err, results) => {
+        }).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos vistos.', null, null);
           copiarImagenesProductos(results, err => {
             if(err) return cb(err, null, null);
@@ -675,7 +675,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "precio": true,
           "imagenes.1": true,
           "categoria": true
-        }).skip(pagina*5).limit(5).toArray((err, results) => {
+        }).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos comprados juntos.', null, null);
           copiarImagenesProductos(results, err => {
             if(err) return cb(err, null, null);
@@ -689,7 +689,7 @@ function getMiniSlider(username, tipo, pagina, cb){
       db.collection('productos').count((err, count) => {
         if(err) return cb('Error contando los productos', null, null);
         let paginasTotales = count/5;
-        let paginaSiguiente = (!paginasTotales || paginasTotales < pagina) ? pagina*5 : paginasTotales;
+        let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
         db.collection('productos').find({}, {
           "_id": false,
           "titulo": true,
@@ -697,7 +697,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "precio": true,
           "imagenes.1": true,
           "categoria": true
-        }).sort({'fecha': -1}).skip(pagina*5).limit(5).toArray((err, results) => {
+        }).sort({'fecha': -1}).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos mas recientes.', null, null);
           copiarImagenesProductos(results, err => {
             if(err) return cb(err, null, null);
@@ -711,7 +711,6 @@ function getMiniSlider(username, tipo, pagina, cb){
       db.collection('productos').count((err, count) => {
         if(err) return cb('Error contando los productos random', null, null);
         let paginasTotales = count/5;
-        let paginaSiguiente = (!paginasTotales || paginasTotales < pagina) ? pagina*5 : paginasTotales;
         db.collection('productos').aggregate([
           {$sample: {size: 5}}
         ]).toArray((err, results) => {

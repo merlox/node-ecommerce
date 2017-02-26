@@ -68,10 +68,3 @@ SLIDER
 .imagen-inicial:not(:first-child){
 	display: none;
 }
-.contenedor-minislideres{
-	overflow: hidden;
-	position: relative;
-	width: 100%;
-	max-width: 1920px;
-	margin: 0 auto;
-}

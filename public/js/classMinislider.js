@@ -40,13 +40,13 @@ function Minislider(nombre, tipo, id){
 				}else tituloCorto = producto.titulo;
 				//producto.imagenes es 1 sola imagen que se ha seleccionado de la bd
 				sliderHTML += 
-					`<div class="contenedor-producto-minislider">
+					`<div class="contenedor-producto-minislider">					
 						<a href="/p/${producto.permalink}" title="${tituloOriginal}">
 							<img class="imagen-minislider" src="../public-uploads/${producto.imagenes[1]}" width="100%">
 						</a>
+						<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>						
 						<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
 						<span class="precio-minislider">${parseFloat(producto.precio).toFixed(2)}€</span>
-						<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>
 					</div>`;
 			}
 			sliderHTML += '</div></div>';

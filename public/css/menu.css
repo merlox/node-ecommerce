@@ -22,7 +22,7 @@ GENERALES
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    font-size: 10pt;
+    font-size: 8.5pt;
     color: white;
     text-decoration: none;
 }
@@ -33,6 +33,14 @@ a#logo{
 	font-size: 37pt;
 	line-height: initial;
 	font-family: 'open sans condensed';
+}
+#toggle-menu-responsive{
+	display: none;
+	background-image: none;
+    background-color: transparent;
+}
+#toggle-menu-responsive:hover{
+    background-color: rgba(0, 0, 0, 0.4);
 }
 /*
 
@@ -118,7 +126,7 @@ BUSCADOR
 	border-radius: 5px 0 0 5px;
 	height: 30px;
 	box-sizing: border-box;
-	width: 80%;
+	width: calc(100% - 70px);
 	z-index: 21;
 	padding-left: 7px;
 	transition: none;
@@ -130,7 +138,7 @@ BUSCADOR
 #buscador-sugerencias{
     display: none;
     min-height: 100%;
-    width: 80%;
+    width: calc(100% - 70px);
     background-color: white;
     position: absolute;
     top: 30px;
@@ -156,7 +164,7 @@ BUSCADOR
 }
 #icono-busqueda{
 	border-radius: 0 5px 5px 0;
-	width: 20%;
+	width: 70px;
 	height: 30px;
 	padding: 5px;
 	cursor: pointer;
@@ -277,6 +285,9 @@ SESIÓN
 	}
 }
 @media (max-width: 650px){
+	#toggle-menu-responsive{
+		display: block;
+	}
 	#logo{
 		height: 100px;
 	}
@@ -285,7 +296,7 @@ SESIÓN
 		flex-direction: column;
 	}
 	#menu-principal > a{
-		margin: 20px 0; 
+		margin: 0 0 0 0; 
 	}
 	a#usuario{
 		margin-top: 0;

@@ -1147,8 +1147,18 @@ DONE - Crear widget de sugeridos que cargue con ajax.
 - Arreglar e investigar el bug del admin edit-productos de cambio de categoria de productos que no se muestra en el widget lateral.
 - Crear opción de ver cuanto stock hay disponible.
 - Hacer páginas de producto más detalladas.
-- Arreglar el main slider.
+DONE - Arreglar el main slider.
 - Lanzar el sitio
 - Configurar nginx con nodejs
 - Configurar certificado ssl
 - Crear widget del chat
+
+### Día 60
+
+Llevo varios días trabajando en la lista superior, he mejorado la seguridad cifrando claves, he mejorado el diseño general con páginas responsive y he arreglado el slider además del minislider de forma que funcionen a la perfección.
+
+Puedo poner hasta 5 tipos diferentes de minislider para sugerir productos a los usuarios porque creo firmemente que una de las más importantes tareas en una buena página web es sugerir productos que interesen al usuario.
+
+Sin embargo, cuando hablamos de los objetivos de una página web, el sugerir productos no es la prioridad máxima. La prioridad máxima es en facilitar la compra con un diseño amigable, entendible, rápido y eficiente para llegar a comprar en el mínimo numero de clicks posibles. Mi objetivo es pasar de mirar a llegar a la página de compra en 3 clicks. 1 para seleccionar el producto, otro para añadirlo a la cesta o comprarlo directamente y otro para ir a la página de pago.
+
+Por eso voy a incluir un botón debajo del de "Añadir a la cesta" que diga "Comprar ahora" para añadirlo a la cesta e inmediatamente ir a la página de pago.

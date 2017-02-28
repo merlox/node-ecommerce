@@ -623,7 +623,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           return cb('Error, no hay productos vistos recientemente', null, null);
         if(userData.productosVistos.length < 5) 
           return cb('Error, hay menos de 5 productos vistos.', null, null);
-        let paginasTotales = userData.productosVistos/5;
+        let paginasTotales = userData.productosVistos.length/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
         //userData.productosVistos son IDs de productos, hay que buscar los productos
         db.collection('productos').find({
@@ -661,7 +661,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           return cb('Error, no hay productos comprados juntos', null, null);
         if(userData.compradosJuntos.length < 5) 
           return cb('Error, hay menos de 5 productos comprados juntos.', null, null);
-        let paginasTotales = userData.compradosJuntos/5;
+        let paginasTotales = userData.compradosJuntos.length/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
         //userData.productosVistos son IDs de productos, hay que buscar los productos
         db.collection('productos').find({

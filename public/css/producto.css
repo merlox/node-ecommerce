@@ -52,8 +52,11 @@ PRODUCT INFORMATION
 #contenedor-informacion-producto{
 	width: 40%;
 }
-#producto-categoria{
-	font-weight: bold;
+#producto-categoria a{
+	text-decoration: none;
+}
+#producto-categoria a:hover{
+	text-decoration: underline;
 }
 #producto-title{
 	margin-top: 0;

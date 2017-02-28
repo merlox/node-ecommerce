@@ -16,8 +16,6 @@ GENERALES
 .contenedor-mensaje-carga h3{
     margin-left: 20px;
 }
-.contenedor-mensaje-error{
-}
 .error{
     text-align: center;
     color: tomato;
@@ -31,6 +29,26 @@ GENERALES
     display: none;
     margin-left: 3px;
     margin-top: 2px;
+}
+/*
+
+WIDGET VISTAZO RAPIDO
+
+*/
+#contenedor-estado{
+    display: none;
+    max-width: 350px;
+    padding: 20px;
+    margin: 10px auto;
+    border-radius: 5px;
+    justify-content: space-between;
+    border: 1px solid lightgrey;
+}
+#contenedor-estado div{
+    display: inline-block;
+}
+#contenedor-estado p{
+    margin-top: 0;
 }
 /*
 
@@ -136,6 +154,11 @@ tr:hover{
 .mensaje-carga-boton-estado{
     text-align: center;
     width: 100%;
+}
+@media (max-width: 1420px){
+    .contenedor-responsive-tabla{
+      overflow: auto;
+    }
 }
 @media (max-width: 1000px){
     #filtros-facturas{

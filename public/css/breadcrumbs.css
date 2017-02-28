@@ -1,0 +1,22 @@
+#breadcrumbs{
+    padding: 0 80px;
+    display: flex;
+    margin: 0;
+    background-color: rgba(0, 4, 32, 0.15);
+    font-style: italic;
+    text-transform: capitalize;
+}
+#breadcrumbs a{
+	text-decoration: none;
+	padding: 5px 10px;
+	color: #444444;
+	border-right: 1px solid darkgrey;
+}
+#breadcrumbs a:hover{
+	background-color: rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 1000px){
+	#breadcrumbs{
+		padding: 0;
+	}
+}

@@ -18,7 +18,7 @@ DONE 8. Enviar email al marcar como enviado
 6.crear widget de chat para comunicarme con cada comprador
 */
 window.addEventListener('load', () => {
-	generarFacturas(1, null);
+	generarFacturas(1);	
 	eventosFiltrosEstado();
 });
 
@@ -87,6 +87,13 @@ function generarFacturas(pag){
 				q('#tabla-facturas').style.display = 'block';
 				return q('#tabla-facturas').innerHTML = dataObject.error;
 			}
+
+			let noEnviados = 0;
+			for (var i = 0; i < dataObject.facturas.length; i++) {
+				if(!dataObject.facturas[i].estaEnviado) noEnviados++;
+			}
+			q('#contenedor-estado').innerHTML = `<b>${noEnviados}</b> productos necesitan ser enviados`;
+			q('#contenedor-estado').style.display = 'flex';
 
 			generarTablaFacturasHTML(dataObject, tablaHTML => {
 				q('#tabla-facturas').style.display = 'block';
@@ -451,3 +458,6 @@ function enviarEmailProductos(idPago, element){
 		}
 	});
 };
+/**
+ * Genera un widget que muestra el estado rápido de la tienda
+ */

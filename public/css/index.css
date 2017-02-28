@@ -44,13 +44,17 @@ SLIDER
 	opacity: 0.5;
 	z-index: 10;
 	transition: none;
+	background-color: black;
 }
 #flecha-izquierda-slider:hover{
-	height: 70px;
-	background-color: rgba(0, 0, 0, 0.1);
+	height: 62px;
+}
+#flecha-izquierda-slider:active{
+	height: 55px;
 }
 #flecha-derecha-slider{
 	position: absolute;
+	background-color: black;
 	top: 50%;
 	padding: 10px;
 	transform: translateY(-50%);
@@ -62,8 +66,10 @@ SLIDER
 	transition: none;
 }
 #flecha-derecha-slider:hover{
-	height: 70px;
-	background-color: rgba(0, 0, 0, 0.1);
+	height: 62px;
+}
+#flecha-derecha-slider:active{
+	height: 55px;
 }
 .imagen-inicial:not(:first-child){
 	display: none;

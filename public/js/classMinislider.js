@@ -23,7 +23,7 @@ function Minislider(nombre, tipo, id){
 				return console.log(response.error); //Si hay un error, no mostrar el minislider directamente
 			}
 			let productos = response.productos;
-			that.paginasTotales = (parseInt(response.paginasTotales)-1); 
+			that.paginasTotales = (parseInt(response.paginasTotales)-1);
 			//Le quitamos uno para que el último no se muestre porque pueden ser 1 o 2 productos y no queda completo
 			let sliderHTML = `<div class="contenedor-minislider">
 				<h3 class="titulo-contenedor-minislider">${nombre}</h3>
@@ -56,29 +56,43 @@ function Minislider(nombre, tipo, id){
 	};
 	function flechaDerechaMinislider(){
 		if(!that.paginasTotales || that.paginasTotales > that.pagina){
+			q(`${id} .flecha-derecha-minislider`).removeAttribute('disabled');
+			q(`${id} .flecha-derecha-minislider`).style.opacity = 1;
 			that.pagina++;
 			colocarMinislider();
+		}else{
+			//Bloquear la flecha
+			q(`${id} .flecha-derecha-minislider`).setAttribute('disabled', 'disabled');
+			q(`${id} .flecha-derecha-minislider`).style.opacity = 0.5;
 		}
 	};
 	function flechaIzquierdaMinislider(){
 		if(that.pagina > 0){
+			q(`${id} .flecha-izquierda-minislider`).removeAttribute('disabled');
+			q(`${id} .flecha-izquierda-minislider`).style.opacity = 1;
 			that.pagina--;
 			colocarMinislider();
+		}else{
+			//Bloquear la flecha
+			q(`${id} .flecha-izquierda-minislider`).setAttribute('disabled', 'disabled');
+			q(`${id} .flecha-izquierda-minislider`).style.opacity = 0.5;
 		}
 	};
 	function addListeners(){
 		q(`${id} .contenedor-minislider`).addEventListener('mouseenter', () => {
-			q(`${id} .flecha-izquierda-minislider`).style.opacity = 1;
-			q(`${id} .flecha-derecha-minislider`).style.opacity = 1;
+			if(q(`${id} .flecha-izquierda-minislider:not([disabled])`))
+				q(`${id} .flecha-izquierda-minislider:not([disabled])`).style.opacity = 1;
+			if(q(`${id} .flecha-derecha-minislider:not([disabled])`))
+				q(`${id} .flecha-derecha-minislider:not([disabled])`).style.opacity = 1;
 		});
 		q(`${id} .contenedor-minislider`).addEventListener('mouseleave', () => {
 			q(`${id} .flecha-izquierda-minislider`).style.opacity = 0.5;
 			q(`${id} .flecha-derecha-minislider`).style.opacity = 0.5;
 		});
-		q(`${id} .flecha-derecha-minislider`).addEventListener('click', () => {
+		q(`${id} .flecha-derecha-minislider:not([disabled])`).addEventListener('click', () => {
 			flechaDerechaMinislider();
 		});
-		q(`${id} .flecha-izquierda-minislider`).addEventListener('click', () => {
+		q(`${id} .flecha-izquierda-minislider:not([disabled])`).addEventListener('click', () => {
 			flechaIzquierdaMinislider();
 		});
 	};

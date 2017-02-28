@@ -137,7 +137,7 @@ WIDGET CESTA
         z-index: 10;
     }   
     .titulo-producto{
-        display: none;
+        font-size: 9pt;
     }
     .separador-tabla{
         display: none;

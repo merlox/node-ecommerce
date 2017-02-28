@@ -27,11 +27,12 @@ SLIDER
 	display: none;
 }
 #contenedor-imagenes-slider{
-	overflow: hidden; 
-	display: none;
-	height: 300px;
-	width: 100%;
-	position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
 }
 #flecha-izquierda-slider{
 	position: absolute;
@@ -59,10 +60,6 @@ SLIDER
 #flecha-derecha-slider:hover{
 	height: 45px;
 }
-#imagen-slider{
-	position: relative;
-	left: 50%;
-}
 #contenedor-botones-slider{
 	margin: 0 auto;
 	width: 405px;
@@ -72,4 +69,12 @@ SLIDER
 }
 #button-reset-slider{
 	width: 200px;
+}
+.input-url{
+	text-align: center;
+	margin: 10px 0;
+	width: 400px;
+}
+.imagen-slider{
+	max-width: 800px;
 }

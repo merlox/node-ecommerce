@@ -16,7 +16,7 @@ let Mongo = require('mongodb').MongoClient,
 Mongo.connect(MongoUrl, (err, database) => {
   if(err) console.log(err);
   db = database;
-  createExpirePasswordTokenIndex();
+  // createExpirePasswordTokenIndex();
 });
 
 function buscarProducto(permalink, callback){
@@ -489,23 +489,24 @@ function guardarSliderImages(objectImages, cb){
   console.log('GuardarSliderImages, functions.js');
   let origin = path.join(__dirname, '../public/public-uploads/');
   let end = path.join(__dirname, '/uploads/_Slider/');
-  let tamañoObjectImages = Object.keys(objectImages).length;
+  let tamañoObjectImages = Object.keys(objectImages.imagenes).length;
 
   borrarSliderFolder((err) => {
     if(err) return cb(err);
-    for(let key in objectImages){
-      let fileLocation = path.join(origin, objectImages[key]);
-      copyFile(fileLocation, end, objectImages[key], (err) => {
+    for(let key in objectImages.imagenes){
+      let fileLocation = path.join(origin, objectImages.imagenes[key]);
+      copyFile(fileLocation, end, objectImages.imagenes[key], (err) => {
         if(err){
           console.log(err);
-          return cb('Err, could not copy the image: '+objectImages[key]+' to the server /_Slider/: '+err);
+          return cb('Err, could not copy the image: '+objectImages.imagenes[key]+' to the server /_Slider/: '+err);
         }
       });
     }
     db.collection('utils').update({
       'sliderImages': {$exists: true}
     }, {
-      'sliderImages': objectImages
+      'sliderImages': objectImages.imagenes,
+      'urls': objectImages.urls
     }, {
       'upsert': true
     }, (err, countFilesModified, result) => {      
@@ -1587,6 +1588,15 @@ function copiarImagenesProductos(arrayProductos, cb){
     }
   });
 };
+//Para conseguir las urls de las imágenes del slider
+function getSliderUrls(cb){
+  db.collection('utils').findOne({
+    'urls': {$exists: true}
+  }, (err, result) => {
+    if(err) return cb('No se encontraron las urls del slider.', null);
+    cb(null, result.urls);
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.copyFile = copyFile;
@@ -1633,3 +1643,4 @@ exports.verificarEmail = verificarEmail;
 exports.enviarMensajeContacto = enviarMensajeContacto;
 exports.guardarVisitadoUsuario = guardarVisitadoUsuario;
 exports.copiarImagenesProductos = copiarImagenesProductos;
+exports.getSliderUrls = getSliderUrls;

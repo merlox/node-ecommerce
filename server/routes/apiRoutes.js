@@ -492,4 +492,16 @@ api.post('/enviar-mensaje', (req, res) => {
   });
 });
 
+api.get('/get-slider-urls', (req, res) => {
+  let response = {
+    'error': null,
+    'urls': null
+  };
+  functions.getSliderUrls((err, objectUrls) => {
+    if(err) response.error = err;
+    response.urls = objectUrls;
+    res.send(response);
+  });
+});
+
 module.exports = api;

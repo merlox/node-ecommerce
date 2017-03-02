@@ -1,0 +1,127 @@
+Server started at 35.156.184.202:8000
+Se ha creado el TTL index correctamente de 1 hora para la collection Tokens.
+
+Requesting: / ::ffff:90.74.172.186
+GetSlider, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+
+Render time: 4
+
+
+Requesting: /api/get-categories ::ffff:90.74.172.186
+GetCategories, functions.js
+
+Requesting: /api/get-minislider/vistosAnteriormente?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /api/get-minislider/vendidos?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /api/get-minislider/recientes?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /api/get-minislider/random?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+
+Requesting: /api/search/qui ::ffff:90.74.172.186
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+
+Requesting: /api/search/qui ::ffff:90.74.172.186
+BuscarProductos, functions.js
+Interna - CopyFirstImage, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+Server started at 35.156.184.202:8000
+Se ha creado el TTL index correctamente de 1 hora para la collection Tokens.
+
+Requesting: / ::ffff:90.74.172.186
+GetSlider, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+
+Render time: 3
+
+
+Requesting: /api/get-categories ::ffff:90.74.172.186
+GetCategories, functions.js
+
+Requesting: /api/get-minislider/vistosAnteriormente?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /api/get-minislider/recientes?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /api/get-minislider/vendidos?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /api/get-minislider/random?pag=0 ::ffff:90.74.172.186
+GetMiniSlider, functions.js
+
+Requesting: /favicon.ico ::ffff:90.74.172.186
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+CopyFile, functions.js
+
+Requesting: /api/get-cesta ::ffff:90.74.172.186
+
+Requesting: /api/get-cesta ::ffff:90.74.172.186
+
+Requesting: /api/get-cesta ::ffff:90.74.172.186
+Server started at 35.156.184.202:8000

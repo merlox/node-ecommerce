@@ -49,8 +49,8 @@ app.use('/admin', adminRoutes);
 app.use('/', publicRoutes);
 
 //Ejecutamos el servidor en la ip local
-socketServer.listen(8000, '0.0.0.0', function(){
-  console.log("Server started at localhost:8000");
+socketServer.listen(8000, function(){
+  console.log("Server started at 35.156.184.202:8000");
 });
 
 //Ejecutamos el servidor socket.io para el chat en realtiime

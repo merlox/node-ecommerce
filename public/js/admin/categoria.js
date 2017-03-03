@@ -66,12 +66,9 @@ id('button-nueva-categoria-cancelar').addEventListener('click', () => {
 });
 id('button-categoria-borrar').addEventListener('click', () => {
   let opcionesSelect = id('producto-categorias');
-
-  console.log(arrayCategorias)
   //Splice elimina el elemento seleccionado del array original Y devuelve el elemento borrado
   arrayCategorias.splice(id('producto-categorias').selectedIndex, 1);
   id('producto-categorias').remove(id('producto-categorias').selectedIndex);
-  console.log(arrayCategorias)
 });
 //Actualizamos la categoría seleccionada poniendole el atributo selected="selected"
 id('producto-categorias').addEventListener('change', (e) => {

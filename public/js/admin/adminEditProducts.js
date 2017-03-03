@@ -157,7 +157,8 @@ function crearCajasProductos(page){
 					addEspacioTitulo = '<br />';
 				}
 				let permalinkATexto = "'"+objetoProducto.permalink+"'";
-				let htmlProducto = `<div class="contenedor-producto borrador">
+				//Mostramos el aspecto de borrador a los no publicados
+				let htmlProducto = `<div class="contenedor-producto ${objetoProducto.publicado ? '' : 'borrador'}">
 					<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
 					<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
 					${objetoProducto.titulo}</span>${addEspacioTitulo}

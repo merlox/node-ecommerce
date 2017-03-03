@@ -39,13 +39,24 @@ function borrarValorAtributo(e){
 }
 
 //Para crear nuevos atributos en el dom. Recibe el nombre del atributo a crear (obligatorio param)
-function crearNuevoAtributo(nombreNuevoAtributo, valoresAtributo){
+function crearNuevoAtributo(nombreNuevoAtributo, valoresAtributo, modo){
   //If not empty string
+  q('.mensaje-error').innerHTML = '';
+
   if(nombreNuevoAtributo !== "" && valoresAtributo !== ""){
-    q('.mensaje-error').innerHTML = '';
     let nodoNuevoAtributo = `<li class="lista-atributos-estilo"><b>${nombreNuevoAtributo}</b>
-      <span class="x-delete-icon" onclick="borrarAtributo(this)">&#10006</span><ul>`,
-      arrayValores = valoresAtributo.split('|');
+      <span class="x-delete-icon" onclick="borrarAtributo(this)">&#10006</span><ul>`;
+    let arrayValores;
+
+    switch(modo){
+      case 'dom':
+        arrayValores = valoresAtributo.split('|');
+      break;
+
+      case 'objeto':
+        arrayValores = valoresAtributo;
+      break;
+    }
 
     for(let i = 0; i < arrayValores.length; i++){
       nodoNuevoAtributo += `<li>${arrayValores[i]}</li>`;
@@ -67,7 +78,7 @@ function crearNuevoAtributo(nombreNuevoAtributo, valoresAtributo){
 q('#button-atributo-add').addEventListener('click', () => {
   let nombreNuevoAtributo = q('#atributo-nuevo-nombre').value,
     valoresAtributo = q('#atributo-valores').value;
-  crearNuevoAtributo(nombreNuevoAtributo, valoresAtributo);
+  crearNuevoAtributo(nombreNuevoAtributo, valoresAtributo, 'dom');
 });
 //1. conseguir el index del atributo
 //2. usar get class con el index para obtener el valor del input

@@ -146,7 +146,7 @@ api.post('/upload-product', (req, res) => {
       'error': null,
       'success': null
     };
-  if(!b.titulo || !b.imagenes || !b.permalink || !b.precio || !b.descripcion || !b.categoria || !b.atributos || !b.publicado){
+  if(!b.titulo || !b.imagenes || !b.permalink || !b.precio || !b.descripcion || !b.categoria || !b.atributos || b.publicado === null){
     responseObject.error = 'Error, algún dato del producto no se ha recibido correctamente, comprueba la información del producto.';
     return res.send(responseObject);
   };

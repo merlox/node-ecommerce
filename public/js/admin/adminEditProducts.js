@@ -112,14 +112,14 @@ function borrarProducto(productPermalink){
 function mostrarObjetoAtributos(objetoAtributos){
 	let indexAtributo = 0;
 	id('lista-atributos').innerHTML = '';
-	for(let keyArrayAtributo in objetoAtributos){
+	/*
+	objetoAtributos = {
+		'talla': arrayValores
+	}
+	*/
+	for(let nombreAtributo in objetoAtributos){
 		//Mostrar atributo. Función del atributo.js para crear el nodo en el DOM.
-		crearNuevoAtributo(keyArrayAtributo);
-		for(let i = 0; i < objetoAtributos[keyArrayAtributo].length; i++){
-			//Mostrar cada valor del atributo. La funcion es del atributo.js y sirve para crear el dom de cada valor.
-			insertAtributoValor(indexAtributo, objetoAtributos[keyArrayAtributo][i], keyArrayAtributo);
-		}
-		indexAtributo++;
+		crearNuevoAtributo(nombreAtributo, objetoAtributos[nombreAtributo], 'objeto');
 	}
 }
 //Para generar las cajas de productos

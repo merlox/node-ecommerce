@@ -217,6 +217,11 @@ q('#cesta').addEventListener('mouseenter', () => {
 		}, 1e3);
 	}
 });
+q('#productos-cesta').addEventListener('mouseleave', () => {
+	q('#productos-cesta').style.display = 'none';
+	q('.triangulo-up').style.display = 'none';
+});
+/* Descomentar para que la cesta se oculte al hacer click fuera
 //No ocultar si se hace click sobre el contenido cesta
 q('#productos-cesta').addEventListener('click', (e) => {
 	e.stopPropagation();
@@ -228,3 +233,4 @@ q('html').addEventListener('click', (e) => {
 		q('.triangulo-up').style.display = 'none';
 	}
 });
+*/

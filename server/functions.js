@@ -256,7 +256,7 @@ function getAllProducts(imageLimit, page, filtroCategoria, callback){
         else return callback(null, results);
       });
     }else{
-      return callback(null, false);
+      return callback('Error, no hay productos', false);
     }
   });
 };
@@ -279,12 +279,14 @@ function copyFirstImage(results, cb){
         console.log('El directorio: '+folderServer+' no existe para ese producto ,'+err);
         error = 'El directorio: '+folderServer+' no existe para ese producto ,'+err;
       }else{
+        //1. Leemos el directorio
         fs.readdir(folderServer, (err, imagesInFolder) => {
           if(err) {
             error = 'Could not read the images in the folder. Try again.';
           }
-          //Buscar la primera imagen guardada en la bd para copiarla
+          //2. Recorremos las imagenes del directorio
           for(let f = 0; f<imagesInFolder.length; f++){
+            //3. Si la imagen del directorio es la 1ª de la base de datos, copiarla, sino pasa a la siguiente
             if(results[i].imagenes[1] == imagesInFolder[f]){
               let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
               copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
@@ -293,15 +295,28 @@ function copyFirstImage(results, cb){
                   error = 'Could not copy the images to the client. Try again.';
                 }
                 if(counter >= results.length){
-                  if(error) return cb(error);
-                  cb(null);
+                  done();
                 }
               });
+            }else{
+              counter++;
             }
+          }
+          if(i >= results.length - 1 || counter >= results.length){
+            done();
           }
         });
       }
     });
+  }
+
+  let callbackCalled = false;
+  function done(){
+    if(!callbackCalled){
+      if(error) return cb(error);
+      cb(null);
+    }
+    callbackCalled = true;
   }
 };
 function borrarProducto(permalink, cb){
@@ -397,6 +412,8 @@ function getCategories(callback){
   console.log('GetCategories, functions.js');
   db.collection('categorias').findOne({
     'arrayCategorias': {$exists : true}
+  }, {
+    '_id': false
   }, (err, result) => {    
     if(err){
       return callback('Err, could not find the categories.', null);

@@ -6,6 +6,13 @@ function getCategoriesFromServer(){
   httpGet('/api/get-categories', (categories) => {
     categories = JSON.parse(categories);
     categories = categories.arrayCategorias;
+    if(categories.length <= 0) {
+      let mensajeErrorHTML = `No se han encontrado categorías<br/>
+        <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+      q('.mensaje-error-subida').style.display = 'block';
+      q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+      return;
+    }
     //Para el objeto global de categorias
     arrayCategorias = categories;
     let categoriasHTML = '';
@@ -18,8 +25,8 @@ function getCategoriesFromServer(){
     id('producto-categorias').innerHTML = categoriasHTML;
     id('contenedor-categorias').selectedIndex = indexCategoriaSeleccionadaAhora;
   });
-}
-
+};
+//Para guardar las categorias
 function guardarCategoria(){
   let newCategoryValue = id('nueva-categoria').value;
   let newCategoryNode = '<option>'+newCategoryValue+'</option>';
@@ -29,7 +36,22 @@ function guardarCategoria(){
   id('contenedor-elementos-categoria').style.display = 'inline-block';
   id('contenedor-categoria-add').style.display = 'none';
   id('nueva-categoria').value = '';
-}
+};
+//Para poner el atributo selected="selected" en el option seleccionado del seleccionado de categorias
+function actualizarCategoriaSeleccionada(that){
+  let select = q('#producto-categorias');
+  for (var i = 0; i < select.length; i++) {
+    let option = select[i];
+    //Quitamos el selected actual
+    if(option.hasAttribute('selected')){
+      q('#producto-categorias').children[i].removeAttribute('selected');
+    }
+    //Ponemos el nuevo selected si es el que hemos seleccionado
+    if(option.innerHTML === that.target.value){
+      q('#producto-categorias').children[i].setAttribute('selected', 'selected');
+    }
+  }
+};
 
 id('button-activar-nueva-categoria').addEventListener('click', () => {
   id('contenedor-elementos-categoria').style.display = 'none';
@@ -43,10 +65,15 @@ id('button-nueva-categoria-cancelar').addEventListener('click', () => {
   id('contenedor-categoria-add').style.display = 'none';
 });
 id('button-categoria-borrar').addEventListener('click', () => {
-  //Comprobamos que no sea la categoria default para que no se elimine
   let opcionesSelect = id('producto-categorias');
-  if(opcionesSelect[opcionesSelect.selectedIndex].innerHTML.toLowerCase() != 'default'){
-    arrayCategorias = arrayCategorias.splice(id('producto-categorias').selectedIndex, 1);
-    id('producto-categorias').remove(id('producto-categorias').selectedIndex);
-  }
+
+  console.log(arrayCategorias)
+  //Splice elimina el elemento seleccionado del array original Y devuelve el elemento borrado
+  arrayCategorias.splice(id('producto-categorias').selectedIndex, 1);
+  id('producto-categorias').remove(id('producto-categorias').selectedIndex);
+  console.log(arrayCategorias)
+});
+//Actualizamos la categoría seleccionada poniendole el atributo selected="selected"
+id('producto-categorias').addEventListener('change', (e) => {
+  actualizarCategoriaSeleccionada(e);
 });

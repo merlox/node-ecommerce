@@ -53,7 +53,6 @@ api.get('/get-all-products/:imagenesLimit?', (req, res) => {
   if(req.params.imagenesLimit) imagesLimit = parseInt(req.params.imagenesLimit);
   if(req.query.page) page = parseInt(req.query.page);
   if(req.query.filtroCategoria) filtroCategoria = req.query.filtroCategoria;
-	
   functions.getAllProducts(imagesLimit, page, filtroCategoria, (err, results) => {
 		if(err){
 			console.log(err);

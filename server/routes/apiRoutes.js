@@ -81,18 +81,20 @@ api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {
   });
 });
 api.get('/get-single-product/:permalink', (req, res) => {
+  let response = {
+    'error': null,
+    'product': null
+  };
   functions.buscarProducto(req.params.permalink, (err, result) => {
     if(err){
-      console.log(err);
-      return res.send(err);
+      response.error = err;
+      return res.send(response);
     }
+    response.product = result; //Ponemos el producto
     functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURIComponent(req.params.permalink)), 
         path.join(__dirname, '../../public/public-uploads/'), (err) => {
-      if(err) {
-        console.log(err);
-        return res.send('There was an error getting the product, please try again.');
-      }
-      return res.send(result);
+      if(err) response.error = err; //Ponemos el error
+      return res.send(response);
     });
   });
 });

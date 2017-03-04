@@ -26,7 +26,7 @@ function buscarProducto(permalink, callback){
     'permalink': permalink
   }, (err, result) => {
     if(err){
-      return callback('Error, could not find that product', null);
+      return callback('Error, could not find that product', result);
     }else{
       return callback(null, result);
     }
@@ -252,7 +252,7 @@ function getAllProducts(imageLimit, page, filtroCategoria, callback){
     if(results != undefined && results.length > 0){
       //Acceder a la carpeta título y copiar la 1º imagen
       copyFirstImage(results, (err) => {
-        if(err) return callback(err, false);
+        if(err) return callback(err, results);
         else return callback(null, results);
       });
     }else{
@@ -275,14 +275,15 @@ function copyFirstImage(results, cb){
     let folderClient = path.join(__dirname, '../public/public-uploads/');
     //Comprobamos que exista el directorio
     fs.stat(folderServer, (err, stats) => {
-      if(err){
-        console.log('El directorio: '+folderServer+' no existe para ese producto ,'+err);
-        error = 'El directorio: '+folderServer+' no existe para ese producto ,'+err;
+      if(err){      
+        console.log(`El directorio: ${folderServer} no existe para el producto: "${results[i].titulo}".`);
+        error = `El directorio: ${folderServer} no existe para el producto: "${results[i].titulo}".`;
+        done();
       }else{
         //1. Leemos el directorio
         fs.readdir(folderServer, (err, imagesInFolder) => {
           if(err) {
-            error = 'Could not read the images in the folder. Try again.';
+            error = '#1 Error copiando las imágenes al cliente.';
           }
           //2. Recorremos las imagenes del directorio
           for(let f = 0; f<imagesInFolder.length; f++){
@@ -292,7 +293,7 @@ function copyFirstImage(results, cb){
               copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
                 counter++;
                 if(err){
-                  error = 'Could not copy the images to the client. Try again.';
+                  error = '#2 Error copiando las imágenes al cliente.';
                 }
                 if(counter >= results.length){
                   done();
@@ -429,14 +430,14 @@ function copyDirectory(origin, end, callback){
   }
   let callbackCalled = false;
   fs.stat(origin, (err, stats) => {
-    if(err) done(err);
+    if(err) return done(`Error copiando el directorio de imagenes del producto: ${err.code}`);
     if(stats.isDirectory()){
       //Check if end exists and create directory
       fs.stat(end, (err, stats) => {
         if(err){
           fs.mkdir(end, (err) => {
             if(err){
-              console.log(err);
+              done('Error copiando el directorio de imágenes del producto, no se ha podido crear el directorio final del cliente.');
             }
           });
         }
@@ -456,11 +457,11 @@ function copyDirectory(origin, end, callback){
             });
           });
         }else{
-          done('Error copying images, there are no files to be copied');
+          done('Error copiando el directorio de imágenes del producto, no hay imágenes a copiar, el directorio está vacío.');
         }
       });
     }else{
-      done('Error copying images, your origin is not a directory');
+      done('Error copiando el directorio de imágenes del producto, no se ha encontrado ese directorio.');
     }
   });
 
@@ -610,7 +611,9 @@ function getMiniSlider(username, tipo, pagina, cb){
         if(err) return cb('Error contando los productos', null, null);
         let paginasTotales = count/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
-        db.collection('productos').find({}, {
+        db.collection('productos').find({
+          'publicado': true
+        }, {
           "_id": false,
           "titulo": true,
           "permalink": true,
@@ -647,7 +650,8 @@ function getMiniSlider(username, tipo, pagina, cb){
         db.collection('productos').find({
           '_id': {
             '$in': userData.productosVistos
-          }
+          },
+          'publicado': true
         }, {
           "_id": false,
           "titulo": true,
@@ -685,7 +689,8 @@ function getMiniSlider(username, tipo, pagina, cb){
         db.collection('productos').find({
           '_id': {
             '$in': userData.compradosJuntos
-          }
+          },
+          'publicado': true
         }, {
           "_id": false,
           "titulo": true,
@@ -708,7 +713,9 @@ function getMiniSlider(username, tipo, pagina, cb){
         if(err) return cb('Error contando los productos', null, null);
         let paginasTotales = count/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
-        db.collection('productos').find({}, {
+        db.collection('productos').find({
+          'publicado': true
+        }, {
           "_id": false,
           "titulo": true,
           "permalink": true,
@@ -730,7 +737,8 @@ function getMiniSlider(username, tipo, pagina, cb){
         if(err) return cb('Error contando los productos random', null, null);
         let paginasTotales = count/5;
         db.collection('productos').aggregate([
-          {$sample: {size: 5}}
+          {$sample: {size: 5}},
+          {$match: {'publicado': true}}
         ]).toArray((err, results) => {
           if(err) return cb('Error buscando los productos random.', null);
           copiarImagenesProductos(results, err => {

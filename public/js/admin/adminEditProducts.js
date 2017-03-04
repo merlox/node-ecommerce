@@ -66,36 +66,45 @@ function loadFullProduct(productPermalink){
 		mostrarMenu();
 	}
 	objetoAtributos = {};
-	httpGet('/api/get-single-product/'+productPermalink, (fullProduct) => {
-		fullProduct = JSON.parse(fullProduct);
-		id('producto-title').value = fullProduct.titulo;
-		id('producto-precio').value = fullProduct.precio;
-		id('permalink').value = fullProduct.permalink;
-		id('producto-descripcion').value = fullProduct.descripcion;
+	httpGet('/api/get-single-product/'+productPermalink, (response) => {
+		response = JSON.parse(response);
+		if(response.error){
+			let mensajeErrorHTML = `${response.error}. Puedes publicar las imágenes de nuevo.<br/>
+		    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+		    q('.mensaje-error-subida').style.display = 'block';
+		    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+		}
+		if(response.product){
+			let fullProduct = response.product;
+			id('producto-title').value = fullProduct.titulo;
+			id('producto-precio').value = fullProduct.precio;
+			id('permalink').value = fullProduct.permalink;
+			id('producto-descripcion').value = fullProduct.descripcion;
 
-		imagenesProducto = fullProduct.imagenes;
-		//Borramos los selected. Comprobamos si el <option> ya existe o no. En caso de que si, selecionalo.
-		let opcionesDelSelect = document.getElementsByTagName('option');
-		let anadirCategoriaOriginalProducto = true;
-		for(let i = 0; i < opcionesDelSelect.length; i++){
-			if(opcionesDelSelect[i].hasAttribute('selected')){
-				opcionesDelSelect[i].removeAttribute('selected');
+			imagenesProducto = fullProduct.imagenes;
+			//Borramos los selected. Comprobamos si el <option> ya existe o no. En caso de que si, selecionalo.
+			let opcionesDelSelect = document.getElementsByTagName('option');
+			let anadirCategoriaOriginalProducto = true;
+			for(let i = 0; i < opcionesDelSelect.length; i++){
+				if(opcionesDelSelect[i].hasAttribute('selected')){
+					opcionesDelSelect[i].removeAttribute('selected');
+				}
 			}
-		}
-		for(let i = 0; i < opcionesDelSelect.length; i++){
-			if(opcionesDelSelect[i].innerHTML == fullProduct.categoria){
-				opcionesDelSelect[i].setAttribute("selected", "selected");
-				anadirCategoriaOriginalProducto = false;
+			for(let i = 0; i < opcionesDelSelect.length; i++){
+				if(opcionesDelSelect[i].innerHTML == fullProduct.categoria){
+					opcionesDelSelect[i].setAttribute("selected", "selected");
+					anadirCategoriaOriginalProducto = false;
+				}
 			}
-		}
-		if(anadirCategoriaOriginalProducto){
-			id('producto-categorias').insertAdjacentHTML('afterbegin', '<option selected="selected">'+fullProduct.categoria+'</option>');
-		}
-		//Crear el dom de los atributos
-		mostrarObjetoAtributos(fullProduct.atributos);
+			if(anadirCategoriaOriginalProducto){
+				id('producto-categorias').insertAdjacentHTML('afterbegin', '<option selected="selected">'+fullProduct.categoria+'</option>');
+			}
+			//Crear el dom de los atributos
+			mostrarObjetoAtributos(fullProduct.atributos);
 
-		//Funcion del upload.js para mostrar las imagenes en el DOM
-		mostrarImagenesCliente(fullProduct.imagenes);
+			//Funcion del upload.js para mostrar las imagenes en el DOM
+			mostrarImagenesCliente(fullProduct.imagenes);
+		}
 	});
 }
 function borrarProducto(productPermalink){
@@ -144,6 +153,11 @@ function crearCajasProductos(page){
 	resetAllProductData(); // Función de upload.js
 	httpGet(url, (response) => {
 		response = JSON.parse(response);
+		//Mostramos el error pero seguimos mostrando los productos, no queremos que deje de funcionar la app
+		if(response.error){
+			id('contenedor-productos').innerHTML = 
+				`<p class="no-products-found">${response.error}</p>`;
+		}
 		if(response.results){
 			let arrayProductos = response.results;
 			for(let i = 0; i < arrayProductos.length; i++){

@@ -143,8 +143,8 @@ function crearCajasProductos(page){
 	}
 	resetAllProductData(); // Función de upload.js
 	httpGet(url, (results) => {
-		results = JSON.parse(results);
-		if(results != false){
+		if(results){
+			results = JSON.parse(results);
 			let arrayProductos = results;
 			for(let i = 0; i < arrayProductos.length; i++){
 				let objetoProducto = arrayProductos[i];

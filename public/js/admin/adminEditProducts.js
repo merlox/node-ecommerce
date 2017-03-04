@@ -142,10 +142,10 @@ function crearCajasProductos(page){
 		url = `/api/get-all-products/${productosPorPagina}?page=${page}`;
 	}
 	resetAllProductData(); // Función de upload.js
-	httpGet(url, (results) => {
-		if(results){
-			results = JSON.parse(results);
-			let arrayProductos = results;
+	httpGet(url, (response) => {
+		response = JSON.parse(response);
+		if(response.results){
+			let arrayProductos = response.results;
 			for(let i = 0; i < arrayProductos.length; i++){
 				let objetoProducto = arrayProductos[i];
 				let tituloProducto = objetoProducto.titulo;
@@ -173,7 +173,7 @@ function crearCajasProductos(page){
 			}
 		}else{
 			id('contenedor-productos').innerHTML = 
-				'<p class="no-products-found">No hay productos para mostrar.</p>';
+				`<p class="no-products-found">${response.error}</p>`;
 		}
 	});
 };

@@ -53,13 +53,14 @@ api.get('/get-all-products/:imagenesLimit?', (req, res) => {
   if(req.params.imagenesLimit) imagesLimit = parseInt(req.params.imagenesLimit);
   if(req.query.page) page = parseInt(req.query.page);
   if(req.query.filtroCategoria) filtroCategoria = req.query.filtroCategoria;
+  let response = {
+    'error': null,
+    'results': null
+  };
   functions.getAllProducts(imagesLimit, page, filtroCategoria, (err, results) => {
-		if(err){
-			console.log(err);
-			return res.send(err);
-		}else{
-			return res.send(results);
-		}
+		if(err) response.error = err;
+    response.results = results;
+    res.send(response);
 	});
 });
 api.get('/get-paginacion-admin-productos/:productLimit?', (req, res) => {

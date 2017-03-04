@@ -256,7 +256,7 @@ function getAllProducts(imageLimit, page, filtroCategoria, callback){
         else return callback(null, results);
       });
     }else{
-      return callback('Error, no hay productos', false);
+      return callback('No hay productos', false);
     }
   });
 };

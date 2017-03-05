@@ -266,9 +266,9 @@ function crearJSONCSV(file, cb){
 					let objetoImagenes = {};
 					let imagenes = celdas[7].split(',');
 					if(imagenes.length > 1){
-						for (var i = 0; i < imagenes.length; i++) {
-							let img = imagenes[i];
-							objetoImagenes[i+1] = img.trim();
+						for (let v = 0; v < imagenes.length; v++) {
+							let img = imagenes[v];
+							objetoImagenes[v+1] = img.trim();
 						}
 					}
 					productoObject.imagenes = objetoImagenes;

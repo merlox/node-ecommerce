@@ -1162,3 +1162,33 @@ Puedo poner hasta 5 tipos diferentes de minislider para sugerir productos a los 
 Sin embargo, cuando hablamos de los objetivos de una página web, el sugerir productos no es la prioridad máxima. La prioridad máxima es en facilitar la compra con un diseño amigable, entendible, rápido y eficiente para llegar a comprar en el mínimo numero de clicks posibles. Mi objetivo es pasar de mirar a llegar a la página de compra en 3 clicks. 1 para seleccionar el producto, otro para añadirlo a la cesta o comprarlo directamente y otro para ir a la página de pago.
 
 Por eso voy a incluir un botón debajo del de "Añadir a la cesta" que diga "Comprar ahora" para añadirlo a la cesta e inmediatamente ir a la página de pago.
+
+### Día 61
+
+He lanzado la aplicación a producción después de multiples mejoras. Ahora está en un servidor ec2 de aws amazon con un servidor nginx que cachea los archivos 168 horas para cargar muchísimo más rápido los archivos estáticos css, js, jpg y png.
+
+También he reparado múltiples bugs como que los productos en borrador aparecían en el frontened.
+
+Ahora es cuestión de crear una nueva funcionalidad para importar productos mediante archivo csv. Es una forma común de cargar grandes cantidades de productos en poco tiempo con un solo archivo excell ordenado.
+
+Pondré un botón debajo de la sección de productos del panel de administración y crearé una nueva función capaz de importar los productos.
+
+Aparte, estoy trabajando en la empresa aiden global por las tardes y aprendiendo mucho a la vez que voy creando un porfolio excelente. Éste es un vídeo que me fue muy útil en el que enseñan a modificar las templates de woocommerce para diseñarlas a tu gusto editando el functions.php de tu child theme:
+
+- https://www.youtube.com/watch?v=JHN7viKRxbQ
+
+De momento me voy a duchar y la app está funcionando muy bien.
+
+A continuación, una serie de recursos que me han ayudado muchísimo:
+
+- Vídeo de como usar nginx rápidamente: https://www.youtube.com/watch?v=FJrs0Ar9asY
+- Vídeo de como lanzar aplicaciones nodejs en amazon ec2: https://www.youtube.com/watch?v=WxhFq64FQzA
+- Breve vídeo para usar forever en nodejs y que se reinicie cada vez que se cuelgue: https://www.youtube.com/watch?v=P4mT5Tbx_KE&t=9s
+
+### Día 62
+
+Hoy he creado el sistema para importar productos mediante archivos csv. El modelo de csv es un archivo excel que he configurado a mi gusto para tener información importante que no se mostrará en el producto final.
+
+He tenido que recrear el sistema de almacenamiento de imágenes porque antes se guardaban las imágenes en uploads/ y dentro de una carpeta con el nombre del producto se metían las imágenes. Ahora no, ahora se guardan todas desordenadas en la carpeta uploads. Lo hacía así por temas de rendimiento, porque en lugar de buscar entre 1000 imagenes tendría que buscar entre 100 directorios. Resultó no ser un modelo facil de trabajar y no valió la pena complicamiento para poco cambio de rendimiento.
+
+Esto me permite que pueda poner las imágenes en cualquier sitio y que el programa lo busque con facilidad. También puedo crear un widget en el que mostrar y almacenar las imágenes a lo wordpress.

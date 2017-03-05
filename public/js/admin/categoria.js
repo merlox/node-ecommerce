@@ -37,21 +37,21 @@ function guardarCategoria(){
   id('contenedor-categoria-add').style.display = 'none';
   id('nueva-categoria').value = '';
 };
-//Para poner el atributo selected="selected" en el option seleccionado del seleccionado de categorias
-function actualizarCategoriaSeleccionada(that){
-  let select = q('#producto-categorias');
-  for (var i = 0; i < select.length; i++) {
-    let option = select[i];
-    //Quitamos el selected actual
-    if(option.hasAttribute('selected')){
-      q('#producto-categorias').children[i].removeAttribute('selected');
-    }
-    //Ponemos el nuevo selected si es el que hemos seleccionado
-    if(option.innerHTML === that.target.value){
-      q('#producto-categorias').children[i].setAttribute('selected', 'selected');
-    }
-  }
-};
+// Deprecated: Para poner el atributo selected="selected" en el option seleccionado del seleccionado de categorias
+// function actualizarCategoriaSeleccionada(that){
+//   let select = q('#producto-categorias');
+//   for (var i = 0; i < select.length; i++) {
+//     let option = select[i];
+//     //Quitamos el selected actual
+//     if(option.hasAttribute('selected')){
+//       q('#producto-categorias').children[i].removeAttribute('selected');
+//     }
+//     //Ponemos el nuevo selected si es el que hemos seleccionado
+//     if(option.innerHTML === that.target.value){
+//       q('#producto-categorias').children[i].setAttribute('selected', 'selected');
+//     }
+//   }
+// };
 
 id('button-activar-nueva-categoria').addEventListener('click', () => {
   id('contenedor-elementos-categoria').style.display = 'none';
@@ -69,8 +69,4 @@ id('button-categoria-borrar').addEventListener('click', () => {
   //Splice elimina el elemento seleccionado del array original Y devuelve el elemento borrado
   arrayCategorias.splice(id('producto-categorias').selectedIndex, 1);
   id('producto-categorias').remove(id('producto-categorias').selectedIndex);
-});
-//Actualizamos la categoría seleccionada poniendole el atributo selected="selected"
-id('producto-categorias').addEventListener('change', (e) => {
-  actualizarCategoriaSeleccionada(e);
 });

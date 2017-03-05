@@ -189,6 +189,10 @@ PRODUCTOS
 	left: 0;
 	overflow-y: auto;
 }
+.success-mensaje{
+  text-align: center;
+  color: green;
+}
 .contenedor-producto{
 	border-bottom:  1px solid lightgrey;
 	display: flex;
@@ -245,6 +249,12 @@ PRODUCTOS
 }
 #contenedor-opciones-productos{
 	display: flex;
+}
+#contenedor-importar-productos{
+  display: flex;
+}
+#contenedor-importar-productos input{
+  width: 181px;
 }
 #contenedor-categorias{
 	width: 40%;

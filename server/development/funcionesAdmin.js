@@ -15,7 +15,7 @@ function insertarUnProducto(imagenes, insideDir, cb){
 	console.log('InsertarProducto, development');
 	let titulo = lorem({count: 10, units: 'words', format: 'plain'});
 	let descripcion = lorem({count: 10, units: 'sentences', format: 'plain'});
-	let permalink = encodeURI(titulo);
+	let permalink = encodeURIComponent(titulo);
 	let precioRandom = Math.floor(Math.random() * (100 - 5 + 1)) + 5;
 	precioRandom += 0.99;
 
@@ -34,7 +34,7 @@ function insertarUnProducto(imagenes, insideDir, cb){
 	console.log('Insertando: '+titulo);
 
 	//Copiar imagenes
-	let end = path.join(__dirname, '../uploads/', permalink);
+	let end = path.join(__dirname, '../uploads/');
 	fs.stat(end, (err, stats) => {
 		if(err){
 			if(err.code == 'ENOENT'){
@@ -99,36 +99,22 @@ function insertarProductos(){
 function borrarTodosProductos(){
 	console.log('BorrarTodosProductos, development');
 	let uploads = path.join(__dirname, '../uploads/');
-	fs.readdir(uploads, (err, uploadsFolder) => {
-		uploadsFolder.forEach((folder) => {
-			if(folder != '_Slider'){
-				fs.readdir(path.join(uploads, folder), (err, files) => {
-					if(err) return console.log(err);
-					if(files.length == 0){
-						fs.rmdir(path.join(uploads, folder), (err) => {
-							if(err) return console.log(err);
-						});
-					}else{
-						for(let o = 0; o < files.length; o++){
-							let file = files[o];
-							let fileLocation = path.join(uploads, folder, file);
-							fs.unlink(fileLocation, (err) => {
-								if(err) return console.log(err);
-								if(o >= files.length - 1){
-									fs.rmdir(path.join(uploads, folder), (err) => {
-										if(err) return console.log(err);
-									});
-								}
-							});
-						}
-					}
-				});
-			}
-		});
+	fs.readdir(uploads, (err, files) => {
+		if(err) return console.log(err);
+		for(let o = 0; o < files.length; o++){
+			let file = files[o];
+			let fileLocation = path.join(uploads, file);
+			fs.unlink(fileLocation, (err) => {
+				if(err) console.log(err);
+			});
+		}
 	});
 	db.collection('productos').remove({}, (err, numberRemoved) => {
-		if(err) return console.log(err);
-		return console.log('Se han borrado: '+numberRemoved+' productos.');
+		if(err){
+			console.log(err);
+		}else{
+			console.log('Se han borrado: '+numberRemoved+' productos.');
+		}
 	});
 };
 

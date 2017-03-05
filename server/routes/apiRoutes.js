@@ -15,8 +15,7 @@ let functions = require('./../functions.js'),
 let requestProcessing = false;
 
 api.get('/get-images/:permalink', (req, res) => {
-  functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURIComponent(req.params.permalink)), 
-    path.join(__dirname, '../../public/', '/public-uploads/'), (err) => {
+  functions.copyImagesProducto(encodeURIComponent(req.params.permalink), err => {
     if(err) console.log(err);
     res.send('Images copied');
   });
@@ -91,8 +90,7 @@ api.get('/get-single-product/:permalink', (req, res) => {
       return res.send(response);
     }
     response.product = result; //Ponemos el producto
-    functions.copyDirectory(path.join(__dirname, '../uploads/', encodeURIComponent(req.params.permalink)), 
-        path.join(__dirname, '../../public/public-uploads/'), (err) => {
+    functions.copyImagesProducto(encodeURIComponent(req.params.permalink), err => {
       if(err) response.error = err; //Ponemos el error
       return res.send(response);
     });
@@ -166,22 +164,23 @@ api.post('/upload-product', (req, res) => {
     'visitas': 0,
     'vendidos': 0
   };
-  functions.uploadPublicImages(req.body.imagenes, req.body.permalink.toLowerCase(), (err) => {
+  functions.uploadPublicImages(req.body.imagenes, err => {
     if(err){
-      responseObject.error = 'Error, las imágenes no se han subido subido correctamente, inténtalo de nuevo.';
+      responseObject.error = err;
       return res.send(responseObject);  
-    }
-  });
-  functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, (err) => {
-    if(err){
-      responseObject.error = 'Error, no se pudo guardar el producto en la base de datos, inténtalo de nuevo.';
-      return res.send(responseObject);
-    }else{
-      responseObject.success = 'Producto guardado satisfactoriamente';
-      return res.send(responseObject);
-    }
+    }  
+    functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, err => {
+      if(err){
+        responseObject.error = 'Error, no se pudo guardar el producto en la base de datos, inténtalo de nuevo.';
+        return res.send(responseObject);
+      }else{
+        responseObject.success = 'Producto guardado satisfactoriamente';
+        return res.send(responseObject);
+      }
+    });
   });
 });
+
 api.post('/guardar-busqueda', (req, res) => {
   functions.guardarBusqueda(req.body.data, (err) => {
     if(err) console.log(err);
@@ -503,6 +502,13 @@ api.get('/get-slider-urls', (req, res) => {
     if(err) response.error = err;
     response.urls = objectUrls;
     res.send(response);
+  });
+});
+
+api.post('/subir-productos-csv', (req, res) => {
+  functions.subirCSV(req.body.data, (err) => {
+    if(err) return res.send(err);
+    res.send(null);
   });
 });
 

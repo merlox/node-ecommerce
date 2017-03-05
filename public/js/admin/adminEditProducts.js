@@ -234,6 +234,108 @@ function crearPaginacion(){
 		}
 	});
 };
+//Para importar muchos productos con csv
+function crearJSONCSV(file, cb){
+	let productos = []; //Array de objetos con cada producto
+	if(file.type.match(/application\/vnd.ms-excel/)){
+		let reader = new FileReader(); //Creamos file reader
+		reader.readAsText(file); //Leemos el csv as text
+		reader.addEventListener('load', () => {
+			let lineas = reader.result.split('\n');
+			let arrayPermalinks = []; //Para comprobar que no se repitan permalinks en todo el csv
+			let counter = 0;
+			//Ignoramos la primera líneas[0] porque es la descriptiva sin valores
+			for(let i = 1; i < lineas.length; i++){
+				let celdas = lineas[i].split(';');
+				let productoObject = {
+					'titulo': null,
+					'permalink': null,
+					'precio': null,
+					'descripcion': null,
+					'categoria': null,
+					'atributos': {}, // atributos = {'attr1': [1,2,3], 'attr2': ['a', 'b']}
+					'imagenes': {}, // imagenes = {1: 'imagen.jpg', 2: 'imagens2.jpg'} Se envían vacías
+					'publicado': false
+				};
+				let permalinkInsertado = false;
+				let counterCalculado = false;
+				if(celdas.length > 1){
+					productoObject.titulo = celdas[0];
+					productoObject.precio = parseFloat(celdas[1].replace(',', '.'));
+					productoObject.descripcion = celdas[3];
+					productoObject.categoria = celdas[4];
+					//Imágenes en la celda 7
+					let objetoImagenes = {};
+					let imagenes = celdas[7].split(',');
+					if(imagenes.length > 1){
+						for (var i = 0; i < imagenes.length; i++) {
+							let img = imagenes[i];
+							objetoImagenes[i+1] = img.trim();
+						}
+					}
+					productoObject.imagenes = objetoImagenes;
+					//Del permalink.js
+					let permalink = replaceBadCharacters(productoObject.titulo);
+					checkPermalinkState(permalink, estaDisponible => { //True si está disponible.
+						if(!estaDisponible) permalink = generarPermalinkUnico(permalink);
+						//Comprobamos que no esté repetido el mismo permalink en los productos que vamos a subir
+						for (let z = 0; z < arrayPermalinks.length; z++) {
+							if(permalink === arrayPermalinks[z]){
+								permalink = generarPermalinkUnico(permalink);
+							}
+						}
+
+						productoObject.permalink = permalink;
+						if(!permalinkInsertado){ //Insertar una vez por linea
+							arrayPermalinks.push(permalink);
+							permalinkInsertado = true;
+						}
+
+						//Atributo
+						let keyAtributos = celdas[5].split(','); //Split devuelve 1 resultado si no hay coma
+						let valoresAtributos = celdas[6].split(',');
+						if(keyAtributos[0] != ''){ //Si hay atributos recorremos todos los atributos
+							for(let x = 0; x < keyAtributos.length; x++){
+								let valoresAtributoSeleccionado = valoresAtributos[x].split('|');
+								valoresAtributoSeleccionado = valoresAtributoSeleccionado.map(e => {
+									return e.trim();
+								});
+								productoObject.atributos[keyAtributos[x].trim()] = valoresAtributoSeleccionado;
+							}
+						}
+						if(!counterCalculado) {
+							counter++;
+							counterCalculado = true;
+						}
+						productos.push(productoObject);
+						//lineas length - 1 porque la primera es la descripción de cada columna
+						//Si es la última celda de la última fila devolver el callback
+						if(counter >= lineas.length-1) //Si se han completado todas las líneas
+							done();
+					});
+				}else{
+					counter++;
+					if(counter >= lineas.length-1) //Si se han completado todas las líneas
+						done();
+				}
+			}
+		});
+	}else{
+		console.log('El archivo no es un csv, comprueba que sea csv');
+		let mensajeErrorHTML = `El archivo no es csv, comprueba que sea csv.<br/>
+	    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+	    q('.mensaje-error-subida').style.display = 'block';
+	    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+	}
+	let callbackCalled = false;
+	function done(){
+		if(!callbackCalled){
+			callbackCalled = true;
+			return cb(productos);
+		}
+	};
+};
+
 //Animar el seccion preview para añadir un nuevo producto
 id('button-nuevo-producto').addEventListener('click', () => {
 	esperarInteraccionMenu = false;
@@ -265,6 +367,26 @@ id('overlay-black').addEventListener('click', () => {
 id('limitar-productos').addEventListener('change', (e) => {
 	//Establecemos los productos por pagina segun lo seleccionado
 	productosPorPagina = parseInt(id('limitar-productos').children[e.target.selectedIndex].innerHTML);
-	crearPaginacion()
+	crearPaginacion();
 	crearCajasProductos();
+});
+q('#button-importar-csv:not([disabled])').addEventListener('click', () => {
+	q('#button-importar-csv').setAttribute('disabled', 'disabled');
+	crearJSONCSV(q('input[name=importar-csv-productos]').files[0], json => {
+		q('#button-importar-csv').removeAttribute('disabled');
+
+		httpPost('/api/subir-productos-csv', json, err => {
+			if(err) {
+				let mensajeErrorHTML = `${err}<br/>
+			    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+			    q('.mensaje-error-subida').style.display = 'block';
+			    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+			}else{
+				let success = `<p class="success-mensaje">Los productos se han publicado correctamente<p>`;
+				q('#contenedor-importar-productos').insertAdjacentHTML('afterend', success);
+				crearPaginacion();
+				crearCajasProductos();
+			}
+		});
+	});
 });

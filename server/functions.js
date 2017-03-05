@@ -150,7 +150,6 @@ function buscarFiltrarProductosCategoria(categoria, pagina, filtros, cb){
     'titulo': true,
     'categoria': true
   }).skip(pagina > 0 ? (pagina-1)*30 : 0).toArray((err, results) => {
-    debugger;
     if(err){
       return cb('Error, could not find those products', null);
     }else{
@@ -197,44 +196,23 @@ function createUpdateProduct(permalink, productData, cb){
   });
 };
 //Funcion para subir las imagenes publicas al servidor en /uploads
-function uploadPublicImages(objectImages, permalinkName, cb){
+function uploadPublicImages(objectImages, cb){
   console.log('UploadPublicImages, functions.js');
   let publicUploads = path.join(__dirname, '../public/public-uploads/');
   let serverUploads = path.join(__dirname, '/uploads/');
   let objectImagenesSize = Object.keys(objectImages).length;
   let counter = 0;
-  permalinkName = encodeURIComponent(permalinkName);
-  fs.stat(path.join(serverUploads, permalinkName), (err, stats) => {
-    if(err){
-      fs.mkdirSync(path.join(serverUploads, permalinkName));
-      copy();
-    }
-    else{
-      //Delete the images in the folder
-      fs.readdir(path.join(serverUploads, permalinkName), (err, files) => {
-        if(err) console.log('Could not read the folder: '+path.join(serverUploads, permalinkName)+' to delete their images '+err);
-        files.forEach((file) => {
-          fs.unlink(path.join(serverUploads, permalinkName, file), (err) => {
-            if(err) console.log('Could not delete the file: '+path.join(serverUploads, permalinkName, file)+' '+err);
-          });
-        });
-        copy();
-      });
-    }
-    function copy(){
-      for(let key in objectImages){
-        counter++;
-        copyFile(path.join(publicUploads, objectImages[key]), path.join(serverUploads, permalinkName), objectImages[key], (err) => {
-          if(err){
-            return cb('Could not copy the file: '+objectImages[key]+' to the server, please try again: '+err);
-          }
-        });
-        if(counter == objectImagenesSize){
-          return cb(null);
-        }
+  let error = null;
+  for(let key in objectImages){
+    copyFile(path.join(publicUploads, objectImages[key]), serverUploads, objectImages[key], err => {
+      counter++;
+      if(err) error = `No se ha podido copiar la imágen ${objectImages[key]} al servidor, inténtelo de nuevo.`;
+      if(counter >= objectImagenesSize){
+        if(error) return cb(error);
+        cb(null);
       }
-    }
-  });
+    });
+  }
 };
 //Función para conseguir todos los productos y copiar la primera imagen de cada uno al public uploads
 function getAllProducts(imageLimit, page, filtroCategoria, callback){
@@ -265,25 +243,32 @@ function copyFirstImage(results, cb){
   console.log('Interna - CopyFirstImage, functions.js');
   let error = null;
   let counter = 0;
+  let folderServer = path.join(__dirname, '/uploads/');
+  let folderClient = path.join(__dirname, '../public/public-uploads/');
+
   if(results.length <= 0){
     console.log('No results found');
     return cb('No results found');
   }
   //Leemos todas las carpetas que coincidan en este for
   for(let i = 0; i<results.length; i++){
-    let folderServer = path.join(__dirname, '/uploads/', results[i].permalink);
-    let folderClient = path.join(__dirname, '../public/public-uploads/');
     //Comprobamos que exista el directorio
     fs.stat(folderServer, (err, stats) => {
       if(err){      
-        console.log(`El directorio: ${folderServer} no existe para el producto: "${results[i].titulo}".`);
-        error = `El directorio: ${folderServer} no existe para el producto: "${results[i].titulo}".`;
-        done();
+        if(err.code === 'ENOENT'){
+          fs.mkdir(folderServer, err => {
+            if(err) error = '#3 Error creando el directorio server/uploads';
+          });
+        }else{
+          error = '#4 Error creando el directorio server/uploads';
+          done();
+        }
       }else{
         //1. Leemos el directorio
         fs.readdir(folderServer, (err, imagesInFolder) => {
           if(err) {
             error = '#1 Error copiando las imágenes al cliente.';
+            done();
           }
           //2. Recorremos las imagenes del directorio
           for(let f = 0; f<imagesInFolder.length; f++){
@@ -314,12 +299,13 @@ function copyFirstImage(results, cb){
   let callbackCalled = false;
   function done(){
     if(!callbackCalled){
+      callbackCalled = true;      
       if(error) return cb(error);
       cb(null);
     }
-    callbackCalled = true;
   }
 };
+//Borra el producto de la bd y sus imágenes
 function borrarProducto(permalink, cb){
   console.log('BorrarProducto, functions.js');
   permalink = encodeURIComponent(permalink);
@@ -329,42 +315,21 @@ function borrarProducto(permalink, cb){
     if(err){
       return cb('Error, could not find the product to delete');
     }
-    db.collection('productos').remove({
-      'permalink': permalink
-    }, (err, numberRemoved) => {
-      if(err){
-        console.log(err);
-        return cb('Error, could not delete the product');
-      }else{
-        console.log('Se ha borrado el producto: '+permalink+ 'con exito.');
-      }
-      //Borramos el directorio y todas sus imagenes
-      borrarDirectorio(permalink);
-      return cb(null);
-    });
-  });
-};
-//Funcion para borrar el directorio y todas sus imagenes
-function borrarDirectorio(permalink){
-  console.log('BorrarDirectorio, functions.js');
-  //El permalink ya está encoded de la funcion borrarProducto
-  let imagenesServer = path.join(__dirname, '/uploads/', permalink);
-  fs.readdir(imagenesServer, (err, files) => {
-    let i = 0;
-    if(err) console.log('Error, no se pudo leer el directorio '+imagenesServer+': '+err);
-    if(files.length != null){
-      files.forEach((file) => {
-        fs.unlink(path.join(imagenesServer, file), (err) => {
-          if(err) console.log('Error, no se pudo borrar la imagen '+path.join(imagenesServer, file)+'del servidor');
-          i++;
-        });
+    //Borramos el directorio y todas sus imagenes
+    borrarImagenesProducto(permalink, err => {
+      if(err) console.log(err); //Aunque no se hayan podido eliminar las imágenes, sigue eliminando el producto de la db
+      db.collection('productos').remove({
+        'permalink': permalink
+      }, err => {
+        if(err){
+          console.log(err);
+          return cb('Error, could not delete the product');
+        }else{
+          console.log('Se ha borrado el producto: '+permalink+ 'con exito.');
+          cb(null);
+        }
       });
-      if(i >= files.length){
-        fs.rmdir(imagenesServer, (err) => {
-          if(err) console.log('Error, no se pudo borrar el dir '+imagenesServer+': '+err);
-        });
-      }
-    }
+    });
   });
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
@@ -506,7 +471,7 @@ function guardarBusqueda(busqueda, cb){
 function guardarSliderImages(objectImages, cb){
   console.log('GuardarSliderImages, functions.js');
   let origin = path.join(__dirname, '../public/public-uploads/');
-  let end = path.join(__dirname, '/uploads/_Slider/');
+  let end = path.join(__dirname, '_Slider/');
   let tamañoObjectImages = Object.keys(objectImages.imagenes).length;
 
   borrarSliderFolder((err) => {
@@ -527,11 +492,9 @@ function guardarSliderImages(objectImages, cb){
       'urls': objectImages.urls
     }, {
       'upsert': true
-    }, (err, countFilesModified, result) => {      
+    }, err => {      
       if(err) return cb('Err, could not save the slider images to the db: '+err);
-      else{
-        return cb(null);
-      }
+      cb(null);
     });
   });
 
@@ -571,7 +534,7 @@ function guardarSliderImages(objectImages, cb){
 function getSlider(doCopy, cb){
   console.log('GetSlider, functions.js');
   if(doCopy){
-    let originDir = path.join(__dirname, '/uploads/_Slider/');
+    let originDir = path.join(__dirname, '_Slider/');
     fs.readdir(originDir, (err, files) => {
       if(err) return cb('Error getting slider, try again.', null);
       let images = files;
@@ -588,7 +551,7 @@ function getSlider(doCopy, cb){
       });
     });
   }else{
-    let originDir = path.join(__dirname, '/uploads/_Slider/');
+    let originDir = path.join(__dirname, '_Slider/');
     fs.readdir(originDir, (err, files) => {
       if(err) return cb('Error copying the images.', null);
       return cb(null, files);
@@ -1173,7 +1136,7 @@ function crearCesta(cesta, cb){
       results[index]['cantidad'] = cantidad;
       delete results[index].imagenes;
       //Le pasamos la imágen del producto al cliente
-      let origen = path.join(__dirname, 'uploads/', objetoProducto.permalink, nombreImagen);
+      let origen = path.join(__dirname, 'uploads/', nombreImagen);
       let end = path.join(__dirname, '../public/public-uploads/');
       copyFile(origen, end, nombreImagen, (err) => {    
         if(err) error = 'No se pudo copiar la imagen de ese producto de la cesta.';
@@ -1415,7 +1378,7 @@ function conseguirFacturasCliente(req, cb){
     //Se copian las imágenes mientras se carga la página con los datos
     facturas.forEach(factura => {
       factura.productos.forEach(producto => {
-        copyFile(path.join(__dirname, 'uploads/', producto.permalink, producto.imagen), path.join(__dirname, '../public/public-uploads'), producto.imagen, err => {
+        copyFile(path.join(__dirname, 'uploads/', producto.imagen), path.join(__dirname, '../public/public-uploads'), producto.imagen, err => {
           if(err) console.log(err);
         });
       });
@@ -1601,7 +1564,7 @@ function copiarImagenesProductos(arrayProductos, cb){
   arrayProductos.forEach(producto => {
     for(let key in producto.imagenes){
       let imagen = producto.imagenes[key];
-      let origin = path.join(__dirname, 'uploads/', producto.permalink, imagen);
+      let origin = path.join(__dirname, 'uploads/', imagen);
       copyFile(origin, end, imagen, err => {
         counter++;
         if(err) error = `Error copiando la imagen ${imagen} del producto ${producto.titulo}`;
@@ -1622,6 +1585,83 @@ function getSliderUrls(cb){
     cb(null, result.urls);
   });
 };
+//Sube cada producto a la bd y crea una carpeta vacía con el permalink correspondiente de cada uno en server/csv
+function subirCSV(arrayProductos, cb){
+  console.log('SubirCSV, functions.js');
+  if(arrayProductos.length <= 0) return cb('#7 No se han recibido productos');
+
+  let arrayProductosCopia = arrayProductos;
+  let permalinks = arrayProductos.map(e => {return e.permalink});
+  arrayProductos = arrayProductosCopia;
+
+  db.collection('productos').find({
+    'permalink': {
+      $in: permalinks
+    }
+  }).toArray((err, results) => {
+    if(err) return cb('#8 Error, comprobando productos repetidos.');
+    if(results && results.length > 0) return cb('#9 Error, algunos productos ya están subidos, intentalo de nuevo.');
+    db.collection('productos').insert(arrayProductos, err => {
+      if(err) return cb(`#1 Error subiendo los productos.`);
+      cb(null);
+    });
+  });
+};
+//Borrar las imagenes de 1 producto dado el permalink y devuelve cb(null) o cb(error)
+function borrarImagenesProducto(permalink, cb){
+  console.log('BorrarImagenesProducto, functions.js');
+  db.collection('productos').findOne({
+    'permalink': permalink
+  }, (err, result) => {
+    if(err) return cb(`#1 Error borrando las imagenes del producto ${permalink}`);
+    if(!result) return cb(`#2 Error, no se ha encontrado el producto ${permalink} para borrar sus imágenes`);
+
+    let counter = 0;
+    let error = null;
+    let tamanoImages = Object.keys(result.imagenes).length;
+    for(let key in result.imagenes){
+      fs.unlink(path.join(__dirname, 'uploads', result.imagenes[key]), err => {
+        counter++;
+        if(err) error = `#4 Error borrando la imagen ${result.imagenes[key]}`;
+        if(counter >= tamanoImages){
+          if(error) return cb(error);
+          cb(null);
+        }
+      });
+    };
+  });
+};
+//Copia las imágenes al public uploads dado el permalink. El cb es error o null.
+function copyImagesProducto(permalink, cb){
+  console.log('CopyImagesProducto, functions.js');
+  db.collection('productos').findOne({
+    'permalink': permalink
+  }, (err, producto) => {
+    if(err) return cb('#1 Error buscando el producto a copiar las imágenes.');
+    if(!producto) return cb(`#2 El producto "${permalink}" no se ha encontrado.`);
+    let tamanoImages = Object.keys(producto.imagenes).length;
+    let counter = 0;
+    let error = null;
+
+    if(tamanoImages <= 0) return cb(`#3 No hay imágenes para el producto ${producto.titulo}`);
+    for(let key in producto.imagenes){
+      copyFile(path.join(__dirname, 'uploads', producto.imagenes[key]), 
+        path.join(__dirname, '../public/public-uploads'), producto.imagenes[key], err => {
+
+        counter++;
+        if(err) error = `#4 Error copiando la imagen: ${producto.imagenes[key]}`;
+        if(counter >= tamanoImages){
+          if(error) {
+            console.log(error);
+            return cb(error);
+          }
+          console.log('Done');
+          cb(null);
+        }
+      });
+    }
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.copyFile = copyFile;
@@ -1632,7 +1672,6 @@ exports.getAllProducts = getAllProducts;
 exports.borrarProducto = borrarProducto;
 exports.createUpdateProduct = createUpdateProduct;
 exports.uploadPublicImages = uploadPublicImages;
-exports.borrarDirectorio = borrarDirectorio;
 exports.buscarProductos = buscarProductos;
 exports.guardarBusqueda = guardarBusqueda;
 exports.guardarSliderImages = guardarSliderImages;
@@ -1669,3 +1708,6 @@ exports.enviarMensajeContacto = enviarMensajeContacto;
 exports.guardarVisitadoUsuario = guardarVisitadoUsuario;
 exports.copiarImagenesProductos = copiarImagenesProductos;
 exports.getSliderUrls = getSliderUrls;
+exports.subirCSV = subirCSV;
+exports.borrarImagenesProducto = borrarImagenesProducto;
+exports.copyImagesProducto = copyImagesProducto;

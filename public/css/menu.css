@@ -8,6 +8,7 @@ GENERALES
 	padding: 0 80px;
 	height: 70px;
 	background-color: #000420;
+	background-image: linear-gradient(161deg, black, #010835);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -33,6 +34,7 @@ a#logo{
 	font-size: 37pt;
 	line-height: initial;
 	font-family: 'open sans condensed';
+	width: 100px;
 }
 #toggle-menu-responsive{
 	display: none;

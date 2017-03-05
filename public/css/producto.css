@@ -52,14 +52,19 @@ PRODUCT INFORMATION
 #contenedor-informacion-producto{
 	width: 40%;
 }
+#producto-categoria{
+	margin-bottom: 15px;
+}
 #producto-categoria a{
 	text-decoration: none;
+	color: grey;
+	font-style: italic;
 }
 #producto-categoria a:hover{
 	text-decoration: underline;
 }
 #producto-title{
-	margin-top: 0;
+	margin: 0;
 	text-transform: capitalize;
 }
 #producto-descripcion-fade{

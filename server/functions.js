@@ -1613,12 +1613,14 @@ function borrarImagenesProducto(permalink, cb){
   db.collection('productos').findOne({
     'permalink': permalink
   }, (err, result) => {
+    console.log(result);
     if(err) return cb(`#1 Error borrando las imagenes del producto ${permalink}`);
     if(!result) return cb(`#2 Error, no se ha encontrado el producto ${permalink} para borrar sus imágenes`);
 
     let counter = 0;
     let error = null;
     let tamanoImages = Object.keys(result.imagenes).length;
+    if(tamanoImages <= 0) return cb(`#5 El producto ${result.titulo} no tiene imágenes.`);
     for(let key in result.imagenes){
       fs.unlink(path.join(__dirname, 'uploads', result.imagenes[key]), err => {
         counter++;

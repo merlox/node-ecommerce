@@ -101,8 +101,7 @@ api.get('/borrar-producto/:permalink', (req, res) => {
     if(err){
       console.log(err);
       return res.send(err);
-    }
-    else return res.send(true);
+    }else return res.send(true);
   });
 });
 //Para upload las imagenes al public uploads

@@ -109,12 +109,10 @@ function loadFullProduct(productPermalink){
 }
 function borrarProducto(productPermalink){
 	httpGet('/api/borrar-producto/'+productPermalink, (success) => {
-		if(success){
-			//Funcion de upload.js
-			resetAllProductData();
-			id('contenedor-productos').innerHTML = '';
-			crearCajasProductos();
-		}
+		//Funcion de upload.js
+		resetAllProductData();
+		id('contenedor-productos').innerHTML = '';
+		crearCajasProductos();
 	});
 };
 //Funcion para crear el dom del widget atributos pasandole el objeto.

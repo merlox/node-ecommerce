@@ -41,7 +41,7 @@ function crearPaginacion(){
 };
 //Para filtrar los productos dado el rango de precios
 function filtrarPrecio(min, max, pageActual){
-	let url = `/api/filter-categoria?categoria=${window.location.pathname.substring(1)}&pag=${pageActual}&preciomin=${min}&preciomax=${max}`;
+	let url = `/api/filter-categoria?categoria=${window.location.pathname.substring(3)}&pag=${pageActual}&preciomin=${min}&preciomax=${max}`;
 	let mensajeCargando = q('.mensaje-cargando');
 	mensajeCargando.style.display = 'block';
 	httpGet(url, (data) => {
@@ -51,6 +51,11 @@ function filtrarPrecio(min, max, pageActual){
 		let products = data.productos;
 		let productsHtml = '';
 		let header = q('#header-productos').outerHTML;
+		if(!products){
+			q('.mensaje-resultados').innerHTML = 
+				`No se han encontrado productos para ese rango de precios. Mostrando todos.`;
+			return;
+		}
 		for(let i = 0; i < products.length; i++){
 			let product = products[i];	
 			productsHtml += `<div class="producto">

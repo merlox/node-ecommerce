@@ -93,6 +93,7 @@ BUY SIDEBAR
 */
 #contenedor-comprar-producto{
 	width: 15%;
+	padding: 10px;
 }
 #contenedor-input-cantidad{
 	display: flex;

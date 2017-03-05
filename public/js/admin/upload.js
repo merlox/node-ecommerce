@@ -39,17 +39,17 @@ function guardarPublicarProducto(publicar){
   let categoriasReq = new XMLHttpRequest();
   categoriasReq.open('POST', '/api/guardar-categorias');
   categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-  categoriasReq.onreadystatechange = () => {
+  categoriasReq.addEventListener('readystatechange', () => {
     if(categoriasReq.readyState == XMLHttpRequest.DONE){
       console.log('Categorias guardadas.');
     }
-  };
+  });
   categoriasReq.send(JSON.stringify(arrayCategorias));
 
   let request = new XMLHttpRequest();
   request.open('POST', '/api/upload-product');
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  request.onreadystatechange = () => {
+  request.addEventListener('readystatechange', () => {
     if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
       let responseObject = JSON.parse(request.responseText);
       if(responseObject.error){
@@ -59,6 +59,8 @@ function guardarPublicarProducto(publicar){
         q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
         return;
       }
+      q('#image-upload-input').value = ''; //Reseteamos el input de imagenes
+      q('#imagen-principal').style.display = 'block';
       resetAllProductData();
       //Funcion del editProducts.js para generar las cajas de productos
       crearCajasProductos();
@@ -71,9 +73,11 @@ function guardarPublicarProducto(publicar){
         q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
         return;
       }
+      q('#image-upload-input').value = ''; //Reseteamos el input de imagenes
+      q('#imagen-principal').style.display = 'block';
       resetAllProductData();
     }
-  };
+  });
   request.send(JSON.stringify(informacionProducto));
 };
 //Función para comprobar que no haya campos vacíos al subir un producto

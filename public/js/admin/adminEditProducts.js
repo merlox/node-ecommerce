@@ -265,6 +265,10 @@ function crearJSONCSV(file, cb){
 					//Imágenes en la celda 7
 					let objetoImagenes = {};
 					let imagenes = celdas[7].split(',');
+					if(imagenes && imagenes[0] != '' && !/.*(\.jpe?g|\.png)/.test(imagenes[0])){
+						//Si no son imágenes retornar
+						done(`La celda de imágenes no es la correcta.`);
+					}
 					if(imagenes.length > 1){
 						for (let v = 0; v < imagenes.length; v++) {
 							let img = imagenes[v];
@@ -326,13 +330,38 @@ function crearJSONCSV(file, cb){
 	    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
 	}
 	let callbackCalled = false;
-	function done(){
+	function done(err){
 		if(!callbackCalled){
 			callbackCalled = true;
-			return cb(productos);
+			if(err) return cb(err, productos);
+			return cb(null, productos);
 		}
 	};
 };
+//Envia el csv al servidor y publica los productos
+function enviarCSV(json){
+	httpPost('/api/subir-productos-csv', json, err => {
+		if(err) {
+			let mensajeErrorHTML = `${err}<br/>
+		    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+		    q('.mensaje-error-subida').style.display = 'block';
+		    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+		}else{
+			let success = `<p class="success-mensaje">Los productos se han publicado correctamente<p>`;
+			q('#contenedor-importar-productos').insertAdjacentHTML('afterend', success);
+			crearPaginacion();
+			crearCajasProductos();
+		}
+	});
+};
+
+//Ocultamos el mensaje de error al hacer click dondesea
+q('html').addEventListener('click', () => {
+	let mensajeError = q('.mensaje-error-subida');
+	if(mensajeError && mensajeError.style.display != 'none'){
+		q('.mensaje-error-subida').style.display = 'none';
+	}
+});
 
 //Animar el seccion preview para añadir un nuevo producto
 id('button-nuevo-producto').addEventListener('click', () => {
@@ -370,21 +399,15 @@ id('limitar-productos').addEventListener('change', (e) => {
 });
 q('#button-importar-csv:not([disabled])').addEventListener('click', () => {
 	q('#button-importar-csv').setAttribute('disabled', 'disabled');
-	crearJSONCSV(q('input[name=importar-csv-productos]').files[0], json => {
+	crearJSONCSV(q('input[name=importar-csv-productos]').files[0], (err, json) => {
 		q('#button-importar-csv').removeAttribute('disabled');
-
-		httpPost('/api/subir-productos-csv', json, err => {
-			if(err) {
-				let mensajeErrorHTML = `${err}<br/>
-			    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
-			    q('.mensaje-error-subida').style.display = 'block';
-			    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
-			}else{
-				let success = `<p class="success-mensaje">Los productos se han publicado correctamente<p>`;
-				q('#contenedor-importar-productos').insertAdjacentHTML('afterend', success);
-				crearPaginacion();
-				crearCajasProductos();
-			}
-		});
+		if(err){
+			let mensajeErrorHTML = `${err}<br/>
+		    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+		    q('.mensaje-error-subida').style.display = 'block';
+		    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+		    return;
+		}
+		enviarCSV(json);
 	});
 });

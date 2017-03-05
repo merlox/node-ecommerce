@@ -279,7 +279,7 @@ routes.get('/confirmar-email/:token', (req, res) => {
   });
 });
 
-routes.get('/:categoria', (req, res) => {
+routes.get('/d/:categoria', (req, res) => {
   let limite = 30;
   let pagina = req.query.pag;
   let error = null;

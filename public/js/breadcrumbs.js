@@ -5,11 +5,11 @@ let categoria = q('#producto-categoria a') ? q('#producto-categoria a').innerHTM
 if(titulo){
 	breadcrumbsHTML = `
 		<a href="/">Inicio</a>
-		<a href="/${categoria}">${categoria}</a>
+		<a href="/d/${categoria}">${categoria}</a>
 		<a href="/p/${permalink}">${titulo}</a>`;
 }else{
 	breadcrumbsHTML = `
 		<a href="/">Inicio</a>
-		<a href="/${categoria}">${categoria}</a>`;
+		<a href="/d/${categoria}">${categoria}</a>`;
 }
 q('#breadcrumbs').innerHTML = breadcrumbsHTML;

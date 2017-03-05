@@ -114,7 +114,8 @@ function buscarProductosCategoria(categoria, limite, pagina, cb){
     'categoria': {
       '$regex': categoria,
       '$options': 'i'
-    }
+    },
+    'publicado': true
   }, {
     '_id': false,
     'imagenes': true,
@@ -252,50 +253,36 @@ function copyFirstImage(results, cb){
     return cb('No results found');
   }
   //Leemos todas las carpetas que coincidan en este for
-  for(let i = 0; i<results.length; i++){
-    //Comprobamos que exista el directorio
-    fs.stat(folderServer, (err, stats) => {
-      if(err){      
-        if(err.code === 'ENOENT'){
-          fs.mkdir(folderServer, err => {
-            if(err) error = '#3 Error creando el directorio server/uploads';
-          });
-        }else{
-          error = '#4 Error creando el directorio server/uploads';
-          done();
-        }
-      }else{
-        //1. Leemos el directorio
-        fs.readdir(folderServer, (err, imagesInFolder) => {
-          if(err) {
-            error = '#1 Error copiando las imágenes al cliente.';
-            done();
-          }
-          //2. Recorremos las imagenes del directorio
-          for(let f = 0; f<imagesInFolder.length; f++){
-            //3. Si la imagen del directorio es la 1ª de la base de datos, copiarla, sino pasa a la siguiente
-            if(results[i].imagenes[1] == imagesInFolder[f]){
-              let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
-              copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
-                counter++;
-                if(err){
-                  error = '#2 Error copiando las imágenes al cliente.';
-                }
-                if(counter >= results.length){
-                  done();
-                }
-              });
-            }else{
-              counter++;
+  //1. Leemos el directorio
+  fs.readdir(folderServer, (err, imagesInFolder) => {
+    if(err) {
+      error = '#1 Error copiando las imágenes al cliente.';
+      done();
+    }
+    for(let i = 0; i<results.length; i++){
+      //2. Recorremos las imagenes del directorio
+      for(let f = 0; f<imagesInFolder.length; f++){
+
+        //3. Si la imagen del directorio es la 1ª de la base de datos, copiarla, sino pasa a la siguiente
+        if(results[i].imagenes[1] == imagesInFolder[f]){
+          let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
+          copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
+            counter++;
+            if(err){
+              error = '#2 Error copiando las imágenes al cliente.';
+              done();
             }
-          }
-          if(i >= results.length - 1 || counter >= results.length){
-            done();
-          }
-        });
+            if(counter >= results.length){
+              done();
+            }
+          });
+        }
       }
-    });
-  }
+      if(i >= results.length - 1 || counter >= results.length){
+        done();
+      }
+    }
+  });    
 
   let callbackCalled = false;
   function done(){

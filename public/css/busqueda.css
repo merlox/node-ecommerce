@@ -89,6 +89,9 @@ PRINCIPAL
 	display: none;
 	background-color: #0014D6;
 }
+.titulo-categoria{
+	text-transform: capitalize;
+}
 .producto{
 	width: 300px;
 	float: left;

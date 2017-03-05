@@ -24,12 +24,12 @@ window.addEventListener('load', () => {
 				if(i == 0){
 					htmlCategories = `<li onmouseenter="cambiarColorFlechaDepartamentos()"
 						onmouseleave="cambiarColorFlechaDepartamentos()">
-						<a href="/${categories[i]}">
+						<a href="/d/${categories[i]}">
 						${categories[i]}</a>
 					</li>`;
 				}else{
 					htmlCategories = `<li >
-						<a href="/${categories[i]}">
+						<a href="/d/${categories[i]}">
 						${categories[i]}</a>
 					</li>`;
 				}

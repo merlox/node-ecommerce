@@ -44,7 +44,7 @@ function Minislider(nombre, tipo, id){
 						<a href="/p/${producto.permalink}" title="${tituloOriginal}">
 							<img class="imagen-minislider" src="../public-uploads/${producto.imagenes[1]}" width="100%">
 						</a>
-						<a class="categoria-minislider" href="/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>						
+						<a class="categoria-minislider" href="/d/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>						
 						<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
 						<span class="precio-minislider">${parseFloat(producto.precio).toFixed(2)}€</span>
 					</div>`;

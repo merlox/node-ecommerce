@@ -109,16 +109,18 @@ BUY SIDEBAR
 	width: 100%;
 }
 .button-comprar-ahora{
-	background-image: linear-gradient(to top, #4454ca, #687bff);
-    color: white;
+    background-image: linear-gradient(to top, transparent, transparent);
+    background-color: transparent;
+    color: black;
+    border: 2px solid orange;
     width: 100%;
     margin-top: 10px;
 }
 .button-comprar-ahora:hover{
-	background-image: linear-gradient(to bottom, #4454ca, #687bff);
+	background-image: linear-gradient(to bottom, #f59f0a, #f59f0a);
 }
 .button-comprar-ahora:focus{
-	background-image: linear-gradient(to bottom, #192471, #1c2da5);
+	background-image: linear-gradient(to bottom, #DE910C, #D08708);	
 }
 /*
 

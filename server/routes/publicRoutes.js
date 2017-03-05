@@ -224,7 +224,7 @@ routes.get('/pago-completado', (req, res) => {
 });
 
 routes.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../public/images/logo.png'));
+  res.sendFile(path.join(__dirname, '../../public/images/favicon.svg'));
 });
 
 routes.get('/micuenta', (req, res) => {

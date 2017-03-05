@@ -46,6 +46,7 @@ MINISLIDER
 .categoria-minislider{
 	color: darkgrey;
 	text-decoration: none;
+	font-size: 10pt;
 }
 .categoria-minislider:hover{
 	color: blue;

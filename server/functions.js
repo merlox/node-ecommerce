@@ -597,14 +597,6 @@ function getMiniSlider(username, tipo, pagina, cb){
           return cb('Error, hay menos de 5 productos vistos.', null, null);
         let paginasTotales = userData.productosVistos.length/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
-        //userData.productosVistos son IDs de productos, hay que buscar los productos
-        // db.collection('productos').find({
-        //   '_id': {
-        //     '$in': userData.productosVistos
-        //   }
-        // }).toArray((err, results) => {
-        //   console.log(`Se han encontrado ${results.length} productos sin paginas.`);
-        // });
         
         db.collection('productos').find({
           '_id': {
@@ -619,10 +611,6 @@ function getMiniSlider(username, tipo, pagina, cb){
           "imagenes.1": true,
           "categoria": true
         }).skip(paginaSiguiente).limit(5).toArray((err, results) => {
-          // console.log(`Productos encontrados: ${results.length}`);
-          // console.log(`Página siguiente: ${paginaSiguiente}`);
-          // console.log(`Página actual: ${pagina}`);
-          // console.log(`Páginas totales: ${paginasTotales}`);
           if(err) return cb('Error buscando los productos vistos.', null, null);
           copiarImagenesProductos(results, err => {
             if(err) return cb(err, null, null);

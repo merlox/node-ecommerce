@@ -350,6 +350,10 @@ routes.get('/d/:categoria', (req, res) => {
   //Buscar los productos que coincidan con la busqueda y renderizar la página
 });
 
+routes.get('/favicon.ico', (req, res) => {
+  res.sendFile('../../public/images/favicon.png');
+});
+
 routes.get('/', (req, res) => {
   let dataObject = {
     'isError': null,

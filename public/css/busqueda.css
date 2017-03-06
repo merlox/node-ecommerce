@@ -29,7 +29,7 @@ SIDEBAR
 
 */
 #sidebar{
-	float: left;
+	width: 200px;
 	margin-top: 40px;
 	margin-left: 10px;
 }
@@ -81,20 +81,35 @@ SIDEBAR
 PRINCIPAL
 
 */
+.contenedor-total{
+	display: flex;
+	justify-content: center;
+}
 #contenedor-principal{
-	width: 900px;
-	margin: 0 auto;
+	width: calc(100% - 225px);
+	padding-left: 15px;
+    border-left: 1px solid lightgrey;
 }
 #responsive-filters{
 	display: none;
 	background-color: #0014D6;
 }
+.mensaje-resultados{
+	font-style: normal;
+    text-transform: uppercase;
+    font-size: 10pt;
+}
 .titulo-categoria{
-	text-transform: capitalize;
+	font-weight: 100;
+    text-transform: uppercase;
+    font-size: x-large;
+    font-family: 'open sans';
 }
 .producto{
-	width: 300px;
-	float: left;
+	width: calc(24% - 20px);
+	max-width: 300px;
+	display: inline-block;
+	margin-right: 20px;
 	height: 500px;
 }
 .paginacion{
@@ -141,13 +156,15 @@ span.pagina-activa{
 }
 .precio-producto{
 	font-family: 'open sans condensed';
-	color: red;
+	color: orangered;
 	font-size: 17pt;
 	display: block;
 }
 .categoria-producto{
-	color: lightgrey;
-	text-decoration: none;
+    color: darkgrey;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 9pt;
 }
 .categoria-producto:hover{
 	color: blue;

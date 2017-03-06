@@ -73,8 +73,7 @@ input, textarea{
     overflow: auto;
 }
 button, input[type=submit]{
-    background-color: orange;
-    background-image: linear-gradient(to bottom, #f5c60c, #f59f0a);
+    background-color: #ffcd72;
     border-radius: 5px;
     font-weight: bold;
     color: black;

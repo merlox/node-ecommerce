@@ -1,9 +1,7 @@
 'use strict';
-
 new Minislider('Vistos anteriormente', 'vistosAnteriormente', '#minislider-vistos-anteriormente');
 new Minislider('Otros clientes han comprado también...', 'compradosJuntos', '#minislider-comprados-juntos');
 new Minislider('Te pueden interesar', 'random', '#minislider-random');
-new Minislider('Novedades', 'recientes', '#minislider-recientes');
 
 //Para colocar la imagen secundaria activa como principal on hover
 let imagenSecundariaActivaAnterior = document.getElementsByClassName('contenedor-imagen-secundaria-individual')[0];

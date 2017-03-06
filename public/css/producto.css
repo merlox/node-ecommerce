@@ -6,7 +6,7 @@ GENERALES
 
 #contenedor-principal{
 	display: flex;
-	margin: 0 80px;
+	margin: 0 20px;
 	margin-top: 10px;
 	justify-content: center;
 }
@@ -19,7 +19,7 @@ IMAGES
 
 */
 #contenedor-imagenes{
-	width: 45%;
+	width: 60%;
 	display: flex;
 	justify-content: center;
 }
@@ -50,15 +50,16 @@ PRODUCT INFORMATION
 
 */
 #contenedor-informacion-producto{
-	width: 40%;
+	width: 25%;
 }
 #producto-categoria{
 	margin-bottom: 15px;
 }
 #producto-categoria a{
-	text-decoration: none;
-	color: grey;
-	font-style: italic;
+    text-decoration: none;
+    color: grey;
+    text-transform: uppercase;
+    font-size: 10pt;
 }
 #producto-categoria a:hover{
 	text-decoration: underline;
@@ -81,10 +82,29 @@ PRODUCT INFORMATION
 	text-align: center;
 	display: none;
 }
+#producto-atributos{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 10px;
+}
+.contenedor-atributo{
+	margin-bottom: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 .precio-producto{
-	color: #FC2828;
+	color: orangered;
 	font-size: 20pt;
 	font-family: 'open sans condensed';
+}
+.selector-atributos{
+	border: 1px solid rgba(0,0,0,0.3);
+    padding: 5px;
+    margin-left: 10px;
+    font-size: 13pt;
 }
 /*
 
@@ -98,37 +118,43 @@ BUY SIDEBAR
 #contenedor-input-cantidad{
 	display: flex;
 	justify-content: center;
+	align-items: center;
 }
 #input-cantidad{
 	width: 40px;
 	font-size: 13pt;
-	margin-bottom: 10px;
 	margin-left: 10px;
-	border-radius: 5px;
+	border-radius: 0;
+	border: 1px solid rgba(0,0,0,0.3);
 }
 .button-añadir-cesta{
 	width: 100%;
 }
 .button-comprar-ahora{
-    background-image: linear-gradient(to top, transparent, transparent);
     background-color: transparent;
     color: black;
-    border: 2px solid orange;
+    border: 2px solid #ffcd72;
     width: 100%;
     margin-top: 10px;
 }
 .button-comprar-ahora:hover{
-	background-image: linear-gradient(to bottom, #f59f0a, #f59f0a);
+	background-color: darkorange;
+	border: none;
 }
 .button-comprar-ahora:focus{
-	background-image: linear-gradient(to bottom, #DE910C, #D08708);	
+	background-color: #BF7F31;	
 }
 /*
 
 RESPONSIVE CSS
 
 */
-@media screen and (max-width: 1000px){
+@media (max-width: 1200px){
+	.contenedor-atributo, #contenedor-input-cantidad{
+		flex-direction: column;
+	}
+}
+@media (max-width: 1000px){
 	#contenedor-informacion-producto{
 		width: 50%;
 	}
@@ -143,14 +169,12 @@ RESPONSIVE CSS
 		margin: 0;
 	}
 }
-
-@media screen and (max-width: 800px){
+@media (max-width: 800px){
 	#producto-title{
 		font-size: 18pt;
 	}
 }
-
-@media screen and (max-width: 650px){
+@media (max-width: 650px){
 	#contenedor-principal{
 		flex-direction: column;
 	}
@@ -173,6 +197,9 @@ RESPONSIVE CSS
 	}
 	#contenedor-button-expandir-texto{
 		display: block;
+	}
+	.contenedor-atributo, #contenedor-input-cantidad{
+		flex-direction: row;
 	}
 }
 

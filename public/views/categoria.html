@@ -11,49 +11,51 @@
 
 	{{> menu}}
 
-	<div id="sidebar">
-		<span class="filtro-titulo">rango de precio</span>
-		<div class="filtro-precio">
-			<div><input type="checkbox" name="precio" value="1"/><a href="javascript:void(0)"> 0€ - 10€</a></div>
-			<div><input type="checkbox" name="precio" value="2"/><a href="javascript:void(0)"> 10€ - 25€</a></div>
-			<div><input type="checkbox" name="precio" value="3"/><a href="javascript:void(0)"> 25€ - 40€</a></div>
-			<div><input type="checkbox" name="precio" value="4"/><a href="javascript:void(0)"> 40€ - 60€</a></div>
-			<div><input type="checkbox" name="precio" value="5"/><a href="javascript:void(0)"> 60€ - 90€</a></div>
-		</div>
-	</div>
-
-    <div id="contenedor-principal">
-		{{#if isProductos 1}}
-	    	<div class="mensaje-cargando">
-	    		<div class="big-spinner"></div>
-	    		<h3 class="mensaje-cargando-pagina">Cargando productos...</h3>
-	    	</div>
-		    <div id="header-productos">
-		        <button id="responsive-filters">Filtrar resultados</button>
-		    	<h2 class="titulo-categoria"><b>{{categoria}}</b></h2>
-		    	{{#if resultadoUnico 1}}
-					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} producto.</i>
-				{{else resultadoUnico 1}}
-					<i class="mensaje-resultados">Mostrando {{cantidadProductos}} productos.</i>
-				{{/if resultadoUnico 1}}
-
-				{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
+	<div class="contenedor-total">
+		<div id="sidebar">
+			<span class="filtro-titulo">rango de precio</span>
+			<div class="filtro-precio">
+				<div><input type="checkbox" name="precio" value="1"/><a href="javascript:void(0)"> 0€ - 10€</a></div>
+				<div><input type="checkbox" name="precio" value="2"/><a href="javascript:void(0)"> 10€ - 25€</a></div>
+				<div><input type="checkbox" name="precio" value="3"/><a href="javascript:void(0)"> 25€ - 40€</a></div>
+				<div><input type="checkbox" name="precio" value="4"/><a href="javascript:void(0)"> 40€ - 60€</a></div>
+				<div><input type="checkbox" name="precio" value="5"/><a href="javascript:void(0)"> 60€ - 90€</a></div>
 			</div>
-	    	{{array productos}}
-			<div class="producto">
-				<a href="/p/{{permalink}}"><img class="producto-imagen" src="../public-uploads/{{imagen}}" width="300px"></a>
-				<span class="precio-producto">{{precio}}€</span>
-				<a href="/p/{{permalink}}" class="titulo-producto">{{titulo}}</a>
-				<a href="{{categoria}}" class="categoria-producto">{{categoria}}</a>
-	    	</div>
-	    	{{/array}}    
-			{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
-    	{{else isProductos 1}}
-    		<div class="mensaje-error">
-	    		<h3>{{errorMessage}}</h3>
-	    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
-	    	</div>
-    	{{/if isProductos 1}}
+		</div>
+
+	    <div id="contenedor-principal">
+			{{#if isProductos 1}}
+		    	<div class="mensaje-cargando">
+		    		<div class="big-spinner"></div>
+		    		<h3 class="mensaje-cargando-pagina">Cargando productos...</h3>
+		    	</div>
+			    <div id="header-productos">
+			        <button id="responsive-filters">Filtrar resultados</button>
+			    	<h2 class="titulo-categoria">{{categoria}}</h2>
+			    	{{#if resultadoUnico 1}}
+						<p class="mensaje-resultados">Mostrando {{cantidadProductos}} producto.</p>
+					{{else resultadoUnico 1}}
+						<p class="mensaje-resultados">Mostrando {{cantidadProductos}} productos.</p>
+					{{/if resultadoUnico 1}}
+
+					{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
+				</div>
+		    	{{array productos}}
+				<div class="producto">
+					<a href="/p/{{permalink}}"><img class="producto-imagen" src="../public-uploads/{{imagen}}" width="300px"></a>
+					<a href="{{categoria}}" class="categoria-producto">{{categoria}}</a>				
+					<a href="/p/{{permalink}}" class="titulo-producto">{{titulo}}</a>
+					<span class="precio-producto">{{precio}}€</span>
+		    	</div>
+		    	{{/array}}    
+				{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
+	    	{{else isProductos 1}}
+	    		<div class="mensaje-error">
+		    		<h3>{{errorMessage}}</h3>
+		    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
+		    	</div>
+	    	{{/if isProductos 1}}
+		</div>
 	</div>
 
 	{{> footer}}

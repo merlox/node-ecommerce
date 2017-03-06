@@ -23,8 +23,13 @@ MINISLIDER
     justify-content: space-around;
 }
 .titulo-contenedor-minislider{
-	margin: 5px 0;
-	border-bottom: 1px solid darkgrey;
+	padding-bottom: 15px;
+    border-bottom: 1px solid lightgrey;
+    color: black;
+    font-size: 15pt;
+    text-transform: uppercase;
+    text-align: center;
+    font-family: 'open sans';
 }
 .titulo-minislider{
 	text-decoration: none;
@@ -44,9 +49,10 @@ MINISLIDER
 	display: block;
 }
 .categoria-minislider{
-	color: darkgrey;
-	text-decoration: none;
-	font-size: 10pt;
+    color: darkgrey;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 9pt;
 }
 .categoria-minislider:hover{
 	color: blue;
@@ -58,7 +64,6 @@ MINISLIDER
 .flecha-minislider{
 	height: 60px;
 	position: absolute;
-	background-color: black;
 	top: 50%;
 	transform: translateY(-50%);
 	padding: 10px;

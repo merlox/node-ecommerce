@@ -217,6 +217,12 @@ q('#cesta').addEventListener('mouseenter', () => {
 		}, 1e3);
 	}
 });
+q('html').addEventListener('click', (e) => {
+	if(e.target.parentNode.id != 'productos-cesta'){
+		q('#productos-cesta').style.display = 'none';
+		q('.triangulo-up').style.display = 'none';
+	}
+});
 q('#productos-cesta').addEventListener('mouseleave', () => {
 	q('#productos-cesta').style.display = 'none';
 	q('.triangulo-up').style.display = 'none';

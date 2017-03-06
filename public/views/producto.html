@@ -28,15 +28,7 @@
 		    </div>
 		    
 		    <div class="precio-producto">{{precio}}€</div>
-		    <br/>
-		    <div id="producto-atributos">
-		      	<b id="producto-atributos-key">{{loopKey atributos}}</b>
-		      	<select>
-		    		<option>{{loopArray atributos}}</option>
-		    	</select>
-		    	{{/loopKey atributos}}
-		    </div>
-		    <br/>
+
 		    <div id="producto-descripcion">
 		    <div id="producto-descripcion-fade"></div>
 		    	<p>{{descripcion}}</p>
@@ -48,16 +40,23 @@
 		</div>
 
 		<div id="contenedor-comprar-producto">
-			<div id="contenedor-input-cantidad">Cantidad: <input id="input-cantidad" type="number" max="9" value="1"></div>
 			<button class="button-añadir-cesta">Añadir a la cesta</button>
 			<button class="button-comprar-ahora">Comprar ahora</button>
+			<div id="producto-atributos">
+				<div class="contenedor-atributo"><b id="producto-atributos-key">{{loopKey atributos}}</b>
+			      	<select class="selector-atributos">
+			    		<option>{{loopArray atributos}}</option>
+			    	</select>
+			   	</div>{{/loopKey atributos}}
+		    	<div id="contenedor-input-cantidad"><b>Cantidad</b>
+		    	<input id="input-cantidad" type="number" min="1" max="9" value="1"></div>
+		    </div>
 		</div>
 	</div>
 	<div class="contenedor-minislideres">
 		<div id="minislider-vistos-anteriormente"></div>
 		<div id="minislider-comprados-juntos"></div>
 		<div id="minislider-random"></div>		
-		<div id="minislider-recientes"></div>
 	</div>
 
 	{{> footer}}

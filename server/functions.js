@@ -1112,7 +1112,7 @@ function crearCesta(cesta, cb){
     'precio': true,
     '_id': false
   }).toArray((err, results) => {
-    if(err || results.length <= 0) return cb('No hay productos en la cesta.', null);
+    if(err || results.length <= 0) return cb('no hay productos en la cesta.', null);
     //Le ponemos la cantidad a cada objeto producto de la cesta
     //Y solo seleccionamos la primera imagen
     let error = null;
@@ -1127,7 +1127,7 @@ function crearCesta(cesta, cb){
       let origen = path.join(__dirname, 'uploads/', nombreImagen);
       let end = path.join(__dirname, '../public/public-uploads/');
       copyFile(origen, end, nombreImagen, (err) => {    
-        if(err) error = 'No se pudo copiar la imagen de ese producto de la cesta.';
+        if(err) error = 'no se pudo copiar la imagen de ese producto de la cesta.';
 
         counter++;
         if(counter >= results.length){

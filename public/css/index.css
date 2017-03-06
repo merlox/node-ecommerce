@@ -44,7 +44,6 @@ SLIDER
 	opacity: 0.5;
 	z-index: 10;
 	transition: none;
-	background-color: black;
 }
 #flecha-izquierda-slider:hover{
 	height: 62px;
@@ -54,7 +53,6 @@ SLIDER
 }
 #flecha-derecha-slider{
 	position: absolute;
-	background-color: black;
 	top: 50%;
 	padding: 10px;
 	transform: translateY(-50%);

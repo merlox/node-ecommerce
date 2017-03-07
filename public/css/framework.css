@@ -34,10 +34,36 @@ hr{
     border: 1px solid lightgrey;
 }
 input, textarea{
-    border-radius: 5px;
     border: 1px solid lightgrey;
     padding: 5px;
     font-family: 'Open Sans', sans-serif;
+}
+button, input[type=submit]{
+    background-color: #ffcd72;
+    font-weight: bold;
+    color: black;
+    font-size: 13px;
+    border: none;
+    padding: 10px 20px 10px 20px;
+    cursor: pointer;
+    font-family: 'Open Sans', sans-serif;
+}
+button[disabled], button[disabled]:hover, input[disabled], button[disabled]:hover{
+    background-image: linear-gradient(to bottom, lightgrey, lightgrey);
+    cursor: not-allowed;
+    font-family: 'Open Sans', sans-serif;
+}
+button:hover, input[type=submit]:hover{
+    background-color: darkorange;
+    font-family: 'Open Sans', sans-serif;
+}
+button:focus, input[type=submit]:focus{
+    background-color: orange;
+    font-family: 'Open Sans', sans-serif;
+}
+button:active, input[type=submit]:active{
+    background-color: lightorange;
+    font-family: 'Open Sans', sans-serif;   
 }
 .spinner{
     border: 2px solid whitesmoke;
@@ -71,28 +97,4 @@ input, textarea{
 }
 .contenedor-responsive-tabla{
     overflow: auto;
-}
-button, input[type=submit]{
-    background-color: #ffcd72;
-    border-radius: 5px;
-    font-weight: bold;
-    color: black;
-    font-size: 13px;
-    border: none;
-    padding: 10px 20px 10px 20px;
-    cursor: pointer;
-    font-family: 'Open Sans', sans-serif;
-}
-button[disabled], button[disabled]:hover, input[disabled], button[disabled]:hover{
-    background-image: linear-gradient(to bottom, lightgrey, lightgrey);
-    cursor: not-allowed;
-    font-family: 'Open Sans', sans-serif;
-}
-button:hover, input[type=submit]:hover{
-    background-image: linear-gradient(to bottom, #f59f0a, #f59f0a);
-    font-family: 'Open Sans', sans-serif;
-}
-button:focus, input[type=submit]:focus{
-    background-image: linear-gradient(to bottom, #FFBE4E, #FFBE4E);
-    font-family: 'Open Sans', sans-serif;
 }

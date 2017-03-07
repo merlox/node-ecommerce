@@ -143,10 +143,11 @@ BUY SIDEBAR
     border: 2px solid #ffcd72;
     width: 100%;
     margin-top: 10px;
+    transition: none;
 }
 .button-comprar-ahora:hover{
 	background-color: darkorange;
-	border: none;
+	border: 2px solid darkorange;
 }
 .button-comprar-ahora:focus{
 	background-color: #BF7F31;	

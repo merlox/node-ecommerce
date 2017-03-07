@@ -90,7 +90,6 @@ function buscarProducto(keyword){
 			q('#buscador-sugerencias').firstChild.innerHTML = '';
 			if(results != null && results != undefined){
 				q('#buscador-sugerencias').style.display = 'block';
-				q('#buscador').style.borderRadius = '5px 0 0 0';
 				//Show suggested searches or products
 				let htmlProducto = "";
 				for(let i = 0; i < results.length; i++){
@@ -114,13 +113,11 @@ function buscarProducto(keyword){
 					}
 				}
 			}else{
-				q('#buscador').style.borderRadius = '5px 0 0 5px';
 				//Si no hay resultados, ocultar la barra de results
 				q('#buscador-sugerencias').style.display = 'none';
 			}
 		});
 	}else{
-		q('#buscador').style.borderRadius = '5px 0 0 5px';
 		q('#buscador-sugerencias').style.display = 'none';
 	}
 };
@@ -145,7 +142,6 @@ function ocultarCestaBuscadorHoverDropdown(ocultarCesta){
 		q('span.triangulo-up').style.display = 'none';
 	}
 	if(q('#buscador-sugerencias')){
-		q('#buscador').style.borderRadius = '5px 0 0 5px';
 		q('#buscador-sugerencias').style.display = 'none';
 	}
 }
@@ -208,7 +204,6 @@ q('#buscador').addEventListener('click', (e) => {
 	e.stopPropagation();
 });
 q('html').addEventListener('click', () => {
-	q('#buscador').style.borderRadius = '5px 0 0 5px';
 	q('#buscador-sugerencias').style.display = 'none';
 });
 //Para ir a la página de busqueda

@@ -60,19 +60,19 @@
 
 			  <div class="form-row">
 			    <label>Número:</label>
-			    <input id="num-tarjeta" type="text" maxlength="19" size="18" required="required" data-stripe="number">
+			    <input id="num-tarjeta" type="text" maxlength="19" size="18" required="required" data-stripe="number" placeholder="Número tarjeta">
 			  </div>
 
 			  <div class="form-row" id="fila-expira">
 			    <label>Expira:</label>
-			    <input id="expira-completo" type="text" maxlength="5">
+			    <input id="expira-completo" type="text" maxlength="5" placeholder="mm/aa">
 			    <input id="expira-mes" type="hidden" maxlength="2" required="required" data-stripe="exp_month">
 			    <input id="expira-ano" type="hidden" maxlength="2" required="required" data-stripe="exp_year">
 			  </div>
 
 			  <div class="form-row" id="cvc">
 			    <label>CVC:</label>
-			    <input id="cvc" type="text" maxlength="4" required="required" data-stripe="cvc">
+			    <input id="cvc" type="text" maxlength="4" required="required" data-stripe="cvc" placeholder="CVC">
 			  </div>
 			</form>
 			<div id="contenedor-completar-pago">

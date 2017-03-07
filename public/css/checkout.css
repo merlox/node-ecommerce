@@ -82,11 +82,11 @@ FORMULARIO DE PAGO CON TARJETA
 	padding: 10px;
 }
 #fila-expira input{
-	width: 50px;
+	width: 60px;
 	height: 30px;
 }
 #cvc input{
-	width: 50px;
+	width: 60px;
 	height: 30px;
 }
 #contenedor-completar-pago{

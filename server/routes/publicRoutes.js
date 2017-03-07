@@ -26,14 +26,14 @@ routes.get('/p/:permalink', (req, res) => {
           if(err) console.log(err);
         });
       }
-      result['loggedStateHTML'] = '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>';
+      result['loggedStateHTML'] = 'iniciar sesión';
       result['loggedState'] = '/login';
       functions.getLoggedState(req, state => {
         if(state === 'logged'){
-          result.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          result.loggedStateHTML = 'mi cuenta ▼';
           result.loggedState = '/micuenta';
         }else if(state === 'admin'){
-          result.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          result.loggedStateHTML = 'admin ▼';
           result.loggedState = '/admin';
         }
         render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
@@ -72,14 +72,14 @@ routes.get('/search', (req, res) => {
         'hayPaginas': false,
         'isProductos': true,
         'loggedState': '/login',
-        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+        'loggedStateHTML': 'iniciar sesión<div class="triangulo-up"></div>'
       };
       functions.getLoggedState(req, state => {
         if(state === 'logged'){
-          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          dataObject.loggedStateHTML = 'mi cuenta ▼';
           dataObject.loggedState = '/micuenta';
         }else if(state === 'admin'){
-          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          dataObject.loggedStateHTML = 'admin ▼';
           dataObject.loggedState = '/admin';
         }
         functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
@@ -100,14 +100,14 @@ routes.get('/search', (req, res) => {
         'isProductos': false,
         'errorMessage': error,
         'loggedState': '/login',
-        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+        'loggedStateHTML': 'iniciar sesión'
       };
       functions.getLoggedState(req, state => {
         if(state === 'logged'){
-          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          dataObject.loggedStateHTML = 'mi cuenta ▼';
           dataObject.loggedState = '/micuenta';
         }else if(state === 'admin'){
-          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          dataObject.loggedStateHTML = 'admin ▼';
           dataObject.loggedState = '/admin';
         }
         render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
@@ -180,14 +180,14 @@ routes.post('/pay-product', (req, res) => {
 routes.get('/cesta', (req, res) => {
   let dataObject = {
     'loggedState': '/login',
-    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+    'loggedStateHTML': 'iniciar sesión'
   };
   functions.getLoggedState(req, state => {
     if(state === 'logged'){
-      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+      dataObject.loggedStateHTML = 'mi cuenta ▼';
       dataObject.loggedState = '/micuenta';
     }else if(state === 'admin'){
-      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+      dataObject.loggedStateHTML = 'admin ▼';
       dataObject.loggedState = '/admin';
     }
     render(path.join(__dirname, '../../public/views/cesta.html'), dataObject, (err, data) => {
@@ -203,14 +203,14 @@ routes.get('/cesta', (req, res) => {
 routes.get('/pago-completado', (req, res) => {
   let dataObject = {
     'loggedState': '/login',
-    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+    'loggedStateHTML': 'iniciar sesión'
   };
   functions.getLoggedState(req, state => {
     if(state === 'logged'){
-      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+      dataObject.loggedStateHTML = 'mi cuenta ▼';
       dataObject.loggedState = '/micuenta';
     }else if(state === 'admin'){
-      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+      dataObject.loggedStateHTML = 'admin ▼';
       dataObject.loggedState = '/admin';
     }
     render(path.join(__dirname, '../../public/views/pagoCompletado.html'), dataObject, (err, data) => {
@@ -226,14 +226,14 @@ routes.get('/pago-completado', (req, res) => {
 routes.get('/micuenta', (req, res) => {
   let dataObject = {
     'loggedState': '/login',
-    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>',
+    'loggedStateHTML': 'iniciar sesión',
   };
   functions.getLoggedState(req, state => {
     if(state === 'logged'){
-      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+      dataObject.loggedStateHTML = 'mi cuenta ▼';
       dataObject.loggedState = '/micuenta';
     }else if(state === 'admin'){
-      dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+      dataObject.loggedStateHTML = 'admin ▼';
       dataObject.loggedState = '/admin';
     }
     render(path.join(__dirname, '../../public/views/micuenta.html'), dataObject, (err, data) => {
@@ -250,14 +250,14 @@ routes.get('/cambiar-contrasena/:token', (req, res) => {
     if(err) return res.send('Error, no se puede restablecer la contraseña, es posible que tu código haya expirado. Inténtalo de nuevo.');
     let dataObject = {
       'loggedState': '/login',
-      'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>',
+      'loggedStateHTML': 'iniciar sesión'
     };
     functions.getLoggedState(req, state => {
       if(state === 'logged'){
-        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+        dataObject.loggedStateHTML = 'mi cuenta ▼';
         dataObject.loggedState = '/micuenta';
       }else if(state === 'admin'){
-        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+        dataObject.loggedStateHTML = 'admin ▼';
         dataObject.loggedState = '/admin';
       }
       render(path.join(__dirname, '../../public/views', 'cambiarContrasena.html'), dataObject, (err, HTML) => {
@@ -301,7 +301,7 @@ routes.get('/d/:categoria', (req, res) => {
         'hayPaginas': false,
         'isProductos': true,
         'loggedState': '/login',
-        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+        'loggedStateHTML': 'iniciar sesión'
       };
 
       functions.getPaginacionCategoria(req.params.categoria, limite, (err, cantidadPaginas) => {
@@ -312,10 +312,10 @@ routes.get('/d/:categoria', (req, res) => {
 
         functions.getLoggedState(req, state => {
           if(state === 'logged'){
-            dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+            dataObject.loggedStateHTML = 'mi cuenta ▼';
             dataObject.loggedState = '/micuenta';
           }else if(state === 'admin'){
-            dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+            dataObject.loggedStateHTML = 'admin ▼';
             dataObject.loggedState = '/admin';
           }
           render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
@@ -330,14 +330,14 @@ routes.get('/d/:categoria', (req, res) => {
         'isProductos': false,
         'errorMessage': error,
         'loggedState': '/login',
-        'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+        'loggedStateHTML': 'iniciar sesión'
       };
       functions.getLoggedState(req, state => {
         if(state === 'logged'){
-          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+          dataObject.loggedStateHTML = 'mi cuenta ▼';
           dataObject.loggedState = '/micuenta';
         }else if(state === 'admin'){
-          dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+          dataObject.loggedStateHTML = 'admin ▼';
           dataObject.loggedState = '/admin';
         }
         render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
@@ -360,7 +360,7 @@ routes.get('/', (req, res) => {
     'error': null,
     'sliderImages': null,
     'loggedState': '/login',
-    'loggedStateHTML': '<img src="../../images/user.svg" width="30px">iniciar sesión<div class="triangulo-up"></div>'
+    'loggedStateHTML': 'iniciar sesión'
   };
   functions.getSlider(true, (err, images) => {
     if(err){
@@ -371,10 +371,10 @@ routes.get('/', (req, res) => {
 
     functions.getLoggedState(req, state => {
       if(state === 'logged'){
-        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">mi cuenta ▼<div class="triangulo-up"></div>';
+        dataObject.loggedStateHTML = 'mi cuenta ▼';
         dataObject.loggedState = '/micuenta';
       }else if(state === 'admin'){
-        dataObject.loggedStateHTML = '<img src="../../images/user.svg" width="30px">admin ▼<div class="triangulo-up"></div>';
+        dataObject.loggedStateHTML = 'admin ▼';
         dataObject.loggedState = '/admin';
       }
 

@@ -13,6 +13,7 @@ GENERALES
 	align-items: center;
 	position: relative;
 	z-index: 20;
+	transition: none;
 }
 #menu-principal > a, #usuario, #contenedor-login-dropdown{
     width: 120px;
@@ -41,6 +42,10 @@ a#logo{
 }
 #toggle-menu-responsive:hover{
     background-color: rgba(0, 0, 0, 0.4);
+}
+#sustituto-menu-fixed{
+	display: none;
+	height: 73px;
 }
 /*
 

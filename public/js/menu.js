@@ -160,12 +160,35 @@ function toggleMenuMovil(){
 		});
 	}
 };
+//Ajusta el diseño del menú onscroll
+function reducirMenuScroll(){
+	if(document.body.scrollTop >= 25){
+		qAll('.subtitulos-menu').forEach(e => {
+			e.style.display = 'none';
+		});
+		q('#menu-principal').style.height = '55px';
+		q('#menu-principal').style.position = 'fixed';
+		//Seleccionamos el elemento debajo del menú inferior
+		q('#sustituto-menu-fixed').style.display = 'block';
+		q('#productos-cesta').style.top = '63px';
+	}else{
+		qAll('.subtitulos-menu').forEach(e => {
+			e.style.display = 'inline';
+		});
+		q('#menu-principal').style.height = '70px';
+		q('#menu-principal').style.position = 'relative';
+		q('#sustituto-menu-fixed').style.display = 'none';
+		q('#productos-cesta').style.top = '70px';
+	}
+};
+
+window.addEventListener('scroll', reducirMenuScroll);
+
 /*
 
-CESTA (LO IMPORTANTE ESTÁ EN CESTA.JS)
+CESTA (LO IMPORTANTE ESTÁ EN CESTA.JS) Para ocultar el buscador al hover cesta
 
 */
-//Para ocultar el buscador al hover cesta
 q('a#cesta').addEventListener('mouseenter', () => {
 	ocultarCestaBuscadorHoverDropdown(false);
 });
@@ -183,7 +206,6 @@ q('#departamentos').addEventListener('mouseenter', () => {
 q('#departamentos').addEventListener('mouseleave', () => {
 	ocultarMostrarDepartamentos();
 });
-
 /*
 
 BUSCADOR

@@ -60,7 +60,7 @@ function filtrarPrecio(min, max, pageActual){
 			let product = products[i];	
 			productsHtml += `<div class="producto">
 				<a href="/p/${product.permalink}"><img class="producto-imagen" src="../public-uploads/${product.imagen}" width="300px"></a>
-				<span class="precio-producto">${product.precio}€</span>
+				<span class="precio-producto">${parseFloat(product.precio).toFixed(2)}€</span>
 				<a href="/p/${product.permalink}" class="titulo-producto">${product.titulo}</a>
 				<a href="${product.categoria}" class="categoria-producto">${product.categoria}</a>
 	    	</div>`;

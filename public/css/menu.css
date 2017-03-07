@@ -47,6 +47,13 @@ a#logo{
 	display: none;
 	height: 73px;
 }
+#button-expandir-texto{
+	color: #444444;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 10pt;
+}
 /*
 
 DEPARTAMENTOS
@@ -254,6 +261,11 @@ SESIÓN
 	color: red;
 	font-family: 'open sans condensed';
 }
+@media (max-width: 1475px){
+	.selector-atributos{
+		max-width: 100px;
+	}
+}
 @media (max-width: 1200px){
 	#buscador-sugerencias tr td{
 		padding: 5px;
@@ -287,9 +299,15 @@ SESIÓN
 		display: none;
 	}
 }
+@media (max-width: 800px){
+	.button-comprar-ahora{
+		padding: 5px;
+	}
+}
 @media (max-width: 650px){
 	#toggle-menu-responsive{
 		display: block;
+		margin-top: 10px;
 	}
 	#logo{
 		height: 100px;
@@ -316,6 +334,12 @@ SESIÓN
 	}
 	#expandible-departamentos{
 		z-index: 40;	
+	}
+	.selector-atributos{
+		max-width: 100%;
+	}
+	.button-comprar-ahora{
+		padding: 10px 20px;
 	}
 }
 @media (max-width: 400px){

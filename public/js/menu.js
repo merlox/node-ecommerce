@@ -162,7 +162,7 @@ function toggleMenuMovil(){
 };
 //Ajusta el diseño del menú onscroll
 function reducirMenuScroll(){
-	if(document.body.scrollTop >= 25){
+	if(document.body.scrollTop >= 25 && window.innerWidth > 650){
 		qAll('.subtitulos-menu').forEach(e => {
 			e.style.display = 'none';
 		});
@@ -171,11 +171,16 @@ function reducirMenuScroll(){
 		//Seleccionamos el elemento debajo del menú inferior
 		q('#sustituto-menu-fixed').style.display = 'block';
 		q('#productos-cesta').style.top = '63px';
-	}else{
+	}else if(window.innerWidth > 650){
 		qAll('.subtitulos-menu').forEach(e => {
 			e.style.display = 'inline';
 		});
 		q('#menu-principal').style.height = '70px';
+		q('#menu-principal').style.position = 'relative';
+		q('#sustituto-menu-fixed').style.display = 'none';
+		q('#productos-cesta').style.top = '70px';
+	}else if(window.innerWidth < 650){
+		q('#menu-principal').style.height = '100%';
 		q('#menu-principal').style.position = 'relative';
 		q('#sustituto-menu-fixed').style.display = 'none';
 		q('#productos-cesta').style.top = '70px';

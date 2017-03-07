@@ -19,6 +19,7 @@ function Minislider(nombre, tipo, id){
 	function colocarMinislider(){
 		httpGet(`/api/get-minislider/${tipo}?pag=${that.pagina}`, (response) => {
 			response = JSON.parse(response);
+			if(!response) return console.log(`No se ha recibido respuesta para el minislider ${tipo}`);
 			if(response.error){
 				return console.log(response.error); //Si hay un error, no mostrar el minislider directamente
 			}

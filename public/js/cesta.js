@@ -8,8 +8,6 @@ function addCesta(cantidad){
 	let permalinkProducto = window.location.pathname.substring(3);
 	let dataObject = {};
 	dataObject[permalinkProducto] = cantidad;
-	menuMovilHidden = true;
-	toggleMenuMovil(); //Para mostrar el menú movil si estuviese oculto y cargar la cesta
 	httpPost('/api/add-cesta/', dataObject, (err) => {
 		getCesta();
 		if(comprarAhora) window.location = `/completar-pago`;
@@ -42,7 +40,6 @@ function getCesta(){
 						onkeypress="editarCantidadCesta('${productoCesta.permalink}', event)" 
 						value="${productoCesta.cantidad}"/></td>
 					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
-					<td></td>
 					<td><span onclick="deleteCestaItem('${productoCesta.permalink}', this)" class="x-icon">×</span></td>
 				</tr>`;
 				precioTotal += parseFloat(precioCalculado);

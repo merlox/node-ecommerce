@@ -137,3 +137,19 @@ q('#flecha-derecha-slider').addEventListener('click', () => {
 q('#flecha-izquierda-slider').addEventListener('click', () => {
 	if(!bloquearFlechas) desplazarIzquierda();
 });
+
+//Ocultar o mostrar el menú en teléfonos de menos de 650px
+function toggleMenuMovil(){
+	if(!menuMovilHidden){
+		menuMovilHidden = true;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			e.style.display = 'none';
+		});
+	}else{
+		menuMovilHidden = false;
+		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
+			if(e.id === 'productos-cesta') e.style.display = 'none';
+			else e.style.display = 'flex';
+		});
+	}
+};

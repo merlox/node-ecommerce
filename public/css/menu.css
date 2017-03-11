@@ -3,6 +3,10 @@
 GENERALES
 
 */
+.contenedor-responsive{
+	width: 100%;
+	display: flex;
+}
 #menu-principal{
 	width: 100%;
 	padding: 0 80px;
@@ -15,7 +19,7 @@ GENERALES
 	z-index: 20;
 	transition: none;
 }
-#menu-principal > a, #usuario, #contenedor-login-dropdown{
+#menu-principal a, #usuario, #contenedor-login-dropdown{
     width: 120px;
     height: 70px;
     display: flex;
@@ -34,14 +38,6 @@ a#logo{
 	line-height: initial;
 	font-family: 'open sans condensed';
 	width: 100px;
-}
-#toggle-menu-responsive{
-	display: none;
-	background-image: none;
-    background-color: transparent;
-}
-#toggle-menu-responsive:hover{
-    background-color: rgba(0, 0, 0, 0.4);
 }
 #sustituto-menu-fixed{
 	display: none;
@@ -93,6 +89,8 @@ DEPARTAMENTOS
     text-align: left;
     padding: 10px 30px;
     display: block;
+    width: 100%;
+    height: auto;
 }
 #expandible-departamentos ul li:hover{
 	background-image: linear-gradient(120deg, #C1DCFF, #5DA4FF);
@@ -162,9 +160,7 @@ BUSCADOR
 	width: 100%;
 	border-spacing: 0;
 	padding: 10px;
-}
-#buscador-sugerencias table td{
-	padding: 15px;
+	margin-top: 30px;
 }
 #buscador-sugerencias table a{
 	text-decoration: none;
@@ -222,6 +218,7 @@ SESIÓN
 }
 #menu-sesion li{
 	padding: 10px 30px;
+	width: 100%;
 }
 #menu-sesion a{
 	text-decoration: none;
@@ -305,13 +302,18 @@ SESIÓN
 	}
 }
 @media (max-width: 650px){
-	#toggle-menu-responsive{
-		display: block;
-		margin-top: 10px;
-	}
 	#logo{
 		height: 100px;
 	}
+	#contenedor-buscador{
+		margin-right: 0;
+	}
+		#buscador{
+			width: calc(100% - 30px);
+		}
+		#icono-busqueda{
+			width: 30px;
+		}
 	#menu-principal{
 		height: 100%;
 		flex-direction: column;
@@ -327,13 +329,14 @@ SESIÓN
 		width: 80%;
 	}
 	table#productos-cesta{
-		top: 77.5%;
+		top: 120px;
 	}
-	#menu-sesion{
-		right: initial;
+	#flecha-departamentos{
+		left: 30%;
 	}
 	#expandible-departamentos{
-		z-index: 40;	
+		z-index: 40;
+		left: -20px;
 	}
 	.selector-atributos{
 		max-width: 100%;

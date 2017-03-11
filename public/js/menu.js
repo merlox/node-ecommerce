@@ -1,20 +1,6 @@
 'use strict';
-
-let menuMovilHidden = false;
 //Onload get categories
 window.addEventListener('load', () => {
-	if(window.innerWidth <= 650){
-		menuMovilHidden = true;
-		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
-			e.style.display = 'none';
-		});
-	}else{
-		menuMovilHidden = false;
-		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
-			if(e.id === 'productos-cesta') e.style.display = 'none';
-			else e.style.display = 'flex';
-		});
-	}
 	httpGet('/api/get-categories', (categories) => {
 		if(categories && categories != '' && categories != undefined){
 			categories = JSON.parse(categories);
@@ -43,25 +29,7 @@ window.addEventListener('load', () => {
 	}
 });
 
-window.addEventListener('resize', () => {
-	if(q('.texto-item-busqueda') && window.innerWidth <= 800 && window.innerWidth >= 650){
-		qAll('.texto-item-busqueda').forEach((e) => {
-			e.innerHTML = e.innerHTML.substring(0, 30) + '...';
-		});
-	}
-	if(window.innerWidth <= 650){
-		menuMovilHidden = true;
-		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
-			e.style.display = 'none';
-		});
-	}else{
-		menuMovilHidden = false;
-		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
-			if(e.id === 'productos-cesta') e.style.display = 'none';
-			else e.style.display = 'flex';
-		});
-	}
-});
+window.addEventListener('resize', acortarTextoResultadosBusqueda);
 
 //Para ocultar o mostrar el menu de departamentos para ir a uno determinado
 function ocultarMostrarDepartamentos(isDepartamentosActive){
@@ -79,7 +47,7 @@ function ocultarMostrarDepartamentos(isDepartamentosActive){
 function buscarProducto(keyword){
 	if(keyword.length >= 3){
 		keyword = encodeURIComponent(keyword);
-		httpGet(`/api/search/${keyword}`, (results) => {
+		httpGet(`/api/search/${keyword}`, results => {
 			try{
 				results = JSON.parse(results);
 			}catch(e){
@@ -87,29 +55,8 @@ function buscarProducto(keyword){
 			}
 			q('#buscador-sugerencias').firstChild.innerHTML = '';
 			if(results != null && results != undefined){
-				q('#buscador-sugerencias').style.display = 'block';
-				//Show suggested searches or products
-				let htmlProducto = "";
-				for(let i = 0; i < results.length; i++){
-					htmlProducto += 
-					`<tr>
-						<td><img class="thumbnail" src="../../public-uploads/${results[i].imagenes[1]}"/></td>
-						<td>
-						<a class="texto-item-busqueda" title="${results[i].titulo}" 
-						href="/p/${results[i].permalink}?searched=${encodeURIComponent(q('#buscador').value)}">
-						${results[i].titulo}</a></td>
-						<td class="producto-precio">${results[i].precio}€</td>
-					</tr>`;
-
-					q('#buscador-sugerencias').children[0].innerHTML = htmlProducto;					
-					//Comprobamos el tamaño de la pantalla para hacer responsive los resultados de busqueda
-					//16 Es el espacio de la barra de scroll
-					if((window.outerWidth-16) <= 800 && ((window.outerWidth-16) >= 650 || (window.outerWidth-16) <= 400)){
-						qAll('.texto-item-busqueda').forEach((e) => {
-							e.innerHTML = e.innerHTML.substring(0, 30) + '...';
-						});
-					}
-				}
+				q('#buscador-sugerencias').children[0].innerHTML = generarResultadosBusquedaHTML(results);
+				acortarTextoResultadosBusqueda();
 			}else{
 				//Si no hay resultados, ocultar la barra de results
 				q('#buscador-sugerencias').style.display = 'none';
@@ -119,6 +66,33 @@ function buscarProducto(keyword){
 		q('#buscador-sugerencias').style.display = 'none';
 	}
 };
+
+function generarResultadosBusquedaHTML(results){
+	q('#buscador-sugerencias').style.display = 'block';
+	//Show suggested searches or products
+	let htmlProducto = "";
+	for(let i = 0; i < results.length; i++){
+		htmlProducto += 
+		`<tr>
+			<td><img class="thumbnail" src="../../public-uploads/${results[i].imagenes[1]}"/></td>
+			<td>
+			<a class="texto-item-busqueda" title="${results[i].titulo}" 
+			href="/p/${results[i].permalink}?searched=${encodeURIComponent(q('#buscador').value)}">
+			${results[i].titulo}</a></td>
+			<td class="producto-precio">${results[i].precio}€</td>
+		</tr>`;
+	}
+	return htmlProducto;
+};
+//Comprobamos el tamaño de la pantalla para hacer responsive los resultados de busqueda
+function acortarTextoResultadosBusqueda(){
+	if(window.innerWidth <= 800 && (window.innerWidth >= 650 || window.innerWidth <= 400)){
+		qAll('.texto-item-busqueda').forEach((e) => {
+			e.innerHTML = e.innerHTML.substring(0, 30) + '...';
+		});
+	}
+}
+
 let flechaActiva = false;
 function cambiarColorFlechaDepartamentos(){
 	if(!flechaActiva){
@@ -143,21 +117,6 @@ function ocultarCestaBuscadorHoverDropdown(ocultarCesta){
 		q('#buscador-sugerencias').style.display = 'none';
 	}
 }
-//Ocultar o mostrar el menú en teléfonos de menos de 650px
-function toggleMenuMovil(){
-	if(!menuMovilHidden){
-		menuMovilHidden = true;
-		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
-			e.style.display = 'none';
-		});
-	}else{
-		menuMovilHidden = false;
-		qAll('#menu-principal > *:not(:first-child):not(:nth-child(2))').forEach(e => {
-			if(e.id === 'productos-cesta') e.style.display = 'none';
-			else e.style.display = 'flex';
-		});
-	}
-};
 //Ajusta el diseño del menú onscroll
 function reducirMenuScroll(){
 	if(document.body.scrollTop >= 25 && window.innerWidth > 650){
@@ -216,17 +175,21 @@ BUSCADOR
 */
 //Para buscar sugerencias a cada toque
 q('#buscador').addEventListener('keyup', () => {
-	buscarProducto(q('#buscador').value);
+	if(window.innerWidth > 650) buscarProducto(q('#buscador').value);
 });
 //Al hacer focus al input
 q('#buscador').addEventListener('focus', () => {
-	buscarProducto(q('#buscador').value);
-	ocultarCestaBuscadorHoverDropdown();
+	if(window.innerWidth > 650){
+		buscarProducto(q('#buscador').value);
+		ocultarCestaBuscadorHoverDropdown();
+	}
 });
 q('#buscador').addEventListener('click', (e) => {
-	buscarProducto(q('#buscador').value);
-	ocultarCestaBuscadorHoverDropdown();
-	e.stopPropagation();
+	if(window.innerWidth > 650){
+		buscarProducto(q('#buscador').value);
+		ocultarCestaBuscadorHoverDropdown();
+		e.stopPropagation();
+	}
 });
 q('html').addEventListener('click', () => {
 	q('#buscador-sugerencias').style.display = 'none';

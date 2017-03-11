@@ -1,40 +1,39 @@
 <div id="menu-principal">
 	<a href="/" id="logo"><img src="../../images/logo.svg" width="100px"></a>
-	<button id="toggle-menu-responsive" onclick="toggleMenuMovil()">
-		<img src="../../images/menu.png" width="30px" height="30px">
-	</button>
-	<a id="departamentos" href="javascript:void(0)">
-		<img src="../../images/store.svg" width="30px">
-		<span class="subtitulos-menu">departamentos</span>
-		<div id="expandible-departamentos">
-			<ul></ul>
-			<span id="flecha-departamentos"></span>
-		</div>
-	</a>
-	<div id="contenedor-buscador">
-		<input id="buscador" type="text" name="buscador" placeholder="Busca productos...">
-		<div id="buscador-sugerencias">
-			<table></table>
-		</div>
-		<button id="icono-busqueda"><img src='../../images/search.png'/></button>
-	</div>
-	<a id="cesta" href="/completar-pago">
-		<img src="../../images/cart.svg" width="30px"/>
-		<span class="subtitulos-menu">cesta</span>
-		<span class="triangulo-up"></span>
-	</a>
-	<table id="productos-cesta"></table>
-	<div id="contenedor-login-dropdown">
-		<a id="usuario" href="{{loggedState}}">
-			<img src="../../images/user.svg" width="30px">
-			<span class="subtitulos-menu">{{loggedStateHTML}}</span><div class="triangulo-up"></div>
+	<div class="contenedor-responsive">
+		<a id="departamentos" href="javascript:void(0)">
+			<img src="../../images/store.svg" width="30px">
+			<span class="subtitulos-menu">departamentos</span>
+			<div id="expandible-departamentos">
+				<ul></ul>
+				<span id="flecha-departamentos"></span>
+			</div>
 		</a>
-		<span id="triangulo-up-sesion"></span>
-		<ul id="menu-sesion">
-			<a href="{{loggedState}}"><li id="session-first" onmouseenter="cambiarColorFlechaDepartamentos()" onmouseleave="cambiarColorFlechaDepartamentos()">mi cuenta
-			</li></a>
-			<a href="/close-session"><li id="session-last">cerrar sesión</li></a>
-		</ul>
-	</div>
+		<div id="contenedor-buscador">
+			<input id="buscador" type="text" name="buscador" placeholder="Busca productos...">
+			<div id="buscador-sugerencias">
+				<table></table>
+			</div>
+			<button id="icono-busqueda"><img src='../../images/search.png'/></button>
+		</div>
+		<a id="cesta" href="/completar-pago">
+			<img src="../../images/cart.svg" width="30px"/>
+			<span class="subtitulos-menu">cesta</span>
+			<span class="triangulo-up"></span>
+		</a>
+		<table id="productos-cesta"></table>
+		<div id="contenedor-login-dropdown">
+			<a id="usuario" href="{{loggedState}}">
+				<img src="../../images/user.svg" width="30px">
+				<span class="subtitulos-menu">{{loggedStateHTML}}</span><div class="triangulo-up"></div>
+			</a>
+			<span id="triangulo-up-sesion"></span>
+			<ul id="menu-sesion">
+				<a href="{{loggedState}}"><li id="session-first" onmouseenter="cambiarColorFlechaDepartamentos()" onmouseleave="cambiarColorFlechaDepartamentos()">mi cuenta
+				</li></a>
+				<a href="/close-session"><li id="session-last">cerrar sesión</li></a>
+			</ul>
+		</div>
+	</div>	
 </div>
 <div id="sustituto-menu-fixed"></div>

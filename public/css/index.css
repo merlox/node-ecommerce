@@ -1,7 +1,7 @@
 @font-face{
 	font-family: 'Vladimir';
-    src: url('vladimir-webfont.woff2') format('woff2'),
-         url('vladimir-webfont.woff') format('woff'),
+    src: url('../fonts/vladimir-webfont.woff2') format('woff2'),
+         url('../fonts/vladimir-webfont.woff') format('woff'),
 		 url(../fonts/VLADIMIR.ttf) format('truetype');
 	font-weight: normal;
     font-style: normal;
@@ -20,6 +20,6 @@
 }
 @media (max-width: 600px){
 	.index-header{
-		font-size: 20pt;
+		font-size: 30pt;
 	}
 }

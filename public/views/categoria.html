@@ -32,13 +32,15 @@
 			    <div id="header-productos">
 			        <button id="responsive-filters">Filtrar resultados</button>
 			    	<h2 class="titulo-categoria">{{categoria}}</h2>
+			    	<div class="subtitulo-categoria">
 			    	{{#if resultadoUnico 1}}
 						<p class="mensaje-resultados">Mostrando {{cantidadProductos}} producto.</p>
 					{{else resultadoUnico 1}}
 						<p class="mensaje-resultados">Mostrando {{cantidadProductos}} productos.</p>
 					{{/if resultadoUnico 1}}
 
-					{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
+					{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}					
+					</div>
 				</div>
 		    	{{array productos}}
 				<div class="producto">
@@ -47,7 +49,7 @@
 					<a href="/p/{{permalink}}" class="titulo-producto">{{titulo}}</a>
 					<span class="precio-producto">{{precio}}€</span>
 		    	</div>
-		    	{{/array}}    
+		    	{{/array}}
 				{{if hayPaginas}}<div class="paginacion">{{paginas}}</div>{{/if hayPaginas}}
 	    	{{else isProductos 1}}
 	    		<div class="mensaje-error">
@@ -55,7 +57,7 @@
 		    		<button onclick="window.location=document.referrer">Volver a la página anterior</button>
 		    	</div>
 	    	{{/if isProductos 1}}
-		</div>
+		</div><!--Fin productos-->
 	</div>
 
 	{{> footer}}

@@ -1,6 +1,6 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
-  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
+  MongoUrl = require('./../secrets/secrets.js').mongoUrl,
   path = require('path'),
   db = {};
 

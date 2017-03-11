@@ -1,8 +1,10 @@
 @font-face{
-	font-family: Vladimir;
-	src: local('vladimir script'),
-		url(../fonts/VLADIMIR.ttf);
+	font-family: 'Vladimir';
+    src: url('vladimir-webfont.woff2') format('woff2'),
+         url('vladimir-webfont.woff') format('woff'),
+		 url(../fonts/VLADIMIR.ttf) format('truetype');
 	font-weight: normal;
+    font-style: normal;
 }
 .index-header{
 	font-family: 'vladimir';
@@ -15,4 +17,9 @@
     justify-content: center;
     align-items: center;
     background-attachment: fixed;
+}
+@media (max-width: 600px){
+	.index-header{
+		font-size: 40pt;
+	}
 }

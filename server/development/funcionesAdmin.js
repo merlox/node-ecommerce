@@ -3,7 +3,7 @@ let fs = require('fs'),
   lorem = require('lorem-ipsum'),
   functions = require('./../functions.js'),
   Mongo = require('mongodb').MongoClient,
-  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
+  MongoUrl = require('./../secrets/secrets.js').mongoUrl,
   db = {};
 
 Mongo.connect(MongoUrl, (err, database) => {

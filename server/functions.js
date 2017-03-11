@@ -1,18 +1,16 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
-  MongoUrl = 'mongodb://merunas:jakx1234.@ds119508.mlab.com:19508/merunas-mongo',
+  claves = require('./secrets/secrets.js'),
+  MongoUrl = claves.mongoUrl,
   fs = require('fs'),
   path = require('path'),
-  claves = require('./secrets/secrets.js'),
   //Ponemos la secret key de stripe para realizar pagos
   stripe = require('stripe')(claves.stripeSecret),
   db = {},
   sendEmail = require('./email.js').sendEmail,
   sendEmailPlain = require('./email.js').sendEmailPlain,
   render = require('./render.js'),
-  crypto = require('crypto'),
-  algorithm = 'aes-256-ctr',
-  encryptPass = 'fasdFXs1231.23,-';
+  crypto = require('crypto');
 
 Mongo.connect(MongoUrl, (err, database) => {
   if(err) console.log(err);
@@ -621,27 +619,34 @@ function getMiniSlider(username, tipo, pagina, cb){
     break;
 
     case 'compradosJuntos':
-      if(!username) return cb('Error no hay un usuario conectado.', null, null);
-      db.collection('usersData').findOne({
-        'username': username
+      db.collection('usersData').find({
+        'compradosJuntos': {'$exists': true}
       }, {
         '_id': false,
         'compradosJuntos': true
-      }, (err, userData) => {
+      }).limit(5).toArray((err, arrayUserData) => {
         if(err) 
           return cb('Error buscando los productos comprados juntos.', null, null);
-        if(!userData.compradosJuntos) 
+        if(!arrayUserData) 
           return cb('Error, no hay productos comprados juntos', null, null);
-        if(userData.compradosJuntos.length < 5) 
-          return cb('Error, hay menos de 5 productos comprados juntos.', null, null);
-        let paginasTotales = userData.compradosJuntos.length/5;
+
+        let productosCompradosJuntos = [],
+          cantidadProductosCompradosJuntos = 0;
+        for (let i = 0; i < arrayUserData.length; i++) {
+          for (let j = 0; j < arrayUserData[i].compradosJuntos.length; j++) {
+            cantidadProductosCompradosJuntos++;
+            if(productosCompradosJuntos.length < 5){
+              productosCompradosJuntos.push(arrayUserData[i].compradosJuntos[j].permalink);
+            }
+          }
+        }
+        let paginasTotales = cantidadProductosCompradosJuntos/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
         //userData.productosVistos son IDs de productos, hay que buscar los productos
         db.collection('productos').find({
-          '_id': {
-            '$in': userData.compradosJuntos
+          'permalink': {
+            '$in': productosCompradosJuntos
           },
-          'publicado': true
         }, {
           "_id": false,
           "titulo": true,
@@ -775,7 +780,7 @@ function payProduct(req, cb){
     '$set': {
       'compradosJuntos': arrayProductos
     }
-  }, (err) => {
+  }, err => {
     if(err) console.log(`Error guardando los compradosJuntos al pagar la cesta del usuario ${req.session.username}`);
   });
 
@@ -1093,7 +1098,7 @@ function getCesta(username, cb){
         cb(null, productosCesta);
       });
     }else{
-      cb('No hay productos en la cesta', null);
+      cb('no hay productos en la cesta', null);
     }
   });
 };
@@ -1492,7 +1497,7 @@ function checkNewUser(username, cb){
 };
 //Cifrar la clave para guardarla de modo seguro en la bd
 function encryptPassword(password){
-  let cipher = crypto.createCipher(algorithm, encryptPass);
+  let cipher = crypto.createCipher('aes-256-cbc', '648fad€.,sdoifhdfijPAS►');
   let update = cipher.update(password, 'utf-8', 'hex');
   update += cipher.final('hex');
   return update;
@@ -1652,6 +1657,33 @@ function copyImagesProducto(permalink, cb){
     }
   });
 };
+//Genera el objeto de preguntas frecuentes. Cb es err, objetoSecciones
+function getPreguntasFrecuentes(cb){
+  console.log('GetPreguntasFrecuentes, functions.js');
+  db.collection('preguntasFrecuentes').find({}, {
+    '_id': false
+  }).limit(10).toArray((err, preguntas) => {
+    if(err) return cb('no se han encontrado las preguntas frecuentes.', null);
+    if(preguntas && preguntas.length < 1) return cb('no se han encontrado las preguntas frecuentes.', null);
+    cb(null, preguntas);
+  });
+};
+//Set las preguntas frecuentes en la db
+/*
+arrayPreguntas = [
+  {
+    'pregunta': 'abc',
+    'respuesta': 'bca'
+  }, {...}
+]
+ */
+function setPreguntasFrecuentes(objetoPregunta, cb){
+  console.log('SetPreguntasFrecuentes, functions.js');
+  db.collection('preguntasFrecuentes').insert(objetoPregunta, err => {
+    if(err) return cb('Error guardando las preguntas, inténtalo de nuevo.')
+    cb(null);
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.copyFile = copyFile;
@@ -1701,3 +1733,5 @@ exports.getSliderUrls = getSliderUrls;
 exports.subirCSV = subirCSV;
 exports.borrarImagenesProducto = borrarImagenesProducto;
 exports.copyImagesProducto = copyImagesProducto;
+exports.getPreguntasFrecuentes = getPreguntasFrecuentes;
+exports.setPreguntasFrecuentes = setPreguntasFrecuentes;

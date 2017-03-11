@@ -258,7 +258,7 @@ SESIÓN
 	max-height: 50px;
 }
 .producto-precio{
-	color: red;
+	color: black;
 	font-family: 'open sans condensed';
 }
 @media (max-width: 1475px){

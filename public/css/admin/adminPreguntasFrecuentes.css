@@ -1,0 +1,32 @@
+.contenedor-total-preguntas{
+	display: flex;	
+}
+	.contenedor-preguntas{
+		width: 700px;
+		margin: 20px;
+	}
+		.contenedor-preguntas p{
+			margin-bottom: 0;
+		}
+		.preguntas-error{
+			text-align: center;
+			color: tomato;
+			margin: 0;
+		}
+		.preguntas-success{
+			text-align: center;
+			color: green;
+			margin: 0;
+		}
+		.contenedor-add-preguntas{
+			display: flex;
+			flex-direction: column;
+		}
+		.contenedor-add-preguntas > input, .contenedor-add-preguntas > textarea{
+			margin-bottom: 10px;
+		}
+	#preguntas-actuales{
+		bottom: 0;
+		right: 2px;
+		margin: 20px;
+	}

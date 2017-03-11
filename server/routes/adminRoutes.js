@@ -2,10 +2,11 @@
 const express = require('express'),
 	path = require('path'),
 	admin = express.Router(),
-	render = require('./../render.js');
+	render = require('./../render.js'),
+	claves = require('./../secrets/secrets.js');
 
 admin.use((req, res, next) => {
-	if(req.session.username === 'merloxdixcontrol@gmail.com'){
+	if(req.session.username === claves.adminName){
 		next();
 	}else{
 		return res.send('You can\'t enter here.');

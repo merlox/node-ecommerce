@@ -1,3 +1,9 @@
+@font-face{
+	font-family: Vladimir;
+	src: local('vladimir script'),
+		url(../fonts/VLADIMIR.ttf);
+	font-weight: normal;
+}
 body{
 	background-color: whitesmoke;
 }
@@ -30,4 +36,9 @@ h3{
 .recover-password{
 	display: flex;
     flex-direction: column;
+}
+.kamisetas-kustom{
+	font-family: 'vladimir';
+	font-size: 42pt;
+	color: #444444;
 }

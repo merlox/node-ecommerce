@@ -3,9 +3,6 @@
 GENERALES
 
 */
-.centrar{
-	text-align: center;
-}
 #contenedor-total-pagina{
 	display: none;
 }
@@ -16,26 +13,67 @@ GENERALES
     margin-left: 10px;
     top: 1.5px;
 }
+.centrar{
+	text-align: center;
+}
+/*
+
+PREGUNTAS FRECUENTES
+
+ */
+#preguntas-frecuentes{
+	position: fixed;
+	right: 2px;
+	bottom: 0;
+}
 /*
 
 CESTA PÁGINA
 
 */
 #contenedor-cesta-pagina{
+    max-width: 900px;
+    margin: 0 auto;
+}
+#contenedor-cesta-pagina input{
+    width: 45px;
+}
+#contenedor-cesta-pagina td{
+    padding: 10px;
+}
+#contenedor-cesta-pagina a{
+    text-decoration: none;
+    color: black;
+}
+#contenedor-cesta-pagina a:hover{
+    color: blue;
+}
+#contenedor-cesta-pagina{
+    border-spacing: 0;
 	box-shadow: 0px 1px 3px grey;
     width: 700px;
-    border-radius: 5px;
-    padding: 20px;
+    padding: 20px;    
+}
+.thin-spinner{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100px;
+    margin: auto;
 }
 /*
 
 FORMULARIO DE DIRECCIÓN DE ENVÍO
 
 */
+.subtitulo-comprar{
+	display: block;
+	text-align: center;
+	margin: 10px 0;
+}
 #formulario-direccion{
 	box-shadow: 0px 1px 3px grey;
     width: 700px;
-    border-radius: 5px;
 	margin: auto;
 	padding: 20px;
 }
@@ -64,7 +102,6 @@ FORMULARIO DE PAGO CON TARJETA
 #contenedor-pago-tarjeta{
 	box-shadow: 0px 1px 3px grey;
     width: 700px;
-    border-radius: 5px;
     padding: 20px;
     display: flex;
     justify-content: space-around;
@@ -78,7 +115,6 @@ FORMULARIO DE PAGO CON TARJETA
 #payment-form{
 	width: 320px;
 	border: 1px solid lightgrey;
-	border-radius: 5px;
 	padding: 10px;
 }
 #fila-expira input{
@@ -111,6 +147,9 @@ FORMULARIO DE PAGO CON TARJETA
     #contenedor-pago-tarjeta{
         width: 400px;
     }
+    #contenedor-completar-pago{
+    	margin: 0 5px;
+    }
     #formulario-direccion{
         width: 400px;
     }
@@ -138,5 +177,10 @@ FORMULARIO DE PAGO CON TARJETA
 	#contenedor-pago-tarjeta{
 		width: 99%;
 		padding: 10px;
+	}
+}
+@media (max-width: 400px){
+	#formulario-direccion input{
+		width: 340px;
 	}
 }

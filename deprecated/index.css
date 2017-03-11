@@ -1,0 +1,74 @@
+/*
+
+SLIDER
+
+*/
+/*Para contener el slider y que solo se vea la imagen destacada*/
+#contenedor-contenedor-slider{
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	max-width: 1920px;
+	height: 360px;
+	margin: 0 auto;
+}
+#contenedor-imagenes-slider{
+	position: relative;
+}
+#imagen-central{
+	position: absolute;
+	top: 0;
+    transform: translateX(-50%);
+    left: 50%;
+}
+#imagen-derecha{
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(50%);
+}
+#imagen-izquierda{
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-150%);	
+}
+#flecha-izquierda-slider{
+	position: absolute;
+	top: 50%;
+	padding: 10px;
+	transform: translateY(-50%);
+	left: 60px;
+	height: 60px;
+	cursor: pointer;
+	opacity: 0.5;
+	z-index: 10;
+	transition: none;
+}
+#flecha-izquierda-slider:hover{
+	height: 62px;
+}
+#flecha-izquierda-slider:active{
+	height: 55px;
+}
+#flecha-derecha-slider{
+	position: absolute;
+	top: 50%;
+	padding: 10px;
+	transform: translateY(-50%);
+	right: 60px;
+	height: 60px;
+	cursor: pointer;
+	opacity: 0.5;
+	z-index: 10;
+	transition: none;
+}
+#flecha-derecha-slider:hover{
+	height: 62px;
+}
+#flecha-derecha-slider:active{
+	height: 55px;
+}
+.imagen-inicial:not(:first-child){
+	display: none;
+}

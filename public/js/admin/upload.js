@@ -2,6 +2,7 @@
 let imagenesProducto = {};
 let informacionProducto = {};
 let contenidosMainMenu = "";
+let scrollProductosPosition = 0;
 
 //imagenesProducto = {
 //  "1" : [
@@ -12,6 +13,7 @@ let contenidosMainMenu = "";
 //El 1 representa la ubicación, siendo 1 la imágen más grande y el resto miniaturas.
 
 function guardarPublicarProducto(publicar){
+  scrollProductosPosition = q('#seccion-productos').scrollTop;
   if(!comprobarDatosSubidaProducto()){
     let mensajeErrorHTML = `Error subiendo el producto, los campos no pueden estar vacíos<br/>
       <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;

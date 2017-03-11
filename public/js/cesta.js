@@ -1,17 +1,8 @@
 'use strict';
 
-let comprarAhora = false;
+let comprarAhora = false,
+	cestaBloqueada = false;
 
-window.addEventListener('load', () => {
-	//Que al hacer click en el icono de la cesta te lleve a la página de pasar por caja
-	q('#cesta').href = `/cesta?ref=${window.location.pathname}`;
-	if(window.location.pathname == "/cesta"){
-		httpGet('/api/get-logged-state', (state) => {
-			if(state == null) window.location.href = "/";
-			else renderCesta();
-		});
-	}
-});
 //Añadir productos a la cesta
 function addCesta(cantidad){
 	let permalinkProducto = window.location.pathname.substring(3);
@@ -21,7 +12,7 @@ function addCesta(cantidad){
 	toggleMenuMovil(); //Para mostrar el menú movil si estuviese oculto y cargar la cesta
 	httpPost('/api/add-cesta/', dataObject, (err) => {
 		getCesta();
-		if(comprarAhora) window.location = `/cesta?ref=${window.location.pathname}`;
+		if(comprarAhora) window.location = `/completar-pago`;
 	});
 };
 //Para crear la cesta widget del menú principal
@@ -51,6 +42,7 @@ function getCesta(){
 						onkeypress="editarCantidadCesta('${productoCesta.permalink}', event)" 
 						value="${productoCesta.cantidad}"/></td>
 					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
+					<td></td>
 					<td><span onclick="deleteCestaItem('${productoCesta.permalink}', this)" class="x-icon">×</span></td>
 				</tr>`;
 				precioTotal += parseFloat(precioCalculado);
@@ -60,7 +52,7 @@ function getCesta(){
 						<td class="separador-tabla"></td>
 						<td colspan="2">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
 						<td colspan="3">
-							<button onclick="window.location.href='/cesta?ref=${window.location.pathname}'">Pasar por caja</button>
+							<button onclick="window.location.href='/completar-pago'">Pasar por caja</button>
 						</td>
 					</tr>`;
 				}
@@ -95,7 +87,7 @@ function editarCantidadCesta(producto, e, blurred){
 		};
 		httpPost('/api/change-cantidad-cesta', data, (err) => {
 			if(err) alert(err);
-			if(window.location.pathname == "/cesta") renderCesta();
+			if(/\/completar-pago\/?/.test(window.location.pathname)) renderCesta();
 			else getCesta();
 		});
 	}
@@ -109,81 +101,8 @@ function deleteCestaItem(producto, element){
 	element.parentNode.parentNode.remove();
 	httpPost('/api/change-cantidad-cesta', data, (err) => {
 		if(err) alert(err);
-		if(window.location.pathname == "/cesta") renderCesta();
+		if(/\/completar-pago\/?/.test(window.location.pathname)) renderCesta();
 		else getCesta();
-	});
-};
-//Para mostrar la cesta en la pantalla principal cesta.html
-function renderCesta(){
-	if(q('#contenedor-total-pagina').style.display == 'block'){
-		q('#contenedor-total-pagina').style.display = 'none';
-	}
-
-	q('body').insertAdjacentHTML('afterbegin', '<div class="thin-spinner"></div>');
-
-	httpGet('/api/get-cesta', (response) => {
-		response = JSON.parse(response);
-		if(response.error){
-			q('.thin-spinner').remove();
-			//Mostrar contenido de la página
-			q('#mensaje-error').style.display = 'block';
-			q('#mensaje-error').innerHTML = `<h3>Error, ${response.error}</h3>
-				<button onclick="window.location='/'">Volver al inicio</button>`;
-		}
-		else if(response.cesta != null){
-			let cestaHtml = '';
-			let precioTotal = 0;
-			//Loop para cada producto de la cesta
-			response.cesta.forEach((productoCesta, index) => {
-				let precioCalculado = (productoCesta.precio*productoCesta.cantidad).toFixed(2);
-				//Importante mantener la estructura html o dará errores raros
-				cestaHtml += 
-				`<tr>
-					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
-					<td class="cesta-precio">${parseFloat(productoCesta.precio).toFixed(2)}€</td>
-					<td class="titulo-producto">
-					<a class="permalink-producto" href="/p/${productoCesta.permalink}">${productoCesta.titulo}</a></td>
-					<td><input type="number" min="1" class="producto-cesta-cantidad"
-						onfocusout="editarCantidadCesta('${productoCesta.permalink}', event, true)"
-						onkeypress="editarCantidadCesta('${productoCesta.permalink}', event)" 
-						value="${productoCesta.cantidad}"/></td>
-					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
-					<td><span onclick="deleteCestaItem('${productoCesta.permalink}', this)" class="x-icon">×</span></td>
-				</tr>`;
-				precioTotal += parseFloat(precioCalculado);
-				if(index + 1 >= response.cesta.length){
-					cestaHtml += 
-					`<tr>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td colspan="3">Total: <b>${precioTotal.toFixed(2)}€</b></td>
-					</tr>`;
-				}
-			});
-			//Quitar spinner
-			q('.thin-spinner').remove();
-			//Mostrar contenido de la página
-			q('#contenedor-total-pagina').style.display = 'block';
-			//Quitar el precio total al lado de la tarjeta
-			if(q('.precio-total')) q('.precio-total').remove();
-			//Insertar precio total al lado de la tarjeta de credito o debito
-			q('#contenedor-completar-pago').insertAdjacentHTML('afterbegin', 
-				`<span class="precio-total">Total: <b>${precioTotal.toFixed(2)}€</b></span>`);
-			//Poner el contenido de la cesta en la página
-			q('#contenedor-cesta-pagina').innerHTML = cestaHtml;
-		}else{
-			q('.thin-spinner').remove();
-			q('#contenedor-total-pagina').style.display = 'block';
-			//La cesta está vacía
-			q('#contenedor-total-pagina').innerHTML = 
-				`<table style="width: 500px; margin: auto;"><tr>
-					<td id="mensaje-cesta-vacia">No hay productos en tu cesta.</td>
-					<td><button onclick="window.location.href='${getParameterByName('ref')}'">
-						Volver a la página anterior
-					</button></td>
-				</tr></table>`;
-		}
 	});
 };
 
@@ -205,8 +124,6 @@ if(q('.button-comprar-ahora')){
 		});
 	});
 }
-
-let cestaBloqueada = false;
 //Mostrar la cesta on hover
 q('#cesta').addEventListener('mouseenter', () => {
 	if(!cestaBloqueada){

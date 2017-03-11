@@ -177,7 +177,7 @@ routes.post('/pay-product', (req, res) => {
   });
 });
 
-routes.get('/cesta', (req, res) => {
+routes.get('/completar-pago', (req, res) => {
   let dataObject = {
     'loggedState': '/login',
     'loggedStateHTML': 'iniciar sesión'
@@ -190,7 +190,7 @@ routes.get('/cesta', (req, res) => {
       dataObject.loggedStateHTML = 'admin ▼';
       dataObject.loggedState = '/admin';
     }
-    render(path.join(__dirname, '../../public/views/cesta.html'), dataObject, (err, data) => {
+    render(path.join(__dirname, '../../public/views/completarPago.html'), dataObject, (err, data) => {
       if(err){
         console.log(err);
         return res.send(err);
@@ -351,37 +351,26 @@ routes.get('/d/:categoria', (req, res) => {
 });
 
 routes.get('/favicon.ico', (req, res) => {
-  res.sendFile('../../public/images/favicon.png');
+  res.sendFile(path.join(__dirname, '../../public/images/', 'favicon.png'));
 });
 
 routes.get('/', (req, res) => {
   let dataObject = {
-    'isError': null,
-    'error': null,
-    'sliderImages': null,
     'loggedState': '/login',
     'loggedStateHTML': 'iniciar sesión'
   };
-  functions.getSlider(true, (err, images) => {
-    if(err){
-      dataObject.isError = true;
-      dataObject.error = err;
+  functions.getLoggedState(req, state => {
+    if(state === 'logged'){
+      dataObject.loggedStateHTML = 'mi cuenta ▼';
+      dataObject.loggedState = '/micuenta';
+    }else if(state === 'admin'){
+      dataObject.loggedStateHTML = 'admin ▼';
+      dataObject.loggedState = '/admin';
     }
-    dataObject.sliderImages = images;
 
-    functions.getLoggedState(req, state => {
-      if(state === 'logged'){
-        dataObject.loggedStateHTML = 'mi cuenta ▼';
-        dataObject.loggedState = '/micuenta';
-      }else if(state === 'admin'){
-        dataObject.loggedStateHTML = 'admin ▼';
-        dataObject.loggedState = '/admin';
-      }
-
-      render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
-        if(err) res.send(err);
-        res.send(data);
-      });
+    render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
+      if(err) res.send(err);
+      res.send(data);
     });
   });
 });

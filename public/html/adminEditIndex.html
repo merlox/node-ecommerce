@@ -1,27 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Admin edit products</title>
+	<title>Admin index | Pregunas frecuentes</title>
     
     {{> adminHeader}}
 
-    <link rel="stylesheet" href="../css/admin/adminEditIndex.css">
+    <link rel="stylesheet" href="../css/classAcordeon.css"/>
+    <link rel="stylesheet" href="../css/admin/adminEditIndex.css"/>
+    <link rel="stylesheet" href="../css/admin/adminPreguntasFrecuentes.css"/>
 </head>
 <body>
 
     {{> adminMenu}}
 
     <div id="contenedor-total">
-        <div id="contenedor-botones-slider">
-            <button id="button-publicar-slider">Publicar slider</button>
-            <button id="button-reset-slider">Reset slider</button>
+        <div class="contenedor-slider">
+            <div id="contenedor-botones-slider">
+                <button id="button-publicar-slider">Publicar slider</button>
+                <button id="button-reset-slider">Reset slider</button>
+            </div>
+            <div id="placeholder-slider"></div>
+            <input id="input-slider" type="file" name="uploads[]" multiple="multiple">
+            <div id="contenedor-imagenes-slider"></div>
         </div>
-        <div id="placeholder-slider"></div>
-        <input id="input-slider" type="file" name="uploads[]" multiple="multiple">
-        <div id="contenedor-imagenes-slider"></div>
+        <div class="contenedor-total-preguntas">
+            <div class="contenedor-preguntas">
+                <p>AÑADIR NUEVA PREGUNTA</p>
+                <div class="contenedor-add-preguntas">
+                    <p class="preguntas-error"></p>
+                    <p class="preguntas-success"></p>
+                    <input type="text" name="pregunta" placeholder="Pregunta..." />
+                    <textarea name="respuesta" placeholder="Respuesta..."></textarea>
+                    <button id="enviar-nueva-pregunta">Enviar nueva pregunta/respuesta</button>
+                </div>
+            </div>
+            <div id="preguntas-actuales"></div>
+        </div>
+
     </div><!--Contenedor total-->
 
     <script src="../js/functions.js" charset="utf-8"></script>
+    <script src="../js/classAcordeon.js"></script>
     <script src="../js/admin/adminEditIndex.js"></script>
+    <script src="../js/admin/adminPreguntasFrecuentes.js"></script>
 </body>
 </html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cesta | Kamisetas Kustom</title>
+	
+	{{> header}}
+
+	<link rel="stylesheet" type="text/css" href="../css/completarPago.css">
+	<link rel="stylesheet" type="text/css" href="../css/classAcordeon.css">
+</head>
+<body>
+
+	{{> menu}}
+
+	<div id="mensaje-error"></div>
+
+	<div id="contenedor-total-pagina">
+		<div id="preguntas-frecuentes"></div>
+		<div id="contenedor-compra">
+			<h2 class="centrar">1. Productos a comprar:</h2>
+			<b class="subtitulo-comprar">Comprueba tus productos y continúa al paso 2.</b>
+			<!--Esta es la cesta-->
+		    <table id="contenedor-cesta-pagina">
+			</table>
+			<h2 class="centrar">2. Dirección de envío:</h2>
+			<b class="subtitulo-comprar">Envío gratuito a todo el planeta de 15 a 30 días.</b>
+			<!--Este es el formulario de envio y datos de usuario-->
+			<form action="/pagar-tarjeta" method="POST" id="formulario-direccion">
+				<div>
+					<label>Nombre y apellidos:</label>
+					<input type="text" id="nombreApellidos" required="required" placeholder="Nombre Apellido"/>
+				</div>
+				<div>
+					<label>Linea 1 dirección:</label>
+					<input type="text" id="direccion1" required="required" placeholder="Calle, Número, Portal, Puerta, Escalera, Letra"/>
+				</div>
+				<div>
+					<label>Linea 2 dirección:</label>
+					<input type="text" id="direccion2" required="required" placeholder="Ciudad, Provincia"/>
+				</div>
+				<div>
+					<label>Código postal:</label>
+					<input type="number" id="codPostal" required="required" placeholder="12345"/>
+				</div>
+				<div>
+					<label>País:</label>
+					<input type="text" id="pais" required="required" placeholder="País"/>
+				</div>
+				<div>
+					<label>Email:</label>
+					<input type="email" id="email" required="required" placeholder="email@email.com"/>
+				</div>
+				<div>
+					<label>Teléfono (opcional):</label>
+					<input type="number" id="telefono" placeholder="123456789"/>
+				</div>
+			</form>
+
+			<h2 class="centrar">3. Datos de pago con tarjeta:</h2>
+			<b class="subtitulo-comprar">Introduce los datos de tu tarjeta para completar el pago.</b>
+			<div id="contenedor-pago-tarjeta">
+			<!--Este es el formulario de pago con tarjeta-->
+				<form id="payment-form" action="/" method="POST">
+				  <b class="payment-errors"></b>
+
+				  <div class="form-row">
+				    <label>Número:</label>
+				    <input id="num-tarjeta" type="text" maxlength="19" size="18" required="required" data-stripe="number" placeholder="Número tarjeta">
+				  </div>
+
+				  <div class="form-row" id="fila-expira">
+				    <label>Expira:</label>
+				    <input id="expira-completo" type="text" maxlength="5" placeholder="mm/aa">
+				    <input id="expira-mes" type="hidden" maxlength="2" required="required" data-stripe="exp_month">
+				    <input id="expira-ano" type="hidden" maxlength="2" required="required" data-stripe="exp_year">
+				  </div>
+
+				  <div class="form-row" id="cvc">
+				    <label>CVC:</label>
+				    <input id="cvc" type="text" maxlength="4" required="required" data-stripe="cvc" placeholder="CVC">
+				  </div>
+				</form>
+				<div id="contenedor-completar-pago">
+					<button class="submit" id="submit-pago">Completar pago ahora<div class="spinner spinner-final"></div></button>
+				</div>
+			</div>
+		</div>
+	</div> <!--Fin contenedor total página-->
+	<br/><br/>
+
+	{{> footer}}
+
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+	<script type="text/javascript" src="../js/classAcordeon.js"></script>
+	<script type="text/javascript" src="../js/checkout.js"></script>
+	<script type="text/javascript" src="../js/completarPago.js"></script>
+	<script type="text/javascript" src="../js/ganalytics.js"></script>
+</body>
+</html>

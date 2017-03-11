@@ -154,7 +154,7 @@ api.post('/upload-product', (req, res) => {
     'titulo': req.body.titulo,
     'imagenes': req.body.imagenes,
     'permalink': req.body.permalink,
-    'precio': parseInt(req.body.precio),
+    'precio': parseFloat(req.body.precio).toFixed(2),
     'descripcion': req.body.descripcion,
     'categoria': req.body.categoria,
     'atributos': req.body.atributos,
@@ -506,6 +506,26 @@ api.get('/get-slider-urls', (req, res) => {
 
 api.post('/subir-productos-csv', (req, res) => {
   functions.subirCSV(req.body.data, (err) => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+
+api.get('/get-preguntas-frecuentes', (req, res) => {
+  let response = {
+    'error': null,
+    'arrayPreguntas': null
+  };
+  functions.getPreguntasFrecuentes((err, arrayPreguntas) => {
+    if(err) response.error = err;
+    response.arrayPreguntas = arrayPreguntas;
+    res.send(response);
+  });
+});
+
+api.post('/set-preguntas-frecuentes', (req, res) => {
+  let objetoPregunta = req.body.data;
+  functions.setPreguntasFrecuentes(objetoPregunta, err => {
     if(err) return res.send(err);
     res.send(null);
   });

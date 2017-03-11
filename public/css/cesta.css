@@ -1,37 +1,5 @@
 /*
 
-PÁGINA CESTA
-
-*/
-#contenedor-cesta-pagina{
-    max-width: 900px;
-    margin: 0 auto;
-}
-#contenedor-cesta-pagina input{
-    width: 45px;
-}
-#contenedor-cesta-pagina td{
-    padding: 10px;
-}
-#contenedor-cesta-pagina a{
-    text-decoration: none;
-    color: black;
-}
-#contenedor-cesta-pagina a:hover{
-    color: blue;
-}
-#contenedor-cesta-pagina{
-    border-spacing: 0;
-}
-.thin-spinner{
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 100px;
-    margin: auto;
-}
-/*
-
 WIDGET CESTA
 
 */

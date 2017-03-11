@@ -18,8 +18,9 @@ function Minislider(nombre, tipo, id){
 	//Genera el html de todo el minislider, luego lo inserta en la ID de este objeto
 	function colocarMinislider(){
 		httpGet(`/api/get-minislider/${tipo}?pag=${that.pagina}`, (response) => {
-			response = JSON.parse(response);
-			if(!response) return console.log(`No se ha recibido respuesta para el minislider ${tipo}`);
+			if(response) response = JSON.parse(response);
+			else return console.log(`No se ha recibido respuesta para el minislider ${tipo}`);
+			
 			if(response.error){
 				return console.log(response.error); //Si hay un error, no mostrar el minislider directamente
 			}
@@ -47,7 +48,7 @@ function Minislider(nombre, tipo, id){
 						</a>
 						<a class="categoria-minislider" href="/d/${encodeURIComponent(producto.categoria)}">${producto.categoria}</a>						
 						<a class="titulo-minislider" href="/p/${producto.permalink}" title="${tituloOriginal}">${tituloCorto}</a>
-						<span class="precio-minislider">${parseFloat(producto.precio).toFixed(2)}€</span>
+						<span class="precio-minislider">${producto.precio}€</span>
 					</div>`;
 			}
 			sliderHTML += '</div></div>';

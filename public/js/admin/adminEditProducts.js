@@ -3,6 +3,7 @@ let isMenuVisible = true,
 	isMenuResponsive = false,
 	productosPorPagina = 50,
 	filtroCategoria = null;
+
 //Para no mostrar el preview productos al hacer resize de la pantalla onload
 let esperarInteraccionMenu = true;
 
@@ -157,20 +158,20 @@ function crearCajasProductos(page){
 				`<p class="no-products-found">${response.error}</p>`;
 		}
 		if(response.results){
-			let arrayProductos = response.results;
+			let arrayProductos = response.results,
+				htmlProducto = '';
 			for(let i = 0; i < arrayProductos.length; i++){
-				let objetoProducto = arrayProductos[i];
-				let tituloProducto = objetoProducto.titulo;
-				let addEspacioTitulo = '';
+				let objetoProducto = arrayProductos[i],
+					tituloProducto = objetoProducto.titulo,
+					addEspacioTitulo = '';
 				if(objetoProducto.titulo.length >= 40){
 					objetoProducto.titulo = objetoProducto.titulo.substring(0, 45);
 					objetoProducto.titulo += "...";
 				}else{
 					addEspacioTitulo = '<br />';
 				}
-				let permalinkATexto = "'"+objetoProducto.permalink+"'";
 				//Mostramos el aspecto de borrador a los no publicados
-				let htmlProducto = `<div class="contenedor-producto ${objetoProducto.publicado ? '' : 'borrador'}">
+				htmlProducto += `<div class="contenedor-producto ${objetoProducto.publicado ? '' : 'borrador'}">
 					<img class="imagen-producto" src="../public-uploads/${objetoProducto.imagenes[1]}"/>
 					<div class="contenedor-producto-informacion"><span title="${tituloProducto}" style="display:inline-block;">
 					${objetoProducto.titulo}</span>${addEspacioTitulo}
@@ -178,11 +179,13 @@ function crearCajasProductos(page){
 					<span class="categoria-producto-unico">
 					${objetoProducto.publicado ? objetoProducto.categoria : (objetoProducto.categoria+' (Borrador)')}</span>
 					<div class="contenedor-enlaces-producto"><a target="_blank" href="/p/${objetoProducto.permalink}"> Ver </a>
-					<a href="javascript:void(0)" onclick="loadFullProduct(${permalinkATexto})"> Editar </a>
-					<a href="javascript:void(0)" onclick="borrarProducto(${permalinkATexto})"> Borrar </a>
+					<a href="javascript:void(0)" onclick="loadFullProduct('${objetoProducto.permalink}')"> Editar </a>
+					<a href="javascript:void(0)" onclick="borrarProducto('${objetoProducto.permalink}')"> Borrar </a>
 					</div></div><input type="hidden" value="${objetoProducto.permalink}"/></div>`;
-				id('contenedor-productos').insertAdjacentHTML('beforeend', htmlProducto);
 			}
+			id('contenedor-productos').innerHTML = htmlProducto;
+			//Volvemos al scroll de antes de guardar el producto
+			q('#seccion-productos').scrollTop = scrollProductosPosition;
 		}else{
 			id('contenedor-productos').innerHTML = 
 				`<p class="no-products-found">${response.error}</p>`;

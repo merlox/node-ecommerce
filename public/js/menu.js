@@ -64,17 +64,15 @@ window.addEventListener('resize', () => {
 });
 
 //Para ocultar o mostrar el menu de departamentos para ir a uno determinado
-let isDepartamentosActive = false;
-function ocultarMostrarDepartamentos(){
+function ocultarMostrarDepartamentos(isDepartamentosActive){
 	//En pantallas pequeñas poner el dropdown dentro del menu
 	if(window.innerWidth >= 650){
-		if(!isDepartamentosActive) q('#expandible-departamentos').className = 'animar-mostrar-departamentos';
+		if(isDepartamentosActive) q('#expandible-departamentos').className = 'animar-mostrar-departamentos';
 		else q('#expandible-departamentos').className = '';
 	}else{
-		if(!isDepartamentosActive) q('#expandible-departamentos').className = 'animar-mostrar-departamentos-responsive';
+		if(isDepartamentosActive) q('#expandible-departamentos').className = 'animar-mostrar-departamentos-responsive';
 		else q('#expandible-departamentos').className = '';
 	}
-	isDepartamentosActive = !isDepartamentosActive;
 };
 
 //Para buscar productos y mostrar palabras sugeridas
@@ -206,10 +204,10 @@ DEPARTAMENTOS
 //Ocultar o mostrar el menu de departamentos
 q('#departamentos').addEventListener('mouseenter', () => {
 	ocultarCestaBuscadorHoverDropdown();
-	ocultarMostrarDepartamentos();
+	ocultarMostrarDepartamentos(true);
 });
 q('#departamentos').addEventListener('mouseleave', () => {
-	ocultarMostrarDepartamentos();
+	ocultarMostrarDepartamentos(false);
 });
 /*
 

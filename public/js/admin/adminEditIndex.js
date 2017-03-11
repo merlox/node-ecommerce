@@ -47,6 +47,7 @@ function colocarImagenesSlider(jsonData){
 	q('#contenedor-imagenes-slider').innerHTML = imagenesHTML;
 	q('#contenedor-imagenes-slider').style.display = 'flex';
 };
+
 q('#placeholder-slider').addEventListener('click', () => {
 	q('#input-slider').click();
 });

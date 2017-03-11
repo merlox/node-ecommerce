@@ -1192,3 +1192,13 @@ Hoy he creado el sistema para importar productos mediante archivos csv. El model
 He tenido que recrear el sistema de almacenamiento de imágenes porque antes se guardaban las imágenes en uploads/ y dentro de una carpeta con el nombre del producto se metían las imágenes. Ahora no, ahora se guardan todas desordenadas en la carpeta uploads. Lo hacía así por temas de rendimiento, porque en lugar de buscar entre 1000 imagenes tendría que buscar entre 100 directorios. Resultó no ser un modelo facil de trabajar y no valió la pena complicamiento para poco cambio de rendimiento.
 
 Esto me permite que pueda poner las imágenes en cualquier sitio y que el programa lo busque con facilidad. También puedo crear un widget en el que mostrar y almacenar las imágenes a lo wordpress.
+
+### Día 63
+
+He instalado el certificado ssl de cloudflare aunque lo ideal sea instalar uno de let's encrypt porque cloudflare me da muchas opciones innecesarias que puedo hacer yo mismo con nginx como que se muestre una versión cacheada de la web cuando esté caída.
+
+También he modificado el diseño para adaptarse correctamente a las diferentes pantallas y arreglado numerosos bugs.
+
+Ahora estoy terminando el widget de preguntas frecuentes que se muestra en la página de compra aunque debería aparecer en todas las páginas puesto que se coloca en la esquina inferior derecha y es expansible.
+
+Mientras tanto estoy añadiendo 10 productos al día por la noche para tener una gran fuente de contenido en la web.

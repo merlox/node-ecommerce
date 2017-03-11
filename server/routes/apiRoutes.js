@@ -523,12 +523,5 @@ api.get('/get-preguntas-frecuentes', (req, res) => {
   });
 });
 
-api.post('/set-preguntas-frecuentes', (req, res) => {
-  let objetoPregunta = req.body.data;
-  functions.setPreguntasFrecuentes(objetoPregunta, err => {
-    if(err) return res.send(err);
-    res.send(null);
-  });
-});
 
 module.exports = api;

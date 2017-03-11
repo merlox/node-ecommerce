@@ -1,5 +1,6 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
+  ObjectId = require('mongodb').ObjectID,
   claves = require('./secrets/secrets.js'),
   MongoUrl = claves.mongoUrl,
   fs = require('fs'),
@@ -954,8 +955,7 @@ function payProduct(req, cb){
               from: 'merunasgrincalaitis@gmail.com',
               to: direccion.email,
               subject: 'Aqui tienes tu factura. Gracias por comprar.',
-              html: null,
-              imagenNombre: 'imagenFactura.jpg'
+              html: null
             };
             let renderEmailObject = {
               arrayProductos: arrayProductos,
@@ -1024,8 +1024,7 @@ function registerUsuario(username, password, domain, cb){
               from: 'merunasgrincalaitis@gmail.com',
               to: username,
               subject: `${username} bienvenido a la tienda. Confirma tu email.`,
-              html: null,
-              imagenNombre: 'imagenFactura.jpg'
+              html: null
             };
             render(path.join(__dirname, 'emails', 'bienvenida.html'), renderObject, (err, HTML) => {
               if(err) console.log('Error enviando el email de bienvenida.');
@@ -1209,7 +1208,7 @@ function saveCestaUser(cesta, username, cb){
   });
 };
 function getLoggedState(req, cb){
-  if(req.session.username == 'merloxdixcontrol@gmail.com'){
+  if(req.session.username === claves.adminName){
     cb('admin');
   }else if(req.session.username != null && req.session.username != undefined){
     cb('logged');
@@ -1321,8 +1320,7 @@ function enviarEmailProductosEnviados(arrayPermalinks, idPago, dominio, cb){
         from: 'merunasgrincalaitis@gmail.com',
         to: factura.direccion.email,
         subject: 'Tus productos acaban de ser enviados.',
-        html: renderedHTML,
-        imagenNombre: 'imagenFactura.jpg'
+        html: renderedHTML
       };
       //Enviamos el email
       sendEmail(emailObject, (err, success) => {
@@ -1403,8 +1401,7 @@ function cambiarContrasena(username, dominio, cb){
       from: 'merunasgrincalaitis@gmail.com',
       to: username,
       subject: 'Solicitud de cambio de contraseña.',
-      html: null,
-      imagenNombre: 'imagenFactura.jpg'
+      html: null
     };
     crypto.randomBytes(48, function(err, buffer) {
       let token = buffer.toString('hex');
@@ -1660,9 +1657,7 @@ function copyImagesProducto(permalink, cb){
 //Genera el objeto de preguntas frecuentes. Cb es err, objetoSecciones
 function getPreguntasFrecuentes(cb){
   console.log('GetPreguntasFrecuentes, functions.js');
-  db.collection('preguntasFrecuentes').find({}, {
-    '_id': false
-  }).limit(10).toArray((err, preguntas) => {
+  db.collection('preguntasFrecuentes').find({}).limit(10).toArray((err, preguntas) => {
     if(err) return cb('no se han encontrado las preguntas frecuentes.', null);
     if(preguntas && preguntas.length < 1) return cb('no se han encontrado las preguntas frecuentes.', null);
     cb(null, preguntas);
@@ -1677,10 +1672,34 @@ arrayPreguntas = [
   }, {...}
 ]
  */
+//Añade una nueva pregunta frecuente a la base de datos
 function setPreguntasFrecuentes(objetoPregunta, cb){
   console.log('SetPreguntasFrecuentes, functions.js');
   db.collection('preguntasFrecuentes').insert(objetoPregunta, err => {
     if(err) return cb('Error guardando las preguntas, inténtalo de nuevo.')
+    cb(null);
+  });
+};
+//Elimina una pregunta frecuente
+function eliminarPreguntaFrecuente(id, cb){
+  console.log('EliminarPreguntaFrecuente, functions.js');
+  db.collection('preguntasFrecuentes').remove({
+    '_id': new ObjectId(id) //Debe ir entrecomillado el id
+  }, err => {
+    if(err) return cb('Error borrando la pregunta frecuente, inténtalo de nuevo.');
+    cb(null);
+  });
+};
+//Edita una pregunta existente
+function editarPregunta(id, preguntaModificada, respuestaModificada, cb){
+  console.log('EditarPregunta, functions.js');
+  db.collection('preguntasFrecuentes').update({
+    '_id': new ObjectId(id)
+  }, {
+    'pregunta': preguntaModificada,
+    'respuesta': respuestaModificada
+  }, err => {
+    if(err) return cb('No se puedo modificar la pregunta, inténtalo de nuevo.');
     cb(null);
   });
 };
@@ -1735,3 +1754,5 @@ exports.borrarImagenesProducto = borrarImagenesProducto;
 exports.copyImagesProducto = copyImagesProducto;
 exports.getPreguntasFrecuentes = getPreguntasFrecuentes;
 exports.setPreguntasFrecuentes = setPreguntasFrecuentes;
+exports.eliminarPreguntaFrecuente = eliminarPreguntaFrecuente;
+exports.editarPregunta = editarPregunta;

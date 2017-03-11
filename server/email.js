@@ -24,7 +24,7 @@ module.exports = {
             html: emailObject.html, // html body
             attachments: [{
                 filename: emailObject.imagenNombre,
-                path: path.join(__dirname, 'emails/imgs/', emailObject.imagenNombre),
+                path: path.join(__dirname, 'emails/imgs/', 'imagenFactura.png'),
                 cid: 'imagenEmail'
             }]
         };

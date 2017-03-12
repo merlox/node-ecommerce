@@ -201,7 +201,6 @@ function generarTablaFacturasHTML(dataObject, done){
 		<th>Productos</th>
 		<th>Total</th>
 		<th>Fecha</th>
-		<th>Pago</th>
 		<th>Dirección</th>
 		<th>Estado</th>
 		<th>Acciones</th>
@@ -232,7 +231,12 @@ function generarTablaFacturasHTML(dataObject, done){
 	    	}
 	    	tablaHTML += `</ul></div></td>`;
 	    	//Precio total
-	    	tablaHTML += `<td>${(objectoFactura.precioTotalCentimos*0.01).toFixed(2)}€</td>`;
+	    	tablaHTML += `<td>
+	    		<b>${(objectoFactura.precioTotalCentimos*0.01).toFixed(2)}€</b>
+	    		<br/>Tarjeta ${objectoFactura.chargeObject.source.brand}
+	    		<br/>${objectoFactura.chargeObject.source.country}
+	    		<br/>${objectoFactura.terminacionTarjeta}
+	    	</td>`;
 	    	//Fecha de compra, la convertimos a ms y luego a date y luego a string para eliminar lo que no interesa
 	    	let fecha = new Date(objectoFactura.fecha*1000).toISOString(),
 	    		fechaHorario = fecha.split('T')[0].split('-'),
@@ -244,10 +248,6 @@ function generarTablaFacturasHTML(dataObject, done){
 	    	tablaHTML += `<td> ${diaDeLaSemana}
 	    		<br/>${fechaDia}/${fechaMes}/${fechaAño} 
 	    		<br/> <span class="secundario">${fechaHoras}</span></td>`;
-	    	//Forma de pago
-	    	tablaHTML += `<td>Tarjeta ${objectoFactura.chargeObject.source.brand}
-	    		<br/>${objectoFactura.chargeObject.source.country}
-	    		<br/>${objectoFactura.terminacionTarjeta}</td>`;
 	    	//Dirección
 	    	tablaHTML += `<td><div class="td-limitar-altura">
 		    		<span class="secundario">Cod. postal:</span> ${objectoFactura.direccion.codPostal ? objectoFactura.direccion.codPostal : '-'}
@@ -263,17 +263,17 @@ function generarTablaFacturasHTML(dataObject, done){
 	    		<br/><span class="secundario">Procesado:</span> <span class="secundario-procesado">${objectoFactura.estaProcesado ? 'Si' : 'No'}</span>
 	    		<br/><span class="secundario">Enviado:</span> <span class="secundario-enviado">${objectoFactura.estaEnviado ? 'Si' : 'No'}</span></td>`;
 	    	//Acciones
-	    	let botonEnviado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaEnviado', true, this)">
+	    	let botonEnviado = `<button class="boton-estado negativo" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaEnviado', true, this)">
 	    			Marcar enviado</button>`,
-	    		botonNoEnviado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaEnviado', false, this)">
+	    		botonNoEnviado = `<button class="boton-estado positivo" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaEnviado', false, this)">
 	    			Marcar no enviado</button>`,
-	    		botonProcesado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaProcesado', true, this)">
+	    		botonProcesado = `<button class="boton-estado negativo" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaProcesado', true, this)">
 	    			Marcar proces.</button>`,
-	    		botonNoProcesado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaProcesado', false, this)">
+	    		botonNoProcesado = `<button class="boton-estado positivo" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaProcesado', false, this)">
 	    			Marcar no proces.</button>`,
-	    		botonPagado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaPagado', true, this)">
+	    		botonPagado = `<button class="boton-estado negativo" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaPagado', true, this)">
 	    			Marcar pagado</button>`,
-	    		botonNoPagado = `<button class="boton-estado" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaPagado', false, this)">
+	    		botonNoPagado = `<button class="boton-estado positivo" onclick="actualizarEstado(${objectoFactura.idPago}, 'estaPagado', false, this)">
 	    			Marcar no pagado</button>`;
 	    	tablaHTML += `<td>${objectoFactura.estaPagado ? botonNoPagado : botonPagado}
 	    		${objectoFactura.estaProcesado ? botonNoProcesado : botonProcesado}
@@ -363,17 +363,17 @@ function actualizarEstado(idFactura, estadoNuevo, boolean, element){
 		//Extraemos la id pago
 		idPago = parseInt(botonNodo.getAttribute('onclick').split(',')[0].substring(botonNodo.getAttribute('onclick').split(',')[0].length-1));
 	//Los botones a usar
-	let botonEnviado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaEnviado', true, this)">
+	let botonEnviado = `<button class="boton-estado negativo" onclick="actualizarEstado(${idPago}, 'estaEnviado', true, this)">
 			Marcar enviado</button>`,
-		botonNoEnviado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaEnviado', false, this)">
+		botonNoEnviado = `<button class="boton-estado positivo" onclick="actualizarEstado(${idPago}, 'estaEnviado', false, this)">
 			Marcar no enviado</button>`,
-		botonProcesado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaProcesado', true, this)">
+		botonProcesado = `<button class="boton-estado negativo" onclick="actualizarEstado(${idPago}, 'estaProcesado', true, this)">
 			Marcar proces.</button>`,
-		botonNoProcesado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaProcesado', false, this)">
+		botonNoProcesado = `<button class="boton-estado positivo" onclick="actualizarEstado(${idPago}, 'estaProcesado', false, this)">
 			Marcar no proces.</button>`,
-		botonPagado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaPagado', true, this)">
+		botonPagado = `<button class="boton-estado negativo" onclick="actualizarEstado(${idPago}, 'estaPagado', true, this)">
 			Marcar pagado</button>`,
-		botonNoPagado = `<button class="boton-estado" onclick="actualizarEstado(${idPago}, 'estaPagado', false, this)">
+		botonNoPagado = `<button class="boton-estado positivo" onclick="actualizarEstado(${idPago}, 'estaPagado', false, this)">
 			Marcar no pagado</button>`;
 
 	//Reemplazamos el botón con un mensaje de cargando
@@ -385,15 +385,15 @@ function actualizarEstado(idFactura, estadoNuevo, boolean, element){
 
 		//Actualizamos el estado según corresponda y cambiamos el botón.
 		if(estadoNuevo === 'estaPagado'){
-			nuevoNodo.parentNode.parentNode.children[7].querySelector('.secundario-pagado').innerHTML = (boolean ? 'Si' : 'No');
+			nuevoNodo.parentNode.parentNode.children[6].querySelector('.secundario-pagado').innerHTML = (boolean ? 'Si' : 'No');
 			nuevoNodo.outerHTML = (boolean ? botonNoPagado : botonPagado);
 		}
 		if(estadoNuevo === 'estaProcesado'){
-			nuevoNodo.parentNode.parentNode.children[7].querySelector('.secundario-procesado').innerHTML = (boolean ? 'Si' : 'No');
+			nuevoNodo.parentNode.parentNode.children[6].querySelector('.secundario-procesado').innerHTML = (boolean ? 'Si' : 'No');
 			nuevoNodo.outerHTML = (boolean ? botonNoProcesado : botonProcesado);
 		}
 		if(estadoNuevo === 'estaEnviado'){
-			nuevoNodo.parentNode.parentNode.children[7].querySelector('.secundario-enviado').innerHTML = (boolean ? 'Si' : 'No');
+			nuevoNodo.parentNode.parentNode.children[6].querySelector('.secundario-enviado').innerHTML = (boolean ? 'Si' : 'No');
 			nuevoNodo.outerHTML = (boolean ? botonNoEnviado : botonEnviado);
 		}
 	});

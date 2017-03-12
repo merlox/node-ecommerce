@@ -78,7 +78,8 @@ tr:hover{
     overflow: auto;
 }
 #contenedor-facturas{
-    max-width: 98.5%;
+    max-width: 1350px;
+    margin: auto;
 }
 #tabla-facturas{
     display: none;
@@ -154,6 +155,12 @@ tr:hover{
 .mensaje-carga-boton-estado{
     text-align: center;
     width: 100%;
+}
+.negativo{
+    background-color: tomato;
+}
+.positivo{
+    background-color: green;
 }
 @media (max-width: 1420px){
     .contenedor-responsive-tabla{

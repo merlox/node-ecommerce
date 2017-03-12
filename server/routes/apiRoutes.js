@@ -132,48 +132,6 @@ api.post('/upload-image-product', (req, res) => {
   });
   form.parse(req);
 });
-//1. Create a folder for each product images and then copy the folder to uploads in the server
-api.post('/upload-product', (req, res) => {
-  let b = req.body,
-    responseObject = {
-      'error': null,
-      'success': null
-    };
-  if(!b.titulo || !b.imagenes || !b.permalink || !b.precio || !b.descripcion || !b.categoria || !b.atributos || b.publicado === null){
-    responseObject.error = 'Error, algún dato del producto no se ha recibido correctamente, comprueba la información del producto.';
-    return res.send(responseObject);
-  };
-  //Guardamos el producto en la base de datos
-  let informacionProducto = {
-    'titulo': req.body.titulo,
-    'imagenes': req.body.imagenes,
-    'permalink': req.body.permalink,
-    'precio': parseFloat(req.body.precio).toFixed(2),
-    'descripcion': req.body.descripcion,
-    'categoria': req.body.categoria,
-    'atributos': req.body.atributos,
-    'publicado': req.body.publicado,
-    'fecha': new Date(),
-    'visitas': 0,
-    'vendidos': 0
-  };
-  functions.uploadPublicImages(req.body.imagenes, err => {
-    if(err){
-      responseObject.error = err;
-      return res.send(responseObject);  
-    }  
-    functions.createUpdateProduct(req.body.permalink.toLowerCase(), informacionProducto, err => {
-      if(err){
-        responseObject.error = 'Error, no se pudo guardar el producto en la base de datos, inténtalo de nuevo.';
-        return res.send(responseObject);
-      }else{
-        responseObject.success = 'Producto guardado satisfactoriamente';
-        return res.send(responseObject);
-      }
-    });
-  });
-});
-
 api.post('/guardar-busqueda', (req, res) => {
   functions.guardarBusqueda(req.body.data, (err) => {
     if(err) console.log(err);

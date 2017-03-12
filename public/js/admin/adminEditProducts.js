@@ -185,7 +185,9 @@ function crearCajasProductos(page){
 			}
 			id('contenedor-productos').innerHTML = htmlProducto;
 			//Volvemos al scroll de antes de guardar el producto
-			q('#seccion-productos').scrollTop = scrollProductosPosition;
+			setTimeout(() => {
+				q('#seccion-productos').scrollTop = scrollProductosPosition;
+			}, 300);
 		}else{
 			id('contenedor-productos').innerHTML = 
 				`<p class="no-products-found">${response.error}</p>`;
@@ -361,8 +363,7 @@ function enviarCSV(json){
 		    q('.mensaje-error-subida').style.display = 'block';
 		    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
 		}else{
-			let success = `<p class="success-mensaje">Los productos se han publicado correctamente<p>`;
-			q('#contenedor-importar-productos').insertAdjacentHTML('afterend', success);
+			q('.success-message').innerHTML = `Los productos se han publicado correctamente`;
 			crearPaginacion();
 			crearCajasProductos();
 		}

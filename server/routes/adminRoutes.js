@@ -68,10 +68,23 @@ admin.post('/subir-productos-csv', (req, res) => {
 });
 
 admin.post('/guardar-categorias', (req, res) => {
-	console.log(req.body.data);
 	functions.guardarCategorias(req.body.data, err => {
 		res.send(err);
 	});
+});
+
+admin.post('/upload-product', (req, res) => {
+  let b = req.body.data;
+  if(!b.titulo || !b.imagenes || !b.permalink || !b.precio || !b.descripcion || !b.categoria || !b.atributos || b.publicado === null){
+    return res.send('Error, algún dato del producto no se ha recibido correctamente, comprueba la información del producto.');
+  };
+  functions.uploadPublicImages(b.imagenes, err => {
+    if(err) return res.send(err);  
+    functions.createUpdateProduct(b, err => {
+      if(err) res.send('Error, no se pudo guardar el producto en la base de datos, inténtalo de nuevo.');
+      res.send(null);
+    });
+  });
 });
 
 module.exports = admin;

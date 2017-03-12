@@ -169,16 +169,15 @@ function buscarFiltrarProductosCategoria(categoria, pagina, filtros, cb){
 };
 
 //Funcion para reemplazar o añadir un producto si no existe
-function createUpdateProduct(permalink, productData, cb){
+function createUpdateProduct(productData, cb){
   console.log('CreateUpdateProduct, functions,js');
-  permalink = encodeURIComponent(permalink);
   db.collection('productos').update({
-    'permalink': permalink.toLowerCase()
+    'permalink': encodeURIComponent(productData.permalink.toLowerCase())
   }, {
     'titulo': productData.titulo,
     'imagenes': productData.imagenes,
     'permalink': productData.permalink.toLowerCase(),
-    'precio': parseInt(productData.precio),
+    'precio': parseFloat(productData.precio).toFixed(2),
     'descripcion': productData.descripcion,
     'categoria': productData.categoria,
     'atributos': productData.atributos,

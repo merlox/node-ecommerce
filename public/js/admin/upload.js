@@ -24,55 +24,37 @@ function guardarPublicarProducto(publicar){
     q('.mensaje-error-subida').style.display = 'none';
     q('.mensaje-error-subida').innerHTML = '';
   }
-
-  informacionProducto.titulo = id('producto-title').value;
-  informacionProducto.permalink = id('permalink').value;
-  informacionProducto.precio = id('producto-precio').value;
-  informacionProducto.descripcion = id('producto-descripcion').value;
+  informacionProducto = {
+    'titulo': id('producto-title').value,
+    'permalink': id('permalink').value,
+    'precio': id('producto-precio').value,
+    'descripcion': id('producto-descripcion').value,
+    'atributos': objetoAtributos,
+    'imagenes': imagenesProducto,
+    'publicado': false
+  }
   //La categoria seleccionada se añade a este mismo objeto con el js del categoria.js
   let productoCategorias = id('producto-categorias');
   informacionProducto.categoria = productoCategorias.childNodes[productoCategorias.selectedIndex].innerHTML;
-  informacionProducto.atributos = objetoAtributos;
-  informacionProducto.imagenes = imagenesProducto;
-  informacionProducto.publicado = false;
 
   if(publicar) informacionProducto.publicado = true;  
 
   uploadCategoriasServer();
-  
-  let request = new XMLHttpRequest();
-  request.open('POST', '/api/upload-product');
-  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  request.addEventListener('readystatechange', () => {
-    if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
-      let responseObject = JSON.parse(request.responseText);
-      if(responseObject.error){
-        let mensajeErrorHTML = `${responseObject.error}<br/>
-          <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
-        q('.mensaje-error-subida').style.display = 'block';
-        q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
-        return;
-      }
-      q('#image-upload-input').value = ''; //Reseteamos el input de imagenes
-      q('#imagen-principal').style.display = 'block';
-      resetAllProductData();
-      //Funcion del editProducts.js para generar las cajas de productos
-      crearCajasProductos();
-    }else if(request.readyState == XMLHttpRequest.DONE){
-      let responseObject = JSON.parse(request.responseText);
-      if(responseObject.error){
-        let mensajeErrorHTML = `${responseObject.error}<br/>
-          <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
-        q('.mensaje-error-subida').style.display = 'block';
-        q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
-        return;
-      }
-      q('#image-upload-input').value = ''; //Reseteamos el input de imagenes
-      q('#imagen-principal').style.display = 'block';
-      resetAllProductData();
+
+  httpPost('/admin/upload-product', informacionProducto, err => {
+    if(err){
+      let mensajeErrorHTML = `${responseObject.error}<br/>
+        <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
+      q('.mensaje-error-subida').style.display = 'block';
+      q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
+      return;
     }
+    q('#image-upload-input').value = ''; //Reseteamos el input de imagenes
+    q('#imagen-principal').style.display = 'block';
+    resetAllProductData();
+    //Funcion del editProducts.js para generar las cajas de productos
+    crearCajasProductos();
   });
-  request.send(JSON.stringify(informacionProducto));
 };
 //Función para comprobar que no haya campos vacíos al subir un producto
 function comprobarDatosSubidaProducto(){

@@ -135,13 +135,15 @@ function saveClientImages(){
           }
         }
       }, false);
-      request.onreadystatechange = () => {
+      request.addEventListener('readystatechange', () => {
         if(request.readyState == XMLHttpRequest.DONE && request.status >= 200 && request.status <= 300){
           requestResults = JSON.parse(request.responseText);
           imagenesProducto = requestResults;
           mostrarImagenesCliente(imagenesProducto);
+        }else if(request.readyState == XMLHttpRequest.DONE){
+          console.log('No se pudieron subir las imágenes.');
         }
-      };
+      });
       request.open('POST', '/api/upload-image-product', true);
       request.send(formData);
     }else{

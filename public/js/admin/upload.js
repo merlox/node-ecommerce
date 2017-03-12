@@ -38,16 +38,8 @@ function guardarPublicarProducto(publicar){
 
   if(publicar) informacionProducto.publicado = true;  
 
-  let categoriasReq = new XMLHttpRequest();
-  categoriasReq.open('POST', '/api/guardar-categorias');
-  categoriasReq.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
-  categoriasReq.addEventListener('readystatechange', () => {
-    if(categoriasReq.readyState == XMLHttpRequest.DONE){
-      console.log('Categorias guardadas.');
-    }
-  });
-  categoriasReq.send(JSON.stringify(arrayCategorias));
-
+  uploadCategoriasServer();
+  
   let request = new XMLHttpRequest();
   request.open('POST', '/api/upload-product');
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

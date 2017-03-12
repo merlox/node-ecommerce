@@ -225,8 +225,9 @@ PRODUCTOS
 	margin: 0;
 }
 .categoria-producto-unico{
-	font-size: 9pt;
-	color: grey;
+	font-size: 8pt;
+	color: black;
+  text-transform: uppercase;
 	margin: 2px 0;
 }
 .contenedor-enlaces-producto a:not(:nth-child(1)){
@@ -257,7 +258,9 @@ PRODUCTOS
 }
 #contenedor-categorias{
 	width: 40%;
-	border-right: 0; 
+	border-right: 0;
+  text-transform: uppercase;
+  font-size: 9pt;
 }
 #button-nuevo-producto{
 	width: 50%;
@@ -333,10 +336,11 @@ INFORMACION PRODUCTO
   word-wrap: break-word;
 }
 #producto-categorias{
-  font-size: 13pt;
+  font-size: 10pt;
   float: left;
   margin-right: 5px;
   padding: 4.5px;
+  text-transform: uppercase;
 }
 #nueva-categoria{
   font-size: 13pt;

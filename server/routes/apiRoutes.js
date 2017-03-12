@@ -30,12 +30,6 @@ api.get('/permalink-check/:permalink', (req, res) => {
 		}
 	});
 });
-api.post('/guardar-categorias', (req, res) => {
-	functions.guardarCategorias(req.body, (err, success) => {
-		if(err) return res.send(err);
-		return res.send(success);
-	});
-});
 api.get('/get-categories', (req, res) => {
 	functions.getCategories((err, result) => {
 		if(err){
@@ -501,13 +495,6 @@ api.get('/get-slider-urls', (req, res) => {
     if(err) response.error = err;
     response.urls = objectUrls;
     res.send(response);
-  });
-});
-
-api.post('/subir-productos-csv', (req, res) => {
-  functions.subirCSV(req.body.data, (err) => {
-    if(err) return res.send(err);
-    res.send(null);
   });
 });
 

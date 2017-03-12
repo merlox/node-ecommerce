@@ -60,4 +60,18 @@ admin.post('/editar-pregunta', (req, res) => {
 	});
 });
 
+admin.post('/subir-productos-csv', (req, res) => {
+  functions.subirCSV(req.body.data, (err) => {
+    if(err) return res.send(err);
+    res.send(null);
+  });
+});
+
+admin.post('/guardar-categorias', (req, res) => {
+	console.log(req.body.data);
+	functions.guardarCategorias(req.body.data, err => {
+		res.send(err);
+	});
+});
+
 module.exports = admin;

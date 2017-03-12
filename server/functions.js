@@ -355,9 +355,9 @@ function guardarCategorias(categorias, callback){
     'upsert': true
   }, (err, countFilesModified, result) => {    
     if(err){
-      return callback('Error, could not update categories', null);
+      return callback('#1 Error guardando las categorías.');
     }else{
-      return callback(null, 'Categories saved correctly');
+      return callback(null);
     }
   });
 };

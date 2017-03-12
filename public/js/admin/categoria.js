@@ -1,6 +1,6 @@
 let arrayCategorias = [];
 
-window.addEventListener('load', getCategoriesFromServer());
+window.addEventListener('load', getCategoriesFromServer);
 
 function getCategoriesFromServer(){
   httpGet('/api/get-categories', (categories) => {
@@ -26,7 +26,7 @@ function getCategoriesFromServer(){
     id('contenedor-categorias').selectedIndex = indexCategoriaSeleccionadaAhora;
   });
 };
-//Para guardar las categorias
+//Añade una categoría nueva al pulsar "Crear categoría".
 function guardarCategoria(){
   let newCategoryValue = id('nueva-categoria').value;
   let newCategoryNode = '<option>'+newCategoryValue+'</option>';
@@ -36,6 +36,34 @@ function guardarCategoria(){
   id('contenedor-elementos-categoria').style.display = 'inline-block';
   id('contenedor-categoria-add').style.display = 'none';
   id('nueva-categoria').value = '';
+  uploadCategoriasServer();
+};
+//Sube el array de categorías al servidor
+function uploadCategoriasServer(cb){
+  for (let i = 0; i < arrayCategorias.length; i++) {
+    arrayCategorias[i] = arrayCategorias[i].toLowerCase();
+  }
+  httpPost('/admin/guardar-categorias', arrayCategorias, err => {
+    if(err) console.log(err);
+    else console.log('Categorías actualizadas');
+  });
+};
+//Borra una categoría y guarda los cambios en el servidor
+function borrarCategoria(){
+  let opcionesSelect = id('producto-categorias');
+  //Splice elimina el elemento seleccionado del array original Y devuelve el elemento borrado
+  //El inner html del option seleccionado
+  let optionSelected = id('producto-categorias').children[id('producto-categorias').selectedIndex].innerHTML,
+    indexOpcionSelectedArrayCategorias = arrayCategorias.indexOf(optionSelected);
+
+  if(indexOpcionSelectedArrayCategorias != -1){
+    arrayCategorias.splice(indexOpcionSelectedArrayCategorias, 1);
+  }else{
+    alert('Esa categoría no existe en el array de categorías.');
+  }
+  id('producto-categorias').remove(id('producto-categorias').selectedIndex);
+
+  uploadCategoriasServer();
 };
 // Deprecated: Para poner el atributo selected="selected" en el option seleccionado del seleccionado de categorias
 // function actualizarCategoriaSeleccionada(that){
@@ -65,8 +93,5 @@ id('button-nueva-categoria-cancelar').addEventListener('click', () => {
   id('contenedor-categoria-add').style.display = 'none';
 });
 id('button-categoria-borrar').addEventListener('click', () => {
-  let opcionesSelect = id('producto-categorias');
-  //Splice elimina el elemento seleccionado del array original Y devuelve el elemento borrado
-  arrayCategorias.splice(id('producto-categorias').selectedIndex, 1);
-  id('producto-categorias').remove(id('producto-categorias').selectedIndex);
+  borrarCategoria();
 });

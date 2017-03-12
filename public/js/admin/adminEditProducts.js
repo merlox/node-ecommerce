@@ -264,7 +264,18 @@ function crearJSONCSV(file, cb){
 					productoObject.titulo = celdas[0];
 					productoObject.precio = parseFloat(celdas[1].replace(',', '.'));
 					productoObject.descripcion = celdas[3];
-					productoObject.categoria = celdas[4];
+					productoObject.categoria = celdas[4].toLowerCase();
+					let existeCategoria = false;
+					//Miramos si la categoría existe en el array de categorías y si no la metemos,
+					//El arraycategorias es de categoria.js
+					for(let a = 0; a < arrayCategorias.length; a++){
+						if(arrayCategorias[a].toLowerCase() === productoObject.categoria) 
+							existeCategoria = true;
+					}
+					if(!existeCategoria){
+						arrayCategorias.push(productoObject.categoria);
+					}
+
 					//Imágenes en la celda 7
 					let objetoImagenes = {};
 					let imagenes = celdas[7].split(',');
@@ -336,14 +347,14 @@ function crearJSONCSV(file, cb){
 	function done(err){
 		if(!callbackCalled){
 			callbackCalled = true;
-			if(err) return cb(err, productos);
-			return cb(null, productos);
+			if(err) return cb(err, productos, arrayCategorias);
+			return cb(null, productos, arrayCategorias);
 		}
 	};
 };
 //Envia el csv al servidor y publica los productos
 function enviarCSV(json){
-	httpPost('/api/subir-productos-csv', json, err => {
+	httpPost('/admin/subir-productos-csv', json, err => {
 		if(err) {
 			let mensajeErrorHTML = `${err}<br/>
 		    	<button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
@@ -402,7 +413,7 @@ id('limitar-productos').addEventListener('change', (e) => {
 });
 q('#button-importar-csv:not([disabled])').addEventListener('click', () => {
 	q('#button-importar-csv').setAttribute('disabled', 'disabled');
-	crearJSONCSV(q('input[name=importar-csv-productos]').files[0], (err, json) => {
+	crearJSONCSV(q('input[name=importar-csv-productos]').files[0], (err, json, arrayCategorias) => {
 		q('#button-importar-csv').removeAttribute('disabled');
 		if(err){
 			let mensajeErrorHTML = `${err}<br/>
@@ -411,6 +422,7 @@ q('#button-importar-csv:not([disabled])').addEventListener('click', () => {
 		    q('.mensaje-error-subida').innerHTML = mensajeErrorHTML;
 		    return;
 		}
+		uploadCategoriasServer();
 		enviarCSV(json);
 	});
 });

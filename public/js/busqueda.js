@@ -51,6 +51,11 @@ function filtrarPrecio(min, max, pageActual){
 		let products = data.productos;
 		let productsHtml = '';
 		let header = q('#header-productos').outerHTML;
+		if(!products){
+			q('.mensaje-resultados').innerHTML = 
+				`No se han encontrado productos para ese rango de precios. Mostrando todos.`;
+			return;
+		}
 		for(let i = 0; i < products.length; i++){
 			let product = products[i];	
 			productsHtml += `<div class="producto">

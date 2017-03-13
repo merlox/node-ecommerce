@@ -162,6 +162,18 @@ tr:hover{
 .positivo{
     background-color: green;
 }
+/*
+
+CHART
+
+ */
+#chart{
+}
+/*
+
+RESPONSIVE
+
+ */
 @media (max-width: 1420px){
     .contenedor-responsive-tabla{
       overflow: auto;

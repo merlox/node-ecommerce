@@ -20,6 +20,7 @@ DONE 8. Enviar email al marcar como enviado
 window.addEventListener('load', () => {
 	generarFacturas(1);	
 	eventosFiltrosEstado();
+	generarEstadisticas();
 });
 
 //Creamos los filtros de estado con sus listeners y efectos
@@ -461,3 +462,50 @@ function enviarEmailProductos(idPago, element){
 /**
  * Genera un widget que muestra el estado rápido de la tienda
  */
+function generarEstadisticas(){
+	Chart.defaults.global.defaultFontFamily = 'Open sans';
+	Chart.defaults.global.defaultFontColor = 'black';
+	let ctx = q('#chart').getContext('2d');
+	let chart = new Chart(ctx, {
+		type: 'line',
+		data: {
+			labels: ["Rojo", "Verde", "Naranja", "Azul", "Marrón"],
+			datasets: [{
+				label: 'Mes actual',
+				data: [101, 243, 24, 182, 94],
+				backgroundColor: '#707AFF',
+				borderColor: '#2424FF',
+				borderWidth: 2,
+				lineTension: 0,
+				pointBackgroundColor: '#2424FF',
+				pointRadius: 4,
+				pointHoverRadius: 6
+			}, {
+				label: 'Mes anterior',
+				data: [520, 94, 98, 674, 102],
+				backgroundColor: '#9CA3FF',
+				borderColor: '#4F4FFF',
+				borderWidth: 2,
+				lineTension: 0,
+				pointBackgroundColor: '#9CA3FF',
+				pointRadius: 4,
+				pointHoverRadius: 6
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero: true
+					},
+					stacked: true
+				}]
+			},
+			responsive: false,
+			title: {
+				display: true,
+				text: 'Visitas diarias'
+			}
+		}
+	});
+};

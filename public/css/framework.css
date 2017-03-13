@@ -49,7 +49,6 @@ button, input[type=submit]{
     font-family: 'Open Sans', sans-serif;
 }
 button[disabled], button[disabled]:hover, input[disabled], button[disabled]:hover{
-    background-image: linear-gradient(to bottom, lightgrey, lightgrey);
     cursor: not-allowed;
     font-family: 'Open Sans', sans-serif;
 }

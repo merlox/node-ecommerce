@@ -6,6 +6,7 @@ GENERALES
 .contenedor-responsive{
 	width: 100%;
 	display: flex;
+	justify-content: center;
 }
 #menu-principal{
 	width: 100%;
@@ -60,7 +61,6 @@ DEPARTAMENTOS
 	flex: none;
 	display: flex;
 	flex-direction: column;
-	margin-left: 20px;
 }
 #departamentos:hover{
 	font-weight: bold;
@@ -125,16 +125,21 @@ BUSCADOR
 
 */
 #contenedor-buscador{
-	width: 100%;
-	display: flex;
-	align-items: center;
-	margin: 0 20px;
-	position: relative;
+	width: 350px;
+    display: flex;
+    align-items: center;
+    margin: auto;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    padding: 3px;
 }
 #buscador{
 	border: none;
 	height: 30px;
 	box-sizing: border-box;
+	background-color: transparent;
+	color: white;
+	font-weight: bold;
 	width: calc(100% - 70px);
 	z-index: 21;
 	padding-left: 7px;
@@ -150,7 +155,7 @@ BUSCADOR
     width: calc(100% - 70px);
     background-color: white;
     position: absolute;
-    top: 30px;
+    top: 45px;
     z-index: 20;
     text-align: left;
     border-radius: 0 0 10px 10px;
@@ -165,6 +170,7 @@ BUSCADOR
 #buscador-sugerencias table a{
 	text-decoration: none;
 	color: #00265F;
+	width: 100%;
 }
 #buscador-sugerencias table a:hover{
 	color: blue;
@@ -172,17 +178,17 @@ BUSCADOR
 #icono-busqueda{
 	width: 70px;
 	height: 30px;
-	padding: 5px;
 	cursor: pointer;
+	border: none;
+	background-color: transparent;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0; /*Overrite button padding*/
 }
 #icono-busqueda img{
 	width: 20px;
-}
-#icono-busqueda:hover{
-	background-color: #FFB400;
-}
-#icono-busqueda:active{
-	background-color: #D97805;	
 }
 #contenedor-login-dropdown{
 	position: relative;
@@ -306,13 +312,21 @@ SESIÓN
 		height: 100px;
 	}
 	#contenedor-buscador{
-		margin-right: 0;
+	    margin-right: 0;
+	    width: 70px;
+	    border: none;
+	    height: 70px;
 	}
 		#buscador{
 			width: calc(100% - 30px);
 		}
 		#icono-busqueda{
-			width: 30px;
+			border: none;
+		    width: 70px;
+		    font-size: 8pt;
+		}
+		#icono-busqueda img{
+			width: 25px;
 		}
 	#menu-principal{
 		height: 100%;
@@ -324,25 +338,23 @@ SESIÓN
 	a#usuario{
 		margin-top: 0;
 	}
-	#contenedor-buscador{
-		flex: initial;
-		width: 80%;
-	}
 	table#productos-cesta{
 		top: 120px;
 	}
-	#flecha-departamentos{
-		left: 30%;
-	}
 	#expandible-departamentos{
 		z-index: 40;
-		left: -20px;
 	}
 	.selector-atributos{
 		max-width: 100%;
 	}
 	.button-comprar-ahora{
 		padding: 10px 20px;
+	}
+	.subtitulos-menu{
+		display: none;
+	}
+	#buscador{
+		display: none;
 	}
 }
 @media (max-width: 400px){

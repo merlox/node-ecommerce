@@ -79,7 +79,6 @@ function generarResultadosBusquedaHTML(results){
 			<a class="texto-item-busqueda" title="${results[i].titulo}" 
 			href="/p/${results[i].permalink}?searched=${encodeURIComponent(q('#buscador').value)}">
 			${results[i].titulo}</a></td>
-			<td class="producto-precio">${results[i].precio}€</td>
 		</tr>`;
 	}
 	return htmlProducto;
@@ -143,6 +142,31 @@ function reducirMenuScroll(){
 		q('#productos-cesta').style.top = '70px';
 	}
 };
+//Oculta o muestra el buscador
+function ocultarMostrarBuscadorResponsive(mostrar){
+	//En pantallas pequeñas ocultar el buscador al click fuera
+	if(window.innerWidth <= 650){
+		if(mostrar){
+			qAll('#contenedor-login-dropdown, #cesta, #departamentos').forEach(e => {
+				e.style.display = 'none';
+			});
+			q('#buscador').style.display = 'block';
+			q('#contenedor-buscador').style.width = '100%';
+		}else{
+			qAll('#contenedor-login-dropdown, #cesta, #departamentos').forEach(e => {
+				e.style.display = 'flex';
+			});
+			q('#buscador').style.display = 'none';
+			q('#contenedor-buscador').style.width = '70px';
+		}
+	}else{
+		qAll('#contenedor-login-dropdown, #cesta, #departamentos').forEach(e => {
+			e.style.display = 'flex';
+		});
+		q('#buscador').style.display = 'block';
+		q('#contenedor-buscador').style.width = '';
+	}
+};
 
 window.addEventListener('scroll', reducirMenuScroll);
 
@@ -191,20 +215,28 @@ q('#buscador').addEventListener('click', (e) => {
 		e.stopPropagation();
 	}
 });
-q('html').addEventListener('click', () => {
-	q('#buscador-sugerencias').style.display = 'none';
-});
-//Para ir a la página de busqueda
-q('#icono-busqueda').addEventListener('click', () => {
-	//Si la busqueda no esta vacía, redirigir a resultados de busqueda en caso de hacer click a buscar
-	if(q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
-		window.location.href = `/search?q=${encodeURI(q('#buscador').value)}`;
-	}
-});
 q('#buscador').addEventListener('keypress', (e) => {
 	if(e.keyCode == 13 && q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
 		window.location.href = `/search?q=${encodeURI(q('#buscador').value)}`;
 	}
+});
+//Para ir a la página de busqueda
+q('#icono-busqueda').addEventListener('click', (e) => {
+	//Si la busqueda no esta vacía, redirigir a resultados de busqueda en caso de hacer click a buscar
+	if(q('#buscador').value != null && q('#buscador').value != "" && q('#buscador').value != undefined){
+		window.location.href = `/search?q=${encodeURI(q('#buscador').value)}`;
+	}
+	ocultarMostrarBuscadorResponsive(true);
+	e.stopPropagation();
+});
+q('#icono-busqueda').addEventListener('mouseover', (e) => {
+	ocultarMostrarBuscadorResponsive(true);
+	e.stopPropagation();
+});
+q('html').addEventListener('click', (e) => {
+	q('#buscador-sugerencias').style.display = 'none';
+	if(window.innerWidth <= 650 && e.target.id != 'menu-principal' && e.target.id != 'buscador')
+		ocultarMostrarBuscadorResponsive(false);
 });
 /*
 

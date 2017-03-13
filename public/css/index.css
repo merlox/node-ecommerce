@@ -18,7 +18,7 @@
     align-items: center;
     background-attachment: fixed;
 }
-@media (max-width: 600px){
+@media (max-width: 650px){
 	.index-header{
 		font-size: 30pt;
 	}

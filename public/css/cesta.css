@@ -25,11 +25,21 @@ WIDGET CESTA
     border-radius: 15px;
     border-spacing: 0;
     max-width: 800px;
+    max-height: 500px;
+    overflow: auto;
     z-index: 10;
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.36);
 }
+#productos-cesta tbody{
+    display: block;
+    max-height: 500px;
+}
 #productos-cesta td{
 	padding: 10px;
+}
+#productos-cesta tr:last-child{
+    position: sticky;
+    bottom: 0;
 }
 #productos-cesta a{
     text-decoration: none;
@@ -77,6 +87,12 @@ WIDGET CESTA
 }
 .titulo-producto{
     max-width: 400px;
+}
+.atributos-producto{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 #mensaje-cesta-vacia{
     padding: 20px;

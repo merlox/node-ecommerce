@@ -235,7 +235,7 @@ q('#icono-busqueda').addEventListener('mouseover', (e) => {
 });
 q('html').addEventListener('click', (e) => {
 	q('#buscador-sugerencias').style.display = 'none';
-	if(window.innerWidth <= 650 && e.target.id != 'menu-principal' && e.target.id != 'buscador')
+	if(!q('#menu-principal').contains(e.target))
 		ocultarMostrarBuscadorResponsive(false);
 });
 /*

@@ -70,6 +70,17 @@ ADMIN
 }
 /*
 
+POSICIONAR PREGUNTAS FRECUENTES
+
+ */
+#preguntas-frecuentes{
+	position: fixed;
+	right: 2px;
+	bottom: 0;
+	z-index: 10;
+}
+/*
+
 RESPONSIVE
 
  */

@@ -312,8 +312,12 @@ function crearJSONCSV(file, cb){
 						//Atributo
 						let keyAtributos = celdas[5].split(','); //Split devuelve 1 resultado si no hay coma
 						let valoresAtributos = celdas[6].split(',');
+						console.log(valoresAtributos)
 						if(keyAtributos[0] != ''){ //Si hay atributos recorremos todos los atributos
 							for(let x = 0; x < keyAtributos.length; x++){
+								console.log(valoresAtributos[x])
+								if(!valoresAtributos[x]) 
+									return done('Error, el archivo está mal formateado, falta el valor del atributo: '+keyAtributos[x]);
 								let valoresAtributoSeleccionado = valoresAtributos[x].split('|');
 								valoresAtributoSeleccionado = valoresAtributoSeleccionado.map(e => {
 									return e.trim();

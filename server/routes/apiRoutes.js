@@ -21,13 +21,8 @@ api.get('/get-images/:permalink', (req, res) => {
   });
 });
 api.get('/permalink-check/:permalink', (req, res) => {
-	functions.buscarProducto(req.params.permalink, (err, result) => {
-		if(err) return res.send(err);
-		if(result != null){
-			return res.send(true);
-		}else{
-			return res.send(null);
-		}
+	functions.checkPermalink(req.params.permalink, esValido => {
+		res.send(checkPermalink);
 	});
 });
 api.get('/get-categories', (req, res) => {
@@ -168,47 +163,36 @@ api.get('/get-minislider/:tipo', (req, res) => {
     return res.send(response);
   });
 });
+
 api.get('/get-logged-state', (req, res) => {
   functions.getLoggedState(req, (state) => {
     res.send(state);
   });
 });
+
 api.post('/add-cesta/', (req, res) => {
-  functions.addProductoCesta(req, (err) => {
-    if(err) return res.send(err);
+  let producto = req.body.data;
+  functions.addProductoCesta(req, producto, err => {
+    if(err) res.send(err);
     res.send(null);
   });
 });
+
 api.get('/get-cesta', (req, res) => {
   let responseObject = {
     error: null,
     cesta: null
   };
-  if(req.session.isLogged){
-    functions.getCesta(req.session.username, (err, cesta) => {
-      if(err){
-        console.log(err);
-        responseObject.error = err;
-      }else responseObject.cesta = cesta;
-      res.send(responseObject);
-    });
-  }else{
-    //Para usuarios no registrados copiar la 1ª imagen de cada producto con copy file
-    if(req.session.cesta != undefined || req.session.cesta != null){
-      functions.crearCesta(req.session.cesta, (err, cesta) => {
-        if(err){
-          console.log(err);
-          responseObject.error = err;
-        }else responseObject.cesta = cesta;
-        res.send(responseObject);
-      });
-    }else{
-      res.send(responseObject);
-    }
-  }
+  functions.getCesta(req.session, (err, cesta) => {
+    if(err){
+      console.log(err);
+      responseObject.error = err;
+    }else responseObject.cesta = cesta;
+    res.send(responseObject);
+  });
 });
 api.post('/change-cantidad-cesta', (req, res) => {
-  functions.cambiarCantidadCesta(req, (err) => {
+  functions.cambiarCantidadCesta(req, req.body.data, err => {
     if(err) return res.send('Error actualizando la cesta.');
     res.send(null);
   });
@@ -219,7 +203,7 @@ api.post('/pagar-compra', (req, res) => {
     'success': null
   };
   functions.getLoggedState(req, (state) => {
-    if(state == null){
+    if(!state){
       responseObject.error = 'Tienes que iniciar sesión o registrarte para comprar.';
       res.send(responseObject);
     }else{
@@ -316,37 +300,6 @@ api.get('/filter-categoria', (req, res) => {
   });
   //Buscar los productos que coincidan con la busqueda y renderizar la página
 });
-//Enviar las facturas.
-api.post('/facturas', (req, res) => {
-  let filtros = req.body.data.filtros,
-    dataObject = {
-      'error': null,
-      'facturas': null
-    },
-    productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
-    pageActual = req.body.data.pageActual ? parseInt(req.body.data.pageActual) : 1;
-  functions.getFacturas(productosPorPagina, pageActual, filtros, (err, arrayFacturas) => {
-    if(err) dataObject.error = err;
-    dataObject.facturas = arrayFacturas;
-    res.send(dataObject);
-  });
-});
-
-api.post('/get-paginacion-facturas', (req, res) => {
-  let filtros = req.body.data.filtros,
-    dataObject = {
-      'error': null,
-      'paginasTotales': null
-    }, 
-    productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
-    pageActual = req.body.data.pageActual;
-
-  functions.getPaginacionFacturas(productosPorPagina, pageActual, filtros, (err, paginasTotales) => {
-    if(err) dataObject.error = err;
-    dataObject.paginasTotales = paginasTotales;
-    res.send(dataObject);
-  });
-});
 
 api.post('/actualizar-estado-factura', (req, res) => {
   let factura = req.body.data;
@@ -360,7 +313,7 @@ api.post('/email-productos-enviados', (req, res) => {
   let productos = req.body.data.productos,
     idPago = req.body.data.idPago;
   //Le pasamos el dominio para crear un permalink por si quiere volver a la website a revisar los productos que ha comprado
-  let dominio = 'http://'+req.get('host');
+  let dominio = 'https://'+req.get('host');
   functions.enviarEmailProductosEnviados(productos, idPago, dominio, err => {
     if(err) return res.send(err);
     res.send(null);
@@ -397,7 +350,7 @@ api.get('/contar-facturas-cliente', (req, res) => {
 //Inicia el email de restablecer contraseña con /api/cambiar-contraseña, no confundir con /cambiar-contrasena del public routes
 //que es el que usa el token para confirmar el cambio.
 api.get('/cambiar-contrasena/:username?', (req, res) => {
-  let dominio = `http://${req.get('host')}`;
+  let dominio = `https://${req.get('host')}`;
   let username = req.session.username ? req.session.username : req.params.username;
   if(!username) return res.send('No se encontró ese usuario.');
   req.session.username = username;

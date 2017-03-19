@@ -1,6 +1,122 @@
 'use strict';
 
-Stripe.setPublishableKey('pk_live_9bAIPTRft8m2tWvGJgLSS4tO');
+Stripe.setPublishableKey('pk_test_UVgGQ5OoCEARrRvds8bKYV93');
+
+window.addEventListener('load', () => {
+	renderCesta();
+});
+
+//Muestra la cesta en la caja de productos de la compra
+function renderCesta(){
+	if(q('#contenedor-total-pagina').style.display == 'block'){
+		q('#contenedor-total-pagina').style.display = 'none';
+	}
+
+	q('body').insertAdjacentHTML('afterbegin', '<div class="thin-spinner"></div>');
+
+	httpGet('/api/get-cesta', (response) => {
+		response = JSON.parse(response);
+		if(response.error){
+			q('.thin-spinner').remove();
+			q('#contenedor-total-pagina').style.display = 'block';
+			//La cesta está vacía
+			q('#contenedor-total-pagina').innerHTML = 
+				`<table style="width: 500px; margin: auto;"><tr>
+					<td id="mensaje-cesta-vacia">No hay productos en tu cesta.</td>
+					<td><button onclick="window.history.back()">
+						Volver a la página anterior
+					</button></td>
+				</tr></table>`;
+		}else if(response.cesta){
+			let cestaHtml = '';
+			let precioTotal = 0;
+			//Loop para cada producto de la cesta
+			response.cesta.forEach((productoCesta, index) => {
+				let precioCalculado = (productoCesta.precio*productoCesta.cantidad).toFixed(2),
+					domAtributos = '';
+				//Creamos los atributos
+				for(let key in productoCesta.atributosTotales){
+					domAtributos += `
+						<span class="producto-atributos-key">${key}</span>
+						<select class="selector-atributos" onchange="
+							editarCantidadCesta(
+								'${productoCesta.id}', 
+								event,
+								null,
+								'${key}',
+								this.children[this.selectedIndex].innerHTML)">`;
+					let arrayValoresAtributo = productoCesta.atributosTotales[key];
+					for(let a = 0; a < arrayValoresAtributo.length;a++){
+						if(productoCesta.atributosSeleccionados[key] === arrayValoresAtributo[a])
+							domAtributos += `<option selected="selected">${arrayValoresAtributo[a]}</option>`;
+						else
+							domAtributos += `<option>${arrayValoresAtributo[a]}</option>`;
+					}
+					domAtributos += '</select>';
+				}
+				cestaHtml += 
+				`<tr>
+					<input type="hidden" value="${productoCesta.id}"/>
+					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
+					<td class="cesta-precio">${parseFloat(productoCesta.precio).toFixed(2)}€</td>
+					<td class="titulo-producto"><a class="permalink-producto" href="/p/${productoCesta.permalink}">
+						${productoCesta.titulo}</a></td>
+					<td class="atributos-producto">
+						${domAtributos}
+					</td>
+					<td><input class="producto-cesta-cantidad" type="number" min="1" max="9" onfocusout="
+						editarCantidadCesta(
+								'${productoCesta.id}',
+								event,
+								this.value,
+								null,
+								null)"
+						onkeypress="
+						editarCantidadCesta(
+								'${productoCesta.id}',
+								event,
+								this.value,
+								null,
+								null)" 
+						value="${productoCesta.cantidad}"/></td>
+					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
+					<td><span onclick="deleteCestaItem(${productoCesta.id}, this)" class="x-icon">×</span></td>
+				</tr>`;
+				precioTotal += parseFloat(precioCalculado);
+				if(index + 1 >= response.cesta.length){
+					cestaHtml += 
+					`<tr>
+						<td class="separador-tabla"></td>
+						<td colspan="2">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
+
+					</tr>`;
+				}
+			});
+			//Quitar spinner
+			q('.thin-spinner').remove();
+			//Mostrar contenido de la página
+			q('#contenedor-total-pagina').style.display = 'block';
+			//Quitar el precio total al lado de la tarjeta
+			if(q('.precio-total')) q('.precio-total').remove();
+			//Insertar precio total al lado de la tarjeta de credito o debito
+			q('#contenedor-completar-pago').insertAdjacentHTML('afterbegin', 
+				`<span class="precio-total">Total: <b>${precioTotal.toFixed(2)}€</b></span>`);
+			//Poner el contenido de la cesta en la página
+			q('#contenedor-cesta-pagina').innerHTML = cestaHtml;
+		}else{
+			q('.thin-spinner').remove();
+			q('#contenedor-total-pagina').style.display = 'block';
+			//La cesta está vacía
+			q('#contenedor-total-pagina').innerHTML = 
+				`<table style="width: 500px; margin: auto;"><tr>
+					<td id="mensaje-cesta-vacia">No hay productos en tu cesta.</td>
+					<td><button onclick="window.history.back()">
+						Volver a la página anterior
+					</button></td>
+				</tr></table>`;
+		}
+	});
+};
 
 //Para separar el mes y año y colocar los valores en los input hidden
 function checkExpireFormat(e){
@@ -45,6 +161,39 @@ function comprobarInputsCompletos(){
 	if(ok) resultado = true;
 	return resultado;
 };
+/**
+ * Devuelve un array con cada atributo y su valor de todos los objetos de la cesta
+ * arrayAtributos = [[{
+ * 	atributoNombre: asda,
+ * 	atributoValor: asas
+ * }, {
+ * 	atributoNombre: asdg,
+ * 	atributoValor: asdfas
+ * }],
+ * [{}, {}]]
+ */
+function extrerNombreValorAtributosSeleccionados(){
+	let contenedoresAtributo = qAll('.atributos-producto');
+	let arrayAtributos = [];
+	for(let i = 0; i < contenedoresAtributo.length; i++){
+		let atributosNombres = contenedoresAtributo[i].querySelectorAll('.producto-atributos-key'),
+			selectsInternos = contenedoresAtributo[i].querySelectorAll('.selector-atributos'),
+			arrayInternoAtributos = [];
+
+		//Recorremos todos los atributos dentro de cada producto
+		for(let a = 0; a < atributosNombres.length; a++){
+			let atributo = {
+				'atributoNombre': atributosNombres[a].innerHTML,
+				'atributoSeleccionado': selectsInternos[a][selectsInternos[a].selectedIndex].innerHTML
+			};
+
+			arrayInternoAtributos.push(atributo);
+		}
+
+		arrayAtributos.push(arrayInternoAtributos);
+	}
+	return arrayAtributos;
+};
 //Para comprobar la tarjeta pasando por los servidores de stripe y realizar el pago seguro.
 function submitPagoStripe(e){
 	if(comprobarInputsCompletos()){
@@ -70,21 +219,25 @@ function submitPagoStripe(e){
 	//Para evitar que se envie la información al servidor antes de comprobar la info en stripe
 	return false;
 };
+//Envia el pago al servidor
 function completarPago(token){
 	let arrayProductos = [];
 	let objetoCompra = {};
 
 	for(let i = 0; i < qAll('#contenedor-cesta-pagina tr').length; i++){
 		let fila = qAll('#contenedor-cesta-pagina tr')[i];
-		if(i + 1 < qAll('#contenedor-cesta-pagina tr').length){
+		if(i + 1 < qAll('#contenedor-cesta-pagina tr').length){  //No contamos la última fila al poner i + 1
 			//Permalink-producto innerHTML es el titulo del producto sacado tal cual de la base de datos
-			let producto = fila.querySelector('.permalink-producto').innerHTML;
+			let producto = fila.querySelector('.permalink-producto').innerHTML.trim();
 			let cantidad = fila.querySelector('.producto-cesta-cantidad').value;
 			let permalink = fila.querySelector('.permalink-producto').href.split('/p/')[1];
 			let objetoProducto = {};
+			let atributos = extrerNombreValorAtributosSeleccionados()[i];
+
 			objetoProducto["nombre"] = producto;
 			objetoProducto["cantidad"] = cantidad;
 			objetoProducto["permalink"] = permalink;
+			objetoProducto["atributos"] = atributos;
 			arrayProductos.push(objetoProducto);
 		}
 	}

@@ -82,7 +82,7 @@ function generarFacturas(pag){
 	if(pageActual > 0 && paginasTotales >= pageActual){
 		crearPaginacionFacturas();
 		//Solicitar el estado de las compras de los productos, con paginación.
-		httpPost(`/api/facturas`, objetoEnviar, dataObject => {
+		httpPost(`/admin/facturas`, objetoEnviar, dataObject => {
 			dataObject = JSON.parse(dataObject);
 			if(dataObject.error) {
 				q('#tabla-facturas').style.display = 'block';
@@ -115,7 +115,7 @@ function crearPaginacionFacturas(done){
 	};
 
 	if(rehacerPaginador){
-		httpPost(`/api/get-paginacion-facturas`, objetoEnviar, dataObject => {
+		httpPost(`/admin/get-paginacion-facturas`, objetoEnviar, dataObject => {
 			if(dataObject) dataObject = JSON.parse(dataObject);
 			//Mensaje de error
 			if(dataObject ? dataObject.error : !dataObject){
@@ -228,7 +228,16 @@ function generarTablaFacturasHTML(dataObject, done){
 	    		let producto = objectoFactura.productos[i];
 	    		tablaHTML += `<li class="lista-productos-comprados"><a href="/p/${producto.permalink}">${producto.titulo}</a>
 	    			<br/><b>${producto.cantidad}</b> x ${(producto.precioCentimos*0.01).toFixed(2)}€ 
-	    			= ${(producto.cantidad*producto.precioCentimos*0.01).toFixed(2)}€</li>`;
+	    			= ${(producto.cantidad*producto.precioCentimos*0.01).toFixed(2)}€
+	    			<br/>`;
+	    		//Recorremos los atributos
+	    		if(producto.atributos && producto.atributos.length > 0){
+		    		for(let w = 0; w < producto.atributos.length; w++){
+		    			let atributo = producto.atributos[w];
+		    			tablaHTML += `${atributo.atributoNombre}: ${atributo.atributoSeleccionado}`;
+		    		}
+		    	}
+	    		tablaHTML += `</li>`;
 	    	}
 	    	tablaHTML += `</ul></div></td>`;
 	    	//Precio total
@@ -463,49 +472,54 @@ function enviarEmailProductos(idPago, element){
  * Genera un widget que muestra el estado rápido de la tienda
  */
 function generarEstadisticas(){
+	let ctx = q('#chart').getContext('2d'),
+		chart;
 	Chart.defaults.global.defaultFontFamily = 'Open sans';
 	Chart.defaults.global.defaultFontColor = 'black';
-	let ctx = q('#chart').getContext('2d');
-	let chart = new Chart(ctx, {
-		type: 'line',
-		data: {
-			labels: ["Rojo", "Verde", "Naranja", "Azul", "Marrón"],
-			datasets: [{
-				label: 'Mes actual',
-				data: [101, 243, 24, 182, 94],
-				backgroundColor: '#707AFF',
-				borderColor: '#2424FF',
-				borderWidth: 2,
-				lineTension: 0,
-				pointBackgroundColor: '#2424FF',
-				pointRadius: 4,
-				pointHoverRadius: 6
-			}, {
-				label: 'Mes anterior',
-				data: [520, 94, 98, 674, 102],
-				backgroundColor: '#9CA3FF',
-				borderColor: '#4F4FFF',
-				borderWidth: 2,
-				lineTension: 0,
-				pointBackgroundColor: '#9CA3FF',
-				pointRadius: 4,
-				pointHoverRadius: 6
-			}]
-		},
-		options: {
-			scales: {
-				yAxes: [{
-					ticks: {
-						beginAtZero: true
-					},
-					stacked: true
+
+	httpGet('/admin/visitas-diarias', response => {
+		if(!response)
+			return q('.chart-error').innerHTML = '#1 No se han recibido las visitas diarias';
+		response = JSON.parse(response);
+		if(response.error) return q('.chart-error').innerHTML = `#2 ${response.error}`;
+		if(!response.visitasDiarias) return q('.chart-error').innerHTML = '#3 No se han recibido visitas diarias';
+		let arrayDias = response.visitasDiarias.map(e => {return `Dia ${e.dia}`;});
+		let arrayVisitas = response.visitasDiarias.map(e => {return e.visitas;});
+
+		generarChart(arrayDias, arrayVisitas);
+	});
+
+	function generarChart(arrayDias, arrayVisitas){
+	 	chart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: arrayDias,
+				datasets: [{
+					label: 'Visitas',
+					data: arrayVisitas,
+					backgroundColor: '#707AFF',
+					borderColor: '#2424FF',
+					borderWidth: 2,
+					lineTension: 0.4,
+					pointBackgroundColor: '#2424FF',
+					pointRadius: 4,
+					pointHoverRadius: 6
 				}]
 			},
-			responsive: false,
-			title: {
-				display: true,
-				text: 'Visitas diarias'
+			options: {
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				},
+				responsive: false,
+				title: {
+					display: true,
+					text: 'Visitas diarias'
+				}
 			}
-		}
-	});
+		});
+	};
 };

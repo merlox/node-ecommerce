@@ -168,6 +168,11 @@ CHART
 
  */
 #chart{
+    margin: auto;
+}
+.chart-error{
+    color: tomato;
+    text-align: center;
 }
 /*
 

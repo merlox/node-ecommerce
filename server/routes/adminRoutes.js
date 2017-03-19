@@ -87,4 +87,50 @@ admin.post('/upload-product', (req, res) => {
   });
 });
 
+admin.get('/visitas-diarias', (req, res) => {
+	let response = {
+		'error': null,
+		'visitasDiarias': null
+	};
+	functions.getVisitasDiarias((err, arrayVisitasDiarias) => {
+		if(err) {
+			response.error = err;
+		}
+		response.visitasDiarias = arrayVisitasDiarias;
+		res.send(response);
+	});
+});
+
+admin.post('/get-paginacion-facturas', (req, res) => {
+  let filtros = req.body.data.filtros,
+    dataObject = {
+      'error': null,
+      'paginasTotales': null
+    }, 
+    productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
+    pageActual = req.body.data.pageActual;
+
+  functions.getPaginacionFacturas(productosPorPagina, pageActual, filtros, (err, paginasTotales) => {
+    if(err) dataObject.error = err;
+    dataObject.paginasTotales = paginasTotales;
+    res.send(dataObject);
+  });
+});
+
+//Enviar las facturas.
+admin.post('/facturas', (req, res) => {
+  let filtros = req.body.data.filtros,
+    dataObject = {
+      'error': null,
+      'facturas': null
+    },
+    productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
+    pageActual = req.body.data.pageActual ? parseInt(req.body.data.pageActual) : 1;
+  functions.getFacturas(productosPorPagina, pageActual, filtros, (err, arrayFacturas) => {
+    if(err) dataObject.error = err;
+    dataObject.facturas = arrayFacturas;
+    res.send(dataObject);
+  });
+});
+
 module.exports = admin;

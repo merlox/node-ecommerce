@@ -19,6 +19,24 @@ Mongo.connect(MongoUrl, (err, database) => {
   // createExpirePasswordTokenIndex();
 });
 
+//Busca productos que tengan el permalink dado y devuelve true si es válido, si no está en uso el permalink
+function checkPermalink(permalink, cb){
+  console.log('checkPermalink, functions.js');
+  permalink = encodeURIComponent(permalink);
+  db.collection('productos').findOne({
+    'permalink': permalink
+  }, (err, result) => {
+    if(err){
+      return callback(false);
+    }
+    if(result && result.permalink == permalink){
+      return callback(false);
+    }else{
+      return callback(true);
+    }
+  });
+};
+//Busca un producto dado el permalink
 function buscarProducto(permalink, callback){
   console.log('BuscarProducto, functions.js');
   permalink = encodeURIComponent(permalink);
@@ -32,7 +50,7 @@ function buscarProducto(permalink, callback){
     }
   });
 };
-//Para buscar muchos productos
+//Para buscar muchos productos en la barra de búsqueda del menú
 function buscarProductos(keyword, limite, pagina, cb){
   console.log('BuscarProductos, functions.js');
   if(limite == undefined || limite == null){
@@ -760,18 +778,20 @@ function getPaginacionCategoria(categoria, limite, cb){
 //Para pagar una compra
 function payProduct(req, cb){
   console.log('PayProduct, functions.js');
-  let dataObject = req.body.data;
-  let direccion = dataObject.direccion;
-  let arrayProductos = dataObject.productos;
-  let token = dataObject.token;
-  let idPago = 0;
-  let customerId = null;
-  let error = null;
+  let dataObject = req.body.data,
+    direccion = dataObject.direccion,
+    arrayProductos = dataObject.productos,
+    token = dataObject.token,
+    idPago = 0,
+    customerId = null,
+    error = null,
+    precioTotalCentimos = null,
+    arrayProductosInterno = [];
 
   if(!/.+@.+\./.test(direccion.email)){
-    return cb('Error: el email es incorrecto, inténtelo de nuevo.');
+    return cb('#1 Error: el email es incorrecto, inténtelo de nuevo.');
   }
-  if(!req.session.username) return cb('Error, tienes que iniciar sesión para comprar.');
+  if(!req.session.username) return cb('#2 Error, tienes que iniciar sesión para comprar.');
 
   //Guardamos en la base de datos de usersData los productos comprados conjuntamente
   db.collection('usersData').update({
@@ -781,27 +801,27 @@ function payProduct(req, cb){
       'compradosJuntos': arrayProductos
     }
   }, err => {
-    if(err) console.log(`Error guardando los compradosJuntos al pagar la cesta del usuario ${req.session.username}`);
+    if(err) console.log(`#3 Error guardando los compradosJuntos al pagar la cesta del usuario ${req.session.username}`);
   });
 
   //Comprobamos que la cantidad sea correcta, que existan los productos puestos y que se cree un nuevo id de compra
   db.collection('facturas').count((err, count) => {
-    if(err) return cb('Error procesando el pago, inténtelo de nuevo.');
+    if(err) return cb('#4 Error procesando el pago, inténtelo de nuevo.');
     let index = 0;
     idPago = count+1
     //Comprobamos que los productos que ha puesto existan
     for(let i = 0; i < arrayProductos.length; i++){
-      let productoNombre = arrayProductos[i].nombre;
+      let productoPermalink = arrayProductos[i].permalink;
       let productoCantidad = arrayProductos[i].cantidad;
       if(arrayProductos[i].cantidad <= 0){
-        error = 'Error, la cantidad del producto: '+arrayProductos[i].nombre+' no puede ser menor o igual a 0';
+        error = '#5 Error, la cantidad del producto: '+arrayProductos[i].nombre+' no puede ser menor o igual a 0';
       }
       db.collection('productos').findOne({
-        'titulo': productoNombre
+        'permalink': productoPermalink
       }, (err, result) => {
         index++;        
-        if(err) error = 'Error procesando el pago, por favor inténtalo de nuevo.';
-        if(!result) error = 'Este producto no existe o no está disponible: '+productoNombre+', por favor cambialo.';
+        if(err) error = '#6 Error procesando el pago, por favor inténtalo de nuevo.';
+        if(!result) error = '#7 Este producto no existe o no está disponible: '+arrayProductos[i].nombre+', por favor cambialo.';
         //Si se ha llegado al último producto sin errores, continuar
         if(index >= arrayProductos.length){
           if(error) return cb(error);
@@ -811,7 +831,14 @@ function payProduct(req, cb){
     }
   });
 
-  //Para crear el customer si no tuviese su id ya y pagar por cada producto comprado
+  /**
+   * Comprueba si el usuario ya tiene customerId y si no, hace lo siguiente:
+   * 1. Crea un costumer con stripe.customers.create con su email de sessión
+   * 2. Si no se puede crear lanza un catch y le devuelve el error #8.5
+   * 3. Una vez creado se guarda en la base de datos el customerId para ese usuario en "users"
+   * 4. Entonces se pasa a realizarPago();
+   * @return { callback } Puede devolver errores en el proceso que termina el programa inmediatamente
+   */
   function crearCustomer(){
     console.log('CrearCustomer, functions.js');
     //Creamos un customer y pagamos por cada producto por separado
@@ -833,17 +860,33 @@ function payProduct(req, cb){
             'customerId': customer.id
           }
         }, (err, result) => {
-          if(err) return cb('Error procesando el pago, por favor inténtalo de nuevo.');
+          if(err) return cb('#8 Error procesando el pago, por favor inténtalo de nuevo.');
           realizarPago();
         });
+      }).catch(err => {
+        return cb('#8.5 No se pudo realizar el pago, inténtalo de nuevo y prueba a iniciar sesión de nuevo.');
       });
     }else{
-      realizarPago();
+      //Preparamos los productos para crear los objetos y arrays necesarios para realizar el pago
+      prepararProductosPago(err => {
+        if(err) return cb(err);
+        realizarPago();
+      });
     }
   };
 
-  function realizarPago(){
-    console.log('RealizarPago, functions.js');
+  /**
+   * Prepara los productos ordenando la información a guardar en la base de datos y preparando
+   * la información de cada producto para el email factura.
+   * 1. Creamos un array de permalinks y buscamos en la bd de productos
+   * esos permalinks para obtener información sobre esos productos
+   * 2. Por cada producto encontrado, pasamos su precio de 11.02 -> 1102 int
+   * 3. Creamos un objeto producto por cada uno de esos productos con los datos principales
+   * 4. Establecemos el precio individual y total de todos los productos en un array de productos
+   * para enviar el email transaccional
+   * @return { callback } Callback error or null
+   */
+  function prepararProductosPago(done){
     //Buscamos cada producto para saber su precio real y lo pagamos
     //Creamos un array con cada titulo para buscarlo en la bd
     let arrayPermalinks = [];
@@ -862,27 +905,30 @@ function payProduct(req, cb){
       'permalink': true,
       'imagenes': true
     }).toArray((err, results) => {
-      if(err) return cb('Hubo un error procesando los productos, por favor intentalo de nuevo.');
-      if(results.length <= 0) return cb('No se han encontrado esos productos en la base de datos, por favor inténtelo de nuevo.');
+      if(err) return done('#9 Hubo un error procesando los productos, por favor intentalo de nuevo.');
+      if(results.length <= 0) return done('#10 No se han encontrado esos productos en la base de datos, por favor inténtelo de nuevo.');
 
-      let precioTotalCentimos = null,
-        arrayProductosInterno = [];
       /*
-      - precio total se sale fuera ·
-      - id pago se elimina (ya estaba fuera)
-      - productos ahora es arrayProductos
       arrayProductos = [{precioCentimos, titulo, cantidad, estaEnviado},
         {precioCentimos, titulo, cantidad, estaEnviado}]
        */
+      //Recorremos los productos
       for(let index = 0; index < results.length; index++){
         let producto = results[index],
-          precioCentimos = (producto.precio*100).toFixed(0),
+          precioCentimos = parseInt((producto.precio*100).toFixed(0)),
           cantidad = null;
+        /*
+         * arrayProductos[index].atributos = [{
+         *   'color': 'rojo'
+         *   'talla': '7XL'
+         * }]
+         */
         //Creamos el array de productos interno para meterlo en la base de datos
         let objetoArrayProducto = {
-          'precioCentimos': parseInt(precioCentimos),
+          'precioCentimos': precioCentimos,
           'titulo': producto.titulo,
           'permalink': producto.permalink,
+          'atributos': arrayProductos[index].atributos, //Es un array de objetos {atributoNombre: 'color', atributoValorSeleccionado: 'Rojo'}
           'cantidad': null,
           'estaEnviado': false,
           'imagen': producto.imagenes[1] //Las imagenes están dentro de un objeto "1": "asfasf.jpg"
@@ -892,9 +938,6 @@ function payProduct(req, cb){
           arrayProductos es el precio para el email y la factura.
           Le calculamos el precio individual para meterlo en el email factura.
         */
-        arrayProductos[index]['precioUno'] = (parseInt(precioCentimos)/100);
-        //Le calculamos el precio individual x cantidad para la factura
-        arrayProductos[index]['precioTotal'] = ((parseInt(precioCentimos)/100)*parseInt(arrayProductos[index].cantidad));
         //Conseguimos la cantidad comprada de ese producto
         for(let f = 0; f < arrayProductos.length; f++){
           if(arrayProductos[f].nombre == producto.titulo){
@@ -908,76 +951,127 @@ function payProduct(req, cb){
         //Aumentamos el precio total
         precioTotalCentimos += precioCentimos;
         if(index + 1 >= results.length){
-          precioTotalCentimos = parseInt(precioTotalCentimos.toFixed(0));
+          precioTotalCentimos = parseInt(precioTotalCentimos);
         }
       };
-
-      //Luego pagamos el total  y luego guardamos la factura en la base de datos
-      let charge = stripe.charges.create({
-        "amount": parseInt(precioTotalCentimos), //Cantidad en centimos
-        "currency": 'eur',
-        "customer": req.session.customerId,
-        "description": 'Hola',
-        "metadata": {
-          'idPago': idPago
+      for(let o = 0; o < arrayProductos.length; o++){
+        //Ponemos los atributos
+        let textoAtributos = '';
+        for(let indexAtb = 0; indexAtb < arrayProductos[o].atributos.length; indexAtb++){
+          if(indexAtb > 0)
+            textoAtributos += ', '+arrayProductos[o].atributos[indexAtb].atributoSeleccionado;
+          else
+            textoAtributos += arrayProductos[o].atributos[indexAtb].atributoSeleccionado;
         }
-      }, (err, charge) => {
-        if(err){
-          console.log(err);
-          return cb('Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.');
-        }else{
-          db.collection('facturas').insert({
-            'idPago': idPago,
-            'idCharge': charge.id,
-            'emailUsuarioConectado': req.session.username,
-            'nombreApellidos': direccion.nombreApellidos,
-            'cantidad': charge.amount,
-            'estaProcesado': charge.captured,
-            'estaPagado': charge.paid,
-            'estaEnviado': false,
-            'fecha': charge.created,
-            'moneda': charge.currency,
-            'customer': charge.customer,
-            'productos': arrayProductosInterno,
-            'precioTotalCentimos': precioTotalCentimos,
-            'telefono': charge.receipt_number,
-            'direccion': direccion,
-            'terminacionTarjeta': charge.source.last4,
-            'chargeObject': charge
-          }, (err, result) => {
-            if(err) return cb('Error procesando el pago, por favor inténtalo de nuevo.');
-            /*
-            1. Renderizar el email
-            2. Enviar la factura por email
-            */
-            let emailObject = {
-              from: 'merunasgrincalaitis@gmail.com',
-              to: direccion.email,
-              subject: 'Aqui tienes tu factura. Gracias por comprar.',
-              html: null
-            };
-            let renderEmailObject = {
-              arrayProductos: arrayProductos,
-              precioFinal: (precioTotalCentimos/100)
-            };
+
+        let precioOriginal; //El precio de este producto aunque esté repetido en la cesta
+        for(let x = 0; x < results.length; x++){
+          if(arrayProductos[o].permalink === results[x].permalink){
+            precioOriginal = results[x].precio;
+            break;
+          }
+        }
+
+        arrayProductos[o]['atributos'] = textoAtributos;
+        //En el email se muestra "Producto" - "Cantidad" - "Precio individual" - "Precio total"
+        arrayProductos[o]['precioUno'] = precioOriginal;
+        //Le calculamos el precio individual x cantidad para la factura
+        arrayProductos[o]['precioTotal'] = parseFloat(precioOriginal*parseInt(arrayProductos[o].cantidad)).toFixed(2);
+      }
+      done(null);
+    });
+  };
+
+  /**
+   * Realiza el pago de la compra del usuario con el customerId una vez estén preparados los productos
+   * 1. Creamos el pago propiamente dicho con stripe.charges.create
+   * 2. Si no hay errores pagando, insertamos la factura en la base de datos
+   * 3. Borramos la cesta para quitar los productos comprados
+   * 4. Renderizamos el email con la información necesaria
+   * 5. Terminamos la función y devolvemos el callback pero sigue ejecutandose el envio del email
+   * 5. Enviamos el email transaccional de la factura de compra para referencias futuras
+   */
+  function realizarPago(){
+    console.log('RealizarPago, functions.js');
+    //Pagamos el total y luego guardamos la factura en la base de datos
+    let charge = stripe.charges.create({
+      "amount": parseInt(precioTotalCentimos), //Cantidad en centimos
+      "currency": 'eur',
+      "customer": req.session.customerId,
+      "description": 'Hola',
+      "metadata": {
+        'idPago': idPago
+      }
+    }, (err, charge) => {
+      if(err){
+        console.log(err);
+        return cb('#11 Tu tarjeta ha sido rechazada, por favor escribe otra vez la información de tu tarjeta e intentalo de nuevo.');
+      }else{
+        db.collection('facturas').insert({
+          'idPago': idPago,
+          'emailUsuarioConectado': req.session.username,
+          'nombreApellidos': direccion.nombreApellidos,
+          'cantidad': charge.amount,
+          'estaProcesado': charge.captured,
+          'estaPagado': charge.paid,
+          'estaEnviado': false,
+          'fecha': charge.created,
+          'moneda': charge.currency,
+          'productos': arrayProductosInterno,
+          'precioTotalCentimos': precioTotalCentimos,
+          'telefono': charge.receipt_number,
+          'direccion': direccion,
+          'terminacionTarjeta': charge.source.last4,
+          
+          'customer': charge.customer,
+          'idCharge': charge.id,
+          'chargeObject': charge
+        }, (err, result) => {
+          if(err) return cb('#12 Error procesando el pago, por favor inténtalo de nuevo.');
+          /*
+          1. Renderizar el email
+          2. Enviar la factura por email
+          */
+          let emailObject = {
+            from: 'merunasgrincalaitis@gmail.com',
+            to: direccion.email,
+            subject: 'Aqui tienes tu factura. Gracias por comprar.',
+            html: null
+          };
+          let renderEmailObject = {
+            arrayProductos: arrayProductos,
+            precioFinal: (precioTotalCentimos/100)
+          };
+
+          //Borramos la cesta en la bd y en la session
+          db.collection('usersData').update({
+            'username': req.session.username
+          }, {
+            '$set': {
+              'cesta': []
+            }
+          }, err => {
+            if(err) console.log(err);
             //Borramos la cesta al terminar de pagar
             delete req.session.cesta;
             req.session.save();
+          });
 
-            //TODO Error handling, ¿Que hacer cuando no se renderiza bien el email? ¿Que hacer cuando no se envía bien?
-            render(path.join(__dirname, 'emails', 'factura.html'), renderEmailObject, (err, emailHTML) => {
+          //Terminamos el pago aunque el envío de email continúa solo hasta terminar de enviarse el email
+          cb(null);
+
+          //TODO Error handling, ¿Que hacer cuando no se renderiza bien el email? ¿Que hacer cuando no se envía bien?
+          render(path.join(__dirname, 'emails', 'factura.html'), renderEmailObject, (err, emailHTML) => {
+            if(err) console.log(err);
+            emailObject.html = emailHTML;
+
+            sendEmail(emailObject, (err, success) => {
               if(err) console.log(err);
-              emailObject.html = emailHTML;
-
-              sendEmail(emailObject, (err, success) => {
-                if(err) console.log(err);
-                console.log(success);
-              });
-              cb(null);
+              console.log(success);
             });
           });
-        }
-      });
+        });
+      }
     });
   }
 };
@@ -1080,132 +1174,6 @@ function loginUsuario(email, password, cb){
     }
   });
 };
-function getCesta(username, cb){
-  console.log('GetCesta, functions.js');
-  db.collection('users').findOne({
-    'username': username
-  }, {
-    'cesta': true,
-    '_id': false
-  }, (err, result) => {
-    if(err) return cb(err, null);
-    //Comprobamos que la cesta no esté vacía
-    if(result && result.cesta != null && result.cesta != undefined && Object.keys(result.cesta).length != 0){
-      crearCesta(result.cesta, (err, productosCesta) => {
-        if(err) return cb(err, null);
-        cb(null, productosCesta);
-      });
-    }else{
-      cb('no hay productos en la cesta', null);
-    }
-  });
-};
-//Para buscar los productos en la cesta sin importar el estado de login del usuario, copiarlos y retornar 
-//sus propiedades necesarias. Obligatorio pasarle el objeto cesta.
-function crearCesta(cesta, cb){
-  console.log('CrearCesta, functions.js');
-  let productosCesta = [];
-  for(let nombreProducto in cesta) productosCesta.push(nombreProducto);
-  db.collection('productos').find({
-    'permalink': {$in: productosCesta}
-  }, {
-    'permalink': true,
-    'titulo': true,
-    'imagenes': true,
-    'precio': true,
-    '_id': false
-  }).toArray((err, results) => {
-    if(err || results.length <= 0) return cb('no hay productos en la cesta.', null);
-    //Le ponemos la cantidad a cada objeto producto de la cesta
-    //Y solo seleccionamos la primera imagen
-    let error = null;
-    let counter = 0;
-    results.forEach((objetoProducto, index) => {
-      let cantidad = cesta[objetoProducto.permalink];
-      let nombreImagen = results[index].imagenes[1];
-      results[index]['imagen'] = nombreImagen;
-      results[index]['cantidad'] = cantidad;
-      delete results[index].imagenes;
-      //Le pasamos la imágen del producto al cliente
-      let origen = path.join(__dirname, 'uploads/', nombreImagen);
-      let end = path.join(__dirname, '../public/public-uploads/');
-      copyFile(origen, end, nombreImagen, (err) => {    
-        if(err) error = 'no se pudo copiar la imagen de ese producto de la cesta.';
-
-        counter++;
-        if(counter >= results.length){
-          if(error) return cb(error, null);
-          cb(null, results);
-        }
-      });
-    });
-  });
-};
-function addProductoCesta(req, cb){
-  console.log('AddProductoCesta, functions.js');
-  //Sacamos el producto de la cesta con el for in
-  let productoCesta;
-  for(productoCesta in req.body.data) break;
-  let cantidadProductoCesta = req.body.data[productoCesta];
-  if(!req.session.cesta){
-    req.session.cesta = {};
-  }
-  //Si no existe ese producto en la cesta, ponerlo como cantidad 1
-  if(!(productoCesta in req.session.cesta)){
-    req.session.cesta[productoCesta] = parseInt(cantidadProductoCesta);
-  }else{
-    //Si existe subirle la cantidad
-    req.session.cesta[productoCesta] = parseInt(req.session.cesta[productoCesta]) + parseInt(cantidadProductoCesta);
-  }
-  if(req.session.isLogged){
-    saveCestaUser(req.session.cesta, req.session.username, (err) => {
-      if(err) return cb(err);
-      cb(null);
-    });
-  }else{
-    cb(null);
-  }
-};
-function cambiarCantidadCesta(req, cb){
-  console.log('CambiarCantidadCesta, functions.js');
-  let producto = req.body.data.producto,
-    cantidad = req.body.data.cantidad;
-  for(let productoCesta in req.session.cesta){
-    if(productoCesta === producto){
-      if(cantidad <= 0)
-        delete req.session.cesta[productoCesta];  
-      else
-        req.session.cesta[productoCesta] = cantidad;
-    }
-  }
-  //Al ser una POST hay que guardar la session
-  req.session.save();
-  if(req.session.isLogged){
-    saveCestaUser(req.session.cesta, req.session.username, (err) => {
-      if(err) return cb(err);
-      cb(null);
-    });
-  }else{
-    cb(null);
-  }
-};
-// Si esta logueado, guardar la info de la cesta en su cuenta. 
-// Si no guardar en el local storage.
-function saveCestaUser(cesta, username, cb){
-  console.log('SaveCestaUser, functions.js');
-  db.collection('users').update({
-    'username': username
-  }, {
-    $set: {
-      'cesta': cesta
-    }
-  },{
-    'upsert': true
-  }, (err, result) => {
-    if(err) return cb('Could not update your cart, try again.');
-    else return cb(null);
-  });
-};
 function getLoggedState(req, cb){
   if(req.session.username === claves.adminName){
     cb('admin');
@@ -1221,9 +1189,9 @@ function getFacturas(ppp, pagina, filtros, cb){
   if(!filtros) filtros = {};
   else{
     //Convertimos los 'false' strings a boolean
-    for(let key in filtros) filtros[key] = (filtros[key] == 'true');
+    for(let key in filtros) filtros[key] = (filtros[key] === 'true');
   }
-  db.collection('facturas').find(filtros).limit(ppp).skip((pagina-1)*ppp).toArray((err, facturas) => {
+  db.collection('facturas').find(filtros).limit(ppp).skip((pagina-1)*ppp).sort({'idPago': -1}).toArray((err, facturas) => {
     if(err) return cb('Error cargando las facturas.', null);
     cb(null, facturas);
   });
@@ -1520,6 +1488,7 @@ function guardarVisitadoUsuario(username, idProducto, cb){
     'username': username
   }, (err, userObject) => {
     if(err) return cb('No se ha podido guardar la visita.');
+    if(!userObject) return cb('No se ha encontrado ese usuario.');
     //Reseteamos el array de paginas vistas a los 200
     if(!userObject.productosVistos || userObject.productosVistos.length >= 200) userObject.paginasVistas = [];
     //Convertimos cada valor a hexstring (es un ObjectId de mongo )y comprobamos con el indexof que no exista
@@ -1702,6 +1671,183 @@ function editarPregunta(id, preguntaModificada, respuestaModificada, cb){
     cb(null);
   });
 };
+//Devuelve el objeto cesta
+function getCesta(session, cb){
+  console.log('GetCesta, functions.js');
+  if(session.isLogged){
+    db.collection('usersData').findOne({
+      'username': session.username
+    }, {
+      'cesta': true,
+      '_id': false
+    }, (err, result) => {
+      if(err) return cb(err, result.cesta);
+      //Comprobamos que la cesta no esté vacía
+      if(result && result.cesta && result.cesta.length > 0){
+        cb(null, result.cesta);
+      }else{
+        cb('no hay productos en la cesta', null);
+      }
+    });
+  }else{
+    if(session && session.cesta && session.cesta.length > 0){
+      cb(null, session.cesta);
+    }else{
+      cb('no hay productos en la cesta', null);
+    }
+  }
+};
+//Añadimos el producto a la cesta del usersData del cliente si está conectado. 
+//Esté conectado o no, se guardará en la sesión.
+function addProductoCesta(req, productoNuevo, cb){
+  console.log('AddProductoCesta, functions.js');
+  let cesta = req.session.cesta,
+    indexProductoCesta = -1;
+
+  if(!cesta){
+    cesta = [];
+    cesta.push(productoNuevo);
+  }else{
+    indexProductoCesta = comprobarProductosCestaIguales(cesta, productoNuevo);
+  }
+  //Añadimos nuevo producto si no existe en la cesta o tiene distintos atributos
+  db.collection('productos').findOne({
+    'permalink': productoNuevo.permalink
+  }, (err, result) => {
+    if(err) return cb('error buscando el producto');
+    if(!result) return cb('no se ha encontrado el producto');
+    productoNuevo['titulo'] = result.titulo;
+    productoNuevo['precio'] = parseFloat(result.precio);
+    productoNuevo['atributosTotales'] = result.atributos;
+    productoNuevo['imagen'] = result.imagenes ? result.imagenes[1] : '';
+    productoNuevo['id'] = cesta.length;
+    if(indexProductoCesta != -1){
+      cesta[indexProductoCesta].cantidad += productoNuevo.cantidad;
+    }else cesta.push(productoNuevo);
+    req.session.cesta = cesta;
+    req.session.save();
+    // Se ejecuta aunque llames al callback
+    if(req.session.isLogged) guardarCestaDB();
+    
+    cb(null);
+  });
+
+  //Guarda la cesta en la db usersData si está conectado
+  function guardarCestaDB(){
+    db.collection('usersData').update({
+      'username': req.session.username
+    }, {
+      '$set': {
+        'cesta': cesta
+      }
+    }, err => {
+      if(err) console.log(`Error guardando la cesta del cliente ${session.username}`);
+    });
+  };
+};
+/**
+ * Permite comprobar si la cesta y el producto nuevo son iguales en cuanto a permalink y atributos
+ * @param  {objeto} cesta         [la cesta de la sesión]
+ * @param  {objeto} productoNuevo [el productonuevo con el que comparar]
+ * @return {int}               [te devuelve la posición del producto igual o -1 si no hay iguales en la cesta]
+ */
+function comprobarProductosCestaIguales(cesta, productoNuevo){
+  console.log('ComprobarProductosCestaIguales, functions.js');
+  /* Comprobamos si existe el exactamente mismo producto con los mismos atributos pero distintas cantidades
+  en la cesta y le aumentamos cantidad o lo creamos */
+  let indexProductoCesta = -1;
+  for (let i = 0; i < cesta.length; i++) {
+    if(cesta[i].permalink == productoNuevo.permalink){
+      let atributosIguales = true;
+      for(let key in cesta[i].atributosSeleccionados){
+        if(cesta[i].atributosSeleccionados[key] != productoNuevo.atributosSeleccionados[key]){
+          atributosIguales = false;
+        }
+      }
+      if(atributosIguales) indexProductoCesta = i;
+    }
+  }
+  return indexProductoCesta;
+};
+//Sustituimos los valores de atributos seleccionados y cantidad seleccionada del id de producto en la cesta
+//con los nuevos valores
+function cambiarCantidadCesta(req, cambios, cb){
+  console.log('CambiarCantidadCesta, functions.js');
+  let cesta = req.session.cesta;
+
+  if(cambios.tipoCambio === 'delete'){
+    cesta.splice(cambios.id, 1);
+    //Recreamos las IDs porque se ha borrado uno, ej: se borra el 2 del array 1 2 3 -> 1 3
+    for(let i = 0; i < cesta.length; i++){
+      cesta[i].id = i;
+    }
+  }else if(cambios.tipoCambio === 'cantidad'){
+    if(cambios.cantidad < 1) return cb('error, no puedes comprar menos de 1 producto');
+    cesta[cambios.id].cantidad = cambios.cantidad;
+  }else{
+    cesta[cambios.id].atributosSeleccionados[cambios.atributoNombre] = cambios.atributoSeleccionado;
+  }
+  
+  req.session.cesta = cesta;
+  req.session.save();
+  // Se ejecuta aunque llames al callback
+  if(req.session.isLogged) guardarCestaDB();
+  
+  cb(null);
+
+  //Guarda la cesta en la db usersData si está conectado
+  function guardarCestaDB(){
+    db.collection('usersData').update({
+      'username': req.session.username
+    }, {
+      '$set': {
+        'cesta': cesta
+      }
+    }, err => {
+      if(err) console.log(`Error guardando la cesta del cliente ${session.username}`);
+    });
+  };
+};
+// Aumenta la visita de la página correspondiente
+function aumentarVisitaPagina(req){
+  db.collection('visitas').insert({
+    'pagina': req.originalUrl.split('?')[0], //No queremos parametros query
+    'ip': req.ip,
+    'fecha': new Date()
+  }, err => {
+    if(err) console.log('No se pudo aumentar la visita');
+  });
+};
+//Para obtener las visitas mensuales
+/**
+ * arrayVisitas = [{
+ *    _id: {
+ *      'dia': 17
+ *    },
+ *    visitas: 15
+ * }]
+ */
+function getVisitasDiarias(cb){
+  console.log('GetVisitasDiarias, functions.js');
+
+  db.collection('visitas').aggregate([{
+      '$group': {
+        '_id': {'dia': {'$dayOfMonth': '$fecha'}},
+        'visitas': {'$sum': 1}
+      },
+    }, {
+      '$project': {
+        '_id': 0,
+        'dia': '$_id.dia',
+        'visitas': 1
+      }
+    }
+    ]).toArray((err, arrayVisitas) => {
+    if(err) return cb('No se ha podido conseguir la información de las visitas.', null);
+
+    cb(null, arrayVisitas);
+  });
+};
 
 exports.buscarProducto = buscarProducto;
 exports.copyFile = copyFile;
@@ -1719,11 +1865,9 @@ exports.getSlider = getSlider;
 exports.getMiniSlider = getMiniSlider;
 exports.getPaginacion = getPaginacion;
 exports.payProduct = payProduct;
-exports.saveCestaUser = saveCestaUser;
 exports.registerUsuario = registerUsuario;
 exports.loginUsuario = loginUsuario;
 exports.getCesta = getCesta;
-exports.crearCesta = crearCesta;
 exports.addProductoCesta = addProductoCesta;
 exports.cambiarCantidadCesta = cambiarCantidadCesta;
 exports.getLoggedState = getLoggedState;
@@ -1755,3 +1899,6 @@ exports.getPreguntasFrecuentes = getPreguntasFrecuentes;
 exports.setPreguntasFrecuentes = setPreguntasFrecuentes;
 exports.eliminarPreguntaFrecuente = eliminarPreguntaFrecuente;
 exports.editarPregunta = editarPregunta;
+exports.checkPermalink = checkPermalink;
+exports.aumentarVisitaPagina = aumentarVisitaPagina;
+exports.getVisitasDiarias = getVisitasDiarias;

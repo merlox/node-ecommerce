@@ -169,3 +169,6 @@ function Acordeon(titulo, id, isAdmin){
 		}
 	};
 };
+
+//Creamos el widget de preguntas frecuentes en todas las páginas en la esquina inferior derecha
+new Acordeon('Preguntas frecuentes', '#preguntas-frecuentes');

@@ -29,6 +29,11 @@
   </body>
   <script type="text/javascript" src="../js/functions.js"></script>
   <script type="text/javascript">
+    //Ponemos el query de comprar en todos los formularios
+    for(let i = 0; i < qAll('form').length; i++){
+      qAll('form')[i].action += window.location.search;
+    }
+
     function crearUsuario(e){
       q('.error').innerHTML = '';
 
@@ -64,6 +69,6 @@
         if(err) q('#cambiar-contrasena-response').innerHTML = `<b class="error">${err}</b>`;
         else q('#cambiar-contrasena-response').innerHTML = `<b>Se ha enviado el mensaje correctamente.</b>`;
       });
-    }
+    };
   </script>
 </html>

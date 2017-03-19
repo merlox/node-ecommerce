@@ -6,7 +6,6 @@
 	{{> header}}
 
 	<link rel="stylesheet" type="text/css" href="../css/completarPago.css">
-	<link rel="stylesheet" type="text/css" href="../css/classAcordeon.css">
 </head>
 <body>
 
@@ -15,14 +14,11 @@
 	<div id="mensaje-error"></div>
 
 	<div id="contenedor-total-pagina">
-		<div id="preguntas-frecuentes"></div>
 		<div id="contenedor-compra">
-			<h2 class="centrar">1. Productos a comprar:</h2>
 			<b class="subtitulo-comprar">Comprueba tus productos y continúa al paso 2.</b>
 			<!--Esta es la cesta-->
 		    <table id="contenedor-cesta-pagina">
 			</table>
-			<h2 class="centrar">2. Dirección de envío:</h2>
 			<b class="subtitulo-comprar">Envío gratuito a todo el planeta de 15 a 30 días.</b>
 			<!--Este es el formulario de envio y datos de usuario-->
 			<form action="/pagar-tarjeta" method="POST" id="formulario-direccion">
@@ -56,7 +52,6 @@
 				</div>
 			</form>
 
-			<h2 class="centrar">3. Datos de pago con tarjeta:</h2>
 			<b class="subtitulo-comprar">Introduce los datos de tu tarjeta para completar el pago.</b>
 			<div id="contenedor-pago-tarjeta">
 			<!--Este es el formulario de pago con tarjeta-->
@@ -86,14 +81,12 @@
 			</div>
 		</div>
 	</div> <!--Fin contenedor total página-->
-	<br/><br/>
+	<br/><br/><br/><br/><br/><br/>
 
 	{{> footer}}
 
 	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-	<script type="text/javascript" src="../js/classAcordeon.js"></script>
 	<script type="text/javascript" src="../js/checkout.js"></script>
-	<script type="text/javascript" src="../js/completarPago.js"></script>
 	<script type="text/javascript" src="../js/ganalytics.js"></script>
 </body>
 </html>

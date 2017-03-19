@@ -41,6 +41,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('*', (req, res, next) => {
   console.log(`\nRequesting: ${req.originalUrl} ${req.ip}`);
   if(req.session.username) username = req.session.username;
+  // req.session.cesta = [];
+  // console.log(req.session)
   next();
 });
 

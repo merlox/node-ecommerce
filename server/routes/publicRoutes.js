@@ -6,14 +6,23 @@ let express = require('express'),
 	path = require('path'),
 	routes = express.Router(),
 	db = {},
-  render = require('./../render.js');
+  render = require('./../render.js'),
+  claves = require('./../secrets/secrets.js');
 
 Mongo.connect(MongoUrl, (err, database) => {
 	if(err) console.log(err);
 	db = database;
 });
 
-routes.get('/p/:permalink', (req, res) => { 
+routes.use('*', (req, res, next) => {
+  if(!req.session.username)
+    functions.aumentarVisitaPagina(req);
+  else if(req.session.username != claves.adminName)
+    functions.aumentarVisitaPagina(req);
+  next();
+});
+
+routes.get('/p/:permalink', (req, res) => {
   functions.buscarProducto(req.params.permalink, (err, result) => {
     if(err) console.log(err);
     if(!result) return res.redirect('/');
@@ -128,10 +137,6 @@ routes.get('/chat', function(req, res){
 	}
 });
 
-routes.get('/login', (req, res) =>{
-	return res.sendFile(path.join(__dirname, '../../public/views/login.html'));
-});
-
 routes.post('/register', function(req, res){
   let nombre = req.body.nombreUsuarioNuevo,
     pass = req.body.passUsuarioNuevo,
@@ -149,16 +154,25 @@ routes.post('/register', function(req, res){
   });
 });
 
+routes.get('/login', (req, res) =>{
+  return res.sendFile(path.join(__dirname, '../../public/views/login.html'));
+});
+
 routes.post('/login', function(req, res){
-  console.log(req.body.nombreUsuario)
-  console.log(req.body.passUsuario)
   functions.loginUsuario(req.body.nombreUsuario, req.body.passUsuario, (err) => {
     if(err){
       res.send(err);
     }else{
       req.session.username = req.body.nombreUsuario;
       req.session.isLogged = true;
-      res.redirect('/');
+      //Si ha pulsado en comprar y ha sido redirigido al login, mandarlo a la página de pago
+      if(req.query.comprar){
+        //Lo redirigimos a comprar
+        res.redirect('/completar-pago');
+      }else{
+        //No lo podemos redirigir a la página anterior porque la página anterior es /login
+        res.redirect('/');
+      }
     }
   });
 });
@@ -189,6 +203,8 @@ routes.get('/completar-pago', (req, res) => {
     }else if(state === 'admin'){
       dataObject.loggedStateHTML = 'admin ▼';
       dataObject.loggedState = '/admin';
+    }else{
+      return res.redirect('/login');
     }
     render(path.join(__dirname, '../../public/views/completarPago.html'), dataObject, (err, data) => {
       if(err){

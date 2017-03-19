@@ -34,6 +34,7 @@
 								<td><i>Producto</i></td>
 								<td><i>Cantidad</i></td>
 								<td><i>Precio individual</i></td>
+								<td><i>Atributos</i></td>
 								<td><i>Precio total</i></td>
 							</tr>
 							{{array arrayProductos}}
@@ -41,11 +42,13 @@
 								<td>{{nombre}}</td>
 								<td>{{cantidad}}</td>
 								<td>{{precioUno}}€</td>
+								<td>{{atributos}}</td>
 								<td>{{precioTotal}}€</td>
 							</tr>
 							{{/array}}
 							<tr align="center">
 								<td><b>Total Final Pagado:</b></td>
+								<td></td>
 								<td></td>
 								<td></td>
 								<td><b>{{precioFinal}}€</b></td>

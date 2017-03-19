@@ -6,6 +6,7 @@ new Minislider('Te pueden interesar', 'random', '#minislider-random');
 //Para colocar la imagen secundaria activa como principal on hover
 let imagenSecundariaActivaAnterior = document.getElementsByClassName('contenedor-imagen-secundaria-individual')[0];
 imagenSecundariaActivaAnterior.className = 'contenedor-imagen-secundaria-individual imagen-secundaria-activa';
+
 function imageHover(e){
 	imagenSecundariaActivaAnterior.className = 'contenedor-imagen-secundaria-individual';
 	e.parentNode.className = 'contenedor-imagen-secundaria-individual imagen-secundaria-activa';

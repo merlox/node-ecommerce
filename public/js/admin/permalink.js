@@ -1,18 +1,12 @@
 'use strict';
 //Retorna true si está disponible y false si no
 function checkPermalinkState(permalink, cb){
-	let request = new XMLHttpRequest();
-	request.open('GET', `/api/permalink-check/${permalink}`);
-	request.onreadystatechange = () => {
-		if(request.readyState == XMLHttpRequest.DONE){
-			if(request.responseText){
-				cb(false);
-			}else{
-				cb(true);
-			}
-		}
-	}
-	request.send();
+	httpGet(`/api/permalink-check/${permalink}`, response => {
+		let estaDisponible = false;
+		if(response) estaDisponible = JSON.parse(response);
+		if(estaDisponible) cb(true);
+		else cb(false);
+	});
 };
 
 function replaceBadCharacters(string){

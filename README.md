@@ -1202,3 +1202,17 @@ También he modificado el diseño para adaptarse correctamente a las diferentes 
 Ahora estoy terminando el widget de preguntas frecuentes que se muestra en la página de compra aunque debería aparecer en todas las páginas puesto que se coloca en la esquina inferior derecha y es expansible.
 
 Mientras tanto estoy añadiendo 10 productos al día por la noche para tener una gran fuente de contenido en la web.
+
+### Día 64
+
+He aprendido bastante a usar nginx. Después de instalar el certificado ssl de cloudflare me dí cuenta que el rendimiento había bajado un poco puesto que la información tenía que pasar por los servidores de cloudflare. De forma que la estructura que tenía montado era nodejs -> nginx -> nginx de cloudflare lo cual empeora el rendimiento.
+
+Además, cada vez que hacía un cambio tenía que limpiar la caché de cloudflare para aplicar las mejoras. Lo cual no es bien.
+
+Entonces aprendí a usar nginx un poco mejor. Ahora tengo mi propio certificado ssl de letsencrypt en ubuntu que se autorenueva automáticamente con un cron job de ubuntu. El nginx cachea la información que se envía al cliente y mejora el rendimiento general del servidor.
+
+Por otro lado, después de esto he estado añadiendo productos, 10 al día alrededor de las 22 horas de la noche. He llegado a meter 100 ~ 130 productos y creo que es suficiente para seguir desarrollando.
+
+Luego he mejorado el backend. Muchas funciones han cambiado para mejor rendimiento con lo que la app debería ir rápido. Ahora me carga el DOM en unos 300~400 ms, esto significa que el navegador deja de girar la rueda que aparece al lado de la pestaña en menos de 1 segundo. Lo cual es fantástico.
+
+Ahora no se muy bien cómo continuar. Puedo hacer la aplicación de autorresponders para enviar mensajes automáticos en una nueva instancia de nodejs o puedo seguir mejorando el servidor. De momento voy a arreglar bugs.

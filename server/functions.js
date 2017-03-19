@@ -1721,6 +1721,7 @@ function addProductoCesta(req, productoNuevo, cb){
     productoNuevo['atributosTotales'] = result.atributos;
     productoNuevo['imagen'] = result.imagenes ? result.imagenes[1] : '';
     productoNuevo['id'] = cesta.length;
+    
     if(indexProductoCesta != -1){
       cesta[indexProductoCesta].cantidad += productoNuevo.cantidad;
     }else cesta.push(productoNuevo);

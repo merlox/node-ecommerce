@@ -1,6 +1,6 @@
 'use strict';
 
-Stripe.setPublishableKey('pk_test_UVgGQ5OoCEARrRvds8bKYV93');
+Stripe.setPublishableKey('pk_live_9bAIPTRft8m2tWvGJgLSS4tO');
 
 window.addEventListener('load', () => {
 	renderCesta();

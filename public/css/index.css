@@ -8,14 +8,13 @@
 }
 .index-header{
 	font-family: 'vladimir';
-	height: 350px;
-	background-size: 100%;
+    height: 250px;
+    background-color: rgb(16, 16, 16);
     color: white;
-    font-size: 70pt;
+    font-size: 50pt;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-attachment: fixed;
 }
 @media (max-width: 650px){
 	.index-header{

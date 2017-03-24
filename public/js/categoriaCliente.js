@@ -1,61 +1,61 @@
 'use strict';
 
-let paginasTotalesFiltro = 0,
-	hasCalculadoPaginasTotales = false;
+let paginasTotalesFiltro = 0;
+let hasCalculadoPaginasTotales = false;
+let pageActual = 0;
+let precioMin = 0;
+let precioMax = Infinity;
+let radioActive = 0; //Ninguno seleccionado
 
 //Creamos las páginas totales
 crearPaginacion();
+sidebarResponsive();
 
 //Para cargar la página clickada
 function loadPage(i){
 	filtrarPrecio(0, 0, i);
 };
-//Para crear la paginación e insertarla en los contenedores de paginación
+
 function crearPaginacion(){
-	let paginasTotales = parseInt(q('.paginacion').innerHTML);
-	paginasTotalesFiltro = paginasTotales;
-	hasCalculadoPaginasTotales = true;
+	let paginacionHTML = '';
+
+	paginasTotales = parseInt(q('.paginacion').innerHTML);
 	if(paginasTotales > 1){
-		let paginacionHtml = '';
-		q('.paginacion').innerHTML = '';
-
-		if(paginasTotales > 1)
-			q('.mensaje-resultados').innerHTML += ` Hay ${paginasTotales} páginas.`;
-
-		paginacionHtml += `<span>Anterior</span> `;
-		for(let i = 1; i <= (paginasTotales > 3 ? 3 : paginasTotales); i++){
+		for(let i = 0; i < paginasTotales; i++){
 			if(i === 1)
-				paginacionHtml += `<span class="pagina-activa" onclick="loadPage(${i})">${i}</span>`;	
+				paginacionHTML += `<span class="pagina-activa" onclick="loadPage(${i})">${i}</span>`;
 			else
 				paginacionHtml += `<span onclick="loadPage(${i})">${i}</span>`;
 		}
-		if(paginasTotales > 3)
-			paginacionHtml += `<span onclick="loadPage(${paginasTotales})">${paginasTotales}</span>`;
-		paginacionHtml += ` <span onclick="loadPage(2)">Siguiente</span>`;
-
 		qAll('.paginacion').forEach(paginacion => {
 			paginacion.style.display = 'block';
-			paginacion.innerHTML = paginacionHtml;
+			paginacion.innerHTML = paginacionHTML;
 		});
 	}
 };
+
 //Para filtrar los productos dado el rango de precios
 function filtrarPrecio(min, max, pageActual){
 	let url = `/api/filter-categoria?categoria=${window.location.pathname.substring(3)}&pag=${pageActual}&preciomin=${min}&preciomax=${max}`;
 	let mensajeCargando = q('.mensaje-cargando');
+
 	mensajeCargando.style.display = 'block';
 	httpGet(url, (data) => {
-		mensajeCargando.style.display = 'none';
-		data = JSON.parse(data);
+
 		//Inicio - Generamos los productos
 		let products = data.productos;
 		let productsHtml = '';
 		let header = q('#header-productos').outerHTML;
+	    let paginacionFooter = '<div class="paginacion"></div>';
+		mensajeCargando.style.display = 'none';
+		data = JSON.parse(data);
+		
 		if(!products){
 			q('.mensaje-resultados').innerHTML = 
 				`No se han encontrado productos para ese rango de precios. Mostrando todos.`;
 			return;
 		}
+
 		for(let i = 0; i < products.length; i++){
 			let product = products[i];	
 			productsHtml += `<div class="producto">
@@ -65,7 +65,7 @@ function filtrarPrecio(min, max, pageActual){
 				<a href="${product.categoria}" class="categoria-producto">${product.categoria}</a>
 	    	</div>`;
 	    }
-	    let paginacionFooter = '<div class="paginacion"></div>';
+
 	    productsHtml = mensajeCargando.outerHTML + header + productsHtml + paginacionFooter;
 	   	q('#contenedor-principal').innerHTML = productsHtml;
 	   	//Fin - Generamos los productos
@@ -89,96 +89,41 @@ function filtrarPrecio(min, max, pageActual){
 		}
 
 		//Creamos el html del paginador
-		let paginasHtml = '';
-		if(paginasTotalesFiltro > 0){
-			//Quitamos la página activa
-			q('.pagina-activa').className = '';
-			//Calculamos cuántas páginas mostrar en esa vista
-			let maxPaginasAMostrar = paginasTotalesFiltro;
-			let paginaInicialAMostrar = 1;
-			if(paginasTotalesFiltro > 3 && pageActual === 1)
-				maxPaginasAMostrar = 3;
-			else if(paginasTotalesFiltro > 3 && pageActual > 1 && pageActual !== paginasTotalesFiltro)
-				maxPaginasAMostrar = (pageActual+1);
-			else if(paginasTotalesFiltro > 3 && pageActual === paginasTotalesFiltro)
-				maxPaginasAMostrar = pageActual;
-
-			if(pageActual > 1 && pageActual === paginasTotalesFiltro && paginasTotalesFiltro >= 3)
-				paginaInicialAMostrar = pageActual-2;
-			else if(pageActual > 1)
-				paginaInicialAMostrar = pageActual-1;
-			//Creamos el botón de anterior
-			if(pageActual > 1)
-				paginasHtml += `<span onclick="filtrarPrecio(${min}, ${max}, ${pageActual-1})">Anterior</span> `;
-			else
-				paginasHtml += `<span>Anterior</span> `;
-
-			//Creamos los 3 botones numéricos con las páginas a mostrar
-			for(let i = paginaInicialAMostrar; i <= maxPaginasAMostrar; i++) {
-				if(i === pageActual) paginasHtml += `<span class="pagina-activa" onclick="filtrarPrecio(${min}, ${max}, ${i})">${i}</span>`;
-				else paginasHtml += `<span onclick="filtrarPrecio(${min}, ${max}, ${i})">${i}</span>`;
-			}
-			//Crear el botón de página final si hay más de 3 páginas y no se muestra ya la página final en el loop de antes
-			if(paginasTotalesFiltro > 3 && pageActual < (paginasTotalesFiltro-1))
-				paginasHtml += `<span onclick="filtrarPrecio(${min}, ${max}, ${paginasTotalesFiltro})">${paginasTotalesFiltro}</span>`;
-			//Crear el botón de siguiente
-			if(pageActual === paginasTotalesFiltro)
-				paginasHtml += ` <span>Siguiente</span>`;
-			else
-				paginasHtml += ` <span onclick="filtrarPrecio(${min}, ${max}, ${pageActual+1})">Siguiente</span>`;
-			//Insertamos el paginador creado
-			qAll('.paginacion').forEach(paginacion => {
-				paginacion.style.display = 'block';
-				paginacion.innerHTML = paginasHtml;
-			});
-		}else{
-			//Si no hay páginas no mostramos el paginador
-			qAll('.paginacion').forEach(paginacion => {
-				paginacion.style.display = 'none';
-			});
-		}
-		//Fin - Creamos la paginación
+		crearPaginacion();
 	});
 };
 
 /*
 
 RESPONSIVE SIDEBAR FILTERS
+Para ocultar y mostrar la sidebar
 
 */
-//Para ocultar y mostrar la sidebar
 function ocultarSidebar(){
 	q('.overlay').style.display = 'none';
 	q('#sidebar').className = 'sidebar-hidden';
 };
+
 function mostrarSidebar(){
 	q('.overlay').style.display = 'block';
 	q('#sidebar').className = 'sidebar-active';
 }
+
 //Para hacer el sidebar responsive al cambiar el tamaño de la pantalla
 function sidebarResponsive(){
 	if(window.innerWidth <= 850) q('#sidebar').className = 'sidebar-hidden';
 	else q('#sidebar').className = '';
 }
-q('#responsive-filters').addEventListener('click', e => {
-	mostrarSidebar();
-});
-q('.overlay').addEventListener('click', () => {
-	ocultarSidebar();
-});
-sidebarResponsive();
-window.addEventListener('resize', () => {
-	sidebarResponsive();
-});
+
 /*
 
 FILTRO PRECIO
+Para cuando selecionas un radio de filtro de precio
 
 */
-//Para cuando selecionas un radio de filtro de precio
-let radioActive = 0; //Ninguno seleccionado
 qAll('input[name=precio]').forEach(radio => {
 	radio.addEventListener('change', (e) => {
+
 		//Si ha selecionado el mismo, deseleccionar todos
 		if(radioActive === parseInt(e.target.value)){
 			let elementos = qAll('input[name=precio]');
@@ -196,6 +141,7 @@ qAll('input[name=precio]').forEach(radio => {
 			}
 			e.target.checked = true;
 		}
+
 		hasCalculadoPaginasTotales = false;
 		switch(radioActive){
 			case 0:
@@ -219,9 +165,22 @@ qAll('input[name=precio]').forEach(radio => {
 		}
 	});
 });
+
 //Para hacer click al radio del precio cuando haces click en su nombre
 qAll('.filtro-precio a').forEach(a => {
 	a.addEventListener('click', (e) => {
 		e.target.parentNode.querySelector('input').click();
 	});
+});
+
+q('#responsive-filters').addEventListener('click', e => {
+	mostrarSidebar();
+});
+
+q('.overlay').addEventListener('click', () => {
+	ocultarSidebar();
+});
+
+window.addEventListener('resize', () => {
+	sidebarResponsive();
 });

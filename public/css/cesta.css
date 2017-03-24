@@ -22,20 +22,24 @@ WIDGET CESTA
     top: 70px;
     right: 150px;
     text-align: left;
-    border-radius: 15px;
     border-spacing: 0;
-    max-width: 800px;
     max-height: 500px;
     overflow: auto;
     z-index: 10;
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.36);
 }
+#productos-cesta tr:not(:last-child){
+    text-transform: uppercase;
+    font-size: 9pt;
+}
 #productos-cesta tbody{
     display: block;
     max-height: 500px;
+    width: 300px;
 }
 #productos-cesta td{
 	padding: 10px;
+    width: 100%;
 }
 #productos-cesta tr:last-child{
     position: sticky;
@@ -43,10 +47,11 @@ WIDGET CESTA
 }
 #productos-cesta a{
     text-decoration: none;
-    color: black;
+    height: auto;
+    color: #444444;
 }
 #productos-cesta a:hover{
-    color: blue;
+    color: darkblue;
 }
 #productos-cesta input{
 	width: 45px;
@@ -85,20 +90,42 @@ WIDGET CESTA
 .x-icon:hover{
 	color: black;
 }
+.cesta-imagen-precio{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.cesta-precio *{
+    margin-bottom: 5px;
+}
+.cesta-precio-cantidad{
+    margin-left: 10px;
+}
 .titulo-producto{
     max-width: 400px;
 }
 .atributos-producto{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+}
+.atributos-producto select{
+    border: 1px solid lightgrey;
+}
+#productos-cesta a.boton-eliminar-cesta{
+    padding: 5px;
+    color: dodgerblue;
+    display: inline;
 }
 #mensaje-cesta-vacia{
     padding: 20px;
     color: grey;
 }
-@media (max-width: 1000px){
+/*
+
+RESPONSIVE
+
+ */
+/*@media (max-width: 1000px){
     #productos-cesta{
         right: 50px;
     }
@@ -107,16 +134,14 @@ WIDGET CESTA
     #productos-cesta{
         max-width: 80%;
     }
-}
+}*/
 @media (max-width: 650px){
     #productos-cesta{
-        top: 324px;
-        max-width: 100%;
-        right: 0;
-        z-index: 10;
+        top: 120px;
+        right: 15px;
     }
 }
-@media (max-width: 420px){
+/*@media (max-width: 420px){
     #productos-cesta{
         z-index: 10;
     }   
@@ -129,4 +154,4 @@ WIDGET CESTA
     .cesta-precio{
         display: none;
     }
-}
+}*/

@@ -14,10 +14,6 @@ function imageHover(e){
 	imagenSecundariaActivaAnterior = e.parentNode;
 }
 
-//Conseguir las imágenes que se colocan automaticamente
-let permalinkUrl = window.location.pathname.slice(3);
-httpGet('/api/get-images/'+permalinkUrl);
-
 //Para expandir el texto o no con el botón de expandir texto
 q('#contenedor-button-expandir-texto').addEventListener('click', () => {
 	q('#producto-descripcion').style.height = 'auto';

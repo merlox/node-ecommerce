@@ -8,20 +8,21 @@ window.addEventListener('load', () => {
 			let htmlCategories = '';
 			for(let i = 0; i < categories.length; i++){
 				if(i == 0){
-					htmlCategories = `<li onmouseenter="cambiarColorFlechaDepartamentos()"
+					htmlCategories += `<li onmouseenter="cambiarColorFlechaDepartamentos()"
 						onmouseleave="cambiarColorFlechaDepartamentos()">
 						<a href="/d/${categories[i]}">
 						${categories[i]}</a>
 					</li>`;
 				}else{
-					htmlCategories = `<li >
+					htmlCategories += `<li >
 						<a href="/d/${categories[i]}">
 						${categories[i]}</a>
 					</li>`;
 				}
-				//Seleccionamos el 2º child porque el texto indentado se considera como un child
-				q('#expandible-departamentos').children[0].insertAdjacentHTML('beforeend', htmlCategories);
 			}
+			//Seleccionamos el 2º child porque el texto indentado se considera como un child
+			q('#expandible-departamentos').children[0].insertAdjacentHTML('beforeend', htmlCategories);
+			q('footer .departamentos').innerHTML = htmlCategories; //Footer			
 		}
 	});
 	if(getParameterByName('searched')){
@@ -139,7 +140,6 @@ function reducirMenuScroll(){
 		q('#menu-principal').style.height = '100%';
 		q('#menu-principal').style.position = 'relative';
 		q('#sustituto-menu-fixed').style.display = 'none';
-		q('#productos-cesta').style.top = '70px';
 	}
 };
 //Oculta o muestra el buscador

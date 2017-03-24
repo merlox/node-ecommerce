@@ -14,12 +14,6 @@ let functions = require('./../functions.js'),
 
 let requestProcessing = false;
 
-api.get('/get-images/:permalink', (req, res) => {
-  functions.copyImagesProducto(encodeURIComponent(req.params.permalink), err => {
-    if(err) console.log(err);
-    res.send('Images copied');
-  });
-});
 api.get('/permalink-check/:permalink', (req, res) => {
 	functions.checkPermalink(req.params.permalink, esValido => {
 		res.send(checkPermalink);
@@ -79,10 +73,7 @@ api.get('/get-single-product/:permalink', (req, res) => {
       return res.send(response);
     }
     response.product = result; //Ponemos el producto
-    functions.copyImagesProducto(encodeURIComponent(req.params.permalink), err => {
-      if(err) response.error = err; //Ponemos el error
-      return res.send(response);
-    });
+    return res.send(response);
   });
 });
 api.get('/borrar-producto/:permalink', (req, res) => {
@@ -128,7 +119,7 @@ api.post('/upload-image-product', (req, res) => {
   form.parse(req);
 });
 api.post('/guardar-busqueda', (req, res) => {
-  functions.guardarBusqueda(req.body.data, (err) => {
+  functions.guardarBusqueda(req, (err) => {
     if(err) console.log(err);
     return res.send(null);
   });
@@ -271,9 +262,11 @@ api.get('/filter', (req, res) => {
 api.get('/filter-categoria', (req, res) => {
   let pagina = req.query.pag;
   let error = null;
-  let filtros = {};
-  filtros['precioMin'] = parseInt(req.query.preciomin);
-  filtros['precioMax'] = parseInt(req.query.preciomax);
+  let filtros = {
+    'precioMin': parseInt(req.query.preciomin),
+    'precioMax': parseInt(req.query.preciomax)
+  };
+
   functions.buscarFiltrarProductosCategoria(req.query.categoria, pagina, filtros, (err, arrayProductos, cantidadPaginas) => {
     if(err) error = `No se han encontrado productos buscando <b>${req.query.q}</b>`;
     if(arrayProductos != null && arrayProductos != undefined){

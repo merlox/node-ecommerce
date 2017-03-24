@@ -19,7 +19,7 @@ function render(page, dataObject, cb) {
 /*
 
 1. Extraer las tags en orden {{.*}}
-2. Identificar la key dentro de la tag {{if key}} con un split para saber la key porke la tag es inusable en el regex
+2. Identificar la key dentro de la tag {{if key}} con un split para saber la key porque la tag es inusable en el regex
 3. En el {{if}} extraer recursivamente y sustituir desde fuera hasta dentro para conseguir ordenar todo esto
 
 */
@@ -91,6 +91,10 @@ function renderData(content, dataObject, cb) {
         case 'each':
           /*
           Para: array simple.
+          Uso:
+          {{each propiedad}}
+            {{propiedad}}
+          {{/each propiedad}}
           Prohibiciones: 
           - No se puede poner más de 1 vez la {{propiedad}} dentro del each.
           - No se puede meter el mismo each dentro del each porque la etiqueta de cierre daría errores.
@@ -106,7 +110,7 @@ function renderData(content, dataObject, cb) {
             regexInterno = new RegExp("(.*){{"+propiedad+"}}(.*)"),
             execEach = '';
 
-          while((execEach = each.exec(content)) != null){
+          while((execEach = each.exec(content)) != null){ //Busca todos los each que tengan la propiedad
             let contenidoFinal = '',
               execInterno = regexInterno.exec(execEach[2]);
             for (let i = 0; i < array.length; i++) {

@@ -290,7 +290,6 @@ SESIÓN
 		left: -65px;
 	}
 	a#cesta, a#departamentos, #contenedor-login-dropdown, #usuario {
-	    width: 70px;
 	    font-size: 8pt;
 	}
 	#menu-sesion{
@@ -337,9 +336,6 @@ SESIÓN
 	}
 	a#usuario{
 		margin-top: 0;
-	}
-	table#productos-cesta{
-		top: 120px;
 	}
 	#expandible-departamentos{
 		z-index: 40;

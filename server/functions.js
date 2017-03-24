@@ -73,13 +73,8 @@ function buscarProductos(keyword, limite, pagina, cb){
   }).limit(limite).skip(pagina*limite).toArray((err, results) => {
     if(err){
       return cb('Error, could not find those products', null);
-    }else{
-      //Copiar la primera imágen
-      copyFirstImage(results, (err) => {
-        if(err) return cb(err, null);
-        cb(null, results);
-      });
     }
+    cb(null, results);
   });
 };
 //Para buscar muchos productos en la api
@@ -111,11 +106,7 @@ function buscarFiltrarProductos(keyword, pagina, filtros, cb){
         cantidadPaginas = Math.floor(results.length/30)+1;
         results = results.slice(0, 30);
       }
-      //Copiar la primera imágen
-      copyFirstImage(results, (err) => {
-        if(err) return cb(err, null, cantidadPaginas);
-        cb(null, results, cantidadPaginas);
-      });
+      cb(null, results, cantidadPaginas);
     }
   });
 };
@@ -143,13 +134,8 @@ function buscarProductosCategoria(categoria, limite, pagina, cb){
   }).limit(limite).skip(pagina*limite).toArray((err, results) => {
     if(err){
       return cb('Error, could not find those products', null);
-    }else{
-      //Copiar la primera imágen
-      copyFirstImage(results, (err) => {
-        if(err) return cb(err, null);
-        cb(null, results);
-      });
     }
+    cb(null, results);
   });
 };
 //Para buscar muchos productos en la api de categoria
@@ -177,11 +163,7 @@ function buscarFiltrarProductosCategoria(categoria, pagina, filtros, cb){
         cantidadPaginas = Math.floor(results.length/30)+1;
         results = results.slice(0, 30);
       }
-      //Copiar la primera imágen
-      copyFirstImage(results, (err) => {
-        if(err) return cb(err, null, cantidadPaginas);
-        cb(null, results, cantidadPaginas);
-      });
+      cb(null, results, cantidadPaginas);
     }
   });
 };
@@ -246,68 +228,12 @@ function getAllProducts(imageLimit, page, filtroCategoria, callback){
       return callback('Err, error searching products: '+err, false);
     }
     if(results != undefined && results.length > 0){
-      //Acceder a la carpeta título y copiar la 1º imagen
-      copyFirstImage(results, (err) => {
-        if(err) return callback(err, results);
-        else return callback(null, results);
-      });
+      if(err) return callback(err, results);
+      else return callback(null, results);
     }else{
       return callback('No hay productos', false);
     }
   });
-};
-//Copiar la primera imagen de los productos pasados por parámetro.
-function copyFirstImage(results, cb){
-  console.log('Interna - CopyFirstImage, functions.js');
-  let error = null;
-  let counter = 0;
-  let folderServer = path.join(__dirname, '/uploads/');
-  let folderClient = path.join(__dirname, '../public/public-uploads/');
-
-  if(results.length <= 0){
-    console.log('No results found');
-    return cb('No results found');
-  }
-  //Leemos todas las carpetas que coincidan en este for
-  //1. Leemos el directorio
-  fs.readdir(folderServer, (err, imagesInFolder) => {
-    if(err) {
-      error = '#1 Error copiando las imágenes al cliente.';
-      done();
-    }
-    for(let i = 0; i<results.length; i++){
-      //2. Recorremos las imagenes del directorio
-      for(let f = 0; f<imagesInFolder.length; f++){
-
-        //3. Si la imagen del directorio es la 1ª de la base de datos, copiarla, sino pasa a la siguiente
-        if(results[i].imagenes[1] == imagesInFolder[f]){
-          let firstImageInFolder = path.join(folderServer, imagesInFolder[f]);
-          copyFile(firstImageInFolder, folderClient, imagesInFolder[f], (err) => {
-            counter++;
-            if(err){
-              error = '#2 Error copiando las imágenes al cliente.';
-              done();
-            }
-            if(counter >= results.length){
-              done();
-            }
-          });
-        }
-      }
-      if(i >= results.length - 1 || counter >= results.length){
-        done();
-      }
-    }
-  });    
-
-  let callbackCalled = false;
-  function done(){
-    if(!callbackCalled){
-      callbackCalled = true;      
-      if(error) return cb(error);
-      cb(null);
-    }
-  }
 };
 //Borra el producto de la bd y sus imágenes
 function borrarProducto(permalink, cb){
@@ -442,8 +368,9 @@ function copyDirectory(origin, end, callback){
   }
 };
 //Guardar en la base de datos las búsquedas realizadas por los clientes.
-function guardarBusqueda(busqueda, cb){
+function guardarBusqueda(req, cb){
   console.log('GuardarBusqueda, functions.js');
+  let busqueda = req.body.data;
   if(busqueda){
     db.collection('busquedas').findOne({
       'search': busqueda
@@ -460,7 +387,8 @@ function guardarBusqueda(busqueda, cb){
           'search': busqueda
         }, {
           'search': busqueda,
-          'veces': (busquedaExistente.veces + 1)
+          'veces': (busquedaExistente.veces + 1),
+          'ip': req.ip
         }, {
           'upsert': true
         }, (err, result) => {          
@@ -589,10 +517,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "categoria": true
         }).sort({'vendidos': -1}).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos mas vendidos.', null);
-          copiarImagenesProductos(results, err => {
-            if(err) return cb(err, null, null);
-            return cb(null, results, paginasTotales);
-          });
+          return cb(null, results, paginasTotales);
         });
       });
     break;
@@ -628,10 +553,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "categoria": true
         }).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos vistos.', null, null);
-          copiarImagenesProductos(results, err => {
-            if(err) return cb(err, null, null);
-            return cb(null, results, paginasTotales);
-          });
+          return cb(null, results, paginasTotales);
         });
       });
     break;
@@ -674,10 +596,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "categoria": true
         }).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos comprados juntos.', null, null);
-          copiarImagenesProductos(results, err => {
-            if(err) return cb(err, null, null);
-            return cb(null, results, paginasTotales);
-          });
+          return cb(null, results, paginasTotales);
         });
       });
     break;
@@ -698,10 +617,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           "categoria": true
         }).sort({'fecha': -1}).skip(paginaSiguiente).limit(5).toArray((err, results) => {
           if(err) return cb('Error buscando los productos mas recientes.', null, null);
-          copiarImagenesProductos(results, err => {
-            if(err) return cb(err, null, null);
-            return cb(null, results, paginasTotales);
-          });
+          return cb(null, results, paginasTotales);
         });
       });
     break;
@@ -715,10 +631,7 @@ function getMiniSlider(username, tipo, pagina, cb){
           {$match: {'publicado': true}}
         ]).toArray((err, results) => {
           if(err) return cb('Error buscando los productos random.', null);
-          copiarImagenesProductos(results, err => {
-            if(err) return cb(err, null, null);
-            return cb(null, results, paginasTotales);
-          });
+          return cb(null, results, paginasTotales);
         });
       });
     break;
@@ -1842,11 +1755,25 @@ function getVisitasDiarias(cb){
         'dia': '$_id.dia',
         'visitas': 1
       }
+    }, {
+      '$sort': {'dia': 1}
     }
     ]).toArray((err, arrayVisitas) => {
     if(err) return cb('No se ha podido conseguir la información de las visitas.', null);
 
     cb(null, arrayVisitas);
+  });
+};
+//Devuelve el html y el /href dependiendo del estado de logged que se encuentre el usuario
+function getLoggedStateHTML(req, cb){
+  getLoggedState(req, state => {
+    if(state === 'logged'){
+      cb('mi cuenta ▼', '/micuenta');
+    }else if(state === 'admin'){
+      cb('admin ▼', '/admin');
+    }else{
+      cb('iniciar sesión ▼', '/login');
+    }
   });
 };
 
@@ -1903,3 +1830,4 @@ exports.editarPregunta = editarPregunta;
 exports.checkPermalink = checkPermalink;
 exports.aumentarVisitaPagina = aumentarVisitaPagina;
 exports.getVisitasDiarias = getVisitasDiarias;
+exports.getLoggedStateHTML = getLoggedStateHTML;

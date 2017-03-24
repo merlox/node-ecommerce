@@ -35,16 +35,9 @@ routes.get('/p/:permalink', (req, res) => {
           if(err) console.log(err);
         });
       }
-      result['loggedStateHTML'] = 'iniciar sesión';
-      result['loggedState'] = '/login';
-      functions.getLoggedState(req, state => {
-        if(state === 'logged'){
-          result.loggedStateHTML = 'mi cuenta ▼';
-          result.loggedState = '/micuenta';
-        }else if(state === 'admin'){
-          result.loggedStateHTML = 'admin ▼';
-          result.loggedState = '/admin';
-        }
+      functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+        result['loggedState'] = stateHref;
+        result['loggedStateHTML'] = stateHTML;
         render(path.join(__dirname, '../../public/views/producto.html'), result, (err, data) => {
           if(err) return res.send(err);
           res.send(data);
@@ -81,16 +74,11 @@ routes.get('/search', (req, res) => {
         'hayPaginas': false,
         'isProductos': true,
         'loggedState': '/login',
-        'loggedStateHTML': 'iniciar sesión<div class="triangulo-up"></div>'
+        'loggedStateHTML': 'iniciar sesión'
       };
-      functions.getLoggedState(req, state => {
-        if(state === 'logged'){
-          dataObject.loggedStateHTML = 'mi cuenta ▼';
-          dataObject.loggedState = '/micuenta';
-        }else if(state === 'admin'){
-          dataObject.loggedStateHTML = 'admin ▼';
-          dataObject.loggedState = '/admin';
-        }
+      functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+        dataObject.loggedState = stateHref;
+        dataObject.loggedStateHTML = stateHTML;
         functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
           if(err) console.log(err);
           
@@ -111,14 +99,9 @@ routes.get('/search', (req, res) => {
         'loggedState': '/login',
         'loggedStateHTML': 'iniciar sesión'
       };
-      functions.getLoggedState(req, state => {
-        if(state === 'logged'){
-          dataObject.loggedStateHTML = 'mi cuenta ▼';
-          dataObject.loggedState = '/micuenta';
-        }else if(state === 'admin'){
-          dataObject.loggedStateHTML = 'admin ▼';
-          dataObject.loggedState = '/admin';
-        }
+      functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+        dataObject.loggedState = stateHref;
+        dataObject.loggedStateHTML = stateHTML;
         render(path.join(__dirname, '../../public/views/busqueda.html'), dataObject, (err, data) => {
           if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
           return res.send(data);
@@ -159,7 +142,7 @@ routes.get('/login', (req, res) =>{
 });
 
 routes.post('/login', function(req, res){
-  functions.loginUsuario(req.body.nombreUsuario, req.body.passUsuario, (err) => {
+  functions.loginUsuario(req.body.nombreUsuario, req.body.passUsuario, err => {
     if(err){
       res.send(err);
     }else{
@@ -196,14 +179,10 @@ routes.get('/completar-pago', (req, res) => {
     'loggedState': '/login',
     'loggedStateHTML': 'iniciar sesión'
   };
-  functions.getLoggedState(req, state => {
-    if(state === 'logged'){
-      dataObject.loggedStateHTML = 'mi cuenta ▼';
-      dataObject.loggedState = '/micuenta';
-    }else if(state === 'admin'){
-      dataObject.loggedStateHTML = 'admin ▼';
-      dataObject.loggedState = '/admin';
-    }else{
+  functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+    dataObject.loggedState = stateHref;
+    dataObject.loggedStateHTML = stateHTML;
+    if(stateHref === '/login'){
       return res.redirect('/login');
     }
     render(path.join(__dirname, '../../public/views/completarPago.html'), dataObject, (err, data) => {
@@ -221,14 +200,9 @@ routes.get('/pago-completado', (req, res) => {
     'loggedState': '/login',
     'loggedStateHTML': 'iniciar sesión'
   };
-  functions.getLoggedState(req, state => {
-    if(state === 'logged'){
-      dataObject.loggedStateHTML = 'mi cuenta ▼';
-      dataObject.loggedState = '/micuenta';
-    }else if(state === 'admin'){
-      dataObject.loggedStateHTML = 'admin ▼';
-      dataObject.loggedState = '/admin';
-    }
+  functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+    dataObject.loggedState = stateHref;
+    dataObject.loggedStateHTML = stateHTML;
     render(path.join(__dirname, '../../public/views/pagoCompletado.html'), dataObject, (err, data) => {
       if(err){
         console.log(err);
@@ -242,16 +216,11 @@ routes.get('/pago-completado', (req, res) => {
 routes.get('/micuenta', (req, res) => {
   let dataObject = {
     'loggedState': '/login',
-    'loggedStateHTML': 'iniciar sesión',
+    'loggedStateHTML': 'iniciar sesión'
   };
-  functions.getLoggedState(req, state => {
-    if(state === 'logged'){
-      dataObject.loggedStateHTML = 'mi cuenta ▼';
-      dataObject.loggedState = '/micuenta';
-    }else if(state === 'admin'){
-      dataObject.loggedStateHTML = 'admin ▼';
-      dataObject.loggedState = '/admin';
-    }
+  functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+    dataObject.loggedState = stateHref;
+    dataObject.loggedStateHTML = stateHTML;
     render(path.join(__dirname, '../../public/views/micuenta.html'), dataObject, (err, data) => {
       if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
       return res.send(data);
@@ -268,14 +237,9 @@ routes.get('/cambiar-contrasena/:token', (req, res) => {
       'loggedState': '/login',
       'loggedStateHTML': 'iniciar sesión'
     };
-    functions.getLoggedState(req, state => {
-      if(state === 'logged'){
-        dataObject.loggedStateHTML = 'mi cuenta ▼';
-        dataObject.loggedState = '/micuenta';
-      }else if(state === 'admin'){
-        dataObject.loggedStateHTML = 'admin ▼';
-        dataObject.loggedState = '/admin';
-      }
+    functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+      dataObject.loggedState = stateHref;
+      dataObject.loggedStateHTML = stateHTML;
       render(path.join(__dirname, '../../public/views', 'cambiarContrasena.html'), dataObject, (err, HTML) => {
         if(err) return res.send(err);
         res.send(HTML);
@@ -326,14 +290,9 @@ routes.get('/d/:categoria', (req, res) => {
         dataObject['hayPaginas'] = true;
         dataObject['paginas'] = cantidadPaginas;
 
-        functions.getLoggedState(req, state => {
-          if(state === 'logged'){
-            dataObject.loggedStateHTML = 'mi cuenta ▼';
-            dataObject.loggedState = '/micuenta';
-          }else if(state === 'admin'){
-            dataObject.loggedStateHTML = 'admin ▼';
-            dataObject.loggedState = '/admin';
-          }
+        functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+          dataObject.loggedState = stateHref;
+          dataObject.loggedStateHTML = stateHTML;
           render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
             if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
             return res.send(data);
@@ -348,14 +307,9 @@ routes.get('/d/:categoria', (req, res) => {
         'loggedState': '/login',
         'loggedStateHTML': 'iniciar sesión'
       };
-      functions.getLoggedState(req, state => {
-        if(state === 'logged'){
-          dataObject.loggedStateHTML = 'mi cuenta ▼';
-          dataObject.loggedState = '/micuenta';
-        }else if(state === 'admin'){
-          dataObject.loggedStateHTML = 'admin ▼';
-          dataObject.loggedState = '/admin';
-        }
+      functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+        dataObject.loggedState = stateHref;
+        dataObject.loggedStateHTML = stateHTML;
         render(path.join(__dirname, '../../public/views/categoria.html'), dataObject, (err, data) => {
           if(err) return res.send('No se pudo cargar la página, por favor inténtalo de nuevo.');
           return res.send(data);
@@ -375,15 +329,10 @@ routes.get('/', (req, res) => {
     'loggedState': '/login',
     'loggedStateHTML': 'iniciar sesión'
   };
-  functions.getLoggedState(req, state => {
-    if(state === 'logged'){
-      dataObject.loggedStateHTML = 'mi cuenta ▼';
-      dataObject.loggedState = '/micuenta';
-    }else if(state === 'admin'){
-      dataObject.loggedStateHTML = 'admin ▼';
-      dataObject.loggedState = '/admin';
-    }
 
+  functions.getLoggedStateHTML(req, (stateHTML, stateHref) => {
+    dataObject.loggedState = stateHref;
+    dataObject.loggedStateHTML = stateHTML;
     render(path.join(__dirname, '../../public/views/index.html'), dataObject, (err, data) => {
       if(err) res.send(err);
       res.send(data);

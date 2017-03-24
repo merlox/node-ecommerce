@@ -55,7 +55,7 @@ function getCesta(){
 				//Creamos los atributos
 				for(let key in productoCesta.atributosTotales){
 					domAtributos += `
-						<span>${key}</span>
+						<span style="display: none;">${key}</span>
 						<select onchange="
 							editarCantidadCesta(
 								'${productoCesta.id}', 
@@ -75,41 +75,44 @@ function getCesta(){
 				cestaHtml += 
 				`<tr>
 					<input type="hidden" value="${productoCesta.id}"/>
-					<td><img src="../public-uploads/${productoCesta.imagen}" width="50px"/></td>
-					<td class="cesta-precio">${parseFloat(productoCesta.precio).toFixed(2)}€</td>
-					<td class="titulo-producto"><a href="/p/${productoCesta.permalink}">
-						${productoCesta.titulo}</a></td>
-					<td class="atributos-producto">
-						${domAtributos}
+					<td class="cesta-imagen-precio">
+						<img src="../public-uploads/${productoCesta.imagen}" width="130px"/>
+						<span>${parseFloat(productoCesta.precio).toFixed(2)}€</span>
 					</td>
-					<td><input type="number" min="1" max="9" onfocusout="
-						editarCantidadCesta(
-								'${productoCesta.id}',
-								event,
-								this.value,
-								null,
-								null)"
-						onkeypress="
-						editarCantidadCesta(
-								'${productoCesta.id}',
-								event,
-								this.value,
-								null,
-								null)" 
-						value="${productoCesta.cantidad}"/></td>
-					<td class="cesta-precio-cantidad"><b>${precioCalculado}€</b></td>
-					<td><span onclick="deleteCestaItem(${productoCesta.id}, this)" class="x-icon">×</span></td>
+					<td class="cesta-precio">
+						<div class="titulo-producto"><a href="/p/${productoCesta.permalink}">
+							${productoCesta.titulo}</a></div>
+						<div class="atributos-producto">
+							${domAtributos}
+						</div>
+						<div><input type="number" min="1" max="9" onfocusout="
+							editarCantidadCesta(
+									'${productoCesta.id}',
+									event,
+									this.value,
+									null,
+									null)"
+							onkeypress="
+							editarCantidadCesta(
+									'${productoCesta.id}',
+									event,
+									this.value,
+									null,
+									null)" 
+							value="${productoCesta.cantidad}"/>
+							<b class="cesta-precio-cantidad">${precioCalculado}€</b>
+							</div>
+						<div><a class="boton-eliminar-cesta" 
+							href="javascript:void(0)" onclick="deleteCestaItem(${productoCesta.id}, this)">
+							Eliminar</a></div>
+					</td>
 				</tr>`;
 				precioTotal += parseFloat(precioCalculado);
 				if(index + 1 >= response.cesta.length){
 					cestaHtml += 
 					`<tr>
-						<td class="separador-tabla"></td>
-						<td colspan="2">Precio total: <b>${precioTotal.toFixed(2)}€</b></td>
-						<td></td>						
-						<td colspan="3">
-							<button onclick="pasarPorCaja();">Pasar por caja</button>
-						</td>
+						<td align="center">Total: <b>${precioTotal.toFixed(2)}€</b></td>
+						<td><button onclick="pasarPorCaja();">Pasar por caja</button></td>
 					</tr>`;
 				}
 			});
@@ -214,26 +217,20 @@ q('#cesta').addEventListener('mouseenter', () => {
 		}, 1e3);
 	}
 });
-q('html').addEventListener('click', (e) => {
-	if(!q('#productos-cesta').contains(e.target)){
-		q('#productos-cesta').style.display = 'none';
-		q('.triangulo-up').style.display = 'none';
-	}
-});
-q('#productos-cesta').addEventListener('mouseleave', () => {
-	q('#productos-cesta').style.display = 'none';
-	q('.triangulo-up').style.display = 'none';
-});
-/* Descomentar para que la cesta se oculte al hacer click fuera
+
+// q('#productos-cesta').addEventListener('mouseleave', () => {
+// 	q('#productos-cesta').style.display = 'none';
+// 	q('.triangulo-up').style.display = 'none';
+// });
+
 //No ocultar si se hace click sobre el contenido cesta
 q('#productos-cesta').addEventListener('click', (e) => {
 	e.stopPropagation();
 });
 //Ocultar la cesta al hacer click fuera
 q('html').addEventListener('click', (e) => {
-	if(e.target != q('#cesta')){
+	if(!q('#productos-cesta').contains(e.target)){
 		q('#productos-cesta').style.display = 'none';
 		q('.triangulo-up').style.display = 'none';
 	}
 });
-*/

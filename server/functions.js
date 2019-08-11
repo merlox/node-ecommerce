@@ -1,7 +1,7 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
   ObjectId = require('mongodb').ObjectID,
-  claves = require('./secrets/secrets.js'),
+  claves = require('./secrets.js'),
   MongoUrl = claves.mongoUrl,
   fs = require('fs'),
   path = require('path'),
@@ -187,7 +187,7 @@ function createUpdateProduct(productData, cb){
     'vendidos': 0
   }, {
     'upsert': true
-  }, (err, result) => {  
+  }, (err, result) => {
     if(err){
       return cb('Error: '+err);
     }else{
@@ -220,7 +220,7 @@ function getAllProducts(imageLimit, page, filtroCategoria, callback){
   let skipProducts = 0;
   if(page > 1){
     skipProducts = (page-1)*imageLimit;
-  } 
+  }
   let query = {};
   if(filtroCategoria) query['categoria'] = filtroCategoria;
   db.collection('productos').find(query).limit(imageLimit).skip(skipProducts).toArray((err, results) => {
@@ -264,7 +264,7 @@ function borrarProducto(permalink, cb){
 };
 //Origin es el archivo con path y end es solo directorio sin nombre de archivo
 function copyFile(origin, end, fileName, cb){
-  console.log('CopyFile, functions.js');  
+  console.log('CopyFile, functions.js');
   let finalName = path.join(end, fileName);
   let readStream = fs.createReadStream(origin);
   let writeStream = fs.createWriteStream(finalName);
@@ -296,7 +296,7 @@ function guardarCategorias(categorias, callback){
     'arrayCategorias': categorias
   }, {
     'upsert': true
-  }, (err, countFilesModified, result) => {    
+  }, (err, countFilesModified, result) => {
     if(err){
       return callback('#1 Error guardando las categorías.');
     }else{
@@ -310,7 +310,7 @@ function getCategories(callback){
     'arrayCategorias': {$exists : true}
   }, {
     '_id': false
-  }, (err, result) => {    
+  }, (err, result) => {
     if(err){
       return callback('Err, could not find the categories.', null);
     }else{
@@ -375,7 +375,7 @@ function guardarBusqueda(req, cb){
     db.collection('busquedas').findOne({
       'search': busqueda
     }, (err, busquedaExistente) => {
-      if(err){        
+      if(err){
         return cb('Error searching busquedas');
       }else{
         if(!busquedaExistente){
@@ -391,7 +391,7 @@ function guardarBusqueda(req, cb){
           'ip': req.ip
         }, {
           'upsert': true
-        }, (err, result) => {          
+        }, (err, result) => {
           if(err) return cb('Err, could not save the search in the database');
           return cb(null);
         });
@@ -424,7 +424,7 @@ function guardarSliderImages(objectImages, cb){
       'urls': objectImages.urls
     }, {
       'upsert': true
-    }, err => {      
+    }, err => {
       if(err) return cb('Err, could not save the slider images to the db: '+err);
       cb(null);
     });
@@ -477,7 +477,7 @@ function getSlider(doCopy, cb){
           counter++;
           if(err) return cb('Error copying the slider images to the client '+err, null);
           if(counter >= images.length){
-            return cb(null, files);  
+            return cb(null, files);
           }
         });
       });
@@ -530,15 +530,15 @@ function getMiniSlider(username, tipo, pagina, cb){
         '_id': false,
         'productosVistos': true
       }, (err, userData) => {
-        if(err) 
+        if(err)
           return cb('Error buscando los productos vistos.', null, null);
         if(!userData.productosVistos)
           return cb('Error, no hay productos vistos recientemente', null, null);
-        if(userData.productosVistos.length < 5) 
+        if(userData.productosVistos.length < 5)
           return cb('Error, hay menos de 5 productos vistos.', null, null);
         let paginasTotales = userData.productosVistos.length/5;
         let paginaSiguiente = paginasTotales < pagina ? pagina*5 : paginasTotales;
-        
+
         db.collection('productos').find({
           '_id': {
             '$in': userData.productosVistos
@@ -565,9 +565,9 @@ function getMiniSlider(username, tipo, pagina, cb){
         '_id': false,
         'compradosJuntos': true
       }).limit(5).toArray((err, arrayUserData) => {
-        if(err) 
+        if(err)
           return cb('Error buscando los productos comprados juntos.', null, null);
-        if(!arrayUserData) 
+        if(!arrayUserData)
           return cb('Error, no hay productos comprados juntos', null, null);
 
         let productosCompradosJuntos = [],
@@ -651,7 +651,7 @@ function getPaginacion(limite, filtroCategoria, cb){
     let paginas = Math.ceil(count/limite);
     return cb(null, paginas);
   });
-}; 
+};
 //Function que me dice cuantas páginas hay en total para ese límite de productos por página y para esa keyword.
 function getPaginacionSearch(keyword, limite, cb){
   console.log('GetPaginacionSearch, functions.js');
@@ -669,7 +669,7 @@ function getPaginacionSearch(keyword, limite, cb){
     let paginas = Math.ceil(count/limite);
     return cb(null, paginas);
   });
-}; 
+};
 //Function que me dice cuantas páginas hay en total para ese límite de productos por página y para esa categoría.
 function getPaginacionCategoria(categoria, limite, cb){
   console.log('GetPaginacionCategoria, functions.js');
@@ -687,7 +687,7 @@ function getPaginacionCategoria(categoria, limite, cb){
     let paginas = Math.ceil(count/limite);
     return cb(null, paginas);
   });
-}; 
+};
 //Para pagar una compra
 function payProduct(req, cb){
   console.log('PayProduct, functions.js');
@@ -732,7 +732,7 @@ function payProduct(req, cb){
       db.collection('productos').findOne({
         'permalink': productoPermalink
       }, (err, result) => {
-        index++;        
+        index++;
         if(err) error = '#6 Error procesando el pago, por favor inténtalo de nuevo.';
         if(!result) error = '#7 Este producto no existe o no está disponible: '+arrayProductos[i].nombre+', por favor cambialo.';
         //Si se ha llegado al último producto sin errores, continuar
@@ -846,8 +846,8 @@ function payProduct(req, cb){
           'estaEnviado': false,
           'imagen': producto.imagenes[1] //Las imagenes están dentro de un objeto "1": "asfasf.jpg"
         };
-        /* 
-          arrayProductos[index] No tiene nada que ver con el arrayProductosInterno, 
+        /*
+          arrayProductos[index] No tiene nada que ver con el arrayProductosInterno,
           arrayProductos es el precio para el email y la factura.
           Le calculamos el precio individual para meterlo en el email factura.
         */
@@ -935,7 +935,7 @@ function payProduct(req, cb){
           'telefono': charge.receipt_number,
           'direccion': direccion,
           'terminacionTarjeta': charge.source.last4,
-          
+
           'customer': charge.customer,
           'idCharge': charge.id,
           'chargeObject': charge
@@ -1148,7 +1148,7 @@ function enviarEmailProductosEnviados(arrayPermalinks, idPago, dominio, cb){
     'productos': true
   }, (err, factura) => {
     if(err) return cb('Error, no se ha encontrado esa factura.');
-    
+
     let todosEnviados = true,
       marcarFacturaTodosEnviados = false;
     for(let i = 0; i < factura.productos.length; i++){
@@ -1518,7 +1518,7 @@ function copyImagesProducto(permalink, cb){
 
     if(tamanoImages <= 0) return cb(`#3 No hay imágenes para el producto ${producto.titulo}`);
     for(let key in producto.imagenes){
-      copyFile(path.join(__dirname, 'uploads', producto.imagenes[key]), 
+      copyFile(path.join(__dirname, 'uploads', producto.imagenes[key]),
         path.join(__dirname, '../public/public-uploads'), producto.imagenes[key], err => {
 
         counter++;
@@ -1610,7 +1610,7 @@ function getCesta(session, cb){
     }
   }
 };
-//Añadimos el producto a la cesta del usersData del cliente si está conectado. 
+//Añadimos el producto a la cesta del usersData del cliente si está conectado.
 //Esté conectado o no, se guardará en la sesión.
 function addProductoCesta(req, productoNuevo, cb){
   console.log('AddProductoCesta, functions.js');
@@ -1634,7 +1634,7 @@ function addProductoCesta(req, productoNuevo, cb){
     productoNuevo['atributosTotales'] = result.atributos;
     productoNuevo['imagen'] = result.imagenes ? result.imagenes[1] : '';
     productoNuevo['id'] = cesta.length;
-    
+
     if(indexProductoCesta != -1){
       cesta[indexProductoCesta].cantidad += productoNuevo.cantidad;
     }else cesta.push(productoNuevo);
@@ -1642,7 +1642,7 @@ function addProductoCesta(req, productoNuevo, cb){
     req.session.save();
     // Se ejecuta aunque llames al callback
     if(req.session.isLogged) guardarCestaDB();
-    
+
     cb(null);
   });
 
@@ -1701,12 +1701,12 @@ function cambiarCantidadCesta(req, cambios, cb){
   }else{
     cesta[cambios.id].atributosSeleccionados[cambios.atributoNombre] = cambios.atributoSeleccionado;
   }
-  
+
   req.session.cesta = cesta;
   req.session.save();
   // Se ejecuta aunque llames al callback
   if(req.session.isLogged) guardarCestaDB();
-  
+
   cb(null);
 
   //Guarda la cesta en la db usersData si está conectado

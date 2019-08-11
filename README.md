@@ -3,6 +3,19 @@
 Este proyecto va a ser una tienda ecommerce en nodejs usando plain javascript html y css.
 Cada día trabajo 1 hora en conseguir avanzar los pasos necesarios para completarlo.
 
+## NOTE
+You need to setup the `secret.js` file inside `server/` containing the following elements:
+```
+module.exports = {
+    stripeSecret, // Stripe secret api key
+    emailUsername, // This is the mailgun username
+    emailPassword, // This is the mailgun password
+    adminName,
+    mongoUrl: 'mongodb://merlox:merlox1@ds145750.mlab.com:45750/merunas', // This can be public because it's just the user of the databas
+}
+```
+
+
 ## Objetivos
 
 1. Crear la interfaz gráfica
@@ -333,13 +346,13 @@ Cambio de planes, lo que voy a hacer es establecer como clave primaria el permal
 
 Después de esto, voy a hacer que el sistema para subir productos sea más agradable. No sera necesario reiniciar la página, simplemente te llegará un mensaje de "Ver producto" y se te limpiará la pantalla para evitar subir el mismo producto, porque las imágenes las he borrado al subir el producto al servidor.
 
-### Día 10 
+### Día 10
 
 Ayer conseguí crear un diseño responsive para la página principal de subir producto. Todo se ve correctamente excepto el widget de las imagenes que al tener un tamaño variable que depende del tamaño de la pantalla, es bastante más complicado modificar lo que mide de anchura y altura.
 
-Además ayer cambié el widget del permalink para que detectase caracteres prohibidos en windows. 
+Además ayer cambié el widget del permalink para que detectase caracteres prohibidos en windows.
 
-La verdad es que no fue un día bastante productivo así que voy a trabajar hoy seriamente para conseguir niveler el tiempo invertido. 
+La verdad es que no fue un día bastante productivo así que voy a trabajar hoy seriamente para conseguir niveler el tiempo invertido.
 
 Para ello usaré una técnica muy conocida llamada la técnica pomodoro que consiste en que te pones un tiempo, por ejemplo media hora, en la que no puedes hacer absolutamente nada que no sea trabajar en el proyecto. Es realmente efectiva porque te obliga a concentrarte y funciona.
 
@@ -349,7 +362,7 @@ Entonces voy a usar esta técnica para conseguir el objetivo principal de hoy: C
 
 Resulta que es más complicado de lo esperado. Mi primer intento ha sido crear ajax requests al servidor para conseguir la información del producto e ir mostrando la información con javascript.
 
-Me dí cuenta que hacer eso es malísmo para el SEO, porque los bots de google encuentran difícil y costoso tener que cargar páginas web para ver realmente el contenido y muchos de ellos tienen javascript desactivado. 
+Me dí cuenta que hacer eso es malísmo para el SEO, porque los bots de google encuentran difícil y costoso tener que cargar páginas web para ver realmente el contenido y muchos de ellos tienen javascript desactivado.
 
 Entonces, tras buscar un rato he descubierto que es posible usas `rendering sistems`  de express, que son pequeñas librerías que te permiten poner variables y cosas dentro de los archivos html para enviarselos al cliente.
 
@@ -374,7 +387,7 @@ En resumen. Voy a crear mi sistema de templates a lo largo de los próximos día
 
 Ayer estuve creando el sistema de templates para las páginas de los productos de forma que yo saque los datos de cada producto de la base de datos y los pueda poner donde quiera con facilidad en el html.
 
-Pues resulta que compliqué demasiado el sistema tratando de abarcar más de lo necesario en un principio. Yo quise poder usar varios tipos de productos y sus cualidades con facilidad para tener un sistema más poderoso. 
+Pues resulta que compliqué demasiado el sistema tratando de abarcar más de lo necesario en un principio. Yo quise poder usar varios tipos de productos y sus cualidades con facilidad para tener un sistema más poderoso.
 
 Sin embargo fue una decisión incorrecta porque me quede bastante atascado y no supe como salir del agujero.
 
@@ -384,7 +397,7 @@ En la página de los productos, donde ponga {{titulo}} saldrá el titulo del pro
 
 Además, estoy creando un sistema algo más avanzado para mostrar las imágenes. Básicamente quiero poner {{loop imagenes}} y que me salgan todas las imágenes con el html intacto.
 
-Por ejemplo, si se lo pongo a un `<div>{{loop imagenes}}</div>` lo que me hará es crear un div y meter las imágenes dentro de uno en uno. 
+Por ejemplo, si se lo pongo a un `<div>{{loop imagenes}}</div>` lo que me hará es crear un div y meter las imágenes dentro de uno en uno.
 
 Pero de momento me está costando. Yo lo estoy haciendo con expresiones regulares o regex para buscar ese tipo de códigos, aunque me está dando problemas al darme más información de la necesaria.
 
@@ -448,7 +461,7 @@ producto = {
   }
 }
 ```
-Es decir, los atributos están guardados en un objeto donde cada `key` es el nombre del atributo y cada `value` es un array con los valores del atributo. Así que tendré que crear una funcion como {{loopArray valores}} para mostrar cada una de las propiedades. 
+Es decir, los atributos están guardados en un objeto donde cada `key` es el nombre del atributo y cada `value` es un array con los valores del atributo. Así que tendré que crear una funcion como {{loopArray valores}} para mostrar cada una de las propiedades.
 
 Sin embargo también me interesa la key para tener el nombre del atributo así que tendría que ser algo como {{loop key and valores}} donde valores sea un array que se acceda al igual que hice antes así {{loop key and valores 1}} además de {{loop key and valores -3-}}.
 
@@ -489,7 +502,7 @@ Me muestre:
   <li>Redonda</li>
   <li>Triangular</li>
 </ul>
-``` 
+```
 
 Donde el objeto es:
 
@@ -560,7 +573,7 @@ Resultó no ser tan facil transladar la página de añadir productos a la págin
 
 Por eso me he decidido a crear el diseño de nuevo en un archivo separado de css ordenado por las 3 secciones principales de la web.
 
-El diseño de la página de productos está quedando excelente. Me gusta mucho porque queda todo muy claro con separaciones discretas. 
+El diseño de la página de productos está quedando excelente. Me gusta mucho porque queda todo muy claro con separaciones discretas.
 
 Mañana continuaré trabajando en ello y espero tenerlo listo con diseño responsive. Aparte tengo una pequeña lista de tareas por hacer en un archivo markdown para llevar un registro de por donde voy.
 
@@ -578,7 +591,7 @@ Además he hecho que el widget de las imágenes funcione. Al hacer hover sobre l
 
 Por hoy he terminado porque me voy a poner a subir videos a youtube que me están dando mucho dinero y es un negocio que quiero escalar a lo grande.
 
-Mañana continuaré reparando los bugs siguientes: 
+Mañana continuaré reparando los bugs siguientes:
 - El widget de las imágenes del admin-add-product tiene que escalarse correctamente en teléfonos móviles.
 
 - Las categorías tienen que guardarse en el servidor en un objeto aparte que se recibirá al cargar la página de añadir producto para tener unas categorías fijas.
@@ -589,7 +602,7 @@ Mañana continuaré reparando los bugs siguientes:
 
 Para hacer un recuento de lo que queda por conseguir, tengo que terminar las siguientes paginas y widgets:
 
-- Página de compra de productos: Será un proceso de 1 sola página y tendrá un indicador en la parte superior para saber lo que queda por hacer como en amazon. 
+- Página de compra de productos: Será un proceso de 1 sola página y tendrá un indicador en la parte superior para saber lo que queda por hacer como en amazon.
 
 - Función de compra de productos con tarjeta de credito como metodo principal y paypal como método secundario. En esta parte tendré que investigar cómo funcionan los mecanismos de pago con tarjeta. Para ello buscaré información sobre authorize.net que es la página que se encarga de este tipo de tareas. Luego seguramente tenga que instalar un certificado SSL en el servidor para poder tener una conexión segura y cifrada. Estimo que esta parte completa tardará 1 semana porque es un proceso muy laborioso y complejo además de no saber exactamente el procedimiento para incorporar estas tecnologías a mi web.
 
@@ -609,7 +622,7 @@ Para hacer un recuento de lo que queda por conseguir, tengo que terminar las sig
 
 - Función de ab testing para mostrar versiones diferentes de la misma página a distintos compradores para testear conversiones.
 
-### Día 15 
+### Día 15
 
 Hoy voy a trabajar en terminar las tareas sencillas que me quedan para perfeccionar el diseño y funcionamiento de las páginas hechas hasta ahora.
 
@@ -629,9 +642,9 @@ Lo acabo de completar. Me ha costado una hora aproximadamente pero lo tengo func
 
 Son las 10 y media de la noche. Me voy a dormir a las 12 y algo por lo que quiero continuar con el proyecto. Como dije antes, ahora tengo que hacer la página de edición de productos para ver cuáles están disponibles y poderlos modificar rápidamente. Pues vamos a ello! Te contaré hoy o mañana lo que he logrado. No es increíble? Lo digo e inmediatamente puedes leer los resultados, pero la verdad es que dedico todo el tiempo necesario real para conseguir esto. Esto es así y me encanta.
 
--- 
+--
 
-Al final he programado durante 1 hora. 
+Al final he programado durante 1 hora.
 
 Lo que he conseguido es crear una nueva página con 3 secciones que al principio eran 2:
 - Un menú lateral para moverte por las categorías y subcategorías.
@@ -642,7 +655,7 @@ Mañana continuaré jugando con el css para darle el diseño que quiero ya que m
 
 ### Día 17
 
-Hoy voy a continuar trabajando en la página de edición de productos hasta tenerla completada con un diseño que me guste. 
+Hoy voy a continuar trabajando en la página de edición de productos hasta tenerla completada con un diseño que me guste.
 
 Tengo pensado poner las categorias en el menú lateral izquierdo para ordenar los productos más fácilmente.
 
@@ -684,7 +697,7 @@ Voy a continuar con la edición de productos.
 
 ### Día 20
 
-Ayer estuve remodelando la estructura de la aplicación porque se me ha desorganizado de tal manera que me cuesta encontrar donde esta cada cosa. 
+Ayer estuve remodelando la estructura de la aplicación porque se me ha desorganizado de tal manera que me cuesta encontrar donde esta cada cosa.
 
 Hoy voy a trabajar en arreglar la página de subida de productos y en crear la página de edicion de productos. Pero antes voy a arreglar el desorden causado por el orden.
 
@@ -715,7 +728,7 @@ Como dije ayer, hoy voy a continuar trabajando en el diseño de la aplicación p
 
 Estuve trabajando en mejorar la interfaz gráfica aparte del widget de las categorías. Ha sido un día lleno de cosas.
 
-### Día 25 
+### Día 25
 
 Hoy estuve trabajando en los widgets de categoría y atributos ya que voy a mover la funcion de añadir productos a la página de editar productos y así tenerlo todo organizado en un lugar en el que añadir y editar.
 
@@ -774,7 +787,7 @@ Mañana continuaré trabajando en el menú responsive y esto es lo que tengo pen
 
 Hoy fue un día de poco trabajo. He estado creando el menú principal de las páginas publicas que no son de administrador y tras muchas vueltas y cambios, he decidido implantar flexbox puesto que al principio no conseguí el look que buscaba pero lo acabé logrando tras trastear con los margins y los flexs.
 
-### Día 32 
+### Día 32
 
 Son las 11 y acabo de completar el menú con responsive y un diseño a lo amazon muy acertado.
 
@@ -874,7 +887,7 @@ Mañana continuaré cambiando y haciendo responsive el diseño de la página ini
 
 ### Día 44
 
-Hoy voy a integrar los pagos de stripe para poder realizar pagos con tarjeta de manera segura con los usuarios. Ahora mismo tengo 2 opciones: 
+Hoy voy a integrar los pagos de stripe para poder realizar pagos con tarjeta de manera segura con los usuarios. Ahora mismo tengo 2 opciones:
 
 1. Usar stripe checkout que es un formulario ya preparado por ellos para facilitar los pagos.
 2. Crear un formulario personalizado para guardar la información que me interese.
@@ -1028,7 +1041,7 @@ Lo que voy a hacer a continuación es crear el panel de administración del admi
 - Lo ideal sería poder tener un chat en directo en caso de que el cliente estuviese conectado e informarle del estado de su pedido. Aparte de enviarle notificaciones a su correo.
 - También me gustaría informar a los clientes diariamente sobre la actualización del estado de su envio y que los clientes pudiesen hacer preguntar en tiempo real al vendedor sobre los productos para ayudarle todo lo posible.
 - Ver que páginas están viendo los clientes en ese momento, los clientes conectados y otro tipo de información relevante en tiempo real. Esto será un sección llamada "En tiempo real".
-- Ver las búsquedas que realizan los clientes. 
+- Ver las búsquedas que realizan los clientes.
 P.D. En el widget de búsqueda quiero mostrar un historial de búsquedas a los clientes que ya hayan buscado antes, además de crear una función única para ir mostrando cada 2 segundos búsquedas realizadas por otros usuarios con objeto de sugerir a los usuarios posibles compras.
 
 ### Día 54
@@ -1099,7 +1112,7 @@ Llevo varios días investigando las distintas opciones de email que ofrece nodej
 Primero he usado nodemailer con gmail como transporte. Me ha ido bien aunque los emails hacia cuentas que no eran a mí mismo acababan en spam.
 El problema es que gmail no es un medio eficiente para enviar mensajes y que lleguen con ciertas garantías, así que me planteé crear mi propio servidor de email en nodejs o smtp server.
 
-Ví que hay 2 opciones principales: 
+Ví que hay 2 opciones principales:
 - Simple-smtp-server: para configurar un servidor de emails de forma sencilla.
 - Haraka: un grandioso programa para crear servidores Smtp en node que utilizan empresas tan famosas como craiglist.
 

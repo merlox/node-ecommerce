@@ -1,6 +1,6 @@
 'use strict';
 const nodemailer = require('nodemailer'),
-    claves = require('./secrets/secrets.js'),
+    claves = require('./secrets.js'),
     fs = require('fs'),
     path = require('path');
 

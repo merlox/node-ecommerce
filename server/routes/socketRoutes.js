@@ -1,6 +1,6 @@
 'use strict';
 let Mongo = require('mongodb').MongoClient,
-  MongoUrl = require('./../secrets/secrets.js').mongoUrl,
+  MongoUrl = require('./../secrets.js').mongoUrl,
   path = require('path'),
   db = {};
 
@@ -25,7 +25,7 @@ function socketRoutes(io, username){
 			usuariosConnectados.push('Anonimo');
 			io.emit('user connected', usuariosConnectados);
 		}
-		
+
 		console.log(usuariosConnectados)
 
 		socket.on('mensaje chat', function(mensaje){

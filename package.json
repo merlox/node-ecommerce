@@ -16,7 +16,7 @@
     "formidable": "^1.0.17",
     "mongodb": "^2.2.10",
     "nodemailer": "^3.0.2",
-    "socket.io": "^1.5.0",
+    "socket.io": "^2.2.0",
     "stripe": "^4.14.0"
   }
 }

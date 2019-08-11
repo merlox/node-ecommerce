@@ -1,13 +1,13 @@
 'use strict';
 let express = require('express'),
 	Mongo = require('mongodb').MongoClient,
-	MongoUrl = require('./../secrets/secrets.js').mongoUrl,
+	MongoUrl = require('./../secrets.js').mongoUrl,
 	functions = require('./../functions.js'),
 	path = require('path'),
 	routes = express.Router(),
 	db = {},
   render = require('./../render.js'),
-  claves = require('./../secrets/secrets.js');
+  claves = require('./../secrets.js');
 
 Mongo.connect(MongoUrl, (err, database) => {
 	if(err) console.log(err);
@@ -64,7 +64,7 @@ routes.get('/search', (req, res) => {
 
       let resultadoUnico = false;
       if(arrayProductos.length === 1) resultadoUnico = true;
-      
+
       let dataObject = {
         'busqueda': req.query.q,
         'productos': arrayProductos,
@@ -81,7 +81,7 @@ routes.get('/search', (req, res) => {
         dataObject.loggedStateHTML = stateHTML;
         functions.getPaginacionSearch(req.query.q, limite, (err, cantidadPaginas) => {
           if(err) console.log(err);
-          
+
           dataObject['hayPaginas'] = true;
           dataObject['paginas'] = cantidadPaginas;
 
@@ -271,7 +271,7 @@ routes.get('/d/:categoria', (req, res) => {
 
       let resultadoUnico = false;
       if(arrayProductos.length === 1) resultadoUnico = true;
-      
+
       let dataObject = {
         'categoria': req.params.categoria,
         'productos': arrayProductos,
@@ -286,7 +286,7 @@ routes.get('/d/:categoria', (req, res) => {
 
       functions.getPaginacionCategoria(req.params.categoria, limite, (err, cantidadPaginas) => {
         if(err) console.log(err);
-        
+
         dataObject['hayPaginas'] = true;
         dataObject['paginas'] = cantidadPaginas;
 

@@ -89,24 +89,35 @@ let productImages = {};
 api.post('/upload-image-product', (req, res) => {
   let form = new formidable.IncomingForm();
   let counterImage = 0;
-  form.multiple = true;
-  form.uploadDir = path.join(__dirname, '../../public/public-uploads');
-  form.on('file', (field, file) => {
-    counterImage++;
-    //Le cambiamos el nombre en caso de que tenga códigos html
-    file.name = file.name.replace(/&.*;+/g, '-');
-    //Esta linea es la que se encarga de subir el archivo en el servidor.
-    functions.copyFile(file.path, path.join(__dirname, '../../public/public-uploads/'), file.name, (err) => {
-      if(err) console.log(err);
-      else{
-        //Borramos el temporal para subir el definitivo
-        fs.unlink(file.path, (err) => {
-          if(err) console.log(err);
-        });
-      }
-    });
+  let dirToUploadImages = path.join(__dirname, '../../public/public-uploads');
+  fs.stat(dirToUploadImages, (err, stats) => {
+	  if(err.code == 'ENOENT') {
+		console.log('The directory public-uploads doesn\'t exists, creating a new one...')
+		const dirCreationError = fs.mkdirSync(dirToUploadImages)
+		if(dirCreationError) return res.status(400).json({err: dirCreationError})
+	  } else if(err) {
+		console.log('Error uploading the image', err.code)
+		return res.status(400).json({err})
+	  }
+	  form.multiple = true;
+	  form.uploadDir = dirToUploadImages;
+	  form.on('file', (field, file) => {
+	    counterImage++;
+	    //Le cambiamos el nombre en caso de que tenga códigos html
+	    file.name = file.name.replace(/&.*;+/g, '-');
+	    //Esta linea es la que se encarga de subir el archivo en el servidor.
+	    functions.copyFile(file.path, path.join(__dirname, '../../public/public-uploads/'), file.name, (err) => {
+	      if(err) console.log(err);
+	      else{
+	        //Borramos el temporal para subir el definitivo
+	        fs.unlink(file.path, (err) => {
+	          if(err) console.log(err);
+	        });
+	      }
+	    });
 
-    productImages[counterImage] = file.name;
+	    productImages[counterImage] = file.name;
+	})
   });
   form.on('error', (err) => {
     console.log('An error ocurred uploading the images '+err);
@@ -383,7 +394,7 @@ api.post('/enviar-mensaje', (req, res) => {
   let mensaje = req.body.data.mensaje;
   if(!titulo) return res.send('Error, el título del mensaje no puede estar vacío');
   if(!mensaje) return res.send('Error, el contenido del mensaje no puede estar vacío');
-  
+
   functions.enviarMensajeContacto(req.session.username, titulo, mensaje, err => {
     if(err) return res.send(err);
     res.send(null);

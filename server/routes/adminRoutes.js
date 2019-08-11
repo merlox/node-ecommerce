@@ -3,7 +3,7 @@ const express = require('express'),
 	path = require('path'),
 	admin = express.Router(),
 	render = require('./../render.js'),
-	claves = require('./../secrets/secrets.js'),
+	claves = require('./../secrets.js'),
 	functions = require('./../functions.js');
 
 admin.use((req, res, next) => {
@@ -103,7 +103,7 @@ admin.post('/get-paginacion-facturas', (req, res) => {
     dataObject = {
       'error': null,
       'paginasTotales': null
-    }, 
+    },
     productosPorPagina = req.body.data.ppp ? parseInt(req.body.data.ppp) : 20,
     pageActual = req.body.data.pageActual;
 

@@ -91,7 +91,7 @@ api.post('/upload-image-product', (req, res) => {
   let counterImage = 0;
   let dirToUploadImages = path.join(__dirname, '../../public/public-uploads');
   fs.stat(dirToUploadImages, (err, stats) => {
-	  if(err.code == 'ENOENT') {
+	  if(err && err.code == 'ENOENT') {
 		console.log('The directory public-uploads doesn\'t exists, creating a new one...')
 		const dirCreationError = fs.mkdirSync(dirToUploadImages)
 		if(dirCreationError) return res.status(400).json({err: dirCreationError})

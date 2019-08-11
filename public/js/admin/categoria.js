@@ -4,9 +4,10 @@ window.addEventListener('load', getCategoriesFromServer);
 
 function getCategoriesFromServer(){
   httpGet('/api/get-categories', (categories) => {
-    categories = JSON.parse(categories);
-    categories = categories.arrayCategorias;
-    if(categories.length <= 0) {
+     if(categories) {
+        categories = JSON.parse(categories);
+        categories = categories.arrayCategorias;
+    } else {
       let mensajeErrorHTML = `No se han encontrado categorías<br/>
         <button onclick="q('.mensaje-error-subida').style.display = 'none'">Vale</button>`;
       q('.mensaje-error-subida').style.display = 'block';

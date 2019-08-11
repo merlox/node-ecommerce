@@ -16,14 +16,14 @@ let requestProcessing = false;
 
 api.get('/permalink-check/:permalink', (req, res) => {
 	functions.checkPermalink(req.params.permalink, esValido => {
-		res.send(checkPermalink);
+		res.send(esValido);
 	});
 });
 api.get('/get-categories', (req, res) => {
 	functions.getCategories((err, result) => {
 		if(err){
 			return res.send(err);
-		}else{
+		} else {
 			return res.send(result);
 		}
 	});

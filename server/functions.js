@@ -27,12 +27,12 @@ function checkPermalink(permalink, cb){
     'permalink': permalink
   }, (err, result) => {
     if(err){
-      return callback(false);
+      return cb(false);
     }
     if(result && result.permalink == permalink){
-      return callback(false);
+      return cb(false);
     }else{
-      return callback(true);
+      return cb(true);
     }
   });
 };

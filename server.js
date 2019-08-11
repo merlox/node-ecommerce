@@ -15,6 +15,7 @@ const express = require('express'),
     socketRoutes = require('./server/routes/socketRoutes.js');
 
 let username = null;
+let port = 8080
 
 //Inicializamos configuracion de express y sessión
 app.use(bodyParser.json());
@@ -51,8 +52,8 @@ app.use('/admin', adminRoutes);
 app.use('/', publicRoutes);
 
 //Ejecutamos el servidor en la ip local
-socketServer.listen(8000, '0.0.0.0', function(){
-  console.log("Server started at 35.156.184.202:8000");
+socketServer.listen(port, '0.0.0.0', function(){
+  console.log("Server started at localhost:", port);
 });
 
 //Ejecutamos el servidor socket.io para el chat en realtiime

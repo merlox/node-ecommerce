@@ -1,6 +1,6 @@
 'use strict';
 new Minislider('Vistos anteriormente', 'vistosAnteriormente', '#minislider-vistos-anteriormente');
-new Minislider('Otros clientes han comprado también...', 'compradosJuntos', '#minislider-comprados-juntos');
+// new Minislider('Otros clientes han comprado también...', 'compradosJuntos', '#minislider-comprados-juntos');
 new Minislider('Te pueden interesar', 'random', '#minislider-random');
 
 //Para colocar la imagen secundaria activa como principal on hover

@@ -1,0 +1,9 @@
+# Create a server/secrets.js file with these object parameters
+
+module.exports = {
+    emailUsername,
+    emailPassword,
+    mongoUrl: 'mongodb://merlox:merlox1@ds145750.mlab.com:45750/merunas',
+    stripeSecret,
+    adminName,
+}

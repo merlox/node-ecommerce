@@ -14,8 +14,18 @@ const express = require('express'),
     publicRoutes = require('./server/routes/publicRoutes.js'),
     socketRoutes = require('./server/routes/socketRoutes.js');
 
-let username = null;
-let port = 8080
+const yargs = require('yargs')
+const argv = yargs.option('port', {
+    alias: 'p',
+    description: 'Set the port to run this server on',
+    type: 'number',
+}).help().alias('help', 'h').argv
+if(!argv.port) {
+    console.log('Error, you need to pass the port you want to run this application on with npm start -- -p 8001')
+    process.exit(0)
+}
+const port = argv.port
+let username = null
 
 //Inicializamos configuracion de express y sessión
 app.use(bodyParser.json());
@@ -39,11 +49,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Logger middleware
 app.use('*', (req, res, next) => {
-  console.log(`\nRequesting: ${req.originalUrl} ${req.ip}`);
-  if(req.session.username) username = req.session.username;
-  // req.session.cesta = [];
-  // console.log(req.session)
-  next();
+    let time = new Date()
+    console.log(`${req.method} to ${req.originalUrl} at ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`)
+    if(req.session.username) username = req.session.username;
+    // req.session.cesta = [];
+    // console.log(req.session)
+    next();
 });
 
 //Custom routes

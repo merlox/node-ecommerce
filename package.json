@@ -15,7 +15,7 @@
     "express-session": "^1.14.1",
     "formidable": "^1.0.17",
     "mongodb": "^2.2.10",
-    "nodemailer": "^3.0.2",
+    "nodemailer": "^6.4.16",
     "socket.io": "^2.2.0",
     "stripe": "^4.14.0",
     "yargs": "^14.0.0"
